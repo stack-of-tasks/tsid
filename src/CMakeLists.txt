@@ -1,0 +1,46 @@
+#
+# Copyright (c) 2017 CNRS
+#
+# This file is part of PinInvDyn
+# pinocchio is free software: you can redistribute it
+# and/or modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation, either version
+# 3 of the License, or (at your option) any later version.
+# pinocchio is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Lesser Public License for more details. You should have
+# received a copy of the GNU Lesser General Public License along with
+# pinocchio If not, see
+# <http://www.gnu.org/licenses/>.
+
+# --- MAIN LIBRARY --- #
+SET(LIBRARY_NAME ${PROJECT_NAME})
+
+SET(${LIBRARY_NAME}_MATH_SOURCES
+  )
+
+SET(${LIBRARY_NAME}_TASKS_SOURCES
+    tasks/task-base.cpp
+  )
+
+SET(${LIBRARY_NAME}_SOLVERS_SOURCES
+    solvers/solver-base.cpp
+  )
+
+SET(${LIBRARY_NAME}_SOURCES
+    ${${LIBRARY_NAME}_MATH_SOURCES}
+    ${${LIBRARY_NAME}_TASKS_SOURCES}
+    ${${LIBRARY_NAME}_SOLVERS_SOURCES}
+  )
+
+ADD_LIBRARY(${LIBRARY_NAME} SHARED ${HEADERS_FULL_PATH} ${${LIBRARY_NAME}_SOURCES})
+SET_TARGET_PROPERTIES(${LIBRARY_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+ADD_HEADER_GROUP(HEADERS_FULL_PATH)
+ADD_SOURCE_GROUP(${LIBRARY_NAME}_SOURCES)
+
+PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} eigen3)
+PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} pinocchio)
+
+INSTALL(TARGETS ${PROJECT_NAME} DESTINATION lib)
+
