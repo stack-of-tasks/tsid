@@ -61,7 +61,7 @@ OPTION (BUILD_UNIT_TESTS "Build the unitary tests" ON)
 # ----------------------------------------------------
 # --- DEPENDANCIES -----------------------------------
 # ----------------------------------------------------
-ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.0.5")
+ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.1.0") # Not sure about the needed version of Eigen, but you need Eigen::Ref, so 3.0.5 is not enough
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.2.0")
 
 SET(BOOST_COMPONENTS unit_test_framework serialization)
@@ -82,20 +82,47 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
 SET(${PROJECT_NAME}_MATH_HEADERS
     include/pininvdyn/math/fwd.hpp
+    include/pininvdyn/math/utils.hpp
+    include/pininvdyn/math/constraint-base.hpp
+    include/pininvdyn/math/constraint-equality.hpp
+    include/pininvdyn/math/constraint-inequality.hpp
+    include/pininvdyn/math/constraint-bound.hpp
   )
 
 SET(${PROJECT_NAME}_TASKS_HEADERS
     include/pininvdyn/tasks/fwd.hpp
     include/pininvdyn/tasks/task-base.hpp
+    include/pininvdyn/tasks/task-motion.hpp
+    include/pininvdyn/tasks/task-actuation.hpp
+    include/pininvdyn/tasks/task-contact-force.hpp
+    include/pininvdyn/tasks/task-se3-equality.hpp
+    include/pininvdyn/tasks/task-contact-force-equality.hpp
+    include/pininvdyn/tasks/task-actuation-equality.hpp
+    include/pininvdyn/tasks/task-actuation-bounds.hpp
+    include/pininvdyn/tasks/task-joint-bounds.hpp
+  )
+
+SET(${PROJECT_NAME}_TRAJECTORIES_HEADERS
+    include/pininvdyn/trajectories/fwd.hpp
+    include/pininvdyn/trajectories/trajectory-base.hpp
+    include/pininvdyn/trajectories/trajectory-se3.hpp
+    include/pininvdyn/trajectories/trajectory-euclidian.hpp
   )
 
 SET(${PROJECT_NAME}_SOLVERS_HEADERS
     include/pininvdyn/solvers/fwd.hpp
+    include/pininvdyn/solvers/solver-HQP-base.hpp
+    include/pininvdyn/solvers/solver-HQP-qpoases.hpp
+    include/pininvdyn/solvers/solver-HQP-eigquadprog.hpp
   )
 
 SET(HEADERS
+    include/pininvdyn/config.hpp
+    include/pininvdyn/robot-wrapper.hpp
+    include/pininvdyn/inverse-dynamics-formulation-base.hpp
     ${${PROJECT_NAME}_MATH_HEADERS}
     ${${PROJECT_NAME}_TASKS_HEADERS}
+    ${${PROJECT_NAME}_TRAJECTORIES_HEADERS}
     ${${PROJECT_NAME}_SOLVERS_HEADERS}
  )
 
@@ -118,7 +145,7 @@ ADD_SUBDIRECTORY(src)
 #ADD_SUBDIRECTORY(bindings)
 
 # --- UNIT TESTS ---------------------------------------------------------------
-#ADD_SUBDIRECTORY(unittest)
+ADD_SUBDIRECTORY(unittest)
 
 # --- PACKAGING ----------------------------------------------------------------
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})

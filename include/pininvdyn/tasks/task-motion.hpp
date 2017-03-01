@@ -2,18 +2,21 @@
 // Copyright (c) 2017 CNRS
 //
 // This file is part of PinInvDyn
-// PinInvDyn is free software: you can redistribute it
+// pinocchio is free software: you can redistribute it
 // and/or modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
-// PinInvDyn is distributed in the hope that it will be
+// pinocchio is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // General Lesser Public License for more details. You should have
 // received a copy of the GNU Lesser General Public License along with
-// PinInvDyn If not, see
+// pinocchio If not, see
 // <http://www.gnu.org/licenses/>.
 //
+
+#ifndef __invdyn_task_motion_hpp__
+#define __invdyn_task_motion_hpp__
 
 #include <pininvdyn/tasks/task-base.hpp>
 
@@ -21,21 +24,16 @@ namespace pininvdyn
 {
   namespace tasks
   {
-    TaskBase::TaskBase(const std::string & name,
-                       RobotWrapper & robot):
-      m_name(name),
-      m_robot(robot)
-    {}
-
-    const std::string & TaskBase::name() const
+    class TaskMotion:
+        public TaskBase
     {
-      return m_name;
-    }
+    public:
+      typedef pininvdyn::RobotWrapper RobotWrapper;
 
-    void TaskBase::name(const std::string & name)
-    {
-      m_name = name;
-    }
-    
+      TaskMotion(const std::string & name,
+                 RobotWrapper & robot);
+    };
   }
 }
+
+#endif // ifndef __invdyn_task_motion_hpp__

@@ -22,6 +22,19 @@ SET(${LIBRARY_NAME}_MATH_SOURCES
 
 SET(${LIBRARY_NAME}_TASKS_SOURCES
     tasks/task-base.cpp
+    tasks/task-actuation-bounds.cpp
+    tasks/task-actuation-equality.cpp
+    tasks/task-actuation.cpp
+    tasks/task-contact-force-equality.cpp
+    tasks/task-contact-force.cpp
+    tasks/task-joint-bounds.cpp
+    tasks/task-motion.cpp
+    tasks/task-se3-equality.cpp
+  )
+
+SET(${LIBRARY_NAME}_TRAJECTORIES_SOURCES
+    trajectories/trajectory-se3.cpp
+    trajectories/trajectory-euclidian.cpp
   )
 
 SET(${LIBRARY_NAME}_SOLVERS_SOURCES
@@ -31,6 +44,7 @@ SET(${LIBRARY_NAME}_SOLVERS_SOURCES
 SET(${LIBRARY_NAME}_SOURCES
     ${${LIBRARY_NAME}_MATH_SOURCES}
     ${${LIBRARY_NAME}_TASKS_SOURCES}
+    ${${LIBRARY_NAME}_TRAJECTORIES_SOURCES}
     ${${LIBRARY_NAME}_SOLVERS_SOURCES}
   )
 

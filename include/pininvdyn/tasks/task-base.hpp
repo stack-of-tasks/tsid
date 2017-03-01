@@ -15,8 +15,12 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_tasks_task_base_hpp__
-#define __invdyn_tasks_task_base_hpp__
+#ifndef __invdyn_task_base_hpp__
+#define __invdyn_task_base_hpp__
+
+#include <pininvdyn/robot-wrapper.hpp>
+#include <pininvdyn/math/utils.hpp>
+#include <pininvdyn/math/constraint-base.hpp>
 
 namespace pininvdyn
 {
@@ -30,37 +34,35 @@ namespace pininvdyn
     class TaskBase
     {
     public:
-      typedef double Scalar;
-      typedef se3::Model Model;
+      typedef pininvdyn::RobotWrapper RobotWrapper;
+      typedef pininvdyn::math::ConstraintBase ConstraintBase;
+      typedef pininvdyn::math::ConstRefVector ConstRefVector;
+      typedef se3::Data Data;
+
+      TaskBase(const std::string & name,
+               RobotWrapper & robot);
+
+      const std::string & name() const;
+
+      void name(const std::string & name);
       
-      TaskBase(const Model & model)
-      : m_model(model)
-      {}
-      
-      ///
       /// \brief Return the dimension of the task.
       /// \info should be overloaded in the child class.
       virtual int dim() const = 0;
-      virtual int nq() const = 0;
-      virtual int nv() const = 0;
-      
-      ///
-      /// \brief Accessor to model.
-      ///
-      /// \returns a const reference on the model.
-      ///
-      const Model & model() const { return m_model; };
+
+      virtual const ConstraintBase & compute(const double t,
+                                             ConstRefVector q,
+                                             ConstRefVector v,
+                                             Data & data) = 0;
       
     protected:
       
-      
-      ///
       /// \brief Reference on the robot model.
-      ///
-      const Model & m_model;
+      RobotWrapper & m_robot;
+      std::string m_name;
     };
     
   }
 }
 
-#endif // ifndef __invdyn_tasks_task_base_hpp__
+#endif // ifndef __invdyn_task_base_hpp__
