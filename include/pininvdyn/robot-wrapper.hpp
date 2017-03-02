@@ -54,192 +54,90 @@ namespace pininvdyn
 
     RobotWrapper(const std::string & filename,
                  const std::vector<std::string> & package_dirs,
-                 bool verbose=false)
-      : m_verbose(verbose)
-    {
-      se3::urdf::buildModel(filename, m_model, m_verbose);
-      m_model_filename = filename;
-    }
+                 bool verbose=false);
 
     RobotWrapper(const std::string & filename,
                  const std::vector<std::string> & package_dirs,
                  const se3::JointModelVariant & rootJoint,
-                 bool verbose=false)
-      : m_verbose(verbose)
-    {
-      se3::urdf::buildModel(filename, rootJoint, m_model, m_verbose);
-      m_model_filename = filename;
-    }
+                 bool verbose=false);
 
-    virtual int nq() const { return m_model.nq; }
-    virtual int nv() const { return m_model.nv; }
+    virtual int nq() const;
+    virtual int nv() const;
 
     ///
     /// \brief Accessor to model.
     ///
     /// \returns a const reference on the model.
     ///
-    const Model & model() const { return m_model; }
+    const Model & model() const;
 
-    inline void computeAllTerms(Data & data, const Vector & q, const Vector & v) const
-    {
-      se3::computeAllTerms(m_model, data, q, v);
-      se3::framesForwardKinematics(m_model, data);
-    }
+    void computeAllTerms(Data & data, const Vector & q, const Vector & v) const;
 
-    inline const Vector3 & com(const Data & data) const
-    {
-      return data.com[0];
-    }
+    const Vector3 & com(const Data & data) const;
 
-    inline const Vector3 & com_vel(const Data & data) const
-    {
-      return data.vcom[0];
-    }
+    const Vector3 & com_vel(const Data & data) const;
 
-    inline const Vector3 & com_acc(const Data & data) const
-    {
-      return data.acom[0];
-    }
+    const Vector3 & com_acc(const Data & data) const;
 
-    inline const Matrix3x & Jcom(const Data & data) const
-    {
-      return data.Jcom;
-    }
+    const Matrix3x & Jcom(const Data & data) const;
 
-    inline const Matrix & mass(const Data & data) const
-    {
-      return data.M;
-    }
+    const Matrix & mass(const Data & data) const;
 
-    inline const Vector & nonLinearEffects(const Data & data) const
-    {
-      return data.nle;
-    }
+    const Vector & nonLinearEffects(const Data & data) const;
 
-    inline const SE3 & position(const Data & data,
-                                const Model::JointIndex index) const
-    {
-      return data.oMi[index];
-    }
+    const SE3 & position(const Data & data,
+                         const Model::JointIndex index) const;
 
-    inline const Motion & velocity(const Data & data,
-                                   const Model::JointIndex index) const
-    {
-      return data.v[index];
-    }
+    const Motion & velocity(const Data & data,
+                            const Model::JointIndex index) const;
 
-    inline const Motion & acceleration(const Data & data,
-                                       const Model::JointIndex index) const
-    {
-      return data.a[index];
-    }
+    const Motion & acceleration(const Data & data,
+                                const Model::JointIndex index) const;
 
-    inline void jacobianWorld(const Data & data,
-                              const Model::JointIndex index,
-                              Data::Matrix6x & J) const
-    {
-      return se3::getJacobian<false>(m_model, data, index, J);
-    }
+    void jacobianWorld(const Data & data,
+                       const Model::JointIndex index,
+                       Data::Matrix6x & J) const;
 
-    inline void jacobianLocal(const Data & data,
-                              const Model::JointIndex index,
-                              Data::Matrix6x & J) const
-    {
-      return se3::getJacobian<true>(m_model, data, index, J);
-    }
+    void jacobianLocal(const Data & data,
+                       const Model::JointIndex index,
+                       Data::Matrix6x & J) const;
 
-    inline SE3 framePosition(const Data & data,
-                             const Model::FrameIndex index) const
-    {
-      const Frame & f = m_model.frames[index];
-      return data.oMi[f.parent].act(f.placement);
-    }
+    SE3 framePosition(const Data & data,
+                      const Model::FrameIndex index) const;
 
-    inline void framePosition(const Data & data,
-                              const Model::FrameIndex index,
-                              SE3 & framePosition) const
-    {
-      const Frame & f = m_model.frames[index];
-      framePosition = data.oMi[f.parent].act(f.placement);
-    }
+    void framePosition(const Data & data,
+                       const Model::FrameIndex index,
+                       SE3 & framePosition) const;
 
-    inline Motion frameVelocity(const Data & data,
-                                const Model::FrameIndex index) const
-    {
-      const Frame & f = m_model.frames[index];
-      return f.placement.actInv(data.v[f.parent]);
-    }
+    Motion frameVelocity(const Data & data,
+                         const Model::FrameIndex index) const;
 
-    inline void frameVelocity(const Data & data,
-                              const Model::FrameIndex index,
-                              Motion & frameVelocity) const
-    {
-      const Frame & f = m_model.frames[index];
-      frameVelocity = f.placement.actInv(data.v[f.parent]);
-    }
+    void frameVelocity(const Data & data,
+                       const Model::FrameIndex index,
+                       Motion & frameVelocity) const;
 
-    inline Motion frameAcceleration(const Data & data,
-                                    const Model::FrameIndex index) const
-    {
-      const Frame & f = m_model.frames[index];
-      return f.placement.actInv(data.a[f.parent]);
-    }
+    Motion frameAcceleration(const Data & data,
+                             const Model::FrameIndex index) const;
 
-    inline void frameAcceleration(const Data & data,
+    void frameAcceleration(const Data & data,
+                           const Model::FrameIndex index,
+                           Motion & frameAcceleration) const;
+
+    Motion frameClassicAcceleration(const Data & data,
+                                    const Model::FrameIndex index) const;
+
+    void frameClassicAcceleration(const Data & data,
                                   const Model::FrameIndex index,
-                                  Motion & frameAcceleration) const
-    {
-      const Frame & f = m_model.frames[index];
-      frameAcceleration = f.placement.actInv(data.a[f.parent]);
-    }
+                                  Motion & frameAcceleration) const;
 
-    inline Motion frameClassicAcceleration(const Data & data,
-                                           const Model::FrameIndex index) const
-    {
-      const Frame & f = m_model.frames[index];
-      Motion a = f.placement.actInv(data.a[f.parent]);
-      Motion v = f.placement.actInv(data.v[f.parent]);
-      a.linear() += v.angular().cross(v.linear());
-      return a;
-    }
+    void frameJacobianWorld(const Data & data,
+                            const Model::FrameIndex index,
+                            Data::Matrix6x & J) const;
 
-    inline void frameClassicAcceleration(const Data & data,
-                                         const Model::FrameIndex index,
-                                         Motion & frameAcceleration) const
-    {
-      const Frame & f = m_model.frames[index];
-      frameAcceleration = f.placement.actInv(data.a[f.parent]);
-      Motion v = f.placement.actInv(data.v[f.parent]);
-      frameAcceleration.linear() += v.angular().cross(v.linear());
-    }
+    void frameJacobianLocal(const Data & data,
+                            const Model::FrameIndex index,
+                            Data::Matrix6x & J) const;
 
-    inline void frameJacobianWorld(const Data & data,
-                                   const Model::FrameIndex index,
-                                   Data::Matrix6x & J) const
-    {
-      return se3::getFrameJacobian<false>(m_model, data, index, J);
-    }
-
-    inline void frameJacobianLocal(const Data & data,
-                                   const Model::FrameIndex index,
-                                   Data::Matrix6x & J) const
-    {
-      return se3::getFrameJacobian<true>(m_model, data, index, J);
-    }
-
-    //    const Vector3 & com(Data & data,const Vector & q,
-    //                        const bool computeSubtreeComs = true,
-    //                        const bool updateKinematics = true)
-    //    {
-    //      return se3::centerOfMass(m_model, data, q, computeSubtreeComs, updateKinematics);
-    //    }
-    //    const Vector3 & com(Data & data, const Vector & q, const Vector & v,
-    //                 const bool computeSubtreeComs = true,
-    //                 const bool updateKinematics = true)
-    //    {
-    //      return se3::centerOfMass(m_model, data, q, v, computeSubtreeComs, updateKinematics);
-    //    }
 
   protected:
 

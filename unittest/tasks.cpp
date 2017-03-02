@@ -49,8 +49,8 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
 
   TaskSE3Equality task("task-se3", robot, "RARM_JOINT5");
 
-  VectorXd Kp = VectorXd::Ones(6);
-  VectorXd Kd = VectorXd::Ones(6);
+  VectorXd Kp = VectorXd::Random(6);
+  VectorXd Kd = VectorXd::Random(6);
   task.Kp(Kp);
   task.Kd(Kd);
 
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
   robot.computeAllTerms(data, q, v);
 
   se3::SE3 M_ref = se3::SE3::Identity();
-  TrajectoryBase *traj = new TrajectorySE3Constant("traj_se3", M_ref);
+  TrajectoryBase *traj = new TrajectorySE3Constant("traj_SE3", M_ref);
   TrajectorySample sample;
   traj->getLastSample(sample);
   task.setReference(sample);

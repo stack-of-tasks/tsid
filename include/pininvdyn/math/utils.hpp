@@ -26,8 +26,14 @@ namespace pininvdyn
 {
   namespace math
   {
+    typedef double Scalar;
     typedef Eigen::VectorXd Vector;
     typedef Eigen::MatrixXd Matrix;
+
+    typedef Eigen::Matrix<Scalar,3,1> Vector3;
+    typedef Eigen::Matrix<Scalar,6,1> Vector6;
+    typedef Eigen::Matrix<Scalar,3,Eigen::Dynamic> Matrix3x;
+
     typedef Eigen::Ref<Eigen::VectorXd> RefVector;
     typedef const Eigen::Ref<const Eigen::VectorXd>& ConstRefVector;
     typedef Eigen::Ref<Eigen::MatrixXd> RefMatrix;
