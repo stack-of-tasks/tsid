@@ -25,6 +25,7 @@
 #include "pinocchio/algorithm/jacobian.hpp"
 #include "pinocchio/algorithm/frames.hpp"
 #include "pinocchio/spatial/skew.hpp"
+#include <pininvdyn/math/utils.hpp>
 
 #include <string>
 
@@ -50,6 +51,7 @@ namespace pininvdyn
     typedef Eigen::Matrix<Scalar,6,1> Vector6;
     typedef Eigen::MatrixXd Matrix;
     typedef Eigen::Matrix<double,3,Eigen::Dynamic> Matrix3x;
+    typedef pininvdyn::math::RefVector RefVector;
 
 
     RobotWrapper(const std::string & filename,
@@ -72,6 +74,11 @@ namespace pininvdyn
     const Model & model() const;
 
     void computeAllTerms(Data & data, const Vector & q, const Vector & v) const;
+
+    const void com(const Data & data,
+                   RefVector com_pos,
+                   RefVector com_vel,
+                   RefVector com_acc) const;
 
     const Vector3 & com(const Data & data) const;
 

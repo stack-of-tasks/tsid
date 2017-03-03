@@ -54,4 +54,4 @@ ADD_UNIT_TEST(constraints eigen3)
 ADD_UNIT_TEST(trajectories eigen3)
 ADD_UNIT_TEST(robot-wrapper eigen3)
 ADD_UNIT_TEST(tasks eigen3)
-
+ADD_UNIT_TEST(math_utils eigen3)

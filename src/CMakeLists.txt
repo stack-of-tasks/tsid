@@ -18,6 +18,7 @@
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
 SET(${LIBRARY_NAME}_MATH_SOURCES
+    math/utils.cpp
   )
 
 SET(${LIBRARY_NAME}_TASKS_SOURCES
@@ -25,6 +26,7 @@ SET(${LIBRARY_NAME}_TASKS_SOURCES
     tasks/task-actuation-bounds.cpp
     tasks/task-actuation-equality.cpp
     tasks/task-actuation.cpp
+    tasks/task-com-equality.cpp
     tasks/task-contact-force-equality.cpp
     tasks/task-contact-force.cpp
     tasks/task-joint-bounds.cpp

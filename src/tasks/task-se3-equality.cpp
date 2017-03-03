@@ -73,6 +73,16 @@ namespace pininvdyn
       m_a_ref = Motion(ref.acc);
     }
 
+    const Motion & TaskSE3Equality::position_error() const
+    {
+      return m_p_error;
+    }
+
+    const Motion & TaskSE3Equality::velocity_error() const
+    {
+      return m_v_error;
+    }
+
     const ConstraintBase & TaskSE3Equality::compute(const double t,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
@@ -95,14 +105,9 @@ namespace pininvdyn
                 - m_Kd.cwiseProduct(m_v_error.toVector_impl())
                 + m_wMl.actInv(m_a_ref).toVector_impl();
 
+      // @todo Since Jacobian computation is cheaper in world frame
+      // we could do all computations in world frame
       m_robot.frameJacobianLocal(data, m_frame_id, m_J);
-
-//      if(local_frame==False):
-//        drift = self._gMl.act(drift);
-//      a_des[:3] = self._gMl.rotation * a_des[:3];
-//      a_des[3:] = self._gMl.rotation * a_des[3:];
-//      J[:3,:] = self._gMl.rotation * J[:3,:];
-//      J[3:,:] = self._gMl.rotation * J[3:,:];
 
       m_constraint.setMatrix(m_J);
       m_constraint.setVector(m_a_des - drift.toVector_impl());

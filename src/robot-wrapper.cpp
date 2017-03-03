@@ -54,6 +54,16 @@ namespace pininvdyn
     se3::framesForwardKinematics(m_model, data);
   }
 
+  const void RobotWrapper::com(const Data & data,
+                               RefVector com_pos,
+                               RefVector com_vel,
+                               RefVector com_acc) const
+  {
+    com_pos = data.com[0];
+    com_vel = data.vcom[0];
+    com_acc = data.acom[0];
+  }
+
   const Vector3 & RobotWrapper::com(const Data & data) const
   {
     return data.com[0];

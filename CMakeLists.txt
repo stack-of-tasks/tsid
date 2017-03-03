@@ -95,6 +95,7 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
     include/pininvdyn/tasks/task-motion.hpp
     include/pininvdyn/tasks/task-actuation.hpp
     include/pininvdyn/tasks/task-contact-force.hpp
+    include/pininvdyn/tasks/task-com-equality.hpp
     include/pininvdyn/tasks/task-se3-equality.hpp
     include/pininvdyn/tasks/task-contact-force-equality.hpp
     include/pininvdyn/tasks/task-actuation-equality.hpp

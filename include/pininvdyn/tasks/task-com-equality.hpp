@@ -15,8 +15,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_task_se3_equality_hpp__
-#define __invdyn_task_se3_equality_hpp__
+#ifndef __invdyn_task_com_equality_hpp__
+#define __invdyn_task_com_equality_hpp__
 
 #include <pininvdyn/tasks/task-motion.hpp>
 #include <pininvdyn/trajectories/trajectory-base.hpp>
@@ -27,7 +27,7 @@ namespace pininvdyn
   namespace tasks
   {
 
-    class TaskSE3Equality:
+    class TaskComEquality:
         public TaskMotion
     {
     public:
@@ -35,15 +35,15 @@ namespace pininvdyn
       typedef pininvdyn::math::Index Index;
       typedef pininvdyn::trajectories::TrajectorySample TrajectorySample;
       typedef pininvdyn::math::Vector Vector;
+      typedef pininvdyn::math::Vector3 Vector3;
       typedef pininvdyn::math::ConstraintEquality ConstraintEquality;
       typedef se3::Data Data;
       typedef se3::Data::Matrix6x Matrix6x;
       typedef se3::Motion Motion;
       typedef se3::SE3 SE3;
 
-      TaskSE3Equality(const std::string & name,
-                      RobotWrapper & robot,
-                      const std::string & frameName);
+      TaskComEquality(const std::string & name,
+                      RobotWrapper & robot);
 
       int dim() const;
 
@@ -52,30 +52,25 @@ namespace pininvdyn
                                      ConstRefVector v,
                                      Data & data);
 
-      void setReference(TrajectorySample & ref);
+      void setReference(const TrajectorySample & ref);
 
-      const Motion & position_error() const;
-      const Motion & velocity_error() const;
+      const Vector3 & position_error() const;
+      const Vector3 & velocity_error() const;
 
-      const Vector & Kp();
-      const Vector & Kd();
+      const Vector3 & Kp();
+      const Vector3 & Kd();
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
 
     protected:
-      std::string m_frame_name;
-      Index m_frame_id;
-      Motion m_p_error, m_v_error;
-      Motion m_v_ref, m_a_ref;
-      SE3 m_M_ref, m_wMl;
-      Vector m_Kp;
-      Vector m_Kd;
-      Vector m_a_des;
-      Matrix6x m_J;
+      Vector3 m_Kp;
+      Vector3 m_Kd;
+      Vector3 m_p_error, m_v_error;
+      TrajectorySample m_ref;
       ConstraintEquality m_constraint;
     };
     
   }
 }
 
-#endif // ifndef __invdyn_task_se3_equality_hpp__
+#endif // ifndef __invdyn_task_com_equality_hpp__

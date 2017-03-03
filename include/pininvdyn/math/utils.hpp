@@ -42,36 +42,60 @@ namespace pininvdyn
     typedef std::size_t Index;
 
     /**
-     * Convert the input SE3 object to a 7D tuple of floats [X,Y,Z,Q1,Q2,Q3,Q4].
+     * Convert the input SE3 object to a 7D vector of floats [X,Y,Z,Q1,Q2,Q3,Q4].
      */
-    static void se3ToXYZQUAT(const se3::SE3 & M, RefVector xyzQuat)
-    {
-      assert(xyzQuat.size()>=7);
-      xyzQuat.head<3>() = M.translation();
-      xyzQuat.tail<4>() = Eigen::Quaterniond(M.rotation()).coeffs();
-    }
+    void se3ToXYZQUAT(const se3::SE3 & M, RefVector xyzQuat);
 
-    static void se3ToVector(const se3::SE3 & M, RefVector vec)
-    {
-      assert(vec.size()>=12);
-      vec.head<3>() = M.translation();
-      typedef Eigen::Matrix<double,9,1> Vector9;
-      vec.tail<9>() = Eigen::Map<const Vector9>(&M.rotation()(0), 9);
-    }
+    /**
+     * Convert the input SE3 object to a 12D vector of floats [X,Y,Z,R11,R12,R13,R14,...].
+     */
+    void se3ToVector(const se3::SE3 & M, RefVector vec);
 
-    static void vectorToSE3(RefVector vec, se3::SE3 & M)
-    {
-      assert(vec.size()>=12);
-      M.translation( vec.head<3>() );
-      typedef Eigen::Matrix<double,3,3> Matrix3;
-      M.rotation( Eigen::Map<const Matrix3>(&vec(3), 3, 3) );
-    }
+    void vectorToSE3(RefVector vec, se3::SE3 & M);
 
-    static void errorInSE3 (const se3::SE3 & M,
-                            const se3::SE3 & Mdes,
-                            se3::Motion & error)
+    void errorInSE3 (const se3::SE3 & M,
+                     const se3::SE3 & Mdes,
+                     se3::Motion & error);
+
+
+    void pseudoInverse(ConstRefMatrix A,
+                       RefMatrix Apinv,
+                       double tolerance,
+                       unsigned int computationOptions = Eigen::ComputeThinU | Eigen::ComputeThinV);
+
+    void pseudoInverse(ConstRefMatrix A,
+                       Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                       RefMatrix Apinv,
+                       double tolerance,
+                       unsigned int computationOptions);
+
+    void pseudoInverse(ConstRefMatrix A,
+                       Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                       RefMatrix Apinv,
+                       double tolerance,
+                       double * nullSpaceBasisOfA,
+                       int &nullSpaceRows,
+                       int &nullSpaceCols,
+                       unsigned int computationOptions);
+
+    void dampedPseudoInverse(ConstRefMatrix A,
+                             Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                             RefMatrix Apinv,
+                             double tolerance,
+                             double dampingFactor,
+                             unsigned int computationOptions = Eigen::ComputeThinU | Eigen::ComputeThinV,
+                             double * nullSpaceBasisOfA=0,
+                             int *nullSpaceRows=0, int *nullSpaceCols=0);
+
+    void nullSpaceBasisFromDecomposition(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                                         double tolerance,
+                                         double * nullSpaceBasisMatrix,
+                                         int &rows, int &cols);
+
+    template<typename Derived>
+    inline bool is_finite(const Eigen::MatrixBase<Derived>& x)
     {
-      error = se3::log6(Mdes.inverse() * M);
+      return ( (x - x).array() == (x - x).array()).all();
     }
 
   }
