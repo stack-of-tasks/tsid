@@ -40,7 +40,9 @@ SET(${LIBRARY_NAME}_TRAJECTORIES_SOURCES
   )
 
 SET(${LIBRARY_NAME}_SOLVERS_SOURCES
-    solvers/solver-base.cpp
+    solvers/solver-HQP-base.cpp
+    solvers/solver-HQP-eiquadprog.cpp
+    solvers/solver-HQP-qpoases.cpp
   )
 
 SET(${LIBRARY_NAME}_SOURCES

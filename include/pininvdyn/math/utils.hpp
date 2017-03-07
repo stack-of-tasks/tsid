@@ -22,6 +22,9 @@
 #include <pinocchio/spatial/se3.hpp>
 #include <pinocchio/spatial/explog.hpp>
 
+#include <iostream>
+#include <fstream>
+
 namespace pininvdyn
 {
   namespace math
@@ -96,6 +99,41 @@ namespace pininvdyn
     inline bool is_finite(const Eigen::MatrixBase<Derived>& x)
     {
       return ( (x - x).array() == (x - x).array()).all();
+    }
+
+    /**
+     * Write the specified matrix to a binary file with the specified name.
+     */
+    template<class Matrix>
+    bool writeMatrixToFile(const std::string &filename, const Matrix& matrix)
+    {
+      std::ofstream out(filename.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
+      if(!out.is_open())
+        return false;
+      typename Matrix::Index rows=matrix.rows(), cols=matrix.cols();
+      out.write((char*) (&rows), sizeof(typename Matrix::Index));
+      out.write((char*) (&cols), sizeof(typename Matrix::Index));
+      out.write((char*) matrix.data(), rows*cols*sizeof(typename Matrix::Scalar) );
+      out.close();
+      return true;
+    }
+
+    /**
+     * Read a matrix from the specified input binary file.
+     */
+    template<class Matrix>
+    bool readMatrixFromFile(const std::string &filename, Matrix& matrix)
+    {
+      std::ifstream in(filename.c_str(), std::ios::in | std::ios::binary);
+      if(!in.is_open())
+        return false;
+      typename Matrix::Index rows=0, cols=0;
+      in.read((char*) (&rows),sizeof(typename Matrix::Index));
+      in.read((char*) (&cols),sizeof(typename Matrix::Index));
+      matrix.resize(rows, cols);
+      in.read( (char *) matrix.data() , rows*cols*sizeof(typename Matrix::Scalar) );
+      in.close();
+      return true;
     }
 
   }

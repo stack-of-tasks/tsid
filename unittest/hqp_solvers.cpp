@@ -2,28 +2,37 @@
 // Copyright (c) 2017 CNRS
 //
 // This file is part of PinInvDyn
-// pinocchio is free software: you can redistribute it
+// PinInvDyn is free software: you can redistribute it
 // and/or modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
-// pinocchio is distributed in the hope that it will be
+// PinInvDyn is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // General Lesser Public License for more details. You should have
 // received a copy of the GNU Lesser General Public License along with
-// pinocchio If not, see
+// PinInvDyn If not, see
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_solvers_fwd_hpp__
-#define __invdyn_solvers_fwd_hpp__
+#include <iostream>
 
-namespace pininvdyn
+#include <boost/test/unit_test.hpp>
+#include <boost/utility/binary.hpp>
+
+#include <pininvdyn/solvers/solver-HQP-base.hpp>
+
+BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
+
+BOOST_AUTO_TEST_CASE ( test_solver_eiquadprog)
 {
-  namespace solvers
-  {
-    
-  }
+  std::cout << "test_solver_eiquadprog";
+  using namespace pininvdyn::math;
+  using namespace Eigen;
+  const unsigned int n = 5;
+
+  VectorXd lb = -1.0*VectorXd::Ones(n);
+  BOOST_CHECK(true);
 }
 
-#endif // ifndef __invdyn_solvers_fwd_hpp__
+BOOST_AUTO_TEST_SUITE_END ()

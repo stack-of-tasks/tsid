@@ -50,8 +50,9 @@ ENDMACRO(ADD_UNIT_TEST)
 # --- RULES -------------------------------------------------------------------
 ADD_CUSTOM_TARGET(check COMMAND ${CMAKE_CTEST_COMMAND})
 
-ADD_UNIT_TEST(constraints "eigen3;pinocchio")
+ADD_UNIT_TEST(constraints eigen3)
 ADD_UNIT_TEST(trajectories "eigen3;pinocchio")
 ADD_UNIT_TEST(robot-wrapper "eigen3;pinocchio")
 ADD_UNIT_TEST(tasks "eigen3;pinocchio")
-ADD_UNIT_TEST(math_utils "eigen3;pinocchio")
+ADD_UNIT_TEST(math_utils eigen3)
+ADD_UNIT_TEST(hqp_solvers eigen3)
