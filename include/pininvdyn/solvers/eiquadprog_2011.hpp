@@ -178,6 +178,8 @@ namespace Eigen {
         double t, t1, t2; /* t is the step length, which is the minimum of the partial step length t1
                            * and the full step length t2 */
 //        VectorXi A(m + p); // Del Prete: active set is now an output parameter
+        if(A.size()!=m+p)
+          A.resize(m+p);
         VectorXi A_old(m + p), iai(m + p), iaexcl(m+p);
 //        int q;
         int iq, iter = 0;

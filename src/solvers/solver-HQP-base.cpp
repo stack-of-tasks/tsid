@@ -24,6 +24,7 @@
 #endif
 
 
+using namespace pininvdyn;
 using namespace std;
 
 namespace pininvdyn
@@ -41,7 +42,7 @@ namespace pininvdyn
         return new Solver_HQP_qpoases(name);
     #endif
 
-      assert(false && "Specified solver type not recognized: "+toString(solverType));
+      assert(false && "Specified solver type not recognized");
       return NULL;
     }
 

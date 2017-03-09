@@ -55,13 +55,14 @@ namespace pininvdyn
       HQP_STATUS_ERROR=4
     };
 
-typedef std::vector< std::pair<double, pininvdyn::math::ConstraintBase*> > ConstraintLevel;
-typedef std::vector<ConstraintLevel> HqpData;
+    typedef std::vector< std::pair<double, pininvdyn::math::ConstraintBase*> > ConstraintLevel;
+    typedef std::vector<ConstraintLevel> HqpData;
 
     class HqpOutput
     {
-         HQP_status status;
-         pininvdyn::math::Vector x, lambda;
+    public:
+      HQP_status status;
+      pininvdyn::math::Vector x, lambda;
     };
 
     /**
@@ -83,14 +84,13 @@ typedef std::vector<ConstraintLevel> HqpData;
        */
       static Solver_HQP_base* getNewSolver(SolverHQP solverType, const std::string & name);
 
-      /** Solve the quadratic program
-       *  minimize    ||A x + a||^2
-       *  subject to  Aeq x = b
-       *              Alb <= Ain x <= Aub
-       *              lb <= x <= ub
+      virtual const std::string & name(){ return m_name; }
+
+      virtual void resize(unsigned int n, unsigned int neq, unsigned int nin) = 0;
+
+      /** Solve the specified Hierarchical Quadratic Program.
        */
-      virtual HqpOutput solve(const HqpData & problemData,
-                               RefVector sol) = 0;
+      virtual const HqpOutput & solve(const HqpData & problemData) = 0;
 
       /** Get the objective value of the last solved problem. */
       virtual double getObjectiveValue() = 0;
@@ -116,6 +116,7 @@ typedef std::vector<ConstraintLevel> HqpData;
       bool                  m_useWarmStart;   // true if the solver is allowed to warm start
       int                   m_maxIter;        // max number of iterations
       double                m_maxTime;        // max time to solve the HQP [s]
+      HqpOutput             m_output;
     };
   }
 }

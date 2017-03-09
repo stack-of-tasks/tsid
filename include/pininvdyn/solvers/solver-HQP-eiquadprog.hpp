@@ -31,26 +31,38 @@ namespace pininvdyn
         public Solver_HQP_base
     {
     public:
+      typedef pininvdyn::math::Matrix Matrix;
+      typedef pininvdyn::math::Vector Vector;
       typedef pininvdyn::math::RefVector RefVector;
       typedef pininvdyn::math::ConstRefVector ConstRefVector;
       typedef pininvdyn::math::ConstRefMatrix ConstRefMatrix;
 
       Solver_HQP_eiquadprog(const std::string & name);
 
-      /** Solve the quadratic program
-       *  minimize    ||A x + a||^2
-       *  subject to  Aeq x = b
-       *              Alb <= Ain x <= Aub
-       *              lb <= x <= ub
+      void resize(unsigned int n, unsigned int neq, unsigned int nin);
+
+      /** Solve the given Hierarchical Quadratic Program
        */
-      HqpOutput solve(const HqpData & problemData,
-                      RefVector sol);
+      const HqpOutput & solve(const HqpData & problemData);
 
       /** Get the objective value of the last solved problem. */
       double getObjectiveValue();
 
     protected:
-      HqpOutput m_output;
+      Matrix m_H;
+      Vector m_g;
+      Matrix m_CE;
+      Vector m_ce0;
+      Matrix m_CI;
+      Vector m_ci0;
+      double m_objValue;
+
+      Eigen::VectorXi m_activeSet;  /// vector containing the indexes of the active inequalities
+      int m_activeSetSize;
+
+      int m_neq;  /// number of equality constraints
+      int m_nin;  /// number of inequality constraints
+      int m_n;    /// number of variables
     };
   }
 }
