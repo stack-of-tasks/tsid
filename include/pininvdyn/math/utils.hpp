@@ -2,7 +2,7 @@
 // Copyright (c) 2017 CNRS
 //
 // This file is part of PinInvDyn
-// pinocchio is free software: you can redistribute it
+// PinInvDyn is free software: you can redistribute it
 // and/or modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
@@ -24,6 +24,41 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
+
+#define PRINT_VECTOR(a) std::cout<<#a<<": "<<a.transpose()<<std::endl
+#define PRINT_MATRIX(a) std::cout<<#a<<": "<<a<<std::endl
+
+namespace pininvdyn
+{
+  template<typename T>
+  std::string toString(const T& v)
+  {
+    std::stringstream ss;
+    ss<<v;
+    return ss.str();
+  }
+
+  template<typename T>
+  std::string toString(const std::vector<T>& v, const std::string separator=", ")
+  {
+    std::stringstream ss;
+    for(int i=0; i<v.size()-1; i++)
+      ss<<v[i]<<separator;
+    ss<<v[v.size()-1];
+    return ss.str();
+  }
+
+  template<typename T, int n>
+  std::string toString(const Eigen::MatrixBase<T>& v, const std::string separator=", ")
+  {
+    if(v.rows()>v.cols())
+      return toString(v.transpose(), separator);
+    std::stringstream ss;
+    ss<<v;
+    return ss.str();
+  }
+}
 
 namespace pininvdyn
 {
@@ -60,6 +95,8 @@ namespace pininvdyn
                      const se3::SE3 & Mdes,
                      se3::Motion & error);
 
+    void svdSolveWithDamping(ConstRefMatrix A, ConstRefVector b,
+                             RefVector sol, double damping=0.0);
 
     void pseudoInverse(ConstRefMatrix A,
                        RefMatrix Apinv,

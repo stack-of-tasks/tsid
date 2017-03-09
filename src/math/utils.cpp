@@ -47,6 +47,27 @@ void pininvdyn::math::errorInSE3 (const se3::SE3 & M,
   error = se3::log6(Mdes.inverse() * M);
 }
 
+void pininvdyn::math::svdSolveWithDamping(ConstRefMatrix A, ConstRefVector b,
+                                          RefVector sol, double damping)
+{
+  assert(A.rows()==b.size());
+  Eigen::JacobiSVD<typename Eigen::MatrixXd::PlainObject> svd(A.rows(), A.cols());
+  svd.compute(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
+
+  Eigen::VectorXd tmp(A.cols());
+  const unsigned int nzsv = svd.nonzeroSingularValues();
+  tmp.noalias() = svd.matrixU().leftCols(nzsv).adjoint() * b;
+  double sv, d2 = damping*damping;
+  for(int i=0; i<nzsv; i++)
+  {
+    sv = svd.singularValues()(i);
+    tmp(i) *= sv/(sv*sv + d2);
+  }
+  sol = svd.matrixV().leftCols(nzsv) * tmp;
+  //  cout<<"sing val = "+toString(svd.singularValues(),3);
+  //  cout<<"solution with damp "+toString(damping)+" = "+toString(res.norm());
+  //  cout<<"solution without damping  ="+toString(svd.solve(b).norm());
+}
 
 void pininvdyn::math::pseudoInverse(ConstRefMatrix A,
                                     RefMatrix Apinv,
