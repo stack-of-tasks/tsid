@@ -31,6 +31,7 @@ namespace pininvdyn
   {
     se3::urdf::buildModel(filename, m_model, m_verbose);
     m_model_filename = filename;
+    package_dirs;
   }
 
   RobotWrapper::RobotWrapper(const std::string & filename,
@@ -41,6 +42,7 @@ namespace pininvdyn
   {
     se3::urdf::buildModel(filename, rootJoint, m_model, m_verbose);
     m_model_filename = filename;
+    package_dirs;
   }
 
   int RobotWrapper::nq() const { return m_model.nq; }
@@ -54,10 +56,10 @@ namespace pininvdyn
     se3::framesForwardKinematics(m_model, data);
   }
 
-  const void RobotWrapper::com(const Data & data,
-                               RefVector com_pos,
-                               RefVector com_vel,
-                               RefVector com_acc) const
+  void RobotWrapper::com(const Data & data,
+                         RefVector com_pos,
+                         RefVector com_vel,
+                         RefVector com_acc) const
   {
     com_pos = data.com[0];
     com_vel = data.vcom[0];

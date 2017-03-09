@@ -75,10 +75,10 @@ namespace pininvdyn
 
     void computeAllTerms(Data & data, const Vector & q, const Vector & v) const;
 
-    const void com(const Data & data,
-                   RefVector com_pos,
-                   RefVector com_vel,
-                   RefVector com_acc) const;
+    void com(const Data & data,
+             RefVector com_pos,
+             RefVector com_vel,
+             RefVector com_acc) const;
 
     const Vector3 & com(const Data & data) const;
 
