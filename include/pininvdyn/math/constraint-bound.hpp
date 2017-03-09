@@ -68,7 +68,7 @@ namespace pininvdyn
       inline const Vector & lowerBound() const { return m_lb; }
       inline const Vector & upperBound() const { return m_ub; }
 
-      inline bool setVector(ConstRefVector b) { assert(false); }
+      inline bool setVector(ConstRefVector b) { assert(false); return false; }
       inline bool setLowerBound(ConstRefVector lb) { m_lb = lb; return true; }
       inline bool setUpperBound(ConstRefVector ub) { m_ub = ub; return true; }
 
