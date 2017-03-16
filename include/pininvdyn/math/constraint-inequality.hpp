@@ -32,49 +32,38 @@ namespace pininvdyn
     {
     public:
 
-      ConstraintInequality(std::string name):
-        ConstraintBase(name)
-      {}
+      ConstraintInequality(const std::string & name);
 
-      ConstraintInequality(std::string name, const unsigned int rows, const unsigned int cols):
-        ConstraintBase(name, rows, cols),
-        m_lb(Vector::Zero(rows)),
-        m_ub(Vector::Zero(rows))
-      {}
+      ConstraintInequality(const std::string & name,
+                           const unsigned int rows,
+                           const unsigned int cols);
 
-      ConstraintInequality(std::string name, const Matrix & A,
-                           const Vector & lb, const Vector & ub):
-        ConstraintBase(name, A),
-        m_lb(lb),
-        m_ub(ub)
-      {
-        assert(A.rows()==lb.rows());
-        assert(A.rows()==ub.rows());
-      }
+      ConstraintInequality(const std::string & name,
+                           ConstRefMatrix A,
+                           ConstRefVector lb,
+                           ConstRefVector ub);
 
-      inline unsigned int rows() const
-      {
-        assert(m_A.rows()==m_lb.rows());
-        assert(m_A.rows()==m_ub.rows());
-        return (unsigned int) m_A.rows();
-      }
+      unsigned int rows() const;
+      unsigned int cols() const;
+      void resize(const unsigned int r, const unsigned int c);
 
-      inline unsigned int cols() const
-      {
-        return (unsigned int) m_A.cols();
-      }
+      bool isEquality() const;
+      bool isInequality() const;
+      bool isBound() const;
 
-      inline bool isEquality() const    { return false; }
-      inline bool isInequality() const  { return true; }
-      inline bool isBound() const       { return false; }
+      const Vector & vector()     const;
+      const Vector & lowerBound() const;
+      const Vector & upperBound() const;
 
-      inline const Vector & vector()     const { assert(false); }
-      inline const Vector & lowerBound() const { return m_lb; }
-      inline const Vector & upperBound() const { return m_ub; }
+      Vector & vector();
+      Vector & lowerBound();
+      Vector & upperBound();
 
-      inline bool setVector(ConstRefVector b) { assert(false); return false; }
-      inline bool setLowerBound(ConstRefVector lb) { m_lb = lb; return true; }
-      inline bool setUpperBound(ConstRefVector ub) { m_ub = ub; return true; }
+      bool setVector(ConstRefVector b);
+      bool setLowerBound(ConstRefVector lb);
+      bool setUpperBound(ConstRefVector ub);
+
+      bool checkConstraint(ConstRefVector x, double tol=1e-6) const;
 
     protected:
       Vector m_lb;

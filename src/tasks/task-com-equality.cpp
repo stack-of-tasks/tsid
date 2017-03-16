@@ -60,14 +60,39 @@ namespace pininvdyn
       m_ref = ref;
     }
 
-    const Vector3 & TaskComEquality::position_error() const
+    const Vector & TaskComEquality::position_error() const
     {
-      return m_p_error;
+      return m_p_error_vec;
     }
 
-    const Vector3 & TaskComEquality::velocity_error() const
+    const Vector & TaskComEquality::velocity_error() const
     {
-      return m_v_error;
+      return m_v_error_vec;
+    }
+
+    const Vector & TaskComEquality::position() const
+    {
+      return m_p_error_vec;
+    }
+
+    const Vector & TaskComEquality::velocity() const
+    {
+      return m_p_error_vec;
+    }
+
+    const Vector & TaskComEquality::position_ref() const
+    {
+      return m_p_error_vec;
+    }
+
+    const Vector & TaskComEquality::velocity_ref() const
+    {
+      return m_p_error_vec;
+    }
+
+    const ConstraintBase & TaskComEquality::getConstraint() const
+    {
+      return m_constraint;
     }
 
     const ConstraintBase & TaskComEquality::compute(const double t,
@@ -84,6 +109,13 @@ namespace pininvdyn
       Vector3 m_a_des = - m_Kp.cwiseProduct(m_p_error)
                         - m_Kd.cwiseProduct(m_v_error)
                         + m_ref.acc;
+
+      m_p_error_vec = m_p_error;
+      m_v_error_vec = m_v_error;
+#ifndef NDEBUG
+//      std::cout<<m_name<<" errors: "<<m_p_error.norm()<<" "
+//        <<m_v_error.norm()<<std::endl;
+#endif
 
       // Get CoM jacobian
       const Matrix3x & Jcom = m_robot.Jcom(data);

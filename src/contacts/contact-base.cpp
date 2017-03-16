@@ -15,33 +15,27 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_task_motion_hpp__
-#define __invdyn_task_motion_hpp__
-
-#include <pininvdyn/tasks/task-base.hpp>
+#include <pininvdyn/contacts/contact-base.hpp>
 
 namespace pininvdyn
 {
-  namespace tasks
+  namespace contacts
   {
-    class TaskMotion:
-        public TaskBase
+    ContactBase::ContactBase(const std::string & name,
+                             RobotWrapper & robot):
+      m_name(name),
+      m_robot(robot)
+    {}
+
+    const std::string & ContactBase::name() const
     {
-    public:
-      typedef pininvdyn::RobotWrapper RobotWrapper;
-      typedef pininvdyn::math::Vector Vector;
+      return m_name;
+    }
 
-      TaskMotion(const std::string & name,
-                 RobotWrapper & robot);
+    void ContactBase::name(const std::string & name)
+    {
+      m_name = name;
+    }
 
-      virtual const Vector & position_error() const = 0;
-      virtual const Vector & velocity_error() const = 0;
-      virtual const Vector & position() const = 0;
-      virtual const Vector & velocity() const = 0;
-      virtual const Vector & position_ref() const = 0;
-      virtual const Vector & velocity_ref() const = 0;
-    };
   }
 }
-
-#endif // ifndef __invdyn_task_motion_hpp__

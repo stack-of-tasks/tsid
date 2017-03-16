@@ -56,7 +56,11 @@ namespace pininvdyn
     };
 
     typedef std::vector< std::pair<double, pininvdyn::math::ConstraintBase*> > ConstraintLevel;
+    typedef std::vector< std::pair<double, const pininvdyn::math::ConstraintBase*> > ConstConstraintLevel;
     typedef std::vector<ConstraintLevel> HqpData;
+    typedef std::vector<ConstConstraintLevel> ConstHqpData;
+
+    std::string hqpDataToString(const HqpData & data, bool printMatrices=false);
 
     class HqpOutput
     {

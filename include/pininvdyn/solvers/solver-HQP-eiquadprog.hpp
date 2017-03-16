@@ -49,6 +49,9 @@ namespace pininvdyn
       double getObjectiveValue();
 
     protected:
+
+      void sendMsg(const std::string & s);
+
       Matrix m_H;
       Vector m_g;
       Matrix m_CE;

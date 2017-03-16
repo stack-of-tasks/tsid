@@ -26,8 +26,8 @@
 #include <fstream>
 #include <vector>
 
-#define PRINT_VECTOR(a) std::cout<<#a<<": "<<a.transpose()<<std::endl
-#define PRINT_MATRIX(a) std::cout<<#a<<": "<<a<<std::endl
+#define PRINT_VECTOR(a) std::cout<<#a<<"("<<a.rows()<<"x"<<a.cols()<<"): "<<a.transpose().format(pininvdyn::math::CleanFmt)<<std::endl
+#define PRINT_MATRIX(a) std::cout<<#a<<"("<<a.rows()<<"x"<<a.cols()<<"):\n"<<a.format(pininvdyn::math::CleanFmt)<<std::endl
 
 namespace pininvdyn
 {
@@ -64,6 +64,19 @@ namespace pininvdyn
 {
   namespace math
   {
+    static const Eigen::IOFormat CleanFmt(1, 0, ", ", "\n", "[", "]");
+
+    /** List of available parameters of IOFormat constructor:
+        precision       number of digits for floating point values, or one of the special constants StreamPrecision and FullPrecision.
+        flags           either 0, or DontAlignCols, which allows to disable the alignment of columns, resulting in faster code.
+        coeffSeparator  string printed between two coefficients of the same row
+        rowSeparator    string printed between two rows
+        rowPrefix       string printed at the beginning of each row
+        rowSuffix       string printed at the end of each row
+        matPrefix       string printed at the beginning of the matrix
+        matSuffix       string printed at the end of the matrix */
+    static const Eigen::IOFormat matlabPrintFormat(Eigen::FullPrecision, Eigen::DontAlignCols, " ", ";\n", "", "", "[", "];");
+
     typedef double Scalar;
     typedef Eigen::VectorXd Vector;
     typedef Eigen::MatrixXd Matrix;
@@ -78,6 +91,8 @@ namespace pininvdyn
     typedef const Eigen::Ref<const Eigen::MatrixXd> ConstRefMatrix;
 
     typedef std::size_t Index;
+
+    Eigen::Matrix<Scalar,3,3> skew(ConstRefVector v);
 
     /**
      * Convert the input SE3 object to a 7D vector of floats [X,Y,Z,Q1,Q2,Q3,Q4].

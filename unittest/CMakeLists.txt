@@ -6,7 +6,7 @@
 # and/or modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation, either version
 # 3 of the License, or (at your option) any later version.
-# pinocchio is distributed in the hope that it will be
+# PinInvDyn is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 # of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Lesser Public License for more details. You should have
@@ -54,5 +54,7 @@ ADD_UNIT_TEST(constraints eigen3)
 ADD_UNIT_TEST(trajectories "eigen3;pinocchio")
 ADD_UNIT_TEST(robot-wrapper "eigen3;pinocchio")
 ADD_UNIT_TEST(tasks "eigen3;pinocchio")
+ADD_UNIT_TEST(contacts "eigen3;pinocchio")
+ADD_UNIT_TEST(invdyn-formulation "eigen3;pinocchio")
 ADD_UNIT_TEST(math_utils eigen3)
 ADD_UNIT_TEST(hqp_solvers eigen3)

@@ -101,14 +101,14 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
     BOOST_REQUIRE(is_finite(q));
     t += dt;
 
-    error = task.position_error().toVector().norm();
-    BOOST_REQUIRE(is_finite(task.position_error().toVector()));
+    error = task.position_error().norm();
+    BOOST_REQUIRE(is_finite(task.position_error()));
     BOOST_CHECK(error <= error_past);
     error_past = error;
 
     if(i%100==0)
       cout << "Time "<<t<<"\t Pos error "<<error<<
-              "\t Vel error "<<task.velocity_error().toVector().norm()<<endl;
+              "\t Vel error "<<task.velocity_error().norm()<<endl;
   }
 }
 

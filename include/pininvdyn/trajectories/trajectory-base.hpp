@@ -52,9 +52,9 @@ namespace pininvdyn
 
       void resize(unsigned int size_pos, unsigned int size_vel)
       {
-        pos.resize(size_pos);
-        vel.resize(size_vel);
-        acc.resize(size_vel);
+        pos.setZero(size_pos);
+        vel.setZero(size_vel);
+        acc.setZero(size_vel);
       }
     };
 

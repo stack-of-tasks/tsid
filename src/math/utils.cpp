@@ -17,16 +17,28 @@
 
 #include <pininvdyn/math/utils.hpp>
 
+using namespace pininvdyn::math;
+
+Eigen::Matrix<Scalar,3,3> pininvdyn::math::skew(ConstRefVector v)
+{
+  assert(v.size()==3);
+  Eigen::Matrix<Scalar,3,3> m;
+  m(0,0) =  0   ;  m(0,1) = -v[2];   m(0,2) =  v[1];
+  m(1,0) =  v[2];  m(1,1) =  0   ;   m(1,2) = -v[0];
+  m(2,0) = -v[1];  m(2,1) =  v[0];   m(2,2) =  0   ;
+  return m;
+}
+
 void pininvdyn::math::se3ToXYZQUAT(const se3::SE3 & M, RefVector xyzQuat)
 {
-  assert(xyzQuat.size()>=7);
+  assert(xyzQuat.size()==7);
   xyzQuat.head<3>() = M.translation();
   xyzQuat.tail<4>() = Eigen::Quaterniond(M.rotation()).coeffs();
 }
 
 void pininvdyn::math::se3ToVector(const se3::SE3 & M, RefVector vec)
 {
-  assert(vec.size()>=12);
+  assert(vec.size()==12);
   vec.head<3>() = M.translation();
   typedef Eigen::Matrix<double,9,1> Vector9;
   vec.tail<9>() = Eigen::Map<const Vector9>(&M.rotation()(0), 9);
@@ -34,7 +46,7 @@ void pininvdyn::math::se3ToVector(const se3::SE3 & M, RefVector vec)
 
 void pininvdyn::math::vectorToSE3(RefVector vec, se3::SE3 & M)
 {
-  assert(vec.size()>=12);
+  assert(vec.size()==12);
   M.translation( vec.head<3>() );
   typedef Eigen::Matrix<double,3,3> Matrix3;
   M.rotation( Eigen::Map<const Matrix3>(&vec(3), 3, 3) );

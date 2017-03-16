@@ -18,6 +18,10 @@
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
 SET(${LIBRARY_NAME}_MATH_SOURCES
+    math/constraint-base.cpp
+    math/constraint-equality.cpp
+    math/constraint-inequality.cpp
+    math/constraint-bound.cpp
     math/utils.cpp
   )
 
@@ -30,8 +34,14 @@ SET(${LIBRARY_NAME}_TASKS_SOURCES
     tasks/task-contact-force-equality.cpp
     tasks/task-contact-force.cpp
     tasks/task-joint-bounds.cpp
+    tasks/task-joint-posture.cpp
     tasks/task-motion.cpp
     tasks/task-se3-equality.cpp
+  )
+
+SET(${LIBRARY_NAME}_CONTACTS_SOURCES
+    contacts/contact-base.cpp
+    contacts/contact-6d.cpp
   )
 
 SET(${LIBRARY_NAME}_TRAJECTORIES_SOURCES
@@ -47,8 +57,11 @@ SET(${LIBRARY_NAME}_SOLVERS_SOURCES
 
 SET(${LIBRARY_NAME}_SOURCES
     robot-wrapper.cpp
+    inverse-dynamics-formulation-base.cpp
+    inverse-dynamics-formulation-acc-force.cpp
     ${${LIBRARY_NAME}_MATH_SOURCES}
     ${${LIBRARY_NAME}_TASKS_SOURCES}
+    ${${LIBRARY_NAME}_CONTACTS_SOURCES}
     ${${LIBRARY_NAME}_TRAJECTORIES_SOURCES}
     ${${LIBRARY_NAME}_SOLVERS_SOURCES}
   )

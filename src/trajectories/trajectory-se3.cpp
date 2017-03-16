@@ -34,8 +34,6 @@ namespace pininvdyn
     {
       m_sample.resize(12, 6);
       se3ToVector(M, m_sample.pos);
-      m_sample.vel.setZero();
-      m_sample.acc.setZero();
     }
 
     unsigned int TrajectorySE3Constant::size() const

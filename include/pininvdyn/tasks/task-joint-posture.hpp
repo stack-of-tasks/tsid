@@ -2,21 +2,21 @@
 // Copyright (c) 2017 CNRS
 //
 // This file is part of PinInvDyn
-// pinocchio is free software: you can redistribute it
+// PinInvDyn is free software: you can redistribute it
 // and/or modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
-// pinocchio is distributed in the hope that it will be
+// PinInvDyn is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // General Lesser Public License for more details. You should have
 // received a copy of the GNU Lesser General Public License along with
-// pinocchio If not, see
+// PinInvDyn If not, see
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_task_com_equality_hpp__
-#define __invdyn_task_com_equality_hpp__
+#ifndef __invdyn_task_joint_posture_hpp__
+#define __invdyn_task_joint_posture_hpp__
 
 #include <pininvdyn/tasks/task-motion.hpp>
 #include <pininvdyn/trajectories/trajectory-base.hpp>
@@ -27,7 +27,7 @@ namespace pininvdyn
   namespace tasks
   {
 
-    class TaskComEquality:
+    class TaskJointPosture:
         public TaskMotion
     {
     public:
@@ -35,14 +35,10 @@ namespace pininvdyn
       typedef pininvdyn::math::Index Index;
       typedef pininvdyn::trajectories::TrajectorySample TrajectorySample;
       typedef pininvdyn::math::Vector Vector;
-      typedef pininvdyn::math::Vector3 Vector3;
       typedef pininvdyn::math::ConstraintEquality ConstraintEquality;
       typedef se3::Data Data;
-      typedef se3::Data::Matrix6x Matrix6x;
-      typedef se3::Motion Motion;
-      typedef se3::SE3 SE3;
 
-      TaskComEquality(const std::string & name,
+      TaskJointPosture(const std::string & name,
                       RobotWrapper & robot);
 
       int dim() const;
@@ -63,16 +59,16 @@ namespace pininvdyn
       const Vector & position_ref() const;
       const Vector & velocity_ref() const;
 
-      const Vector3 & Kp();
-      const Vector3 & Kd();
+      const Vector & Kp();
+      const Vector & Kd();
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
 
     protected:
-      Vector3 m_Kp;
-      Vector3 m_Kd;
-      Vector3 m_p_error, m_v_error;
-      Vector m_p_error_vec, m_v_error_vec;
+      Vector m_Kp;
+      Vector m_Kd;
+      Vector m_p_error, m_v_error;
+      Vector m_p, m_v;
       TrajectorySample m_ref;
       ConstraintEquality m_constraint;
     };
@@ -80,4 +76,4 @@ namespace pininvdyn
   }
 }
 
-#endif // ifndef __invdyn_task_com_equality_hpp__
+#endif // ifndef __invdyn_task_joint_posture_hpp__

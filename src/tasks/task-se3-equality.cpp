@@ -38,6 +38,12 @@ namespace pininvdyn
       m_a_ref.setZero();
       m_M_ref.setIdentity();
       m_wMl.setIdentity();
+      m_p_error_vec.setZero(6);
+      m_v_error_vec.setZero(6);
+      m_p.resize(12);
+      m_v.resize(6);
+      m_p_ref.resize(12);
+      m_v_ref_vec.resize(6);
       m_Kp.setZero(6);
       m_Kd.setZero(6);
       m_a_des.setZero(6);
@@ -50,9 +56,9 @@ namespace pininvdyn
       return 6;
     }
 
-    const Vector & TaskSE3Equality::Kp(){ return m_Kp; }
+    const Vector & TaskSE3Equality::Kp() const { return m_Kp; }
 
-    const Vector & TaskSE3Equality::Kd(){ return m_Kd; }
+    const Vector & TaskSE3Equality::Kd() const { return m_Kd; }
 
     void TaskSE3Equality::Kp(ConstRefVector Kp)
     {
@@ -73,14 +79,39 @@ namespace pininvdyn
       m_a_ref = Motion(ref.acc);
     }
 
-    const Motion & TaskSE3Equality::position_error() const
+    const Vector & TaskSE3Equality::position_error() const
     {
-      return m_p_error;
+      return m_p_error_vec;
     }
 
-    const Motion & TaskSE3Equality::velocity_error() const
+    const Vector & TaskSE3Equality::velocity_error() const
     {
-      return m_v_error;
+      return m_v_error_vec;
+    }
+
+    const Vector & TaskSE3Equality::position() const
+    {
+      return m_p;
+    }
+
+    const Vector & TaskSE3Equality::velocity() const
+    {
+      return m_v;
+    }
+
+    const Vector & TaskSE3Equality::position_ref() const
+    {
+      return m_p_ref;
+    }
+
+    const Vector & TaskSE3Equality::velocity_ref() const
+    {
+      return m_v_ref_vec;
+    }
+
+    const ConstraintBase & TaskSE3Equality::getConstraint() const
+    {
+      return m_constraint;
     }
 
     const ConstraintBase & TaskSE3Equality::compute(const double t,
@@ -99,6 +130,18 @@ namespace pininvdyn
 
       errorInSE3(oMi, m_M_ref, m_p_error);          // pos err in local frame
       m_v_error = v_frame - m_wMl.actInv(m_v_ref);  // vel err in local frame
+
+      m_p_error_vec = m_p_error.toVector();
+      m_v_error_vec = m_v_error.toVector();
+      se3ToVector(m_M_ref, m_p_ref);
+      m_v_ref_vec = m_v_ref.toVector();
+      se3ToVector(oMi, m_p);
+      m_v = v_frame.toVector();
+
+#ifndef NDEBUG
+//      PRINT_VECTOR(v_frame.toVector());
+//      PRINT_VECTOR(m_v_ref.toVector());
+#endif
 
       // desired acc in local frame
       m_a_des = - m_Kp.cwiseProduct(m_p_error.toVector_impl())

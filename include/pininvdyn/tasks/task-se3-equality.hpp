@@ -52,13 +52,19 @@ namespace pininvdyn
                                      ConstRefVector v,
                                      Data & data);
 
+      const ConstraintBase & getConstraint() const;
+
       void setReference(TrajectorySample & ref);
 
-      const Motion & position_error() const;
-      const Motion & velocity_error() const;
+      const Vector & position_error() const;
+      const Vector & velocity_error() const;
+      const Vector & position() const;
+      const Vector & velocity() const;
+      const Vector & position_ref() const;
+      const Vector & velocity_ref() const;
 
-      const Vector & Kp();
-      const Vector & Kd();
+      const Vector & Kp() const;
+      const Vector & Kd() const;
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
 
@@ -66,6 +72,9 @@ namespace pininvdyn
       std::string m_frame_name;
       Index m_frame_id;
       Motion m_p_error, m_v_error;
+      Vector m_p_error_vec, m_v_error_vec;
+      Vector m_p, m_v;
+      Vector m_p_ref, m_v_ref_vec;
       Motion m_v_ref, m_a_ref;
       SE3 m_M_ref, m_wMl;
       Vector m_Kp;

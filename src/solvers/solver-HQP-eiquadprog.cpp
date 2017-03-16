@@ -29,32 +29,46 @@ Solver_HQP_eiquadprog::Solver_HQP_eiquadprog(const std::string & name):
   m_nin = 0;
 }
 
+void Solver_HQP_eiquadprog::sendMsg(const std::string & s)
+{
+  std::cout<<"[Solver_HQP_eiquadprog."<<m_name<<"] "<<s<<std::endl;
+}
+
 void Solver_HQP_eiquadprog::resize(unsigned int n, unsigned int neq, unsigned int nin)
 {
   const bool resizeVar = n!=m_n;
   const bool resizeEq = (resizeVar || neq!=m_neq );
   const bool resizeIn = (resizeVar || nin!=m_nin );
 
-  m_n = n;
-  m_neq = neq;
-  m_nin = nin;
-
   if(resizeEq)
   {
-    m_CE.resize(m_neq, m_n);
-    m_ce0.resize(m_neq);
+#ifndef NDEBUG
+    sendMsg("Resizing equality constraints from "+toString(m_neq)+" to "+toString(neq));
+#endif
+    m_CE.resize(neq, n);
+    m_ce0.resize(neq);
   }
   if(resizeIn)
   {
-    m_CI.resize(m_nin, m_n);
-    m_ci0.resize(m_nin);
+#ifndef NDEBUG
+    sendMsg("Resizing inequality constraints from "+toString(m_nin)+" to "+toString(nin));
+#endif
+    m_CI.resize(nin, n);
+    m_ci0.resize(nin);
   }
   if(resizeVar)
   {
+#ifndef NDEBUG
+    sendMsg("Resizing Hessian from "+toString(m_n)+" to "+toString(n));
+#endif
     m_H.resize(n, n);
     m_g.resize(n);
-    m_output.x.resize(m_n);
+    m_output.x.resize(n);
   }
+
+  m_n = n;
+  m_neq = neq;
+  m_nin = nin;
 }
 
 const HqpOutput & Solver_HQP_eiquadprog::solve(const HqpData & problemData)
@@ -118,6 +132,8 @@ const HqpOutput & Solver_HQP_eiquadprog::solve(const HqpData & problemData)
   if(problemData.size()>1)
   {
     const ConstraintLevel & cl1 = problemData[1];
+    m_H.setZero();
+    m_g.setZero();
     for(ConstraintLevel::const_iterator it=cl1.begin(); it!=cl1.end(); it++)
     {
       const double & w = it->first;
@@ -128,7 +144,17 @@ const HqpOutput & Solver_HQP_eiquadprog::solve(const HqpData & problemData)
       m_H += w*constr->matrix().transpose()*constr->matrix();
       m_g -= w*(constr->matrix().transpose()*constr->vector());
     }
+    m_H.diagonal() += 1e-8*Vector::Ones(m_n);
   }
+
+//#ifndef NDEBUG
+//  PRINT_MATRIX(m_H);
+//  PRINT_VECTOR(m_g);
+//  PRINT_MATRIX(m_CE);
+//  PRINT_VECTOR(m_ce0);
+//  PRINT_MATRIX(m_CI);
+//  PRINT_VECTOR(m_ci0);
+//#endif
 
   //  min 0.5 * x G x + g0 x
   //  s.t.
@@ -139,9 +165,43 @@ const HqpOutput & Solver_HQP_eiquadprog::solve(const HqpData & problemData)
                               m_output.x, m_activeSet, m_activeSetSize);
 
   if(m_objValue==std::numeric_limits<double>::infinity())
-  {
     m_output.status = HQP_STATUS_INFEASIBLE;
+  else
+  {
+    m_output.status = HQP_STATUS_OPTIMAL;
+#ifndef NDEBUG
+    const Vector & x = m_output.x;
+
+    if(cl0.size()>0)
+    {
+      for(ConstraintLevel::const_iterator it=cl0.begin(); it!=cl0.end(); it++)
+      {
+        const ConstraintBase* constr = it->second;
+        if(constr->checkConstraint(x)==false)
+        {
+          if(constr->isEquality())
+          {
+            sendMsg("Equality "+constr->name()+" violated: "+
+                    toString((constr->matrix()*x-constr->vector()).norm()));
+          }
+          else if(constr->isInequality())
+          {
+            sendMsg("Inequality "+constr->name()+" violated: "+
+                    toString((constr->matrix()*x-constr->lowerBound()).minCoeff())+"\n"+
+                    toString((constr->upperBound()-constr->matrix()*x).minCoeff()));
+          }
+          else if(constr->isBound())
+          {
+            sendMsg("Bound "+constr->name()+" violated: "+
+                    toString((x-constr->lowerBound()).minCoeff())+"\n"+
+                    toString((constr->upperBound()-x).minCoeff()));
+          }
+        }
+      }
+    }
+#endif
   }
+
   return m_output;
 }
 

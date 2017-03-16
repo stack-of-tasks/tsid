@@ -54,6 +54,8 @@ namespace pininvdyn
                                              ConstRefVector q,
                                              ConstRefVector v,
                                              Data & data) = 0;
+
+      virtual const ConstraintBase & getConstraint() const = 0;
       
     protected:
       std::string m_name;

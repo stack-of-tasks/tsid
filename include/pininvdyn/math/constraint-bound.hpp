@@ -2,16 +2,16 @@
 // Copyright (c) 2017 CNRS
 //
 // This file is part of PinInvDyn
-// pinocchio is free software: you can redistribute it
+// PinInvDyn is free software: you can redistribute it
 // and/or modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
-// pinocchio is distributed in the hope that it will be
+// PinInvDyn is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // General Lesser Public License for more details. You should have
 // received a copy of the GNU Lesser General Public License along with
-// pinocchio If not, see
+// PinInvDyn If not, see
 // <http://www.gnu.org/licenses/>.
 //
 
@@ -32,45 +32,36 @@ namespace pininvdyn
     {
     public:
 
-      ConstraintBound(std::string name):
-        ConstraintBase(name)
-      {}
+      ConstraintBound(const std::string & name);
 
-      ConstraintBound(std::string name, const unsigned int size):
-        ConstraintBase(name),
-        m_lb(Vector::Zero(size)),
-        m_ub(Vector::Zero(size))
-      {}
+      ConstraintBound(const std::string & name,
+                      const unsigned int size);
 
-      ConstraintBound(std::string name, const Vector & lb, const Vector & ub):
-        ConstraintBase(name),
-        m_lb(lb),
-        m_ub(ub)
-      {}
+      ConstraintBound(const std::string & name,
+                      ConstRefVector lb,
+                      ConstRefVector ub);
 
-      inline unsigned int rows() const
-      {
-        assert(m_lb.rows()==m_ub.rows());
-        return (unsigned int) m_lb.rows();
-      }
+      unsigned int rows() const;
+      unsigned int cols() const;
+      void resize(const unsigned int r, const unsigned int c);
 
-      inline unsigned int cols() const
-      {
-        assert(m_lb.rows()==m_ub.rows());
-        return (unsigned int) m_lb.rows();
-      }
+      bool isEquality() const;
+      bool isInequality() const;
+      bool isBound() const;
 
-      inline bool isEquality() const    { return false; }
-      inline bool isInequality() const  { return false; }
-      inline bool isBound() const       { return true; }
+      const Vector & vector()     const;
+      const Vector & lowerBound() const;
+      const Vector & upperBound() const;
 
-      inline const Vector & vector()     const { assert(false); }
-      inline const Vector & lowerBound() const { return m_lb; }
-      inline const Vector & upperBound() const { return m_ub; }
+      Vector & vector();
+      Vector & lowerBound();
+      Vector & upperBound();
 
-      inline bool setVector(ConstRefVector b) { assert(false); return false; }
-      inline bool setLowerBound(ConstRefVector lb) { m_lb = lb; return true; }
-      inline bool setUpperBound(ConstRefVector ub) { m_ub = ub; return true; }
+      bool setVector(ConstRefVector b);
+      bool setLowerBound(ConstRefVector lb);
+      bool setUpperBound(ConstRefVector ub);
+
+      bool checkConstraint(ConstRefVector x, double tol=1e-6) const;
 
     protected:
       Vector m_lb;

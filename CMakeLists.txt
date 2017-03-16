@@ -101,6 +101,13 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
     include/pininvdyn/tasks/task-actuation-equality.hpp
     include/pininvdyn/tasks/task-actuation-bounds.hpp
     include/pininvdyn/tasks/task-joint-bounds.hpp
+    include/pininvdyn/tasks/task-joint-posture.hpp
+  )
+
+SET(${PROJECT_NAME}_CONTACTS_HEADERS
+    include/pininvdyn/contacts/fwd.hpp
+    include/pininvdyn/contacts/contact-base.hpp
+    include/pininvdyn/contacts/contact-6d.hpp
   )
 
 SET(${PROJECT_NAME}_TRAJECTORIES_HEADERS
@@ -122,8 +129,10 @@ SET(HEADERS
     include/pininvdyn/config.hpp
     include/pininvdyn/robot-wrapper.hpp
     include/pininvdyn/inverse-dynamics-formulation-base.hpp
+    include/pininvdyn/inverse-dynamics-formulation-acc-force.hpp
     ${${PROJECT_NAME}_MATH_HEADERS}
     ${${PROJECT_NAME}_TASKS_HEADERS}
+    ${${PROJECT_NAME}_CONTACTS_HEADERS}
     ${${PROJECT_NAME}_TRAJECTORIES_HEADERS}
     ${${PROJECT_NAME}_SOLVERS_HEADERS}
  )

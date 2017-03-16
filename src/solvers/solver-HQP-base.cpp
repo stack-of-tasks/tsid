@@ -31,6 +31,63 @@ namespace pininvdyn
 {
   namespace solvers
   {
+
+    std::string hqpDataToString(const HqpData & data, bool printMatrices)
+    {
+      stringstream ss;
+      unsigned int priority = 0;
+      for(HqpData::const_iterator it=data.begin(); it!=data.end(); it++)
+      {
+        ss<<"Level "<< priority<<endl;
+        for(ConstraintLevel::const_iterator iit=it->begin(); iit!=it->end(); iit++)
+        {
+          const pininvdyn::math::ConstraintBase* c = iit->second;
+          ss<<" - "<<c->name()<<": w="<<iit->first<<", ";
+          if(c->isEquality())
+            ss<<"equality, ";
+          else if(c->isInequality())
+            ss<<"inequality, ";
+          else
+            ss<<"bound, ";
+          ss<<c->rows()<<"x"<<c->cols()<<endl;
+        }
+        priority++;
+      }
+
+      if(printMatrices)
+      {
+        ss<<endl;
+        for(HqpData::const_iterator it=data.begin(); it!=data.end(); it++)
+        {
+          for(ConstraintLevel::const_iterator iit=it->begin(); iit!=it->end(); iit++)
+          {
+            const pininvdyn::math::ConstraintBase* c = iit->second;
+            ss<<"*** "<<c->name()<<" *** ";
+            if(c->isEquality())
+            {
+              ss<<"(equality)"<<endl;
+              ss<<"A =\n"<<c->matrix()<<endl;
+              ss<<"b = "<<c->vector().transpose()<<endl;
+            }
+            else if(c->isInequality())
+            {
+              ss<<"(inequality)"<<endl;
+              ss<<"A =\n"<<c->matrix()<<endl;
+              ss<<"lb = "<<c->lowerBound().transpose()<<endl;
+              ss<<"ub = "<<c->upperBound().transpose()<<endl;
+            }
+            else
+            {
+              ss<<"(bounds)"<<endl;
+              ss<<"lb = "<<c->lowerBound().transpose()<<endl;
+              ss<<"ub = "<<c->upperBound().transpose()<<endl;
+            }
+            ss<<endl;
+          }
+        }
+      }
+      return ss.str();
+    }
           
     Solver_HQP_base* Solver_HQP_base::getNewSolver(SolverHQP solverType, const std::string & name)
     {
