@@ -130,6 +130,8 @@ SET(HEADERS
     include/pininvdyn/robot-wrapper.hpp
     include/pininvdyn/inverse-dynamics-formulation-base.hpp
     include/pininvdyn/inverse-dynamics-formulation-acc-force.hpp
+    include/pininvdyn/utils/stop-watch.hpp
+    include/pininvdyn/utils/Stdafx.hh
     ${${PROJECT_NAME}_MATH_HEADERS}
     ${${PROJECT_NAME}_TASKS_HEADERS}
     ${${PROJECT_NAME}_CONTACTS_HEADERS}

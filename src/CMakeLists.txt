@@ -59,6 +59,7 @@ SET(${LIBRARY_NAME}_SOURCES
     robot-wrapper.cpp
     inverse-dynamics-formulation-base.cpp
     inverse-dynamics-formulation-acc-force.cpp
+    utils/stop-watch.cpp
     ${${LIBRARY_NAME}_MATH_SOURCES}
     ${${LIBRARY_NAME}_TASKS_SOURCES}
     ${${LIBRARY_NAME}_CONTACTS_SOURCES}
