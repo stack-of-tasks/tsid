@@ -27,20 +27,43 @@ namespace pininvdyn
     TaskJointPosture::TaskJointPosture(const std::string & name,
                                      RobotWrapper & robot):
       TaskMotion(name, robot),
-      m_constraint(name, robot.nv()-6, robot.nv())
+      m_constraint(name, robot.nv()-6, robot.nv()),
+      m_ref(robot.nv()-6)
     {
       m_Kp.setZero(robot.nv()-6);
       m_Kd.setZero(robot.nv()-6);
-      Matrix S(robot.nv()-6, robot.nv());
-      S.leftCols(6).setZero();
-      S.rightCols(robot.nv()-6).setIdentity();
+      Vector m = Vector::Ones(robot.nv()-6);
+      mask(m);
+    }
+
+    const Vector & TaskJointPosture::mask() const
+    {
+      return m_mask;
+    }
+
+    bool TaskJointPosture::mask(const Vector & mask)
+    {
+      assert(mask.size()==m_robot.nv()-6);
+      m_mask = mask;
+      const unsigned int dim = mask.sum();
+      Matrix S = Matrix::Zero(dim, m_robot.nv());
+      m_activeAxes.resize(dim);
+      unsigned int j=0;
+      for(unsigned int i=0; i<mask.size(); i++)
+        if(mask(i)!=0.0)
+        {
+          assert(mask(i)==1.0);
+          S(i,6+i) = 1.0;
+          m_activeAxes(j) = i;
+          j++;
+        }
+      m_constraint.resize(dim, m_robot.nv());
       m_constraint.setMatrix(S);
     }
 
     int TaskJointPosture::dim() const
     {
-      //return self._mask.sum ()
-      return m_robot.nv()-6;
+      return m_mask.sum();
     }
 
     const Vector & TaskJointPosture::Kp(){ return m_Kp; }
@@ -116,7 +139,8 @@ namespace pininvdyn
                        - m_Kd.cwiseProduct(m_v_error)
                        + m_ref.acc;
 
-      m_constraint.setVector(m_a_des);
+      for(unsigned int i=0; i<m_activeAxes.size(); i++)
+        m_constraint.vector()(i) = m_a_des(m_activeAxes(i));
       return m_constraint;
     }
     

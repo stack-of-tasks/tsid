@@ -35,6 +35,7 @@ namespace pininvdyn
       typedef pininvdyn::math::Index Index;
       typedef pininvdyn::trajectories::TrajectorySample TrajectorySample;
       typedef pininvdyn::math::Vector Vector;
+      typedef pininvdyn::math::VectorXi VectorXi;
       typedef pininvdyn::math::ConstraintEquality ConstraintEquality;
       typedef se3::Data Data;
 
@@ -51,6 +52,9 @@ namespace pininvdyn
       const ConstraintBase & getConstraint() const;
 
       void setReference(const TrajectorySample & ref);
+
+      const Vector & mask() const;
+      bool mask(const Vector & mask);
 
       const Vector & position_error() const;
       const Vector & velocity_error() const;
@@ -69,6 +73,8 @@ namespace pininvdyn
       Vector m_Kd;
       Vector m_p_error, m_v_error;
       Vector m_p, m_v;
+      Vector m_mask;
+      VectorXi m_activeAxes;
       TrajectorySample m_ref;
       ConstraintEquality m_constraint;
     };

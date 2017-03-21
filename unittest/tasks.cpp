@@ -24,6 +24,7 @@
 
 #include <pininvdyn/tasks/task-se3-equality.hpp>
 #include <pininvdyn/tasks/task-com-equality.hpp>
+#include <pininvdyn/tasks/task-joint-posture.hpp>
 
 #include <pininvdyn/trajectories/trajectory-se3.hpp>
 #include <pininvdyn/trajectories/trajectory-euclidian.hpp>
@@ -45,6 +46,7 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
 BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
 {
+  cout<<"\n\n*********** TEST TASK SE3 EQUALITY ***********\n";
   vector<string> package_dirs;
   package_dirs.push_back(HRP2_PKG_DIR);
   string urdfFileName = package_dirs[0] + "/hrp2_14_description/urdf/hrp2_14_reduced.urdf";
@@ -114,6 +116,7 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
 
 BOOST_AUTO_TEST_CASE ( test_task_com_equality )
 {
+  cout<<"\n\n*********** TEST TASK COM EQUALITY ***********\n";
   vector<string> package_dirs;
   package_dirs.push_back(HRP2_PKG_DIR);
   string urdfFileName = package_dirs[0] + "/hrp2_14_description/urdf/hrp2_14_reduced.urdf";
@@ -173,6 +176,80 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
     if(i%10==0)
       cout << "Time "<<t<<"\t CoM pos error "<<error<<
               "\t CoM vel error "<<task.velocity_error().norm()<<endl;
+  }
+}
+
+BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
+{
+  cout<<"\n\n*********** TEST TASK JOINT POSTURE ***********\n";
+  vector<string> package_dirs;
+  package_dirs.push_back(HRP2_PKG_DIR);
+  string urdfFileName = package_dirs[0] + "/hrp2_14_description/urdf/hrp2_14_reduced.urdf";
+  RobotWrapper robot(urdfFileName,
+                     package_dirs,
+                     se3::JointModelFreeFlyer(),
+                     false);
+  const unsigned int na = robot.nv()-6;
+
+  cout<<"Gonna create task\n";
+  TaskJointPosture task("task-posture", robot);
+
+  cout<<"Gonna set gains\n"<<na<<endl;
+  VectorXd Kp = VectorXd::Ones(na);
+  cout<<"Gonna set gains 0\n";
+  VectorXd Kd = 2.0*Kp;
+  cout<<"Gonna set gains 1\n";
+  task.Kp(Kp);
+  cout<<"Gonna set gains 2\n";
+  task.Kd(Kd);
+  cout<<"Gonna set gains 3\n";
+  BOOST_CHECK(task.Kp().isApprox(Kp));
+  BOOST_CHECK(task.Kd().isApprox(Kd));
+
+  cout<<"Gonna create reference trajectory\n";
+  Vector q_ref = Vector::Random(na);
+  TrajectoryBase *traj = new TrajectoryEuclidianConstant("traj_joint", q_ref);
+  TrajectorySample sample;
+
+  cout<<"Gonna set up for simulation\n";
+  double t = 0.0;
+  const double dt = 0.001;
+  MatrixXd Jpinv(robot.nv(), na);
+  double error, error_past=1e100;
+  VectorXd q = robot.model().neutralConfiguration;
+  VectorXd v = VectorXd::Zero(robot.nv());
+  se3::Data data(robot.model());
+  for(int i=0; i<1000; i++)
+  {
+    robot.computeAllTerms(data, q, v);
+    sample = traj->computeNext();
+    task.setReference(sample);
+    const ConstraintBase & constraint = task.compute(t, q, v, data);
+    BOOST_CHECK(constraint.rows()==na);
+    BOOST_CHECK(constraint.cols()==robot.nv());
+    BOOST_REQUIRE(is_finite(constraint.matrix()));
+    BOOST_REQUIRE(is_finite(constraint.vector()));
+
+    pseudoInverse(constraint.matrix(), Jpinv, 1e-5);
+    Vector dv = Jpinv * constraint.vector();
+    BOOST_REQUIRE(is_finite(Jpinv));
+    BOOST_CHECK(MatrixXd::Identity(na,na).isApprox(constraint.matrix()*Jpinv));
+    BOOST_REQUIRE(is_finite(dv));
+
+    v += dt*dv;
+    q = se3::integrate(robot.model(), q, dt*v);
+    BOOST_REQUIRE(is_finite(v));
+    BOOST_REQUIRE(is_finite(q));
+    t += dt;
+
+    error = task.position_error().norm();
+    BOOST_REQUIRE(is_finite(task.position_error()));
+    BOOST_CHECK(error <= error_past);
+    error_past = error;
+
+    if(i%10==0)
+      cout << "Time "<<t<<"\t pos error "<<error<<
+              "\t vel error "<<task.velocity_error().norm()<<endl;
   }
 }
 
