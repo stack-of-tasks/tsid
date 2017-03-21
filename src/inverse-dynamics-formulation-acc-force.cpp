@@ -305,6 +305,17 @@ const HqpData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   return m_hqpData;
 }
 
+const Vector & InverseDynamicsFormulationAccForce::computeActuatorForces(const HqpOutput & sol)
+{
+  const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-6);
+  const Vector & h_a = m_robot.nonLinearEffects(m_data).tail(m_v-6);
+  const Matrix & J_a = m_Jc.rightCols(m_v-6);
+  m_dv = sol.x.head(m_v);
+  m_f = sol.x.tail(m_k);
+  m_tau = M_a*m_dv + h_a - J_a.transpose()*m_f;
+  return m_tau;
+}
+
 
 bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName,
                                                     double transition_duration)

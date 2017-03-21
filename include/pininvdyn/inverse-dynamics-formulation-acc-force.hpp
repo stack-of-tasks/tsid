@@ -56,12 +56,14 @@ namespace pininvdyn
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     typedef se3::Data Data;
+    typedef pininvdyn::math::Vector Vector;
     typedef pininvdyn::math::Matrix Matrix;
     typedef pininvdyn::math::ConstRefVector ConstRefVector;
     typedef pininvdyn::tasks::TaskBase TaskBase;
     typedef pininvdyn::tasks::TaskMotion TaskMotion;
     typedef pininvdyn::tasks::TaskContactForce TaskContactForce;
     typedef pininvdyn::tasks::TaskActuation TaskActuation;
+    typedef pininvdyn::solvers::HqpOutput HqpOutput;
 
 
     InverseDynamicsFormulationAccForce(const std::string & name,
@@ -101,6 +103,8 @@ namespace pininvdyn
                                        ConstRefVector q,
                                        ConstRefVector v);
 
+    const Vector & computeActuatorForces(const HqpOutput & sol);
+
   public:
 
     void addTask(TaskLevel* task,
@@ -122,6 +126,10 @@ namespace pininvdyn
     unsigned int m_in;  /// number of inequality constraints
     Matrix m_Jc;        /// contact force Jacobian
     pininvdyn::math::ConstraintEquality m_baseDynamics;
+
+    Vector m_dv;
+    Vector m_f;
+    Vector m_tau;
   };
 
 }

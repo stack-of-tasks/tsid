@@ -80,15 +80,17 @@ namespace pininvdyn
     typedef double Scalar;
     typedef Eigen::VectorXd Vector;
     typedef Eigen::MatrixXd Matrix;
+    typedef Eigen::VectorXi VectorXi;
+    typedef Eigen::Matrix<bool,Eigen::Dynamic,1> VectorXb;
 
     typedef Eigen::Matrix<Scalar,3,1> Vector3;
     typedef Eigen::Matrix<Scalar,6,1> Vector6;
     typedef Eigen::Matrix<Scalar,3,Eigen::Dynamic> Matrix3x;
 
-    typedef Eigen::Ref<Eigen::VectorXd> RefVector;
-    typedef const Eigen::Ref<const Eigen::VectorXd>& ConstRefVector;
-    typedef Eigen::Ref<Eigen::MatrixXd> RefMatrix;
-    typedef const Eigen::Ref<const Eigen::MatrixXd> ConstRefMatrix;
+    typedef Eigen::Ref<Vector>              RefVector;
+    typedef const Eigen::Ref<const Vector>& ConstRefVector;
+    typedef Eigen::Ref<Matrix>              RefMatrix;
+    typedef const Eigen::Ref<const Matrix>  ConstRefMatrix;
 
     typedef std::size_t Index;
 
