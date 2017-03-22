@@ -53,8 +53,8 @@ void Solver_HQP_eiquadprog::resize(unsigned int n, unsigned int neq, unsigned in
 #ifndef NDEBUG
     sendMsg("Resizing inequality constraints from "+toString(m_nin)+" to "+toString(nin));
 #endif
-    m_CI.resize(nin, n);
-    m_ci0.resize(nin);
+    m_CI.resize(2*nin, n);
+    m_ci0.resize(2*nin);
   }
   if(resizeVar)
   {
@@ -91,7 +91,7 @@ const HqpOutput & Solver_HQP_eiquadprog::solve(const HqpData & problemData)
       if(constr->isEquality())
         neq += constr->rows();
       else
-        nin += 2*constr->rows();
+        nin += constr->rows();
     }
     // If necessary, resize the constraint matrices
     resize(n, neq, nin);
