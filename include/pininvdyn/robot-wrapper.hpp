@@ -46,12 +46,13 @@ namespace pininvdyn
     typedef se3::Motion Motion;
     typedef se3::Frame Frame;
     typedef se3::SE3 SE3;
-    typedef Eigen::VectorXd Vector;
-    typedef Eigen::Matrix<Scalar,3,1> Vector3;
-    typedef Eigen::Matrix<Scalar,6,1> Vector6;
-    typedef Eigen::MatrixXd Matrix;
-    typedef Eigen::Matrix<double,3,Eigen::Dynamic> Matrix3x;
+    typedef pininvdyn::math::Vector  Vector;
+    typedef pininvdyn::math::Vector3 Vector3;
+    typedef pininvdyn::math::Vector6 Vector6;
+    typedef pininvdyn::math::Matrix Matrix;
+    typedef pininvdyn::math::Matrix3x Matrix3x;
     typedef pininvdyn::math::RefVector RefVector;
+    typedef pininvdyn::math::ConstRefVector ConstRefVector;
 
 
     RobotWrapper(const std::string & filename,
@@ -75,6 +76,12 @@ namespace pininvdyn
 
     void computeAllTerms(Data & data, const Vector & q, const Vector & v) const;
 
+    const Vector & rotor_inertias() const;
+    const Vector & gear_ratios() const;
+
+    bool rotor_inertias(ConstRefVector rotor_inertias);
+    bool gear_ratios(ConstRefVector gear_ratios);
+
     void com(const Data & data,
              RefVector com_pos,
              RefVector com_vel,
@@ -88,7 +95,7 @@ namespace pininvdyn
 
     const Matrix3x & Jcom(const Data & data) const;
 
-    const Matrix & mass(const Data & data) const;
+    const Matrix & mass(const Data & data);
 
     const Vector & nonLinearEffects(const Data & data) const;
 
@@ -148,11 +155,18 @@ namespace pininvdyn
 
   protected:
 
+    void updateMd();
+
 
     /// \brief Robot model.
     Model m_model;
     std::string m_model_filename;
     bool m_verbose;
+
+    Vector m_rotor_inertias;
+    Vector m_gear_ratios;
+    Vector m_Md;  /// diagonal part of inertia matrix due to rotor inertias
+    Matrix m_M;   /// inertia matrix including rotor inertias
   };
 
 }

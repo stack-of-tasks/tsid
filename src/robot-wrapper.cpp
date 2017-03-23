@@ -31,7 +31,10 @@ namespace pininvdyn
   {
     se3::urdf::buildModel(filename, m_model, m_verbose);
     m_model_filename = filename;
-    package_dirs;
+    m_rotor_inertias.setZero(m_model.nv);
+    m_gear_ratios.setZero(m_model.nv);
+    m_Md.setZero(m_model.nv);
+    m_M.setZero(m_model.nv, m_model.nv);
   }
 
   RobotWrapper::RobotWrapper(const std::string & filename,
@@ -42,7 +45,10 @@ namespace pininvdyn
   {
     se3::urdf::buildModel(filename, rootJoint, m_model, m_verbose);
     m_model_filename = filename;
-    package_dirs;
+    m_rotor_inertias.setZero(m_model.nv-6);
+    m_gear_ratios.setZero(m_model.nv-6);
+    m_Md.setZero(m_model.nv-6);
+    m_M.setZero(m_model.nv, m_model.nv);
   }
 
   int RobotWrapper::nq() const { return m_model.nq; }
@@ -54,6 +60,36 @@ namespace pininvdyn
   {
     se3::computeAllTerms(m_model, data, q, v);
     se3::framesForwardKinematics(m_model, data);
+  }
+
+  const Vector & RobotWrapper::rotor_inertias() const
+  {
+    return m_rotor_inertias;
+  }
+  const Vector & RobotWrapper::gear_ratios() const
+  {
+    return m_gear_ratios;
+  }
+
+  bool RobotWrapper::rotor_inertias(ConstRefVector rotor_inertias)
+  {
+    assert(rotor_inertias.size()==m_rotor_inertias.size());
+    m_rotor_inertias = rotor_inertias;
+    updateMd();
+    return true;
+  }
+
+  bool RobotWrapper::gear_ratios(ConstRefVector gear_ratios)
+  {
+    assert(gear_ratios.size()==m_gear_ratios.size());
+    m_gear_ratios = gear_ratios;
+    updateMd();
+    return true;
+  }
+
+  void RobotWrapper::updateMd()
+  {
+    m_Md = m_gear_ratios.cwiseProduct(m_gear_ratios.cwiseProduct(m_rotor_inertias));
   }
 
   void RobotWrapper::com(const Data & data,
@@ -86,9 +122,11 @@ namespace pininvdyn
     return data.Jcom;
   }
 
-  const Matrix & RobotWrapper::mass(const Data & data) const
+  const Matrix & RobotWrapper::mass(const Data & data)
   {
-    return data.M;
+    m_M = data.M;
+    m_M.diagonal().tail(m_model.nv-6) += m_Md;
+    return m_M;
   }
 
   const Vector & RobotWrapper::nonLinearEffects(const Data & data) const
