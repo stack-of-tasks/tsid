@@ -13,10 +13,11 @@ To install eigen3 on Ubuntu you can use apt-get:
 To install [pinocchio](https://github.com/stack-of-tasks/pinocchio) follow the instruction on its website.
 
 ## Installation
-  cd $DEVEL/openrobots/src/
-  git clone --recursive git@github.com:stack-of-tasks/invdyn.git
-  cd invdyn
-  mkdir _build-RELEASE
-  cd _build-RELEASE
-  cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=$DEVEL/openrobots
-  make install
+
+    cd $DEVEL/openrobots/src/
+    git clone --recursive git@github.com:stack-of-tasks/invdyn.git
+    cd invdyn
+    mkdir _build-RELEASE
+    cd _build-RELEASE
+    cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=$DEVEL/openrobots
+    make install
