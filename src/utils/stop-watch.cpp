@@ -40,6 +40,7 @@ using std::map;
 using std::string;
 using std::ostringstream;
 
+
 Stopwatch& getProfiler()
 {
   static Stopwatch s(REAL_TIME);   // alternatives are CPU_TIME and REAL_TIME
@@ -143,6 +144,10 @@ void Stopwatch::stop(string perf_name)
 
   PerformanceData& perf_info = records_of->find(perf_name)->second;
 
+  // check whether the performance has been reset
+  if(perf_info.clock_start==0)
+    return;
+
   perf_info.stops++;
   long double  lapse = clock_end - perf_info.clock_start;
 
@@ -173,6 +178,10 @@ void Stopwatch::pause(string perf_name)
 
   PerformanceData& perf_info = records_of->find(perf_name)->second;
 
+  // check whether the performance has been reset
+  if(perf_info.clock_start==0)
+    return;
+
   long double  lapse = clock_end - perf_info.clock_start;
 
   // Update total time
@@ -195,10 +204,11 @@ void Stopwatch::report_all(int precision, std::ostream& output)
 {
   if (!active) return;
 
-  output<< "\n*** PROFILING RESULTS [ms] (min - avg - max - lastTime - nSamples) ***\n";
+  output<< "\n*** PROFILING RESULTS [ms] (min - avg - max - lastTime - nSamples - totalTime) ***\n";
   map<string, PerformanceData>::iterator it;
   for (it = records_of->begin(); it != records_of->end(); ++it) {
-    report(it->first, precision, output);
+	if(it->second.stops>0)
+      report(it->first, precision, output);
   }
 }
 
@@ -230,7 +240,7 @@ void Stopwatch::turn_on()
 void Stopwatch::turn_off()
 {
   std::cout << "Stopwatch inactive." << std::endl;
-        active = false;
+  active = false;
 }
 
 void Stopwatch::report(string perf_name, int precision, std::ostream& output)
@@ -243,9 +253,8 @@ void Stopwatch::report(string perf_name, int precision, std::ostream& output)
 
   PerformanceData& perf_info = records_of->find(perf_name)->second;
 
-  const int MAX_NAME_LENGTH = 40;
   string pad = "";
-  for (int i = perf_name.length(); i<MAX_NAME_LENGTH; i++)
+  for (int i = perf_name.length(); i<STOP_WATCH_MAX_NAME_LENGTH; i++)
     pad.append(" ");
 
   output << perf_name << pad;
@@ -258,12 +267,9 @@ void Stopwatch::report(string perf_name, int precision, std::ostream& output)
   output << std::fixed << std::setprecision(precision)
          << (perf_info.last_time*1e3) << "\t";
   output << std::fixed << std::setprecision(precision)
-         << perf_info.stops << std::endl;
-
-  //	ostringstream stops;
-  //	stops << perf_info.stops;
-  //	output << "  *  Stops " << stops.str() << std::endl;
-  //	output << std::endl;
+         << perf_info.stops << "\t";
+  output << std::fixed << std::setprecision(precision)
+         << perf_info.total_time*1e3 << std::endl;
 }
 
 long double Stopwatch::get_time_so_far(string perf_name)

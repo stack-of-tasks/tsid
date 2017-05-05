@@ -25,15 +25,22 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 
-#ifndef WBR_STOPWATCH_H
-#define WBR_STOPWATCH_H
+#ifndef __invdyn_stopwatch_H__
+#define __invdyn_stopwatch_H__
 
 #include "pininvdyn/utils/Stdafx.hh"
 
 #ifndef WIN32
-        /* The classes below are exported */
-        #pragma GCC visibility push(default)
+/* The classes below are exported */
+#pragma GCC visibility push(default)
 #endif
+
+//#define START_PROFILER(name)
+//#define STOP_PROFILER(name)
+#define START_PROFILER(name) getProfiler().start(name)
+#define STOP_PROFILER(name) getProfiler().stop(name)
+
+#define STOP_WATCH_MAX_NAME_LENGTH 60
 
 // Generic stopwatch exception class
 struct StopwatchException
@@ -49,8 +56,9 @@ enum StopwatchMode
   NONE	    = 0,  // Clock is not initialized
   CPU_TIME  = 1,  // Clock calculates time ranges using ctime and CLOCKS_PER_SEC
   REAL_TIME = 2   // Clock calculates time by asking the operating system how
-                  // much real time passed
+  // much real time passed
 };
+
 
 /**
     @brief A class representing a stopwatch.
@@ -261,7 +269,7 @@ protected:
 Stopwatch& getProfiler();
 
 #ifndef WIN32
-   #pragma GCC visibility pop
+#pragma GCC visibility pop
 #endif
 
 #endif
