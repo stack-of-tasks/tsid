@@ -38,6 +38,7 @@ using namespace pininvdyn::math;
 using namespace pininvdyn::contacts;
 using namespace pininvdyn::tasks;
 using namespace pininvdyn::solvers;
+//using namespace pininvdyn::utils;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
@@ -47,6 +48,7 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
 BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
 {
+  cout<<"\n*** test_invdyn_formulation_acc_force ***\n";
   const double lxp = 0.14;
   const double lxn = 0.077;
   const double lyp = 0.069;
@@ -212,6 +214,32 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
     const HqpOutput & sol = solver->solve(hqpData);
 
     BOOST_CHECK_MESSAGE(sol.status==HQP_STATUS_OPTIMAL, "Status "+toString(sol.status));
+
+    for(ConstraintLevel::const_iterator it=hqpData[0].begin(); it!=hqpData[0].end(); it++)
+    {
+      const ConstraintBase* constr = it->second;
+      if(constr->checkConstraint(sol.x)==false)
+      {
+        if(constr->isEquality())
+        {
+          BOOST_CHECK_MESSAGE(false, "Equality "+constr->name()+" violated: "+
+                       toString((constr->matrix()*sol.x-constr->vector()).norm()));
+        }
+        else if(constr->isInequality())
+        {
+          BOOST_CHECK_MESSAGE(false, "Inequality "+constr->name()+" violated: "+
+                  toString((constr->matrix()*sol.x-constr->lowerBound()).minCoeff())+"\n"+
+                  toString((constr->upperBound()-constr->matrix()*sol.x).minCoeff()));
+        }
+        else if(constr->isBound())
+        {
+          BOOST_CHECK_MESSAGE(false, "Bound "+constr->name()+" violated: "+
+                  toString((sol.x-constr->lowerBound()).minCoeff())+"\n"+
+                  toString((constr->upperBound()-sol.x).minCoeff()));
+        }
+      }
+    }
+
     dv = sol.x.head(nv);
     f_RF = sol.x.segment<12>(nv);
     f_LF = sol.x.segment<12>(nv+12);
@@ -222,18 +250,18 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
     BOOST_CHECK(contactLF.getMotionConstraint().checkConstraint(dv));
     BOOST_CHECK(contactLF.getForceConstraint().checkConstraint(f_LF));
 
-    unsigned int index = 0;
-    for(vector<ContactBase*>::iterator it=contacts.begin(); it!=contacts.end(); it++)
-    {
-      unsigned int m = (*it)->n_force();
-      const Matrix & T = (*it)->getForceGeneratorMatrix(); // 6x12
-      Jc.middleRows(index, m) = T.transpose()*(*it)->getMotionConstraint().matrix();
-      index += m;
-    }
-    const Matrix & M_u = robot.mass(data).topRows<6>();
-    const Vector & h_u = robot.nonLinearEffects(data).head<6>();
-    const Matrix & J_u = Jc.leftCols<6>();
-    CHECK_LESS_THAN((M_u*dv + h_u - J_u.transpose()*f).norm(), 1e-6);
+//    unsigned int index = 0;
+//    for(vector<ContactBase*>::iterator it=contacts.begin(); it!=contacts.end(); it++)
+//    {
+//      unsigned int m = (*it)->n_force();
+//      const Matrix & T = (*it)->getForceGeneratorMatrix(); // 6x12
+//      Jc.middleRows(index, m) = T.transpose()*(*it)->getMotionConstraint().matrix();
+//      index += m;
+//    }
+//    const Matrix & M_u = robot.mass(data).topRows<6>();
+//    const Vector & h_u = robot.nonLinearEffects(data).head<6>();
+//    const Matrix & J_u = Jc.leftCols<6>();
+//    CHECK_LESS_THAN((M_u*dv + h_u - J_u.transpose()*f).norm(), 1e-6);
 
     v += dt*dv;
     q = se3::integrate(robot.model(), q, dt*v);
@@ -258,6 +286,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
 
 BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
 {
+  cout<<"\n*** test_invdyn_formulation_acc_force_computation_time ***\n";
   const double lxp = 0.14;
   const double lxn = 0.077;
   const double lyp = 0.069;
@@ -372,6 +401,10 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
     v += dt*dv;
     q = se3::integrate(robot.model(), q, dt*v);
     t += dt;
+
+    REQUIRE_FINITE(dv.transpose());
+    REQUIRE_FINITE(v.transpose());
+    REQUIRE_FINITE(q.transpose());
   }
 
   cout<<"\n### TEST FINISHED ###\n";
