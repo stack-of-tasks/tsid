@@ -17,12 +17,15 @@
 
 #include <pininvdyn/solvers/solver-HQP-eiquadprog.hpp>
 #include <pininvdyn/solvers/eiquadprog_2011.hpp>
+#include <pininvdyn/utils/stop-watch.hpp>
 
 using namespace pininvdyn::math;
 using namespace pininvdyn::solvers;
+using namespace Eigen;
 
 Solver_HQP_eiquadprog::Solver_HQP_eiquadprog(const std::string & name):
-  Solver_HQP_base(name)
+  Solver_HQP_base(name),
+  m_hessian_regularization(DEFAULT_HESSIAN_REGULARIZATION)
 {
   m_n = 0;
   m_neq = 0;
@@ -144,8 +147,87 @@ const HqpOutput & Solver_HQP_eiquadprog::solve(const HqpData & problemData)
       m_H += w*constr->matrix().transpose()*constr->matrix();
       m_g -= w*(constr->matrix().transpose()*constr->vector());
     }
-    m_H.diagonal() += 1e-8*Vector::Ones(m_n);
+    m_H.diagonal() += m_hessian_regularization*Vector::Ones(m_n);
   }
+
+#ifdef ELIMINATE_EQUALITY_CONSTRAINTS
+
+  // eliminate equality constraints
+  const int r = m_neq;
+  Matrix Z(m_n, m_n-m_neq);
+  Matrix ZT(m_n, m_n);
+  m_ZT_H_Z.resize(m_n-r, m_n-r);
+  
+  START_PROFILER("Eiquadprog eliminate equalities");
+  if(m_neq>0)
+  {
+	START_PROFILER("Eiquadprog CE decomposition");
+//    m_CE_dec.compute(m_CE, ComputeThinU | ComputeThinV);
+	m_CE_dec.compute(m_CE);
+	STOP_PROFILER("Eiquadprog CE decomposition");
+
+	START_PROFILER("Eiquadprog get CE null-space basis");
+// get nullspace basis from SVD	
+//    const int r = m_CE_dec.nonzeroSingularValues();
+//    const Matrix Z = m_CE_dec.matrixV().rightCols(m_n-r);
+
+	// get null space basis from ColPivHouseholderQR
+//	Matrix Z = m_CE_dec.householderQ();
+//	Z = Z.rightCols(m_n-r);
+	
+	// get null space basis from COD
+	// P^{-1} * y => colsPermutation() * y;
+//	Z = m_CE_dec.matrixZ(); // * m_CE_dec.colsPermutation();
+	ZT.setIdentity();
+	//m_CE_dec.applyZAdjointOnTheLeftInPlace(ZT);
+	typedef Eigen::Index Index;
+        const Index rank = m_CE_dec.rank();
+        Vector temp(m_n);
+        for (Index k = 0; k < rank; ++k)
+        {
+          if (k != rank - 1)
+            ZT.row(k).swap(ZT.row(rank - 1));
+          ZT.middleRows(rank - 1, m_n - rank + 1)
+              .applyHouseholderOnTheLeft(
+                m_CE_dec.matrixQTZ().row(k).tail(m_n - rank).adjoint(),
+                m_CE_dec.zCoeffs()(k),
+                &temp(0));
+          if (k != rank - 1)
+            ZT.row(k).swap(ZT.row(rank - 1));
+        }
+	STOP_PROFILER("Eiquadprog get CE null-space basis");
+		
+	// find a solution for the equalities
+    Vector x0 = m_CE_dec.solve(m_ce0);
+	x0 = -x0;
+
+//    START_PROFILER("Eiquadprog project Hessian full");
+//    m_ZT_H_Z.noalias() = Z.transpose()*m_H*Z; // this is too slow
+//	STOP_PROFILER("Eiquadprog project Hessian full");
+	
+	START_PROFILER("Eiquadprog project Hessian incremental");
+    const ConstraintLevel & cl1 = problemData[1];
+    m_ZT_H_Z.setZero();
+    //m_g.setZero();
+	Matrix AZ;
+    for(ConstraintLevel::const_iterator it=cl1.begin(); it!=cl1.end(); it++)
+    {
+      const double & w = it->first;
+      const ConstraintBase* constr = it->second;
+      if(!constr->isEquality())
+        assert(false && "Inequalities in the cost function are not implemented yet");
+
+	  AZ.noalias() = constr->matrix()*Z.rightCols(m_n-r);
+      m_ZT_H_Z += w*AZ.transpose()*AZ;
+      //m_g -= w*(constr->matrix().transpose()*constr->vector());
+    }
+    //m_ZT_H_Z.diagonal() += 1e-8*Vector::Ones(m_n);
+    m_CI_Z.noalias() = m_CI*Z.rightCols(m_n-r);
+    STOP_PROFILER("Eiquadprog project Hessian incremental");
+
+  }
+  STOP_PROFILER("Eiquadprog eliminate equalities");
+#endif
 
 //#ifndef NDEBUG
 //  PRINT_MATRIX(m_H);
