@@ -75,6 +75,9 @@ namespace pininvdyn
     class PININVDYN_DLLAPI Solver_HQP_base
     {
     public:
+
+      static std::string const HQP_status_string [5];
+
       typedef pininvdyn::math::RefVector RefVector;
       typedef pininvdyn::math::ConstRefVector ConstRefVector;
       typedef pininvdyn::math::ConstRefMatrix ConstRefMatrix;

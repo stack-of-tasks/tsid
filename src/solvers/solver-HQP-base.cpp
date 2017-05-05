@@ -27,10 +27,17 @@
 using namespace pininvdyn;
 using namespace std;
 
+
 namespace pininvdyn
 {
   namespace solvers
   {
+
+    std::string const Solver_HQP_base::HQP_status_string[] = { "HQP_STATUS_OPTIMAL",
+                                                  "HQP_STATUS_INFEASIBLE",
+                                                  "HQP_STATUS_UNBOUNDED",
+                                                  "HQP_STATUS_MAX_ITER_REACHED",
+                                                  "HQP_STATUS_ERROR"};
 
     std::string hqpDataToString(const HqpData & data, bool printMatrices)
     {
