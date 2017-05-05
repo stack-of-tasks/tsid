@@ -15,8 +15,9 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <pininvdyn/solvers/solver-HQP-base.hpp>
+#include <pininvdyn/solvers/solver-HQP-base.h>
 #include <pininvdyn/solvers/solver-HQP-eiquadprog.hpp>
+#include <pininvdyn/solvers/solver-HQP-eiquadprog-fast.h>
 #include <iostream>
 
 #ifdef QPOASES_FOUND
@@ -100,6 +101,9 @@ namespace pininvdyn
     {
       if(solverType==SOLVER_HQP_EIQUADPROG)
         return new Solver_HQP_eiquadprog(name);
+
+      if(solverType==SOLVER_HQP_EIQUADPROG_FAST)
+        return new Solver_HQP_eiquadprog_fast(name);
 
     #ifdef QPOASES_FOUND
       if(solverType==SOLVER_HQP_QPOASES)

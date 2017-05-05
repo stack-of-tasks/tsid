@@ -25,8 +25,9 @@
 #include <pininvdyn/tasks/task-com-equality.hpp>
 #include <pininvdyn/tasks/task-joint-posture.hpp>
 #include <pininvdyn/trajectories/trajectory-euclidian.hpp>
-#include <pininvdyn/solvers/solver-HQP-eiquadprog.hpp>
+#include <pininvdyn/solvers/solver-HQP-base.hpp>
 #include <pininvdyn/utils/stop-watch.hpp>
+#include <pininvdyn/utils/statistics.hpp>
 
 #include <pinocchio/algorithm/joint-configuration.hpp> // integrate
 
@@ -283,6 +284,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
 #define PROFILE_CONTROL_CYCLE "Control cycle"
 #define PROFILE_PROBLEM_FORMULATION "Problem formulation"
 #define PROFILE_HQP "HQP"
+#define PROFILE_HQP_FAST "HQP_FAST"
+#define PROFILE_HQP_RT "HQP_RT"
 
 BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
 {
@@ -373,31 +376,47 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
 
   // Create an HQP solver
   Solver_HQP_base * solver = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG,
-                                                           "solver-eiquadprog");
+                                                           "eiquadprog");
+  Solver_HQP_base * solver_fast = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG_FAST,
+                                                                "eiquadprog-fast");
+  Solver_HQP_base * solver_rt =
+      Solver_HQP_base::getNewSolverFixedSize<60,18,40>(SOLVER_HQP_EIQUADPROG_RT,
+                                                       "eiquadprog-rt");
   solver->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
+  solver_fast->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
 
   Vector dv = Vector::Zero(nv);
   for(int i=0; i<N_DT; i++)
   {
     getProfiler().start(PROFILE_CONTROL_CYCLE);
-    {
-      sampleCom = trajCom->computeNext();
-      comTask.setReference(sampleCom);
-      samplePosture = trajPosture->computeNext();
-      postureTask.setReference(samplePosture);
 
-      getProfiler().start(PROFILE_PROBLEM_FORMULATION);
-      const HqpData & hqpData = invDyn->computeProblemData(t, q, v);
-      getProfiler().stop(PROFILE_PROBLEM_FORMULATION);
+    sampleCom = trajCom->computeNext();
+    comTask.setReference(sampleCom);
+    samplePosture = trajPosture->computeNext();
+    postureTask.setReference(samplePosture);
 
-      getProfiler().start(PROFILE_HQP);
-      const HqpOutput & sol = solver->solve(hqpData);
-      getProfiler().stop(PROFILE_HQP);
+    getProfiler().start(PROFILE_PROBLEM_FORMULATION);
+    const HqpData & hqpData = invDyn->computeProblemData(t, q, v);
+    getProfiler().stop(PROFILE_PROBLEM_FORMULATION);
 
-      dv = sol.x.head(nv);
-    }
+    getProfiler().start(PROFILE_HQP);
+    const HqpOutput & sol = solver->solve(hqpData);
+    getProfiler().stop(PROFILE_HQP);
+
     getProfiler().stop(PROFILE_CONTROL_CYCLE);
 
+    getProfiler().start(PROFILE_HQP_FAST);
+    const HqpOutput & sol_fast = solver_fast->solve(hqpData);
+    getProfiler().stop(PROFILE_HQP_FAST);
+
+    getProfiler().start(PROFILE_HQP_RT);
+    solver_rt->solve(hqpData);
+    getProfiler().stop(PROFILE_HQP_RT);
+
+    getStatistics().store("active inequalities", sol_fast.activeSet.size());
+    getStatistics().store("solver iterations", sol_fast.iterations);
+
+    dv = sol.x.head(nv);
     v += dt*dv;
     q = se3::integrate(robot.model(), q, dt*v);
     t += dt;
@@ -409,6 +428,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
 
   cout<<"\n### TEST FINISHED ###\n";
   getProfiler().report_all(3, cout);
+  getStatistics().report_all(1, cout);
 }
 
 BOOST_AUTO_TEST_SUITE_END ()

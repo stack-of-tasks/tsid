@@ -119,10 +119,18 @@ SET(${PROJECT_NAME}_TRAJECTORIES_HEADERS
 
 SET(${PROJECT_NAME}_SOLVERS_HEADERS
     include/pininvdyn/solvers/eiquadprog_2011.hpp
+    include/pininvdyn/solvers/eiquadprog_rt.h
+    include/pininvdyn/solvers/eiquadprog_rt.hpp
+    include/pininvdyn/solvers/eiquadprog_fast.h
+    include/pininvdyn/solvers/eiquadprog_fast.hpp
     include/pininvdyn/solvers/fwd.hpp
+    include/pininvdyn/solvers/solver-HQP-base.h
     include/pininvdyn/solvers/solver-HQP-base.hpp
     include/pininvdyn/solvers/solver-HQP-qpoases.hpp
     include/pininvdyn/solvers/solver-HQP-eiquadprog.hpp
+    include/pininvdyn/solvers/solver-HQP-eiquadprog-rt.h
+    include/pininvdyn/solvers/solver-HQP-eiquadprog-rt.hpp
+    include/pininvdyn/solvers/solver-HQP-eiquadprog-fast.h
   )
 
 SET(HEADERS
@@ -130,6 +138,7 @@ SET(HEADERS
     include/pininvdyn/robot-wrapper.hpp
     include/pininvdyn/inverse-dynamics-formulation-base.hpp
     include/pininvdyn/inverse-dynamics-formulation-acc-force.hpp
+    include/pininvdyn/utils/statistics.hpp
     include/pininvdyn/utils/stop-watch.hpp
     include/pininvdyn/utils/Stdafx.hh
     ${${PROJECT_NAME}_MATH_HEADERS}

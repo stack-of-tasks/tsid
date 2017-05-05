@@ -52,6 +52,7 @@ SET(${LIBRARY_NAME}_TRAJECTORIES_SOURCES
 SET(${LIBRARY_NAME}_SOLVERS_SOURCES
     solvers/solver-HQP-base.cpp
     solvers/solver-HQP-eiquadprog.cpp
+    solvers/solver-HQP-eiquadprog-fast.cpp
     solvers/solver-HQP-qpoases.cpp
   )
 
@@ -59,6 +60,7 @@ SET(${LIBRARY_NAME}_SOURCES
     robot-wrapper.cpp
     inverse-dynamics-formulation-base.cpp
     inverse-dynamics-formulation-acc-force.cpp
+    utils/statistics.cpp
     utils/stop-watch.cpp
     ${${LIBRARY_NAME}_MATH_SOURCES}
     ${${LIBRARY_NAME}_TASKS_SOURCES}

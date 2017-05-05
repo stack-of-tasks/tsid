@@ -6,19 +6,20 @@
 // and/or modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
-// pinocchio is distributed in the hope that it will be
+// PinInvDyn is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // General Lesser Public License for more details. You should have
 // received a copy of the GNU Lesser General Public License along with
-// pinocchio If not, see
+// PinInvDyn If not, see
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_solvers_hqp_eiquadprog_hpp__
-#define __invdyn_solvers_hqp_eiquadprog_hpp__
+#ifndef __invdyn_solvers_hqp_eiquadprog_fast_h__
+#define __invdyn_solvers_hqp_eiquadprog_fast_h__
 
 #include <pininvdyn/solvers/solver-HQP-base.h>
+#include <pininvdyn/solvers/eiquadprog_fast.h>
 
 #define DEFAULT_HESSIAN_REGULARIZATION 1e-8
 
@@ -27,9 +28,9 @@ namespace pininvdyn
   namespace solvers
   {
     /**
-     * @brief Abstract interface for a Quadratic Program (HQP) solver.
+     * @brief
      */
-    class PININVDYN_DLLAPI Solver_HQP_eiquadprog:
+    class PININVDYN_DLLAPI Solver_HQP_eiquadprog_fast:
         public Solver_HQP_base
     {
     public:
@@ -39,7 +40,7 @@ namespace pininvdyn
       typedef pininvdyn::math::ConstRefVector ConstRefVector;
       typedef pininvdyn::math::ConstRefMatrix ConstRefMatrix;
 
-      Solver_HQP_eiquadprog(const std::string & name);
+      Solver_HQP_eiquadprog_fast(const std::string & name);
 
       void resize(unsigned int n, unsigned int neq, unsigned int nin);
 
@@ -50,15 +51,20 @@ namespace pininvdyn
       /** Get the objective value of the last solved problem. */
       double getObjectiveValue();
 
+      /** Set the current maximum number of iterations performed by the solver. */
+      bool setMaximumIterations(unsigned int maxIter);
+
     protected:
 
       void sendMsg(const std::string & s);
+
+      EiquadprogFast m_solver; // <nVars, nEqCon, 2*nIneqCon>
 
       Matrix m_H;
       Vector m_g;
       Matrix m_CE;
       Vector m_ce0;
-      Matrix m_CI;
+      Matrix m_CI;  /// twice the rows because inequality constraints are bilateral
       Vector m_ci0;
       double m_objValue;
 
@@ -67,16 +73,6 @@ namespace pininvdyn
       Eigen::VectorXi m_activeSet;  /// vector containing the indexes of the active inequalities
       int m_activeSetSize;
 
-#ifdef ELIMINATE_EQUALITY_CONSTRAINTS
-//      Eigen::FullPivLU<Matrix>                        m_CE_dec;
-//	  Eigen::ColPivHouseholderQR<Matrix>              m_CE_dec; // fast, but difficult to retrieve null space basis
-//      Eigen::FullPivHouseholderQR<Matrix>             m_CE_dec; // doc says it is slow 
-      Eigen::CompleteOrthogonalDecomposition<Matrix>  m_CE_dec; // available from Eigen 3.3.0, 40 us for decomposition, 40 us to get null space basis, 40 us to project Hessian
-//      Eigen::JacobiSVD<Matrix, Eigen::HouseholderQRPreconditioner> m_CE_dec; // too slow
-      Matrix m_ZT_H_Z;
-      Matrix m_CI_Z;
-#endif
-
       int m_neq;  /// number of equality constraints
       int m_nin;  /// number of inequality constraints
       int m_n;    /// number of variables
@@ -84,4 +80,4 @@ namespace pininvdyn
   }
 }
 
-#endif // ifndef __invdyn_solvers_hqp_eiquadprog_hpp__
+#endif // ifndef __invdyn_solvers_hqp_eiquadprog_fast_h__

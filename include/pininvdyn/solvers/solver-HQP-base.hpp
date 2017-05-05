@@ -18,113 +18,25 @@
 #ifndef __invdyn_solvers_hqp_base_hpp__
 #define __invdyn_solvers_hqp_base_hpp__
 
-#include <pininvdyn/math/utils.hpp>
-#include <pininvdyn/math/constraint-base.hpp>
-#include <pininvdyn/config.hh>
+//#include <pininvdyn/solvers/solver-HQP-base.h>
+#include <pininvdyn/solvers/solver-HQP-eiquadprog-rt.hpp>
 
-#include <vector>
-#include <utility>
 
 namespace pininvdyn
 {
   namespace solvers
   {
 
-    /**
-    * Available HQP solvers.
-    */
-    enum PININVDYN_DLLAPI SolverHQP
+    template<int nVars, int nEqCon, int nIneqCon>
+    Solver_HQP_base* Solver_HQP_base::getNewSolverFixedSize(SolverHQP solverType,
+                                                            const std::string & name)
     {
-      SOLVER_HQP_EIQUADPROG = 0
-#ifdef QPOASES_FOUND
-      ,SOLVER_HQP_OASES = 1
-#endif
-    };
+      if(solverType==SOLVER_HQP_EIQUADPROG_RT)
+        return new Solver_HQP_eiquadprog_rt<nVars, nEqCon, nIneqCon>(name);
 
-
-    /**
-    * Possible states of an HQP solver.
-    */
-    enum PININVDYN_DLLAPI HQP_status
-    {
-      HQP_STATUS_UNKNOWN=-1,
-      HQP_STATUS_OPTIMAL=0,
-      HQP_STATUS_INFEASIBLE=1,
-      HQP_STATUS_UNBOUNDED=2,
-      HQP_STATUS_MAX_ITER_REACHED=3,
-      HQP_STATUS_ERROR=4
-    };
-
-    typedef std::vector< std::pair<double, pininvdyn::math::ConstraintBase*> > ConstraintLevel;
-    typedef std::vector< std::pair<double, const pininvdyn::math::ConstraintBase*> > ConstConstraintLevel;
-    typedef std::vector<ConstraintLevel> HqpData;
-    typedef std::vector<ConstConstraintLevel> ConstHqpData;
-
-    std::string hqpDataToString(const HqpData & data, bool printMatrices=false);
-
-    class HqpOutput
-    {
-    public:
-      HQP_status status;
-      pininvdyn::math::Vector x, lambda;
-    };
-
-    /**
-     * @brief Abstract interface for a Quadratic Program (HQP) solver.
-     */
-    class PININVDYN_DLLAPI Solver_HQP_base
-    {
-    public:
-
-      static std::string const HQP_status_string [5];
-
-      typedef pininvdyn::math::RefVector RefVector;
-      typedef pininvdyn::math::ConstRefVector ConstRefVector;
-      typedef pininvdyn::math::ConstRefMatrix ConstRefMatrix;
-
-      Solver_HQP_base(const std::string & name);
-
-      /**
-       * @brief Create a new HQP solver of the specified type.
-       * @param solverType Type of HQP solver.
-       * @return A pointer to the new solver.
-       */
-      static Solver_HQP_base* getNewSolver(SolverHQP solverType, const std::string & name);
-
-      virtual const std::string & name(){ return m_name; }
-
-      virtual void resize(unsigned int n, unsigned int neq, unsigned int nin) = 0;
-
-      /** Solve the specified Hierarchical Quadratic Program.
-       */
-      virtual const HqpOutput & solve(const HqpData & problemData) = 0;
-
-      /** Get the objective value of the last solved problem. */
-      virtual double getObjectiveValue() = 0;
-
-      /** Return true if the solver is allowed to warm start, false otherwise. */
-      virtual bool getUseWarmStart(){ return m_useWarmStart; }
-      /** Specify whether the solver is allowed to use warm-start techniques. */
-      virtual void setUseWarmStart(bool useWarmStart){ m_useWarmStart = useWarmStart; }
-
-      /** Get the current maximum number of iterations performed by the solver. */
-      virtual unsigned int getMaximumIterations(){ return m_maxIter; }
-      /** Set the current maximum number of iterations performed by the solver. */
-      virtual bool setMaximumIterations(unsigned int maxIter);
-
-
-      /** Get the maximum time allowed to solve a problem. */
-      virtual double getMaximumTime(){ return m_maxTime; }
-      /** Set the maximum time allowed to solve a problem. */
-      virtual bool setMaximumTime(double seconds);
-
-    protected:
-      std::string           m_name;
-      bool                  m_useWarmStart;   // true if the solver is allowed to warm start
-      int                   m_maxIter;        // max number of iterations
-      double                m_maxTime;        // max time to solve the HQP [s]
-      HqpOutput             m_output;
-    };
+      assert(false && "Specified solver type not recognized");
+      return NULL;
+    }
   }
 }
 
