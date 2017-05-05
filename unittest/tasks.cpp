@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
     BOOST_CHECK(error <= error_past);
     error_past = error;
 
-    if(i%10==0)
+    if(i%100==0)
       cout << "Time "<<t<<"\t CoM pos error "<<error<<
               "\t CoM vel error "<<task.velocity_error().norm()<<endl;
   }
@@ -196,13 +196,9 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
 
   cout<<"Gonna set gains\n"<<na<<endl;
   VectorXd Kp = VectorXd::Ones(na);
-  cout<<"Gonna set gains 0\n";
   VectorXd Kd = 2.0*Kp;
-  cout<<"Gonna set gains 1\n";
   task.Kp(Kp);
-  cout<<"Gonna set gains 2\n";
   task.Kd(Kd);
-  cout<<"Gonna set gains 3\n";
   BOOST_CHECK(task.Kp().isApprox(Kp));
   BOOST_CHECK(task.Kd().isApprox(Kd));
 
@@ -247,7 +243,7 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
     BOOST_CHECK(error <= error_past);
     error_past = error;
 
-    if(i%10==0)
+    if(i%100==0)
       cout << "Time "<<t<<"\t pos error "<<error<<
               "\t vel error "<<task.velocity_error().norm()<<endl;
   }
