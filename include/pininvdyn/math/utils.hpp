@@ -18,6 +18,16 @@
 #ifndef __invdyn_math_utils_hpp__
 #define __invdyn_math_utils_hpp__
 
+// if defined, the matrices (or arrays) on both sides of an assignment a = b have
+// to be of the same size; otherwise, Eigen automatically resizes a so that it is
+// of the correct size. Not defined by default.
+//#define EIGEN_NO_AUTOMATIC_RESIZING
+
+//if defined, a new switch is introduced which can be turned on and off by calling
+//set_is_malloc_allowed(bool). If malloc is not allowed and Eigen tries to allocate
+//memory dynamically anyway, an assertion failure results. Not defined by default.
+#define EIGEN_RUNTIME_NO_MALLOC
+
 #include <Eigen/Core>
 #include <pinocchio/spatial/se3.hpp>
 #include <pinocchio/spatial/explog.hpp>
