@@ -226,7 +226,7 @@ const HqpData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     cl->motionConstraint->vector() = mc.vector();
 
     const Matrix & T = cl->contact.getForceGeneratorMatrix(); // 6x12
-    m_Jc.middleRows(cl->index, m) = T.transpose()*mc.matrix();
+    m_Jc.middleRows(cl->index, m).noalias() = T.transpose()*mc.matrix();
 
     const ConstraintInequality & fc = cl->contact.computeForceTask(time, q, v, m_data);
     cl->forceConstraint->matrix().middleCols(m_v+cl->index, m) = fc.matrix();
@@ -281,16 +281,19 @@ const HqpData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     const ConstraintBase & c = (*it)->task.compute(time, q, v, m_data);
     if(c.isEquality())
     {
-      (*it)->constraint->matrix().leftCols(m_v) = c.matrix() * M_a;
-      (*it)->constraint->matrix().rightCols(m_k) = - c.matrix() * J_a.transpose();
-      (*it)->constraint->vector() = c.vector() - c.matrix() * h_a;
+      (*it)->constraint->matrix().leftCols(m_v).noalias() = c.matrix() * M_a;
+      (*it)->constraint->matrix().rightCols(m_k).noalias() = - c.matrix() * J_a.transpose();
+      (*it)->constraint->vector() = c.vector();
+      (*it)->constraint->vector().noalias() -= c.matrix() * h_a;
     }
     else if(c.isInequality())
     {
-      (*it)->constraint->matrix().leftCols(m_v) = c.matrix() * M_a;
-      (*it)->constraint->matrix().rightCols(m_k) = - c.matrix() * J_a.transpose();
-      (*it)->constraint->lowerBound() = c.lowerBound() - c.matrix() * h_a;
-      (*it)->constraint->upperBound() = c.upperBound() - c.matrix() * h_a;
+      (*it)->constraint->matrix().leftCols(m_v).noalias() = c.matrix() * M_a;
+      (*it)->constraint->matrix().rightCols(m_k).noalias() = - c.matrix() * J_a.transpose();
+      (*it)->constraint->lowerBound() = c.lowerBound();
+      (*it)->constraint->lowerBound().noalias() -= c.matrix() * h_a;
+      (*it)->constraint->upperBound() = c.upperBound();
+      (*it)->constraint->upperBound().noalias() -= c.matrix() * h_a;
     }
     else
     {
@@ -312,7 +315,9 @@ const Vector & InverseDynamicsFormulationAccForce::computeActuatorForces(const H
   const Matrix & J_a = m_Jc.rightCols(m_v-6);
   m_dv = sol.x.head(m_v);
   m_f = sol.x.tail(m_k);
-  m_tau = M_a*m_dv + h_a - J_a.transpose()*m_f;
+  m_tau = h_a;
+  m_tau.noalias() += M_a*m_dv;
+  m_tau.noalias() -= J_a.transpose()*m_f;
   return m_tau;
 }
 
@@ -389,6 +394,7 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
     }
   }
 
+  bool contact_found = false;
   for(vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
   {
     if((*it)->contact.name()==contactName)
@@ -398,8 +404,17 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
       m_in -= (*it)->forceConstraint->rows();
       m_contacts.erase(it);
       resizeHqpData();
-      return true;
+      contact_found = true;
+      break;
     }
   }
-  return false;
+
+  int k=0;
+  for(vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+  {
+    ContactLevel * cl = *it;
+    cl->index = k;
+    k += cl->contact.n_force();
+  }
+  return contact_found;
 }
