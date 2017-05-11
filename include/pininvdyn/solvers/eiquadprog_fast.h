@@ -75,6 +75,7 @@ namespace pininvdyn
       EIQUADPROG_FAST_REDUNDANT_EQUALITIES=4
     };
 
+    /// Compute sqrt(a^2 + b^2)
     template<typename Scalar>
     inline Scalar distance(Scalar a, Scalar b)
     {
@@ -174,12 +175,14 @@ namespace pininvdyn
       bool is_inverse_provided_;
 
     private:
+      int m_nVars;
+      int m_nEqCon;
+      int m_nIneqCon;
 
       int m_maxIter;  /// max number of active-set iterations
       double f_value; /// current value of cost function
 
       Eigen::LLT<MatrixXd,Eigen::Lower> chol_; // <nVars,nVars>::d
-      double solver_return_;
 
       /// from QR of L' N, where L is Cholewsky factor of Hessian, and N is the matrix of active constraints
       MatrixXd R; // <nVars,nVars>::d
@@ -222,6 +225,10 @@ namespace pininvdyn
       VectorXd x_old;           // old value of x <nVars>::d
       VectorXd u_old; // old value of u <nIneqCon+nEqCon>::d
       VectorXi A_old; // old value of A <nIneqCon+nEqCon>::i
+	  
+#ifdef OPTIMIZE_ADD_CONSTRAINT
+	  VectorXd T1; /// tmp variable used in add_constraint
+#endif
 
       /// size of the active set A (containing the indices of the active constraints)
       int q;

@@ -28,18 +28,23 @@ namespace pininvdyn
   namespace solvers
   {
 
-    EiquadprogFast::EiquadprogFast():
-      solver_return_(std::numeric_limits<double>::infinity())
+    EiquadprogFast::EiquadprogFast()
     {
       m_maxIter = DEFAULT_MAX_ITER;
       q = 0;    // size of the active set A (containing the indices of the active constraints)
       is_inverse_provided_ = false;
+      m_nVars = 0;
+      m_nEqCon = 0;
+      m_nIneqCon = 0;
     }
 
     EiquadprogFast::~EiquadprogFast(){}
 
     void EiquadprogFast::reset(int nVars, int nEqCon, int nIneqCon)
     {
+      m_nVars = nVars;
+      m_nEqCon = nEqCon;
+      m_nIneqCon = nIneqCon;
       m_J.setZero(nVars, nVars);
       chol_.compute(m_J);
       R.resize(nVars, nVars);
@@ -55,7 +60,10 @@ namespace pininvdyn
       x_old.resize(nVars);
       u_old.resize(nIneqCon+nEqCon);
       A_old.resize(nIneqCon+nEqCon);
-      solver_return_ = std::numeric_limits<double>::infinity();
+
+#ifdef OPTIMIZE_ADD_CONSTRAINT
+	  T1.resize(nVars);
+#endif
     }
 
 
@@ -71,6 +79,10 @@ namespace pininvdyn
 #endif
       int j, k;
       double cc, ss, h, t1, t2, xny;
+
+#ifdef OPTIMIZE_ADD_CONSTRAINT
+	  Eigen::Vector2d cc_ss;
+#endif
 
       /* we have to find the Givens rotation which will reduce the element
                d(j) to zero.
@@ -103,6 +115,15 @@ namespace pininvdyn
         else
           d(j - 1) = h;
         xny = ss / (1.0 + cc);
+
+// #define OPTIMIZE_ADD_CONSTRAINT
+#ifdef OPTIMIZE_ADD_CONSTRAINT // the optimized code is actually slower than the original
+		T1 = J.col(j-1);
+		cc_ss(0) = cc;
+		cc_ss(1) = ss;
+		J.col(j-1).noalias() = J.middleCols<2>(j-1) * cc_ss;
+		J.col(j) = xny * (T1 + J.col(j - 1)) - J.col(j);
+#else
         // J.col(j-1) = J[:,j-1:j] * [cc; ss]
         for (k = 0; k < nVars; k++)
         {
@@ -111,6 +132,7 @@ namespace pininvdyn
           J(k,j - 1) = t1 * cc + t2 * ss;
           J(k,j) = xny * (t1 + J(k,j - 1)) - t2;
         }
+#endif
       }
       /* update the number of constraints added*/
       iq++;
@@ -224,18 +246,26 @@ namespace pininvdyn
     }
 
     EiquadprogFast_status EiquadprogFast::solve_quadprog(const MatrixXd & Hess,
-                                                       const VectorXd & g0,
-                                                       const MatrixXd & CE,
-                                                       const VectorXd & ce0,
-                                                       const MatrixXd & CI,
-                                                       const VectorXd & ci0,
-                                                       VectorXd & x)
+                                                         const VectorXd & g0,
+                                                         const MatrixXd & CE,
+                                                         const VectorXd & ce0,
+                                                         const MatrixXd & CI,
+                                                         const VectorXd & ci0,
+                                                         VectorXd & x)
     {
       const int nVars = g0.size();
       const int nEqCon = ce0.size();
       const int nIneqCon = ci0.size();
 
-      assert(Hess.rows()==nVars && Hess.cols()==nVars);
+      if(nVars!=m_nVars || nEqCon!=m_nEqCon || nIneqCon!=m_nIneqCon)
+        reset(nVars, nEqCon, nIneqCon);
+
+      assert(Hess.rows()==m_nVars && Hess.cols()==m_nVars);
+      assert(g0.size()==m_nVars);
+      assert(CE.rows()==m_nEqCon && CE.cols()==m_nVars);
+      assert(ce0.size()==m_nEqCon);
+      assert(CI.rows()==m_nIneqCon && CI.cols()==m_nVars);
+      assert(ci0.size()==m_nIneqCon);
 
       int i, k, l;  // indices
       int ip;       // index of the chosen violated constraint
@@ -251,7 +281,6 @@ namespace pininvdyn
         * and the full step length t2 */
 
       iter = 0; // active-set iteration number
-      //      q = 0;    // size of the active set A (containing the indices of the active constraints)
 
       /*
        * Preprocessing phase
@@ -413,8 +442,15 @@ namespace pininvdyn
 #endif
 
 l1:
-      START_PROFILER_EIQUADPROG_FAST(EIQUADPROG_FAST_STEP_1);
       iter++;
+      if(iter>=m_maxIter)
+      {
+        q = iq;
+        return EIQUADPROG_FAST_MAX_ITER_REACHED;
+      }
+	  
+      START_PROFILER_EIQUADPROG_FAST(EIQUADPROG_FAST_STEP_1);
+	  
 #ifdef TRACE_SOLVER
       print_vector("x", x, nVars);
 #endif
@@ -440,7 +476,6 @@ l1:
       for (i = 0; i < nIneqCon; i++)
       {
         iaexcl(i) = 1;
-        //        sum = -(CI.row(i).dot(x) + ci0(i)); // ADP: Inequality sign was inverted
         s(i) = CI.row(i).dot(x) + ci0(i);
         psi += std::min(0.0, s(i));
       }

@@ -213,6 +213,10 @@ namespace pininvdyn
       typename RtVectorX<nIneqCon+nEqCon>::d u_old; // old value of u
       typename RtVectorX<nIneqCon+nEqCon>::i A_old; // old value of A
 
+#ifdef OPTIMIZE_ADD_CONSTRAINT
+      typename RtVectorX<nVars>::d T1;           // tmp vector
+#endif
+	  
       /// size of the active set A (containing the indices of the active constraints)
       int q;
 

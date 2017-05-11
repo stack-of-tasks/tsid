@@ -51,8 +51,6 @@ void Solver_HQP_eiquadprog_fast::sendMsg(const std::string & s)
 
 void Solver_HQP_eiquadprog_fast::resize(unsigned int n, unsigned int neq, unsigned int nin)
 {
-  m_output.resize(n, neq, 2*nin);
-
   const bool resizeVar = n!=m_n;
   const bool resizeEq = (resizeVar || neq!=m_neq );
   const bool resizeIn = (resizeVar || nin!=m_nin );
@@ -83,7 +81,10 @@ void Solver_HQP_eiquadprog_fast::resize(unsigned int n, unsigned int neq, unsign
   }
 
   if(resizeVar || resizeIn || resizeEq)
-    m_solver.reset(n, neq, nin*2);
+  {
+	m_solver.reset(n, neq, nin*2);
+  	m_output.resize(n, neq, 2*nin);
+  }
 
   m_n = n;
   m_neq = neq;
@@ -92,8 +93,8 @@ void Solver_HQP_eiquadprog_fast::resize(unsigned int n, unsigned int neq, unsign
 
 const HqpOutput & Solver_HQP_eiquadprog_fast::solve(const HqpData & problemData)
 {
-//  Eigen::internal::set_is_malloc_allowed(false);
-
+  Eigen::internal::set_is_malloc_allowed(false);
+  
   START_PROFILER_EIQUADPROG_FAST(PROFILE_EIQUADPROG_PREPARATION);
 
   if(problemData.size()>2)
@@ -184,8 +185,8 @@ const HqpOutput & Solver_HQP_eiquadprog_fast::solve(const HqpData & problemData)
                                                          m_output.x);
   STOP_PROFILER_EIQUADPROG_FAST(PROFILE_EIQUADPROG_SOLUTION);
 
-//  Eigen::internal::set_is_malloc_allowed(true);
-
+  Eigen::internal::set_is_malloc_allowed(true);
+  
   if(status == EIQUADPROG_FAST_OPTIMAL)
   {
     m_output.status = HQP_STATUS_OPTIMAL;
@@ -231,7 +232,7 @@ const HqpOutput & Solver_HQP_eiquadprog_fast::solve(const HqpData & problemData)
     m_output.status = HQP_STATUS_MAX_ITER_REACHED;
   else if(status==EIQUADPROG_FAST_REDUNDANT_EQUALITIES)
     m_output.status = HQP_STATUS_ERROR;
-
+  
   return m_output;
 }
 
