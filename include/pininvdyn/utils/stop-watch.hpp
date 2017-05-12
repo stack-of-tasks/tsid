@@ -41,6 +41,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define STOP_PROFILER(name) getProfiler().stop(name)
 
 #define STOP_WATCH_MAX_NAME_LENGTH 60
+#define STOP_WATCH_TIME_WIDTH 10
 
 // Generic stopwatch exception class
 struct StopwatchException

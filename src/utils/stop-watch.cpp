@@ -204,10 +204,16 @@ void Stopwatch::report_all(int precision, std::ostream& output)
 {
   if (!active) return;
 
-  output<< "\n*** PROFILING RESULTS [ms] (min - avg - max - lastTime - nSamples - totalTime) ***\n";
+  output<< "\n"<< std::setw(STOP_WATCH_MAX_NAME_LENGTH)<< std::left<< "*** PROFILING RESULTS [ms] ";
+  output<< std::setw(STOP_WATCH_TIME_WIDTH)<<"min"<<" ";
+  output<< std::setw(STOP_WATCH_TIME_WIDTH)<<"avg"<<" ";
+  output<< std::setw(STOP_WATCH_TIME_WIDTH)<<"max"<<" ";
+  output<< std::setw(STOP_WATCH_TIME_WIDTH)<<"lastTime"<<" ";
+  output<< std::setw(STOP_WATCH_TIME_WIDTH)<<"nSamples"<<" ";
+  output<< std::setw(STOP_WATCH_TIME_WIDTH)<<"totalTime"<< " ***\n";
   map<string, PerformanceData>::iterator it;
   for (it = records_of->begin(); it != records_of->end(); ++it) {
-	if(it->second.stops>0)
+    if(it->second.stops>0)
       report(it->first, precision, output);
   }
 }
@@ -253,22 +259,18 @@ void Stopwatch::report(string perf_name, int precision, std::ostream& output)
 
   PerformanceData& perf_info = records_of->find(perf_name)->second;
 
-  string pad = "";
-  for (int i = perf_name.length(); i<STOP_WATCH_MAX_NAME_LENGTH; i++)
-    pad.append(" ");
-
-  output << perf_name << pad;
-  output << std::fixed << std::setprecision(precision)
-         << (perf_info.min_time*1e3) << "\t";
-  output << std::fixed << std::setprecision(precision)
-         << (perf_info.total_time*1e3 / (long double) perf_info.stops) << "\t";
-  output << std::fixed << std::setprecision(precision)
-         << (perf_info.max_time*1e3) << "\t";
-  output << std::fixed << std::setprecision(precision)
-         << (perf_info.last_time*1e3) << "\t";
-  output << std::fixed << std::setprecision(precision)
-         << perf_info.stops << "\t";
-  output << std::fixed << std::setprecision(precision)
+  output << std::setw(STOP_WATCH_MAX_NAME_LENGTH) << std::left<< perf_name;
+  output << std::fixed << std::setprecision(precision) <<  std::setw(STOP_WATCH_TIME_WIDTH)
+         << (perf_info.min_time*1e3) << " ";
+  output << std::fixed << std::setprecision(precision) <<  std::setw(STOP_WATCH_TIME_WIDTH)
+         << (perf_info.total_time*1e3 / (long double) perf_info.stops) << " ";
+  output << std::fixed << std::setprecision(precision) <<  std::setw(STOP_WATCH_TIME_WIDTH)
+         << (perf_info.max_time*1e3) << " ";
+  output << std::fixed << std::setprecision(precision) <<  std::setw(STOP_WATCH_TIME_WIDTH)
+         << (perf_info.last_time*1e3) << " ";
+  output << std::fixed << std::setprecision(precision) <<  std::setw(STOP_WATCH_TIME_WIDTH)
+         << perf_info.stops << " ";
+  output << std::fixed << std::setprecision(precision) <<  std::setw(STOP_WATCH_TIME_WIDTH)
          << perf_info.total_time*1e3 << std::endl;
 }
 
