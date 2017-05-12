@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   const unsigned int nTest = 100;
 #endif
   const unsigned int n = 60;
-  const unsigned int neq = 18;
+  const unsigned int neq = 36;
   const unsigned int nin = 40;
   const double damping = 1e-10;
 
