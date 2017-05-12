@@ -113,6 +113,8 @@ namespace pininvdyn
 
     void resizeHqpData();
 
+    bool removeFromHqpData(const std::string & name);
+
     Data m_data;
     HqpData m_hqpData;
     std::vector<TaskLevel*>     m_taskMotions;

@@ -325,17 +325,8 @@ const Vector & InverseDynamicsFormulationAccForce::computeActuatorForces(const H
 bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName,
                                                     double transition_duration)
 {
-  for(HqpData::iterator it=m_hqpData.begin(); it!=m_hqpData.end(); it++)
-  {
-    for(ConstraintLevel::iterator itt=it->begin(); itt!=it->end(); itt++)
-    {
-      if((*itt).second->name()==taskName)
-      {
-        it->erase(itt);
-        break;
-      }
-    }
-  }
+  bool taskFound = removeFromHqpData(taskName);
+  assert(taskFound);
 
   vector<TaskLevel*>::iterator it;
   for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
@@ -383,16 +374,11 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
 bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & contactName,
                                                             double transition_duration)
 {
-  for(HqpData::iterator it=m_hqpData.begin(); it!=m_hqpData.end(); it++)
-  {
-    for(ConstraintLevel::iterator itt=it->begin(); itt!=it->end(); itt++)
-    {
-      if(itt->second->name()==contactName)
-      {
-        it->erase(itt);
-      }
-    }
-  }
+  bool first_constraint_found = removeFromHqpData(contactName);
+  assert(first_constraint_found);
+
+  bool second_constraint_found = removeFromHqpData(contactName);
+  assert(second_constraint_found);
 
   bool contact_found = false;
   for(vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
@@ -417,4 +403,21 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
     k += cl->contact.n_force();
   }
   return contact_found;
+}
+
+bool InverseDynamicsFormulationAccForce::removeFromHqpData(const std::string & name)
+{
+  bool found = false;
+  for(HqpData::iterator it=m_hqpData.begin(); !found && it!=m_hqpData.end(); it++)
+  {
+    for(ConstraintLevel::iterator itt=it->begin(); !found && itt!=it->end(); itt++)
+    {
+      if(itt->second->name()==name)
+      {
+        it->erase(itt);
+        found = true;
+      }
+    }
+  }
+  return found;
 }
