@@ -43,6 +43,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_6d )
   const double lz = 0.105;
   const double mu = 0.3;
   const double fMin = 10.0;
+  const double fMax = 1000.0;
   const std::string frameName = "RLEG_JOINT5";
 
   vector<string> package_dirs;
@@ -62,7 +63,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_6d )
                     lz,  lz,  lz,  lz;
   Contact6d contact("contact6d", robot, frameName,
                     contactPoints, contactNormal,
-                    mu, fMin, 1e-3);
+                    mu, fMin, fMax, 1e-3);
 
   BOOST_CHECK(contact.n_motion()==6);
   BOOST_CHECK(contact.n_force()==12);

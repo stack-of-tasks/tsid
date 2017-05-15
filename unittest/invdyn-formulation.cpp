@@ -47,9 +47,9 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 #define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(is_finite(A), #A<<": "<<A)
 #define CHECK_LESS_THAN(A,B) BOOST_CHECK_MESSAGE(A<B, #A<<": "<<A<<">"<<B)
 
-BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
+class StandardHrp2InvDynCtrl
 {
-  cout<<"\n*** test_invdyn_formulation_acc_force_remove_contact ***\n";
+  public:
   const double lxp = 0.14;
   const double lxn = 0.077;
   const double lyp = 0.069;
@@ -57,82 +57,113 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   const double lz = 0.105;
   const double mu = 0.3;
   const double fMin = 10.0;
+  const double fMax = 1000.0;
   const std::string rf_frame_name = "RLEG_JOINT5";
   const std::string lf_frame_name = "LLEG_JOINT5";
-  Vector3 contactNormal = Vector3::UnitZ();
+  const Vector3 contactNormal = Vector3::UnitZ();
   const double w_com = 1.0;
   const double w_posture = 1e-2;
   const double w_forceReg = 1e-5;
   const double kp_contact = 100.0;
   const double kp_com = 30.0;
   const double kp_posture = 30.0;
+  double t = 0.0;
+
+  RobotWrapper * robot;
+  InverseDynamicsFormulationAccForce * invDyn;
+  Contact6d * contactRF;
+  Contact6d * contactLF;
+  TaskComEquality * comTask;
+  TaskJointPosture * postureTask;
+  Vector q;
+  Vector v;
+  se3::SE3 H_rf_ref;
+  se3::SE3 H_lf_ref;
+
+  StandardHrp2InvDynCtrl()
+  {
+    vector<string> package_dirs;
+    package_dirs.push_back(HRP2_PKG_DIR);
+    string urdfFileName = package_dirs[0] + "/hrp2_14_description/urdf/hrp2_14_reduced.urdf";
+    robot = new RobotWrapper(urdfFileName, package_dirs, se3::JointModelFreeFlyer());
+
+    const unsigned int nv = robot->nv();
+    q = robot->model().neutralConfiguration;
+    q(2) += 0.6;
+    v = Vector::Zero(nv);
+    BOOST_REQUIRE(robot->model().existFrame(rf_frame_name));
+    BOOST_REQUIRE(robot->model().existFrame(lf_frame_name));
+
+    // Create the inverse-dynamics formulation
+    invDyn = new InverseDynamicsFormulationAccForce("invdyn", *robot);
+    invDyn->computeProblemData(t, q, v);
+    const se3::Data & data = invDyn->data();
+
+    // Add the contact constraints
+    Matrix3x contactPoints(3,4);
+    contactPoints << -lxn, -lxn, +lxp, +lxp,
+                     -lyn, +lyp, -lyn, +lyp,
+                      lz,  lz,  lz,  lz;
+    contactRF = new Contact6d("contact_rfoot", *robot, rf_frame_name,
+                              contactPoints, contactNormal,
+                              mu, fMin, fMax, w_forceReg);
+    contactRF->Kp(kp_contact*Vector::Ones(6));
+    contactRF->Kd(2.0*contactRF->Kp().cwiseSqrt());
+    H_rf_ref = robot->position(data, robot->model().getJointId(rf_frame_name));
+    contactRF->setReference(H_rf_ref);
+    invDyn->addRigidContact(*contactRF);
+
+    contactLF = new Contact6d ("contact_lfoot", *robot, lf_frame_name,
+                               contactPoints, contactNormal,
+                               mu, fMin, fMax, w_forceReg);
+    contactLF->Kp(kp_contact*Vector::Ones(6));
+    contactLF->Kd(2.0*contactLF->Kp().cwiseSqrt());
+    H_lf_ref = robot->position(data, robot->model().getJointId(lf_frame_name));
+    contactLF->setReference(H_lf_ref);
+    invDyn->addRigidContact(*contactLF);
+
+    // Add the com task
+    comTask = new TaskComEquality("task-com", *robot);
+    comTask->Kp(kp_com*Vector::Ones(3));
+    comTask->Kd(2.0*comTask->Kp().cwiseSqrt());
+    invDyn->addMotionTask(*comTask, w_com, 1);
+
+    // Add the posture task
+    postureTask = new TaskJointPosture("task-posture", *robot);
+    postureTask->Kp(kp_posture*Vector::Ones(nv-6));
+    postureTask->Kd(2.0*postureTask->Kp().cwiseSqrt());
+    invDyn->addMotionTask(*postureTask, w_posture, 1);
+  }
+
+};
+
+BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
+{
+  cout<<"\n*** test_invdyn_formulation_acc_force_remove_contact ***\n";
   const double dt = 0.01;
   const unsigned int N_DT = 300;
   const unsigned int PRINT_N = 10;
   double t = 0.0;
 
-  vector<string> package_dirs;
-  package_dirs.push_back(HRP2_PKG_DIR);
-  string urdfFileName = package_dirs[0] + "/hrp2_14_description/urdf/hrp2_14_reduced.urdf";
-  RobotWrapper robot(urdfFileName,
-                     package_dirs,
-                     se3::JointModelFreeFlyer());
-  const unsigned int nv = robot.nv();
-  Vector q = robot.model().neutralConfiguration;
-  q(2) += 0.6;
-  Vector v = Vector::Zero(nv);
-  BOOST_REQUIRE(robot.model().existFrame(rf_frame_name));
-  BOOST_REQUIRE(robot.model().existFrame(lf_frame_name));
+  StandardHrp2InvDynCtrl hrp2_inv_dyn;
+  RobotWrapper & robot = *(hrp2_inv_dyn.robot);
+  InverseDynamicsFormulationAccForce * invDyn = hrp2_inv_dyn.invDyn;
+  Contact6d & contactRF = *(hrp2_inv_dyn.contactRF);
+  Contact6d & contactLF = *(hrp2_inv_dyn.contactLF);
+  TaskComEquality & comTask = *(hrp2_inv_dyn.comTask);
+  TaskJointPosture & postureTask = *(hrp2_inv_dyn.postureTask);
+  Vector q = hrp2_inv_dyn.q;
+  Vector v = hrp2_inv_dyn.v;
+  const int nv = robot.model().nv;
 
-  // Create the inverse-dynamics formulation
-  InverseDynamicsFormulationAccForce * invDyn;
-  invDyn = new InverseDynamicsFormulationAccForce("invdyn", robot);
-  invDyn->computeProblemData(t, q, v);
-  const se3::Data & data = invDyn->data();
-
-  // Add the contact constraints
-  Matrix3x contactPoints(3,4);
-  contactPoints << -lxn, -lxn, +lxp, +lxp,
-                   -lyn, +lyp, -lyn, +lyp,
-                    lz,  lz,  lz,  lz;
-  Contact6d contactRF("contact_rfoot", robot, rf_frame_name,
-                    contactPoints, contactNormal,
-                    mu, fMin, w_forceReg);
-  contactRF.Kp(kp_contact*Vector::Ones(6));
-  contactRF.Kd(2.0*contactRF.Kp().cwiseSqrt());
-  se3::SE3 H_rf_ref = robot.position(data,
-                                  robot.model().getJointId(rf_frame_name));
-  contactRF.setReference(H_rf_ref);
-  invDyn->addRigidContact(contactRF);
-
-  Contact6d contactLF("contact_lfoot", robot, lf_frame_name,
-                    contactPoints, contactNormal,
-                    mu, fMin, w_forceReg);
-  contactLF.Kp(kp_contact*Vector::Ones(6));
-  contactLF.Kd(2.0*contactLF.Kp().cwiseSqrt());
-  se3::SE3 H_lf_ref = robot.position(data,
-                                    robot.model().getJointId(lf_frame_name));
-  contactLF.setReference(H_lf_ref);
-  invDyn->addRigidContact(contactLF);
-
-  // Add the com task
-  TaskComEquality comTask("task-com", robot);
-  comTask.Kp(kp_com*Vector::Ones(3));
-  comTask.Kd(2.0*comTask.Kp().cwiseSqrt());
   Vector3 com_ref = robot.com(invDyn->data());
   com_ref(1) += 0.1;
   TrajectoryBase *trajCom = new TrajectoryEuclidianConstant("traj_com", com_ref);
   TrajectorySample sampleCom(3);
-  invDyn->addMotionTask(comTask, w_com, 1);
 
-  // Add the posture task
-  TaskJointPosture postureTask("task-posture", robot);
-  postureTask.Kp(kp_posture*Vector::Ones(nv-6));
-  postureTask.Kd(2.0*postureTask.Kp().cwiseSqrt());
   Vector q_ref = q.tail(nv-6);
   TrajectoryBase *trajPosture = new TrajectoryEuclidianConstant("traj_posture", q_ref);
   TrajectorySample samplePosture(nv-6);
-  invDyn->addMotionTask(postureTask, w_posture, 1);
 
   // Create an HQP solver
   Solver_HQP_base * solver = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG,
@@ -213,89 +244,31 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
 BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
 {
   cout<<"\n*** test_invdyn_formulation_acc_force ***\n";
-  const double lxp = 0.14;
-  const double lxn = 0.077;
-  const double lyp = 0.069;
-  const double lyn = 0.069;
-  const double lz = 0.105;
-  const double mu = 0.3;
-  const double fMin = 10.0;
-  const std::string rf_frame_name = "RLEG_JOINT5";
-  const std::string lf_frame_name = "LLEG_JOINT5";
-  Vector3 contactNormal = Vector3::UnitZ();
-  const double w_com = 1.0;
-  const double w_posture = 1e-2;
-  const double w_forceReg = 1e-5;
-  const double kp_contact = 100.0;
-  const double kp_com = 30.0;
-  const double kp_posture = 30.0;
+
   const double dt = 0.001;
   const unsigned int N_DT = 3000;
   const unsigned int PRINT_N = 100;
   double t = 0.0;
 
-  vector<string> package_dirs;
-  package_dirs.push_back(HRP2_PKG_DIR);
-  string urdfFileName = package_dirs[0] + "/hrp2_14_description/urdf/hrp2_14_reduced.urdf";
-  RobotWrapper robot(urdfFileName,
-                     package_dirs,
-                     se3::JointModelFreeFlyer());
-  const unsigned int nv = robot.nv();
-  Vector q = robot.model().neutralConfiguration;
-  q(2) += 0.6;
-  Vector v = Vector::Zero(nv);
-  BOOST_REQUIRE(robot.model().existFrame(rf_frame_name));
-  BOOST_REQUIRE(robot.model().existFrame(lf_frame_name));
+  StandardHrp2InvDynCtrl hrp2_inv_dyn;
+  RobotWrapper & robot = *(hrp2_inv_dyn.robot);
+  InverseDynamicsFormulationAccForce * invDyn = hrp2_inv_dyn.invDyn;
+  Contact6d & contactRF = *(hrp2_inv_dyn.contactRF);
+  Contact6d & contactLF = *(hrp2_inv_dyn.contactLF);
+  TaskComEquality & comTask = *(hrp2_inv_dyn.comTask);
+  TaskJointPosture & postureTask = *(hrp2_inv_dyn.postureTask);
+  Vector q = hrp2_inv_dyn.q;
+  Vector v = hrp2_inv_dyn.v;
+  const int nv = robot.model().nv;
 
-  // Create the inverse-dynamics formulation
-  InverseDynamicsFormulationAccForce * invDyn;
-  invDyn = new InverseDynamicsFormulationAccForce("invdyn", robot);
-  invDyn->computeProblemData(t, q, v);
-  const se3::Data & data = invDyn->data();
-
-  // Add the contact constraints
-  Matrix3x contactPoints(3,4);
-  contactPoints << -lxn, -lxn, +lxp, +lxp,
-                   -lyn, +lyp, -lyn, +lyp,
-                    lz,  lz,  lz,  lz;
-  Contact6d contactRF("contact_rfoot", robot, rf_frame_name,
-                    contactPoints, contactNormal,
-                    mu, fMin, w_forceReg);
-  contactRF.Kp(kp_contact*Vector::Ones(6));
-  contactRF.Kd(2.0*contactRF.Kp().cwiseSqrt());
-  se3::SE3 H_rf_ref = robot.position(data,
-                                  robot.model().getJointId(rf_frame_name));
-  contactRF.setReference(H_rf_ref);
-  invDyn->addRigidContact(contactRF);
-
-  Contact6d contactLF("contact_lfoot", robot, lf_frame_name,
-                    contactPoints, contactNormal,
-                    mu, fMin, w_forceReg);
-  contactLF.Kp(kp_contact*Vector::Ones(6));
-  contactLF.Kd(2.0*contactLF.Kp().cwiseSqrt());
-  se3::SE3 H_lf_ref = robot.position(data,
-                                    robot.model().getJointId(lf_frame_name));
-  contactLF.setReference(H_lf_ref);
-  invDyn->addRigidContact(contactLF);
-
-  // Add the com task
-  TaskComEquality comTask("task-com", robot);
-  comTask.Kp(kp_com*Vector::Ones(3));
-  comTask.Kd(2.0*comTask.Kp().cwiseSqrt());
   Vector3 com_ref = robot.com(invDyn->data());
-  com_ref(0) += 0.1;
+  com_ref(1) += 0.1;
   TrajectoryBase *trajCom = new TrajectoryEuclidianConstant("traj_com", com_ref);
   TrajectorySample sampleCom(3);
-  invDyn->addMotionTask(comTask, w_com, 1);
 
-  // Add the posture task
-  TaskJointPosture postureTask("task-posture", robot);
-  postureTask.Kp(kp_posture*Vector::Ones(nv-6));
-  postureTask.Kd(2.0*postureTask.Kp().cwiseSqrt());
   Vector q_ref = q.tail(nv-6);
   TrajectoryBase *trajPosture = new TrajectoryEuclidianConstant("traj_posture", q_ref);
   TrajectorySample samplePosture(nv-6);
-  invDyn->addMotionTask(postureTask, w_posture, 1);
 
   // Create an HQP solver
   Solver_HQP_base * solver = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG,
@@ -305,8 +278,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   cout<<"nEq "<<invDyn->nEq()<<endl;
   cout<<"nIn "<<invDyn->nIn()<<endl;
   cout<<"Initial CoM position: "<<robot.com(invDyn->data()).transpose()<<endl;
-  cout<<"Initial RF position: "<<H_rf_ref<<endl;
-  cout<<"Initial LF position: "<<H_lf_ref<<endl;
+  cout<<"Initial RF position: "<<hrp2_inv_dyn.H_rf_ref<<endl;
+  cout<<"Initial LF position: "<<hrp2_inv_dyn.H_lf_ref<<endl;
 
   Vector dv = Vector::Zero(nv);
   Vector f_RF(12), f_LF(12), f(24);
@@ -453,89 +426,31 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
 BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
 {
   cout<<"\n*** test_invdyn_formulation_acc_force_computation_time ***\n";
-  const double lxp = 0.14;
-  const double lxn = 0.077;
-  const double lyp = 0.069;
-  const double lyn = 0.069;
-  const double lz = 0.105;
-  const double mu = 0.3;
-  const double fMin = 10.0;
-  const std::string rf_frame_name = "RLEG_JOINT5";
-  const std::string lf_frame_name = "LLEG_JOINT5";
-  Vector3 contactNormal = Vector3::UnitZ();
-  const double w_com = 1.0;
-  const double w_posture = 1e-2;
-  const double w_forceReg = 1e-5;
-  const double kp_contact = 100.0;
-  const double kp_com = 30.0;
-  const double kp_posture = 30.0;
+
   const double dt = 0.001;
   const unsigned int N_DT = 3000;
   const unsigned int PRINT_N = 100;
   double t = 0.0;
 
-  vector<string> package_dirs;
-  package_dirs.push_back(HRP2_PKG_DIR);
-  string urdfFileName = package_dirs[0] + "/hrp2_14_description/urdf/hrp2_14_reduced.urdf";
-  RobotWrapper robot(urdfFileName,
-                     package_dirs,
-                     se3::JointModelFreeFlyer());
-  const unsigned int nv = robot.nv();
-  Vector q = robot.model().neutralConfiguration;
-  q(2) += 0.6;
-  Vector v = Vector::Zero(nv);
-  BOOST_REQUIRE(robot.model().existFrame(rf_frame_name));
-  BOOST_REQUIRE(robot.model().existFrame(lf_frame_name));
+  StandardHrp2InvDynCtrl hrp2_inv_dyn;
+  RobotWrapper & robot = *(hrp2_inv_dyn.robot);
+  InverseDynamicsFormulationAccForce * invDyn = hrp2_inv_dyn.invDyn;
+  Contact6d & contactRF = *(hrp2_inv_dyn.contactRF);
+  Contact6d & contactLF = *(hrp2_inv_dyn.contactLF);
+  TaskComEquality & comTask = *(hrp2_inv_dyn.comTask);
+  TaskJointPosture & postureTask = *(hrp2_inv_dyn.postureTask);
+  Vector q = hrp2_inv_dyn.q;
+  Vector v = hrp2_inv_dyn.v;
+  const int nv = robot.model().nv;
 
-  // Create the inverse-dynamics formulation
-  InverseDynamicsFormulationAccForce * invDyn;
-  invDyn = new InverseDynamicsFormulationAccForce("invdyn", robot);
-  invDyn->computeProblemData(t, q, v);
-  const se3::Data & data = invDyn->data();
-
-  // Add the contact constraints
-  Matrix3x contactPoints(3,4);
-  contactPoints << -lxn, -lxn, +lxp, +lxp,
-                   -lyn, +lyp, -lyn, +lyp,
-                    lz,  lz,  lz,  lz;
-  Contact6d contactRF("contact_rfoot", robot, rf_frame_name,
-                    contactPoints, contactNormal,
-                    mu, fMin, w_forceReg);
-  contactRF.Kp(kp_contact*Vector::Ones(6));
-  contactRF.Kd(2.0*contactRF.Kp().cwiseSqrt());
-  se3::SE3 H_rf_ref = robot.position(data,
-                                  robot.model().getJointId(rf_frame_name));
-  contactRF.setReference(H_rf_ref);
-  invDyn->addRigidContact(contactRF);
-
-  Contact6d contactLF("contact_lfoot", robot, lf_frame_name,
-                    contactPoints, contactNormal,
-                    mu, fMin, w_forceReg);
-  contactLF.Kp(kp_contact*Vector::Ones(6));
-  contactLF.Kd(2.0*contactLF.Kp().cwiseSqrt());
-  se3::SE3 H_lf_ref = robot.position(data,
-                                    robot.model().getJointId(lf_frame_name));
-  contactLF.setReference(H_lf_ref);
-  invDyn->addRigidContact(contactLF);
-
-  // Add the com task
-  TaskComEquality comTask("task-com", robot);
-  comTask.Kp(kp_com*Vector::Ones(3));
-  comTask.Kd(2.0*comTask.Kp().cwiseSqrt());
   Vector3 com_ref = robot.com(invDyn->data());
-  com_ref(0) += 0.1;
+  com_ref(1) += 0.1;
   TrajectoryBase *trajCom = new TrajectoryEuclidianConstant("traj_com", com_ref);
   TrajectorySample sampleCom(3);
-  invDyn->addMotionTask(comTask, w_com, 1);
 
-  // Add the posture task
-  TaskJointPosture postureTask("task-posture", robot);
-  postureTask.Kp(kp_posture*Vector::Ones(nv-6));
-  postureTask.Kd(2.0*postureTask.Kp().cwiseSqrt());
   Vector q_ref = q.tail(nv-6);
   TrajectoryBase *trajPosture = new TrajectoryEuclidianConstant("traj_posture", q_ref);
   TrajectorySample samplePosture(nv-6);
-  invDyn->addMotionTask(postureTask, w_posture, 1);
 
   // Create an HQP solver
   Solver_HQP_base * solver = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG,
@@ -543,7 +458,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
   Solver_HQP_base * solver_fast = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG_FAST,
                                                                 "eiquadprog-fast");
   Solver_HQP_base * solver_rt =
-      Solver_HQP_base::getNewSolverFixedSize<60,18,40>(SOLVER_HQP_EIQUADPROG_RT,
+      Solver_HQP_base::getNewSolverFixedSize<60,18,34>(SOLVER_HQP_EIQUADPROG_RT,
                                                        "eiquadprog-rt");
   solver->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
   solver_fast->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());

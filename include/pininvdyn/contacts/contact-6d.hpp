@@ -48,6 +48,7 @@ namespace pininvdyn
                 ConstRefVector contactNormal,
                 const double frictionCoefficient,
                 const double minNormalForce,
+                const double maxNormalForce,
                 const double regularizationTaskWeight);
 
       /// Return the number of motion constraints
@@ -89,6 +90,7 @@ namespace pininvdyn
 
       bool setFrictionCoefficient(const double frictionCoefficient);
       bool setMinNormalForce(const double minNormalForce);
+      bool setMaxNormalForce(const double maxNormalForce);
       bool setRegularizationTaskWeight(const double w);
       void setReference(const SE3 & ref);
 
@@ -105,6 +107,7 @@ namespace pininvdyn
       Vector3 m_contactNormal;
       double m_mu;
       double m_fMin;
+      double m_fMax;
       double m_regularizationTaskWeight;
       Matrix m_forceGenMat;
     };

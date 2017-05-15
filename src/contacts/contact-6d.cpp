@@ -30,6 +30,7 @@ Contact6d::Contact6d(const std::string & name,
                      ConstRefVector contactNormal,
                      const double frictionCoefficient,
                      const double minNormalForce,
+                     const double maxNormalForce,
                      const double regularizationTaskWeight):
   ContactBase(name, robot),
   m_motionTask(name, robot, frameName),
@@ -39,6 +40,7 @@ Contact6d::Contact6d(const std::string & name,
   m_contactNormal(contactNormal),
   m_mu(frictionCoefficient),
   m_fMin(minNormalForce),
+  m_fMax(maxNormalForce),
   m_regularizationTaskWeight(regularizationTaskWeight)
 {
   m_forceGenMat.resize(6,12);
@@ -50,9 +52,11 @@ Contact6d::Contact6d(const std::string & name,
 void Contact6d::updateForceInequalityConstraints()
 {
   Vector3 t1, t2;
-  Matrix B = Matrix::Zero(5*4, 3*4);
-  Vector lb = -1e10*Vector::Ones(5*4);
-  Vector ub =  1e10*Vector::Ones(5*4);
+  const int n_in = 4*4 + 1;
+  const int n_var = 3*4;
+  Matrix B = Matrix::Zero(n_in, n_var);
+  Vector lb = -1e10*Vector::Ones(n_in);
+  Vector ub =  Vector::Zero(n_in);
   t1 = m_contactNormal.cross(Vector3::UnitX());
   if(t1.norm()<1e-5)
     t1 = m_contactNormal.cross(Vector3::UnitY());
@@ -64,16 +68,18 @@ void Contact6d::updateForceInequalityConstraints()
   B.block<1,3>(1,0) = (t1 - m_mu*m_contactNormal).transpose();
   B.block<1,3>(2,0) = (-t2 - m_mu*m_contactNormal).transpose();
   B.block<1,3>(3,0) = (t2 - m_mu*m_contactNormal).transpose();
-  ub.head<4>().setZero();
-  B.block<1,3>(4,0) = m_contactNormal.transpose();
-  lb(4)    = m_fMin;
 
   for(int i=1; i<4; i++)
   {
-    B.block<5,3>(5*i,3*i)   = B.topLeftCorner<5,3>();
-    lb.segment<5>(5*i)      = lb.head<5>();
-    ub.segment<5>(5*i)      = ub.head<5>();
+    B.block<4,3>(4*i,3*i)   = B.topLeftCorner<4,3>();
   }
+
+  B.block<1,3>(n_in-1,0) = m_contactNormal.transpose();
+  B.block<1,3>(n_in-1,3) = m_contactNormal.transpose();
+  B.block<1,3>(n_in-1,6) = m_contactNormal.transpose();
+  B.block<1,3>(n_in-1,9) = m_contactNormal.transpose();
+  ub(n_in-1)    = m_fMax;
+  lb(n_in-1)    = m_fMin;
 
   m_forceInequality.setMatrix(B);
   m_forceInequality.setLowerBound(lb);
@@ -145,11 +151,23 @@ bool Contact6d::setFrictionCoefficient(const double frictionCoefficient)
 
 bool Contact6d::setMinNormalForce(const double minNormalForce)
 {
-  assert(minNormalForce>0.0);
-  if(minNormalForce<=0.0)
+  assert(minNormalForce>0.0 && minNormalForce<=m_fMax);
+  if(minNormalForce<=0.0 || minNormalForce>m_fMax)
     return false;
   m_fMin = minNormalForce;
-  updateForceInequalityConstraints();
+  Vector & lb = m_forceInequality.lowerBound();
+  lb(lb.size()-1) = m_fMin;
+  return true;
+}
+
+bool Contact6d::setMaxNormalForce(const double maxNormalForce)
+{
+  assert(maxNormalForce>=m_fMin);
+  if(maxNormalForce<m_fMin)
+    return false;
+  m_fMax = maxNormalForce;
+  Vector & ub = m_forceInequality.upperBound();
+  ub(ub.size()-1) = m_fMax;
   return true;
 }
 
