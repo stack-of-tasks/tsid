@@ -56,7 +56,7 @@ class StandardHrp2InvDynCtrl
   const double lyn = 0.069;
   const double lz = 0.105;
   const double mu = 0.3;
-  const double fMin = 10.0;
+  const double fMin = 5.0;
   const double fMax = 1000.0;
   const std::string rf_frame_name = "RLEG_JOINT5";
   const std::string lf_frame_name = "LLEG_JOINT5";
@@ -143,6 +143,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   const double dt = 0.01;
   const unsigned int N_DT = 300;
   const unsigned int PRINT_N = 10;
+  const unsigned int REMOVE_CONTACT_N = 100;
+  const double CONTACT_TRANSITION_TIME = 1.0;
   double t = 0.0;
 
   StandardHrp2InvDynCtrl hrp2_inv_dyn;
@@ -170,13 +172,12 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
                                                            "solver-eiquadprog");
   solver->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
 
-  Vector dv = Vector::Zero(nv);
   for(int i=0; i<N_DT; i++)
   {
-    if(i==1000)
+    if(i==REMOVE_CONTACT_N)
     {
       cout<<"Break contact right foot\n";
-      invDyn->removeRigidContact(contactRF.name());
+      invDyn->removeRigidContact(contactRF.name(), CONTACT_TRANSITION_TIME);
     }
     sampleCom = trajCom->computeNext();
     comTask.setReference(sampleCom);
@@ -209,20 +210,27 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
     CHECK_LESS_THAN(contactRF.getMotionTask().position_error().norm(), 1e-3);
     CHECK_LESS_THAN(contactLF.getMotionTask().position_error().norm(), 1e-3);
 
-    if(i%PRINT_N==0)
-    {
-      cout<<"Time "<<i<<endl;
-      cout<<"  "<<contactRF.name()<<" err: "<<contactRF.getMotionTask().position_error().norm()<<" \t";
-      cout<<contactLF.name()<<" err: "<<contactLF.getMotionTask().position_error().norm()<<" \t";
-      cout<<comTask.name()<<" err: "<<comTask.position_error().norm()<<" \t";
-      cout<<"v="<<v.norm()<<"\t dv="<<dv.norm()<<endl;
-    }
-
     const HqpOutput & sol = solver->solve(hqpData);
 
     BOOST_CHECK_MESSAGE(sol.status==HQP_STATUS_OPTIMAL, "Status "+toString(sol.status));
 
-    dv = sol.x.head(nv);
+    const Vector & tau = invDyn->getActuatorForces(sol);
+    const Vector & dv = invDyn->getAccelerations(sol);
+
+    if(i%PRINT_N==0)
+    {
+      cout<<"Time "<<i<<endl;
+
+      Eigen::Matrix<double, 12, 1> f;
+      if(invDyn->getContactForces(contactRF.name(), sol, f))
+        cout<<"  "<<contactRF.name()<<" force: "<<contactRF.getNormalForce(f)<<" \t";
+
+      if(invDyn->getContactForces(contactLF.name(), sol, f))
+        cout<<"  "<<contactLF.name()<<" force: "<<contactLF.getNormalForce(f)<<" \t";
+
+      cout<<comTask.name()<<" err: "<<comTask.position_error().norm()<<" \t";
+      cout<<"v="<<v.norm()<<"\t dv="<<dv.norm()<<endl;
+    }
 
     v += dt*dv;
     q = se3::integrate(robot.model(), q, dt*v);
@@ -429,14 +437,11 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
 
   const double dt = 0.001;
   const unsigned int N_DT = 3000;
-  const unsigned int PRINT_N = 100;
   double t = 0.0;
 
   StandardHrp2InvDynCtrl hrp2_inv_dyn;
   RobotWrapper & robot = *(hrp2_inv_dyn.robot);
   InverseDynamicsFormulationAccForce * invDyn = hrp2_inv_dyn.invDyn;
-  Contact6d & contactRF = *(hrp2_inv_dyn.contactRF);
-  Contact6d & contactLF = *(hrp2_inv_dyn.contactLF);
   TaskComEquality & comTask = *(hrp2_inv_dyn.comTask);
   TaskJointPosture & postureTask = *(hrp2_inv_dyn.postureTask);
   Vector q = hrp2_inv_dyn.q;

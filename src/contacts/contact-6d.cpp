@@ -86,11 +86,19 @@ void Contact6d::updateForceInequalityConstraints()
   m_forceInequality.setUpperBound(ub);
 }
 
+double Contact6d::getNormalForce(ConstRefVector f) const
+{
+  assert(f.size()==n_force());
+  double n=0.0;
+  for(int i=0; i<4; i++)
+    n += m_contactNormal.dot(f.segment<3>(i*3));
+  return n;
+}
+
 void Contact6d::updateForceRegularizationTask()
 {
   // [1, 1, 1e-3, 2, 2, 2] weights of force regularization task
 typedef Eigen::Matrix<double,6,6> Matrix6;
-typedef Eigen::Matrix<double,12,1> Vector12;
   Vector6 m_weightForceRegTask;
   m_weightForceRegTask << 1, 1, 1e-3, 2, 2, 2;
   Matrix6 A = Matrix6::Zero();
@@ -215,6 +223,9 @@ const ConstraintEquality & Contact6d::computeForceRegularizationTask(const doubl
 {
   return m_forceRegTask;
 }
+
+double Contact6d::getMinNormalForce() const { return m_fMin; }
+double Contact6d::getMaxNormalForce() const { return m_fMax; }
 
 const TaskMotion & Contact6d::getMotionTask() const { return m_motionTask; }
 

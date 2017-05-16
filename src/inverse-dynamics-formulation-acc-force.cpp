@@ -46,7 +46,8 @@ InverseDynamicsFormulationAccForce::InverseDynamicsFormulationAccForce(const std
                                                                        bool verbose):
   InverseDynamicsFormulationBase(name, robot, verbose),
   m_data(robot.model()),
-  m_baseDynamics("base-dynamics", 6, robot.nv())
+  m_baseDynamics("base-dynamics", 6, robot.nv()),
+  m_solutionDecoded(false)
 {
   m_t = 0.0;
   m_v = robot.nv();
@@ -214,6 +215,28 @@ const HqpData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
                                                                        ConstRefVector v)
 {
   m_t = time;
+
+  vector<ContactTransitionInfo*>::iterator it_ct;
+  for(it_ct=m_contactTransitions.begin(); it_ct!=m_contactTransitions.end(); it_ct++)
+  {
+    const ContactTransitionInfo * c = *it_ct;
+    assert(c->time_start <= m_t);
+    if(m_t < c->time_end)
+    {
+      const double alpha = (m_t - c->time_start) / (c->time_end - c->time_start);
+      const double fMax = c->fMax_start + alpha*(c->fMax_end - c->fMax_start);
+      c->contactLevel->contact.setMaxNormalForce(fMax);
+    }
+    else
+    {
+      removeRigidContact(c->contactLevel->contact.name());
+      // FIXME: this won't work if multiple contact transitions occur at the same time
+      // because after erasing an element the iterator is invalid
+      m_contactTransitions.erase(it_ct);
+      break;
+    }
+  }
+
   m_robot.computeAllTerms(m_data, q, v);
 
   for(vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
@@ -305,11 +328,15 @@ const HqpData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     }
   }
 
+  m_solutionDecoded = false;
+
   return m_hqpData;
 }
 
-const Vector & InverseDynamicsFormulationAccForce::computeActuatorForces(const HqpOutput & sol)
+bool InverseDynamicsFormulationAccForce::decodeSolution(const HqpOutput & sol)
 {
+  if(m_solutionDecoded)
+    return true;
   const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-6);
   const Vector & h_a = m_robot.nonLinearEffects(m_data).tail(m_v-6);
   const Matrix & J_a = m_Jc.rightCols(m_v-6);
@@ -318,9 +345,45 @@ const Vector & InverseDynamicsFormulationAccForce::computeActuatorForces(const H
   m_tau = h_a;
   m_tau.noalias() += M_a*m_dv;
   m_tau.noalias() -= J_a.transpose()*m_f;
+  m_solutionDecoded = true;
+  return true;
+}
+
+const Vector & InverseDynamicsFormulationAccForce::getActuatorForces(const HqpOutput & sol)
+{
+  decodeSolution(sol);
   return m_tau;
 }
 
+const Vector & InverseDynamicsFormulationAccForce::getAccelerations(const HqpOutput & sol)
+{
+  decodeSolution(sol);
+  return m_dv;
+}
+
+const Vector & InverseDynamicsFormulationAccForce::getContactForces(const HqpOutput & sol)
+{
+  decodeSolution(sol);
+  return m_f;
+}
+
+bool InverseDynamicsFormulationAccForce::getContactForces(const std::string & name,
+                                                          const HqpOutput & sol,
+                                                          RefVector f)
+{
+  decodeSolution(sol);
+  for(vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+  {
+    if((*it)->contact.name()==name)
+    {
+      const int k = (*it)->contact.n_force();
+      assert(f.size()==k);
+      f = m_f.segment((*it)->index, k);
+      return true;
+    }
+  }
+  return false;
+}
 
 bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName,
                                                     double transition_duration)
@@ -374,6 +437,34 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
 bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & contactName,
                                                             double transition_duration)
 {
+  if(transition_duration>0.0)
+  {
+    for(vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+    {
+      if((*it)->contact.name()==contactName)
+      {
+        ContactTransitionInfo * transitionInfo = new ContactTransitionInfo();
+        transitionInfo->contactLevel = (*it);
+        transitionInfo->time_start = m_t;
+        transitionInfo->time_end = m_t + transition_duration;
+        const int k = (*it)->contact.n_force();
+        if(m_f.size() >= (*it)->index+k)
+        {
+          const Vector f = m_f.segment((*it)->index, k);
+          transitionInfo->fMax_start = (*it)->contact.getNormalForce(f);
+        }
+        else
+        {
+          transitionInfo->fMax_start = (*it)->contact.getMaxNormalForce();
+        }
+        transitionInfo->fMax_end = (*it)->contact.getMinNormalForce() + 1e-3;
+        m_contactTransitions.push_back(transitionInfo);
+        return true;
+      }
+    }
+    return false;
+  }
+
   bool first_constraint_found = removeFromHqpData(contactName);
   assert(first_constraint_found);
 

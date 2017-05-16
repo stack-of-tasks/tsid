@@ -85,6 +85,13 @@ namespace pininvdyn
                                                ConstRefVector q,
                                                ConstRefVector v) = 0;
 
+    virtual const Vector & getActuatorForces(const HqpOutput & sol) = 0;
+    virtual const Vector & getAccelerations(const HqpOutput & sol) = 0;
+    virtual const Vector & getContactForces(const HqpOutput & sol) = 0;
+    virtual bool getContactForces(const std::string & name,
+                                  const HqpOutput & sol,
+                                  RefVector f) = 0;
+
   protected:
     std::string m_name;
     RobotWrapper m_robot;

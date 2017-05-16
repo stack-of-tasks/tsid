@@ -81,6 +81,12 @@ namespace pininvdyn
       virtual const ConstraintEquality & getForceRegularizationTask() const = 0;
       virtual double getForceRegularizationWeight() const = 0;
       
+      virtual double getMinNormalForce() const = 0;
+      virtual double getMaxNormalForce() const = 0;
+      virtual bool setMinNormalForce(const double minNormalForce) = 0;
+      virtual bool setMaxNormalForce(const double maxNormalForce) = 0;
+      virtual double getNormalForce(ConstRefVector f) const = 0;
+
     protected:
       std::string m_name;
       /// \brief Reference on the robot model.

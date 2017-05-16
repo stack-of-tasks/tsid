@@ -49,6 +49,16 @@ namespace pininvdyn
     ContactLevel(pininvdyn::contacts::ContactBase & contact);
   };
 
+  class ContactTransitionInfo
+  {
+  public:
+    double time_start;
+    double time_end;
+    double fMax_start;  /// max normal force at time time_start
+    double fMax_end;    /// max normal force at time time_end
+    ContactLevel * contactLevel;
+  };
+
   class InverseDynamicsFormulationAccForce:
       public InverseDynamicsFormulationBase
   {
@@ -103,7 +113,12 @@ namespace pininvdyn
                                        ConstRefVector q,
                                        ConstRefVector v);
 
-    const Vector & computeActuatorForces(const HqpOutput & sol);
+    const Vector & getActuatorForces(const HqpOutput & sol);
+    const Vector & getAccelerations(const HqpOutput & sol);
+    const Vector & getContactForces(const HqpOutput & sol);
+    bool getContactForces(const std::string & name,
+                          const HqpOutput & sol,
+                          RefVector f);
 
   public:
 
@@ -114,6 +129,8 @@ namespace pininvdyn
     void resizeHqpData();
 
     bool removeFromHqpData(const std::string & name);
+
+    bool decodeSolution(const HqpOutput & sol);
 
     Data m_data;
     HqpData m_hqpData;
@@ -129,9 +146,12 @@ namespace pininvdyn
     Matrix m_Jc;        /// contact force Jacobian
     pininvdyn::math::ConstraintEquality m_baseDynamics;
 
+    bool m_solutionDecoded;
     Vector m_dv;
     Vector m_f;
     Vector m_tau;
+
+    std::vector<ContactTransitionInfo*> m_contactTransitions;
   };
 
 }

@@ -80,6 +80,10 @@ namespace pininvdyn
       const ConstraintEquality & getForceRegularizationTask() const;
       double getForceRegularizationWeight() const;
 
+      double getNormalForce(ConstRefVector f) const;
+      double getMinNormalForce() const;
+      double getMaxNormalForce() const;
+
       const Vector & Kp() const;
       const Vector & Kd() const;
       void Kp(ConstRefVector Kp);
