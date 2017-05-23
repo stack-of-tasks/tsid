@@ -47,11 +47,15 @@ namespace pininvdyn
       const ConstraintBase & compute(const double t,
                                      ConstRefVector q,
                                      ConstRefVector v,
-                                     Data & data);
+                                     const Data & data);
 
       const ConstraintBase & getConstraint() const;
 
       void setReference(const TrajectorySample & ref);
+      const TrajectorySample & getReference() const;
+
+      const Vector & getDesiredAcceleration() const;
+      Vector getAcceleration(ConstRefVector dv) const;
 
       const Vector & mask() const;
       bool mask(const Vector & mask);
@@ -73,6 +77,7 @@ namespace pininvdyn
       Vector m_Kd;
       Vector m_p_error, m_v_error;
       Vector m_p, m_v;
+      Vector m_a_des;
       Vector m_mask;
       VectorXi m_activeAxes;
       TrajectorySample m_ref;

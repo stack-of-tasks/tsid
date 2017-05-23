@@ -50,11 +50,15 @@ namespace pininvdyn
       const ConstraintBase & compute(const double t,
                                      ConstRefVector q,
                                      ConstRefVector v,
-                                     Data & data);
+                                     const Data & data);
 
       const ConstraintBase & getConstraint() const;
 
       void setReference(TrajectorySample & ref);
+      const TrajectorySample & getReference() const;
+
+      const Vector & getDesiredAcceleration() const;
+      Vector getAcceleration(ConstRefVector dv) const;
 
       const Vector & position_error() const;
       const Vector & velocity_error() const;
@@ -80,8 +84,10 @@ namespace pininvdyn
       Vector m_Kp;
       Vector m_Kd;
       Vector m_a_des;
+      Motion m_drift;
       Matrix6x m_J;
       ConstraintEquality m_constraint;
+      TrajectorySample m_ref;
     };
     
   }

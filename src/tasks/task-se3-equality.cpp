@@ -22,6 +22,7 @@ namespace pininvdyn
   namespace tasks
   {
     using namespace pininvdyn::math;
+    using namespace pininvdyn::trajectories;
     using namespace se3;
 
     TaskSE3Equality::TaskSE3Equality(const std::string & name,
@@ -29,7 +30,8 @@ namespace pininvdyn
                                      const std::string & frameName):
       TaskMotion(name, robot),
       m_frame_name(frameName),
-      m_constraint(name, 6, robot.nv())
+      m_constraint(name, 6, robot.nv()),
+      m_ref(12, 6)
     {
       assert(m_robot.model().existFrame(frameName));
       m_frame_id = m_robot.model().getFrameId(frameName);
@@ -74,9 +76,15 @@ namespace pininvdyn
 
     void TaskSE3Equality::setReference(TrajectorySample & ref)
     {
+      m_ref = ref;
       vectorToSE3(ref.pos, m_M_ref);
       m_v_ref = Motion(ref.vel);
       m_a_ref = Motion(ref.acc);
+    }
+
+    const TrajectorySample & TaskSE3Equality::getReference() const
+    {
+      return m_ref;
     }
 
     const Vector & TaskSE3Equality::position_error() const
@@ -109,6 +117,16 @@ namespace pininvdyn
       return m_v_ref_vec;
     }
 
+    const Vector & TaskSE3Equality::getDesiredAcceleration() const
+    {
+      return m_a_des;
+    }
+
+    Vector TaskSE3Equality::getAcceleration(ConstRefVector dv) const
+    {
+      return m_constraint.matrix()*dv - m_drift.toVector();
+    }
+
     const ConstraintBase & TaskSE3Equality::getConstraint() const
     {
       return m_constraint;
@@ -117,13 +135,13 @@ namespace pininvdyn
     const ConstraintBase & TaskSE3Equality::compute(const double t,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    Data & data)
+                                                    const Data & data)
     {
       SE3 oMi;
-      Motion v_frame, drift;
+      Motion v_frame;
       m_robot.framePosition(data, m_frame_id, oMi);
       m_robot.frameVelocity(data, m_frame_id, v_frame);
-      m_robot.frameClassicAcceleration(data, m_frame_id, drift);
+      m_robot.frameClassicAcceleration(data, m_frame_id, m_drift);
 
       // Transformation from local to world
       m_wMl.rotation(oMi.rotation());
@@ -144,16 +162,16 @@ namespace pininvdyn
 #endif
 
       // desired acc in local frame
-      m_a_des = - m_Kp.cwiseProduct(m_p_error.toVector_impl())
-                - m_Kd.cwiseProduct(m_v_error.toVector_impl())
-                + m_wMl.actInv(m_a_ref).toVector_impl();
+      m_a_des = - m_Kp.cwiseProduct(m_p_error.toVector())
+                - m_Kd.cwiseProduct(m_v_error.toVector())
+                + m_wMl.actInv(m_a_ref).toVector();
 
       // @todo Since Jacobian computation is cheaper in world frame
       // we could do all computations in world frame
       m_robot.frameJacobianLocal(data, m_frame_id, m_J);
 
       m_constraint.setMatrix(m_J);
-      m_constraint.setVector(m_a_des - drift.toVector_impl());
+      m_constraint.setVector(m_a_des - m_drift.toVector());
       return m_constraint;
     }
     

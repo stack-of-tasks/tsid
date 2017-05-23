@@ -22,6 +22,7 @@ namespace pininvdyn
   namespace tasks
   {
     using namespace pininvdyn::math;
+    using namespace pininvdyn::trajectories;
     using namespace se3;
 
     TaskJointPosture::TaskJointPosture(const std::string & name,
@@ -90,6 +91,21 @@ namespace pininvdyn
       m_ref = ref;
     }
 
+    const TrajectorySample & TaskJointPosture::getReference() const
+    {
+      return m_ref;
+    }
+
+    const Vector & TaskJointPosture::getDesiredAcceleration() const
+    {
+      return m_a_des;
+    }
+
+    Vector TaskJointPosture::getAcceleration(ConstRefVector dv) const
+    {
+      return m_constraint.matrix()*dv;
+    }
+
     const Vector & TaskJointPosture::position_error() const
     {
       return m_p_error;
@@ -128,16 +144,16 @@ namespace pininvdyn
     const ConstraintBase & TaskJointPosture::compute(const double t,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    Data & data)
+                                                    const Data & data)
     {
       // Compute errors
       m_p = q.tail(m_robot.nv()-6);
       m_v = v.tail(m_robot.nv()-6);
       m_p_error = m_p - m_ref.pos;
       m_v_error = m_v - m_ref.vel;
-      Vector m_a_des = - m_Kp.cwiseProduct(m_p_error)
-                       - m_Kd.cwiseProduct(m_v_error)
-                       + m_ref.acc;
+      m_a_des = - m_Kp.cwiseProduct(m_p_error)
+                - m_Kd.cwiseProduct(m_v_error)
+                + m_ref.acc;
 
       for(unsigned int i=0; i<m_activeAxes.size(); i++)
         m_constraint.vector()(i) = m_a_des(m_activeAxes(i));

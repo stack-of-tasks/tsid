@@ -198,7 +198,7 @@ void Contact6d::setReference(const SE3 & ref)
 const ConstraintBase & Contact6d::computeMotionTask(const double t,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    Data & data)
+                                                    const Data & data)
 {
   return m_motionTask.compute(t, q, v, data);
 }
@@ -206,7 +206,7 @@ const ConstraintBase & Contact6d::computeMotionTask(const double t,
 const ConstraintInequality & Contact6d::computeForceTask(const double t,
                                                          ConstRefVector q,
                                                          ConstRefVector v,
-                                                         Data & data)
+                                                         const Data & data)
 {
   return m_forceInequality;
 }
@@ -219,7 +219,7 @@ const Matrix & Contact6d::getForceGeneratorMatrix()
 const ConstraintEquality & Contact6d::computeForceRegularizationTask(const double t,
                                                                      ConstRefVector q,
                                                                      ConstRefVector v,
-                                                                     Data & data)
+                                                                     const Data & data)
 {
   return m_forceRegTask;
 }

@@ -23,6 +23,7 @@
 #include <pininvdyn/contacts/contact-6d.hpp>
 #include <pininvdyn/inverse-dynamics-formulation-acc-force.hpp>
 #include <pininvdyn/tasks/task-com-equality.hpp>
+#include <pininvdyn/tasks/task-se3-equality.hpp>
 #include <pininvdyn/tasks/task-joint-posture.hpp>
 #include <pininvdyn/trajectories/trajectory-euclidian.hpp>
 #include <pininvdyn/solvers/solver-HQP-base.hpp>
@@ -46,6 +47,17 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
 #define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(is_finite(A), #A<<": "<<A)
 #define CHECK_LESS_THAN(A,B) BOOST_CHECK_MESSAGE(A<B, #A<<": "<<A<<">"<<B)
+
+#define REQUIRE_TASK_FINITE(task) REQUIRE_FINITE(task.getConstraint().matrix()); \
+                                  REQUIRE_FINITE(task.getConstraint().vector())
+
+#define REQUIRE_CONTACT_FINITE(contact) REQUIRE_FINITE(contact.getMotionConstraint().matrix()); \
+                                        REQUIRE_FINITE(contact.getMotionConstraint().vector()); \
+                                        REQUIRE_FINITE(contact.getForceConstraint().matrix()); \
+                                        REQUIRE_FINITE(contact.getForceConstraint().lowerBound()); \
+                                        REQUIRE_FINITE(contact.getForceConstraint().upperBound()); \
+                                        REQUIRE_FINITE(contact.getForceRegularizationTask().matrix()); \
+                                        REQUIRE_FINITE(contact.getForceRegularizationTask().vector())
 
 class StandardHrp2InvDynCtrl
 {
@@ -145,6 +157,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   const unsigned int PRINT_N = 10;
   const unsigned int REMOVE_CONTACT_N = 100;
   const double CONTACT_TRANSITION_TIME = 1.0;
+  const double kp_RF = 100.0;
+  const double w_RF = 1e3;
   double t = 0.0;
 
   StandardHrp2InvDynCtrl hrp2_inv_dyn;
@@ -157,6 +171,20 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   Vector q = hrp2_inv_dyn.q;
   Vector v = hrp2_inv_dyn.v;
   const int nv = robot.model().nv;
+
+  // Add the right foot task
+  TaskSE3Equality * rightFootTask = new TaskSE3Equality("task-right-foot",
+                                                       robot,
+                                                       hrp2_inv_dyn.rf_frame_name);
+  rightFootTask->Kp(kp_RF*Vector::Ones(6));
+  rightFootTask->Kd(2.0*rightFootTask->Kp().cwiseSqrt());
+  se3::SE3 H_rf_ref = robot.position(invDyn->data(),
+                                     robot.model().getJointId(hrp2_inv_dyn.rf_frame_name));
+  invDyn->addMotionTask(*rightFootTask, w_RF, 1);
+
+  TrajectorySample s(12, 6);
+  se3ToVector(H_rf_ref, s.pos);
+  rightFootTask->setReference(s);
 
   Vector3 com_ref = robot.com(invDyn->data());
   com_ref(1) += 0.1;
@@ -172,13 +200,15 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
                                                            "solver-eiquadprog");
   solver->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
 
+  Vector tau_old(nv-6);
   for(int i=0; i<N_DT; i++)
   {
     if(i==REMOVE_CONTACT_N)
     {
-      cout<<"Break contact right foot\n";
+      cout<<"Start breaking contact right foot\n";
       invDyn->removeRigidContact(contactRF.name(), CONTACT_TRANSITION_TIME);
     }
+
     sampleCom = trajCom->computeNext();
     comTask.setReference(sampleCom);
     samplePosture = trajPosture->computeNext();
@@ -188,24 +218,10 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
     if(i==0)
       cout<< hqpDataToString(hqpData, false)<<endl;
 
-    REQUIRE_FINITE(postureTask.getConstraint().matrix());
-    REQUIRE_FINITE(postureTask.getConstraint().vector());
-    REQUIRE_FINITE(comTask.getConstraint().matrix());
-    REQUIRE_FINITE(comTask.getConstraint().vector());
-    REQUIRE_FINITE(contactRF.getMotionConstraint().matrix());
-    REQUIRE_FINITE(contactRF.getMotionConstraint().vector());
-    REQUIRE_FINITE(contactRF.getForceConstraint().matrix());
-    REQUIRE_FINITE(contactRF.getForceConstraint().lowerBound());
-    REQUIRE_FINITE(contactRF.getForceConstraint().upperBound());
-    REQUIRE_FINITE(contactRF.getForceRegularizationTask().matrix());
-    REQUIRE_FINITE(contactRF.getForceRegularizationTask().vector());
-    REQUIRE_FINITE(contactLF.getMotionConstraint().matrix());
-    REQUIRE_FINITE(contactLF.getMotionConstraint().vector());
-    REQUIRE_FINITE(contactLF.getForceConstraint().matrix());
-    REQUIRE_FINITE(contactLF.getForceConstraint().lowerBound());
-    REQUIRE_FINITE(contactLF.getForceConstraint().upperBound());
-    REQUIRE_FINITE(contactLF.getForceRegularizationTask().matrix());
-    REQUIRE_FINITE(contactLF.getForceRegularizationTask().vector());
+    REQUIRE_TASK_FINITE(postureTask);
+    REQUIRE_TASK_FINITE(comTask);
+    REQUIRE_CONTACT_FINITE(contactRF);
+    REQUIRE_CONTACT_FINITE(contactLF);
 
     CHECK_LESS_THAN(contactRF.getMotionTask().position_error().norm(), 1e-3);
     CHECK_LESS_THAN(contactLF.getMotionTask().position_error().norm(), 1e-3);
@@ -216,6 +232,23 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
 
     const Vector & tau = invDyn->getActuatorForces(sol);
     const Vector & dv = invDyn->getAccelerations(sol);
+
+    if(i>0)
+    {
+      CHECK_LESS_THAN((tau-tau_old).norm(), 1e1);
+      if((tau-tau_old).norm()>1e1) // || (i>=197 && i<=200))
+      {
+//        contactRF.computeMotionTask(t, q, v, invDyn->data());
+//        rightFootTask->compute(t, q, v, invDyn->data());
+        cout << "Time "<<i<<endl;
+        cout<<"tau:\n"<<tau.transpose()<<"\ntauOld:\n"<<tau_old.transpose()<<"\n";
+//        cout << "RF contact task des acc:   "<<contactRF.getMotionTask().getDesiredAcceleration().transpose()<<endl;
+//        cout << "RF contact task acc:       "<<contactRF.getMotionTask().getAcceleration(dv).transpose()<<endl;
+//        cout << "RF motion task des acc:    "<<rightFootTask->getDesiredAcceleration().transpose()<<endl;
+        cout << endl;
+      }
+    }
+    tau_old = tau;
 
     if(i%PRINT_N==0)
     {
@@ -306,24 +339,10 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
     if(i==0)
       cout<< hqpDataToString(hqpData, false)<<endl;
 
-    REQUIRE_FINITE(postureTask.getConstraint().matrix());
-    REQUIRE_FINITE(postureTask.getConstraint().vector());
-    REQUIRE_FINITE(comTask.getConstraint().matrix());
-    REQUIRE_FINITE(comTask.getConstraint().vector());
-    REQUIRE_FINITE(contactRF.getMotionConstraint().matrix());
-    REQUIRE_FINITE(contactRF.getMotionConstraint().vector());
-    REQUIRE_FINITE(contactRF.getForceConstraint().matrix());
-    REQUIRE_FINITE(contactRF.getForceConstraint().lowerBound());
-    REQUIRE_FINITE(contactRF.getForceConstraint().upperBound());
-    REQUIRE_FINITE(contactRF.getForceRegularizationTask().matrix());
-    REQUIRE_FINITE(contactRF.getForceRegularizationTask().vector());
-    REQUIRE_FINITE(contactLF.getMotionConstraint().matrix());
-    REQUIRE_FINITE(contactLF.getMotionConstraint().vector());
-    REQUIRE_FINITE(contactLF.getForceConstraint().matrix());
-    REQUIRE_FINITE(contactLF.getForceConstraint().lowerBound());
-    REQUIRE_FINITE(contactLF.getForceConstraint().upperBound());
-    REQUIRE_FINITE(contactLF.getForceRegularizationTask().matrix());
-    REQUIRE_FINITE(contactLF.getForceRegularizationTask().vector());
+    REQUIRE_TASK_FINITE(postureTask);
+    REQUIRE_TASK_FINITE(comTask);
+    REQUIRE_CONTACT_FINITE(contactRF);
+    REQUIRE_CONTACT_FINITE(contactLF);
 
     CHECK_LESS_THAN(contactRF.getMotionTask().position_error().norm(), 1e-3);
     CHECK_LESS_THAN(contactLF.getMotionTask().position_error().norm(), 1e-3);

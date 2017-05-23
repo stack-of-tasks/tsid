@@ -61,19 +61,19 @@ namespace pininvdyn
       virtual const ConstraintBase & computeMotionTask(const double t,
                                                        ConstRefVector q,
                                                        ConstRefVector v,
-                                                       Data & data) = 0;
+                                                       const Data & data) = 0;
 
       virtual const ConstraintInequality & computeForceTask(const double t,
                                                             ConstRefVector q,
                                                             ConstRefVector v,
-                                                            Data & data) = 0;
+                                                            const Data & data) = 0;
 
       virtual const Matrix & getForceGeneratorMatrix() = 0;
 
       virtual const ConstraintEquality & computeForceRegularizationTask(const double t,
-                                                                    ConstRefVector q,
-                                                                    ConstRefVector v,
-                                                                    Data & data) = 0;
+                                                                        ConstRefVector q,
+                                                                        ConstRefVector v,
+                                                                        const Data & data) = 0;
 
       virtual const TaskMotion & getMotionTask() const = 0;
       virtual const ConstraintBase & getMotionConstraint() const = 0;

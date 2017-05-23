@@ -22,6 +22,7 @@ namespace pininvdyn
   namespace tasks
   {
     using namespace pininvdyn::math;
+    using namespace pininvdyn::trajectories;
     using namespace se3;
 
     TaskComEquality::TaskComEquality(const std::string & name,
@@ -58,6 +59,21 @@ namespace pininvdyn
     void TaskComEquality::setReference(const TrajectorySample & ref)
     {
       m_ref = ref;
+    }
+
+    const TrajectorySample & TaskComEquality::getReference() const
+    {
+      return m_ref;
+    }
+
+    const Vector & TaskComEquality::getDesiredAcceleration() const
+    {
+      return m_a_des;
+    }
+
+    Vector TaskComEquality::getAcceleration(ConstRefVector dv) const
+    {
+      return m_constraint.matrix()*dv - m_drift;
     }
 
     const Vector & TaskComEquality::position_error() const
@@ -98,17 +114,17 @@ namespace pininvdyn
     const ConstraintBase & TaskComEquality::compute(const double t,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    Data & data)
+                                                    const Data & data)
     {
-      Vector3 p_com, v_com, drift;
-      m_robot.com(data, p_com, v_com, drift);
+      Vector3 p_com, v_com;
+      m_robot.com(data, p_com, v_com, m_drift);
 
       // Compute errors
       m_p_error = p_com - m_ref.pos;
       m_v_error = v_com - m_ref.vel;
-      Vector3 m_a_des = - m_Kp.cwiseProduct(m_p_error)
-                        - m_Kd.cwiseProduct(m_v_error)
-                        + m_ref.acc;
+      m_a_des = - m_Kp.cwiseProduct(m_p_error)
+                - m_Kd.cwiseProduct(m_v_error)
+                + m_ref.acc;
 
       m_p_error_vec = m_p_error;
       m_v_error_vec = m_v_error;
@@ -121,7 +137,7 @@ namespace pininvdyn
       const Matrix3x & Jcom = m_robot.Jcom(data);
 
       m_constraint.setMatrix(Jcom);
-      m_constraint.setVector(m_a_des - drift);
+      m_constraint.setVector(m_a_des - m_drift);
       return m_constraint;
     }
     

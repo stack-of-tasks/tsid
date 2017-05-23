@@ -19,6 +19,7 @@
 #define __invdyn_task_motion_hpp__
 
 #include <pininvdyn/tasks/task-base.hpp>
+#include <pininvdyn/trajectories/trajectory-base.hpp>
 
 namespace pininvdyn
 {
@@ -30,9 +31,16 @@ namespace pininvdyn
     public:
       typedef pininvdyn::RobotWrapper RobotWrapper;
       typedef pininvdyn::math::Vector Vector;
+      typedef pininvdyn::trajectories::TrajectorySample TrajectorySample;
 
       TaskMotion(const std::string & name,
                  RobotWrapper & robot);
+
+      virtual const TrajectorySample & getReference() const = 0;
+
+      virtual const Vector & getDesiredAcceleration() const = 0;
+
+      virtual Vector getAcceleration(ConstRefVector dv) const = 0;
 
       virtual const Vector & position_error() const = 0;
       virtual const Vector & velocity_error() const = 0;
@@ -40,6 +48,7 @@ namespace pininvdyn
       virtual const Vector & velocity() const = 0;
       virtual const Vector & position_ref() const = 0;
       virtual const Vector & velocity_ref() const = 0;
+
     };
   }
 }

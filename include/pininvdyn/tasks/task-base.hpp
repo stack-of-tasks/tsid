@@ -53,7 +53,7 @@ namespace pininvdyn
       virtual const ConstraintBase & compute(const double t,
                                              ConstRefVector q,
                                              ConstRefVector v,
-                                             Data & data) = 0;
+                                             const Data & data) = 0;
 
       virtual const ConstraintBase & getConstraint() const = 0;
       

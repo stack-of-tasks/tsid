@@ -221,7 +221,7 @@ const HqpData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   {
     const ContactTransitionInfo * c = *it_ct;
     assert(c->time_start <= m_t);
-    if(m_t < c->time_end)
+    if(m_t <= c->time_end)
     {
       const double alpha = (m_t - c->time_start) / (c->time_end - c->time_start);
       const double fMax = c->fMax_start + alpha*(c->fMax_end - c->fMax_start);
@@ -229,6 +229,8 @@ const HqpData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     }
     else
     {
+      std::cout<<"[InverseDynamicsFormulationAccForce] Remove contact "<<
+                 c->contactLevel->contact.name()<<" at time "<<time<<std::endl;
       removeRigidContact(c->contactLevel->contact.name());
       // FIXME: this won't work if multiple contact transitions occur at the same time
       // because after erasing an element the iterator is invalid
