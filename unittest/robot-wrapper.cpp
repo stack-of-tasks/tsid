@@ -21,32 +21,48 @@
 #include <boost/utility/binary.hpp>
 
 #include <pininvdyn/robot-wrapper.hpp>
-
-#define HRP2_PKG_DIR "/home/adelpret/devel/sot_hydro/install/share"
+#include <pinocchio/algorithm/joint-configuration.hpp>
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
 BOOST_AUTO_TEST_CASE ( test_robot_wrapper )
 {
   using namespace pininvdyn;
+  using namespace pininvdyn::math;
   using namespace std;
-  using namespace Eigen;
   using namespace se3;
+  
+  const string romeo_model_path = INVDYN_SOURCE_DIR"/models/romeo";
 
   vector<string> package_dirs;
-  package_dirs.push_back(HRP2_PKG_DIR);
-  string urdfFileName = package_dirs[0] + "/hrp2_14_description/urdf/hrp2_14_reduced.urdf";
+  package_dirs.push_back(romeo_model_path);
+  string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
+  
   RobotWrapper robot(urdfFileName,
                      package_dirs,
                      se3::JointModelFreeFlyer(),
                      false);
-  VectorXd q = VectorXd::Ones(robot.nq());
-  VectorXd v = VectorXd::Ones(robot.nv());
-  se3::Data data(robot.model());
+  
+  const Model & model = robot.model();
+  
+  // Update default config bounds to take into account the Free Flyer
+  Vector lb(model.lowerPositionLimit);
+  lb.head<3>().fill(-10.);
+  lb.segment<4>(3).fill(-1.);
+  
+  Vector ub(model.upperPositionLimit);
+  ub.head<3>().fill(10.);
+  ub.segment<4>(3).fill(1.);
+  
+  Vector q = se3::randomConfiguration(model,lb,ub);
+  Vector v = Vector::Ones(robot.nv());
+  Data data(robot.model());
   robot.computeAllTerms(data, q, v);
 
-  VectorXd com = robot.com(data);
-//  cout << "Robot com:" << com.transpose() << endl;
+  Vector3 com = robot.com(data);
+  
+  BOOST_CHECK(robot.nq() == 38);
+  BOOST_CHECK(robot.nv() == 37);
 }
 
 BOOST_AUTO_TEST_SUITE_END ()
