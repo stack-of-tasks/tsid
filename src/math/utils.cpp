@@ -19,16 +19,6 @@
 
 using namespace pininvdyn::math;
 
-Eigen::Matrix<Scalar,3,3> pininvdyn::math::skew(ConstRefVector v)
-{
-  assert(v.size()==3);
-  Eigen::Matrix<Scalar,3,3> m;
-  m(0,0) =  0   ;  m(0,1) = -v[2];   m(0,2) =  v[1];
-  m(1,0) =  v[2];  m(1,1) =  0   ;   m(1,2) = -v[0];
-  m(2,0) = -v[1];  m(2,1) =  v[0];   m(2,2) =  0   ;
-  return m;
-}
-
 void pininvdyn::math::se3ToXYZQUAT(const se3::SE3 & M, RefVector xyzQuat)
 {
   assert(xyzQuat.size()==7);

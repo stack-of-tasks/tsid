@@ -78,10 +78,6 @@ namespace pininvdyn
         matSuffix       string printed at the end of the matrix */
     static const Eigen::IOFormat matlabPrintFormat(Eigen::FullPrecision, Eigen::DontAlignCols, " ", ";\n", "", "", "[", "];");
 
-
-
-    Eigen::Matrix<Scalar,3,3> skew(ConstRefVector v);
-
     /**
      * Convert the input SE3 object to a 7D vector of floats [X,Y,Z,Q1,Q2,Q3,Q4].
      */

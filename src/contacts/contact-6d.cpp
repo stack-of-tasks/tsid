@@ -18,6 +18,8 @@
 #include "pininvdyn/math/utils.hpp"
 #include "pininvdyn/contacts/contact-6d.hpp"
 
+#include <pinocchio/spatial/skew.hpp>
+
 using namespace pininvdyn;
 using namespace pininvdyn::contacts;
 using namespace pininvdyn::math;
@@ -115,7 +117,7 @@ void Contact6d:: updateForceGeneratorMatrix()
   for(int i=0; i<4; i++)
   {
     m_forceGenMat.block<3,3>(0, i*3).setIdentity();
-    m_forceGenMat.block<3,3>(3, i*3) = skew(m_contactPoints.col(i));
+    m_forceGenMat.block<3,3>(3, i*3) = se3::skew(m_contactPoints.col(i));
   }
 }
 
