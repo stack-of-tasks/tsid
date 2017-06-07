@@ -57,6 +57,24 @@ ENDIF(WIN32)
 # --- OPTIONS ----------------------------------------
 OPTION (BUILD_PYTHON_INTERFACE "Build the python binding" OFF)
 OPTION (BUILD_UNIT_TESTS "Build the unitary tests" ON)
+OPTION (INITIALIZE_WITH_NAN "Initialize Eigen entries with NaN" OFF)
+OPTION (EIGEN_RUNTIME_NO_MALLOC "If ON, it can assert in case of runtime allocation" ON)
+OPTION (EIGEN_NO_AUTOMATIC_RESIZING "If ON, it forbids automatic resizing of dynamics arrays and matrices" OFF)
+
+IF(INITIALIZE_WITH_NAN)
+  MESSAGE(STATUS "Initialize with NaN all the Eigen entries.")
+  ADD_DEFINITIONS(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
+ENDIF(INITIALIZE_WITH_NAN)
+
+IF(EIGEN_RUNTIME_NO_MALLOC)
+  MESSAGE(STATUS "Option EIGEN_RUNTIME_NO_MALLOC on.")
+  ADD_DEFINITIONS(-DEIGEN_RUNTIME_NO_MALLOC)
+ENDIF(EIGEN_RUNTIME_NO_MALLOC)
+
+IF(EIGEN_NO_AUTOMATIC_RESIZING)
+  MESSAGE(STATUS "Option EIGEN_NO_AUTOMATIC_RESIZING on.")
+  ADD_DEFINITIONS(-DEIGEN_NO_AUTOMATIC_RESIZING)
+ENDIF(EIGEN_NO_AUTOMATIC_RESIZING)
 
 # ----------------------------------------------------
 # --- DEPENDANCIES -----------------------------------
