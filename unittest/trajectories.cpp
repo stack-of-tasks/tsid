@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE ( test_trajectory_se3 )
 
   SE3 M_ref = SE3::Identity();
   VectorXd M_vec(12);
-  se3ToVector(M_ref, M_vec);
+  SE3ToVector(M_ref, M_vec);
   VectorXd zero = VectorXd::Zero(6);
 
   TrajectoryBase *traj = new TrajectorySE3Constant("traj_se3", M_ref);

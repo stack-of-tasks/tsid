@@ -152,9 +152,9 @@ namespace pininvdyn
 
       m_p_error_vec = m_p_error.toVector();
       m_v_error_vec = m_v_error.toVector();
-      se3ToVector(m_M_ref, m_p_ref);
+      SE3ToVector(m_M_ref, m_p_ref);
       m_v_ref_vec = m_v_ref.toVector();
-      se3ToVector(oMi, m_p);
+      SE3ToVector(oMi, m_p);
       m_v = v_frame.toVector();
 
 #ifndef NDEBUG

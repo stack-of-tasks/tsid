@@ -19,14 +19,14 @@
 
 using namespace pininvdyn::math;
 
-void pininvdyn::math::se3ToXYZQUAT(const se3::SE3 & M, RefVector xyzQuat)
+void pininvdyn::math::SE3ToXYZQUAT(const se3::SE3 & M, RefVector xyzQuat)
 {
   assert(xyzQuat.size()==7);
   xyzQuat.head<3>() = M.translation();
   xyzQuat.tail<4>() = Eigen::Quaterniond(M.rotation()).coeffs();
 }
 
-void pininvdyn::math::se3ToVector(const se3::SE3 & M, RefVector vec)
+void pininvdyn::math::SE3ToVector(const se3::SE3 & M, RefVector vec)
 {
   assert(vec.size()==12);
   vec.head<3>() = M.translation();

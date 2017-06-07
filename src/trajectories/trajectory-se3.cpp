@@ -34,7 +34,7 @@ namespace pininvdyn
       :TrajectoryBase(name)
     {
       m_sample.resize(12, 6);
-      se3ToVector(M, m_sample.pos);
+      SE3ToVector(M, m_sample.pos);
     }
 
     unsigned int TrajectorySE3Constant::size() const

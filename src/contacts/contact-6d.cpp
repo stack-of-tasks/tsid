@@ -194,7 +194,7 @@ bool Contact6d::setRegularizationTaskWeight(const double w)
 void Contact6d::setReference(const SE3 & ref)
 {
   TrajectorySample s(12, 6);
-  se3ToVector(ref, s.pos);
+  SE3ToVector(ref, s.pos);
   m_motionTask.setReference(s);
 }
 
