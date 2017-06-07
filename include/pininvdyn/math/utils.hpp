@@ -88,8 +88,8 @@ namespace pininvdyn
     static const Eigen::IOFormat matlabPrintFormat(Eigen::FullPrecision, Eigen::DontAlignCols, " ", ";\n", "", "", "[", "];");
 
     typedef double Scalar;
-    typedef Eigen::VectorXd Vector;
-    typedef Eigen::MatrixXd Matrix;
+    typedef Eigen::Matrix<Scalar,Eigen::Dynamic,1> Vector;
+    typedef Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> Matrix;
     typedef Eigen::VectorXi VectorXi;
     typedef Eigen::Matrix<bool,Eigen::Dynamic,1> VectorXb;
 
