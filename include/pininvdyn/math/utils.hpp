@@ -169,15 +169,19 @@ namespace pininvdyn
      * Write the specified matrix to a binary file with the specified name.
      */
     template<class Matrix>
-    bool writeMatrixToFile(const std::string &filename, const Matrix& matrix)
+    bool writeMatrixToFile(const std::string & filename,
+                           const Eigen::MatrixBase<Matrix> & matrix)
     {
+      typedef typename Matrix::Index Index;
+      typedef typename Matrix::Scalar Scalar;
+      
       std::ofstream out(filename.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
       if(!out.is_open())
         return false;
-      typename Matrix::Index rows=matrix.rows(), cols=matrix.cols();
-      out.write((char*) (&rows), sizeof(typename Matrix::Index));
-      out.write((char*) (&cols), sizeof(typename Matrix::Index));
-      out.write((char*) matrix.data(), rows*cols*sizeof(typename Matrix::Scalar) );
+      Index rows=matrix.rows(), cols=matrix.cols();
+      out.write((char*) (&rows), sizeof(Index));
+      out.write((char*) (&cols), sizeof(Index));
+      out.write((char*) matrix.data(), rows*cols*sizeof(Scalar) );
       out.close();
       return true;
     }
@@ -186,16 +190,23 @@ namespace pininvdyn
      * Read a matrix from the specified input binary file.
      */
     template<class Matrix>
-    bool readMatrixFromFile(const std::string &filename, Matrix& matrix)
+    bool readMatrixFromFile(const std::string & filename,
+                            const Eigen::MatrixBase<Matrix> & matrix)
     {
+      typedef typename Matrix::Index Index;
+      typedef typename Matrix::Scalar Scalar;
+      
       std::ifstream in(filename.c_str(), std::ios::in | std::ios::binary);
       if(!in.is_open())
         return false;
-      typename Matrix::Index rows=0, cols=0;
-      in.read((char*) (&rows),sizeof(typename Matrix::Index));
-      in.read((char*) (&cols),sizeof(typename Matrix::Index));
-      matrix.resize(rows, cols);
-      in.read( (char *) matrix.data() , rows*cols*sizeof(typename Matrix::Scalar) );
+      Index rows=0, cols=0;
+      in.read((char*) (&rows),sizeof(Index));
+      in.read((char*) (&cols),sizeof(Index));
+      
+      Eigen::MatrixBase<Matrix> & matrix_ = const_cast< Eigen::MatrixBase<Matrix>& >(matrix);
+      
+      matrix_.resize(rows, cols);
+      in.read( (char *) matrix_.data() , rows*cols*sizeof(Scalar) );
       in.close();
       return true;
     }
