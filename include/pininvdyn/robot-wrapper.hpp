@@ -42,7 +42,7 @@ namespace pininvdyn
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    typedef double Scalar;
+    typedef math::Scalar Scalar;
     typedef se3::Model Model;
     typedef se3::Data Data;
     typedef se3::Motion Motion;

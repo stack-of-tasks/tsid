@@ -31,6 +31,7 @@ namespace pininvdyn
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
       pininvdyn::math::Vector pos, vel, acc;
 
       TrajectorySample(unsigned int size=0)
@@ -62,7 +63,7 @@ namespace pininvdyn
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      TrajectoryBase(std::string name):
+      TrajectoryBase(const std::string & name):
         m_name(name){}
 
       virtual unsigned int size() const = 0;
