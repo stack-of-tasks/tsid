@@ -18,6 +18,8 @@
 #ifndef __invdyn_math_utils_hpp__
 #define __invdyn_math_utils_hpp__
 
+#include "pininvdyn/math/fwd.hpp"
+
 // if defined, the matrices (or arrays) on both sides of an assignment a = b have
 // to be of the same size; otherwise, Eigen automatically resizes a so that it is
 // of the correct size. Not defined by default.
@@ -28,7 +30,6 @@
 //memory dynamically anyway, an assertion failure results. Not defined by default.
 #define EIGEN_RUNTIME_NO_MALLOC
 
-#include <Eigen/Core>
 #include <pinocchio/spatial/se3.hpp>
 #include <pinocchio/spatial/explog.hpp>
 
@@ -87,22 +88,7 @@ namespace pininvdyn
         matSuffix       string printed at the end of the matrix */
     static const Eigen::IOFormat matlabPrintFormat(Eigen::FullPrecision, Eigen::DontAlignCols, " ", ";\n", "", "", "[", "];");
 
-    typedef double Scalar;
-    typedef Eigen::Matrix<Scalar,Eigen::Dynamic,1> Vector;
-    typedef Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> Matrix;
-    typedef Eigen::VectorXi VectorXi;
-    typedef Eigen::Matrix<bool,Eigen::Dynamic,1> VectorXb;
 
-    typedef Eigen::Matrix<Scalar,3,1> Vector3;
-    typedef Eigen::Matrix<Scalar,6,1> Vector6;
-    typedef Eigen::Matrix<Scalar,3,Eigen::Dynamic> Matrix3x;
-
-    typedef Eigen::Ref<Vector>              RefVector;
-    typedef const Eigen::Ref<const Vector>& ConstRefVector;
-    typedef Eigen::Ref<Matrix>              RefMatrix;
-    typedef const Eigen::Ref<const Matrix>  ConstRefMatrix;
-
-    typedef std::size_t Index;
 
     Eigen::Matrix<Scalar,3,3> skew(ConstRefVector v);
 
