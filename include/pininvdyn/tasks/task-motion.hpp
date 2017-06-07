@@ -25,10 +25,11 @@ namespace pininvdyn
 {
   namespace tasks
   {
-    class TaskMotion:
-        public TaskBase
+    class TaskMotion : public TaskBase
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
       typedef pininvdyn::RobotWrapper RobotWrapper;
       typedef pininvdyn::math::Vector Vector;
       typedef pininvdyn::trajectories::TrajectorySample TrajectorySample;

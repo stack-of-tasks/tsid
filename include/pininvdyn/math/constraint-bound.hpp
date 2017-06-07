@@ -18,19 +18,17 @@
 #ifndef __invdyn_math_constraint_bound_hpp__
 #define __invdyn_math_constraint_bound_hpp__
 
-#include <Eigen/Core>
 #include <pininvdyn/math/constraint-base.hpp>
-#include <exception>
 
 namespace pininvdyn
 {
   namespace math
   {
 
-    class ConstraintBound
-        :public pininvdyn::math::ConstraintBase
+    class ConstraintBound : public ConstraintBase
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       ConstraintBound(const std::string & name);
 
@@ -64,6 +62,7 @@ namespace pininvdyn
       bool checkConstraint(ConstRefVector x, double tol=1e-6) const;
 
     protected:
+      
       Vector m_lb;
       Vector m_ub;
     };

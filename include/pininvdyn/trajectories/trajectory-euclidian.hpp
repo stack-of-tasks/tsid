@@ -25,8 +25,7 @@ namespace pininvdyn
   namespace trajectories
   {
 
-    class TrajectoryEuclidianConstant:
-        public TrajectoryBase
+    class TrajectoryEuclidianConstant : public TrajectoryBase
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW

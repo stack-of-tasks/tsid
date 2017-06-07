@@ -27,10 +27,11 @@ namespace pininvdyn
   namespace tasks
   {
 
-    class TaskSE3Equality:
-        public TaskMotion
+    class TaskSE3Equality: public TaskMotion
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
       typedef pininvdyn::RobotWrapper RobotWrapper;
       typedef pininvdyn::math::Index Index;
       typedef pininvdyn::trajectories::TrajectorySample TrajectorySample;
@@ -73,6 +74,7 @@ namespace pininvdyn
       void Kd(ConstRefVector Kp);
 
     protected:
+      
       std::string m_frame_name;
       Index m_frame_id;
       Motion m_p_error, m_v_error;

@@ -36,6 +36,8 @@ namespace pininvdyn
     class ContactBase
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
       typedef pininvdyn::RobotWrapper RobotWrapper;
       typedef pininvdyn::math::ConstraintBase ConstraintBase;
       typedef pininvdyn::math::ConstraintInequality ConstraintInequality;

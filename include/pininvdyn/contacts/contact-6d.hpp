@@ -25,10 +25,11 @@ namespace pininvdyn
 {
   namespace contacts
   {
-    class Contact6d:
-        public ContactBase
+    class Contact6d : public ContactBase
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
       typedef pininvdyn::RobotWrapper RobotWrapper;
       typedef pininvdyn::math::ConstRefMatrix ConstRefMatrix;
       typedef pininvdyn::math::ConstRefVector ConstRefVector;

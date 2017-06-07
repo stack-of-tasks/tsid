@@ -18,19 +18,17 @@
 #ifndef __invdyn_math_constraint_equality_hpp__
 #define __invdyn_math_constraint_equality_hpp__
 
-#include <Eigen/Core>
 #include <pininvdyn/math/constraint-base.hpp>
-#include <exception>
 
 namespace pininvdyn
 {
   namespace math
   {
 
-    class ConstraintEquality
-        :public pininvdyn::math::ConstraintBase
+    class ConstraintEquality : public ConstraintBase
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       ConstraintEquality(const std::string & name);
 

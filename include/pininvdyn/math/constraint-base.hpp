@@ -19,7 +19,6 @@
 #define __invdyn_math_constraint_base_hpp__
 
 #include <pininvdyn/math/fwd.hpp>
-#include <Eigen/Core>
 #include <string>
 
 namespace pininvdyn
@@ -75,6 +74,7 @@ namespace pininvdyn
       virtual bool checkConstraint(ConstRefVector x, double tol=1e-6) const = 0;
 
     protected:
+      
       std::string m_name;
       Matrix m_A;
     };
