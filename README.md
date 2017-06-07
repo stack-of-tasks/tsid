@@ -3,7 +3,7 @@ C++ library for optimization-based inverse-dynamics control based on the rigid m
 Take a look at the project [wiki](https://github.com/stack-of-tasks/invdyn/wiki) for more details.
 
 ## Dependencies
-* boost (unit_test_framework, serialization)
+* boost (unit_test_framework)
 * eigen3
 * [pinocchio](https://github.com/stack-of-tasks/pinocchio)
 

@@ -82,7 +82,7 @@ ENDIF(EIGEN_NO_AUTOMATIC_RESIZING)
 ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.1.0") # Not sure about the needed version of Eigen, but you need Eigen::Ref, so 3.0.5 is not enough
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.2.0")
 
-SET(BOOST_COMPONENTS unit_test_framework serialization)
+SET(BOOST_COMPONENTS unit_test_framework)
 
 IF(BUILD_PYTHON_INTERFACE)
   ADD_COMPILE_DEPENDENCY("eigenpy >= 1.3.1")
@@ -189,6 +189,5 @@ ADD_SUBDIRECTORY(unittest)
 
 # --- PACKAGING ----------------------------------------------------------------
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
-PKG_CONFIG_APPEND_BOOST_LIBS(serialization)
 
 SETUP_PROJECT_FINALIZE()
