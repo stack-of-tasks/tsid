@@ -126,8 +126,13 @@ namespace pininvdyn
                              double * nullSpaceBasisOfA=0,
                              int *nullSpaceRows=0, int *nullSpaceCols=0);
 
-    void nullSpaceBasisFromDecomposition(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+    void nullSpaceBasisFromDecomposition(const Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> & svdDecomposition,
                                          double tolerance,
+                                         double * nullSpaceBasisMatrix,
+                                         int &rows, int &cols);
+    
+    void nullSpaceBasisFromDecomposition(const Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> & svdDecomposition,
+                                         int rank,
                                          double * nullSpaceBasisMatrix,
                                          int &rows, int &cols);
 
