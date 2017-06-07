@@ -15,7 +15,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <pininvdyn/tasks/task-se3-equality.hpp>
+#include "pininvdyn/math/utils.hpp"
+#include "pininvdyn/tasks/task-se3-equality.hpp"
 
 namespace pininvdyn
 {

@@ -18,11 +18,9 @@
 #ifndef __invdyn_trajectory_base_hpp__
 #define __invdyn_trajectory_base_hpp__
 
-#include <Eigen/Core>
+#include "pininvdyn/math/fwd.hpp"
+
 #include <string>
-#include <pinocchio/spatial/se3.hpp>
-#include <Eigen/Geometry>
-#include <pininvdyn/math/utils.hpp>
 
 namespace pininvdyn
 {

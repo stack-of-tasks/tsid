@@ -18,7 +18,6 @@
 #ifndef __invdyn_inverse_dynamics_formulation_base_hpp__
 #define __invdyn_inverse_dynamics_formulation_base_hpp__
 
-#include <pininvdyn/math/utils.hpp>
 #include <pininvdyn/robot-wrapper.hpp>
 #include <pininvdyn/tasks/task-actuation.hpp>
 #include <pininvdyn/tasks/task-motion.hpp>

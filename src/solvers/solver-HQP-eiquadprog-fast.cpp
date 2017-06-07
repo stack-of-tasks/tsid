@@ -15,9 +15,10 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <pininvdyn/solvers/solver-HQP-eiquadprog-fast.h>
-#include <pininvdyn/solvers/eiquadprog_fast.hpp>
-#include <pininvdyn/utils/stop-watch.hpp>
+#include "pininvdyn/solvers/solver-HQP-eiquadprog-fast.h"
+#include "pininvdyn/math/utils.hpp"
+#include "pininvdyn/solvers/eiquadprog_fast.hpp"
+#include "pininvdyn/utils/stop-watch.hpp"
 
 //#define PROFILE_EIQUADPROG_FAST
 

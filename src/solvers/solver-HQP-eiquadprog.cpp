@@ -15,9 +15,10 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <pininvdyn/solvers/solver-HQP-eiquadprog.hpp>
-#include <pininvdyn/solvers/eiquadprog_2011.hpp>
-#include <pininvdyn/utils/stop-watch.hpp>
+#include "pininvdyn/solvers/solver-HQP-eiquadprog.hpp"
+#include "pininvdyn/math/utils.hpp"
+#include "pininvdyn/solvers/eiquadprog_2011.hpp"
+#include "pininvdyn/utils/stop-watch.hpp"
 
 using namespace pininvdyn::math;
 using namespace pininvdyn::solvers;

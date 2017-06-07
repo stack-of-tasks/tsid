@@ -85,6 +85,8 @@
 #include <Eigen/Core>
 #include <Eigen/Cholesky>
 
+#include <iostream>
+
 namespace Eigen {
 
     // namespace internal {

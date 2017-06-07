@@ -22,6 +22,7 @@
 
 #include <pininvdyn/solvers/solver-HQP-base.hpp>
 #include <pininvdyn/solvers/solver-HQP-eiquadprog.hpp>
+#include <pininvdyn/math/utils.hpp>
 #include <pininvdyn/math/constraint-equality.hpp>
 #include <pininvdyn/math/constraint-inequality.hpp>
 #include <pininvdyn/math/constraint-bound.hpp>

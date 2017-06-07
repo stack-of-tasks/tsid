@@ -19,7 +19,8 @@
 #define __invdyn_trajectory_se3_hpp__
 
 #include <pininvdyn/trajectories/trajectory-base.hpp>
-#include "pinocchio/multibody/model.hpp"
+
+#include <pinocchio/spatial/se3.hpp>
 
 namespace pininvdyn
 {
@@ -31,6 +32,7 @@ namespace pininvdyn
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
       typedef se3::SE3 SE3;
 
       TrajectorySE3Constant(const std::string & name);

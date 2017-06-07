@@ -18,16 +18,18 @@
 #ifndef __invdyn_robot_wrapper_hpp__
 #define __invdyn_robot_wrapper_hpp__
 
-#include "pinocchio/multibody/model.hpp"
-#include "pinocchio/parsers/urdf.hpp"
-#include "pinocchio/algorithm/center-of-mass.hpp"
-#include "pinocchio/algorithm/compute-all-terms.hpp"
-#include "pinocchio/algorithm/jacobian.hpp"
-#include "pinocchio/algorithm/frames.hpp"
-#include "pinocchio/spatial/skew.hpp"
-#include <pininvdyn/math/utils.hpp>
+#include "pininvdyn/math/fwd.hpp"
+
+#include <pinocchio/multibody/model.hpp>
+#include <pinocchio/parsers/urdf.hpp>
+#include <pinocchio/algorithm/center-of-mass.hpp>
+#include <pinocchio/algorithm/compute-all-terms.hpp>
+#include <pinocchio/algorithm/jacobian.hpp>
+#include <pinocchio/algorithm/frames.hpp>
+#include <pinocchio/spatial/skew.hpp>
 
 #include <string>
+#include <vector>
 
 namespace pininvdyn
 {

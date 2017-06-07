@@ -18,7 +18,6 @@
 #ifndef __invdyn_solvers_hqp_base_h__
 #define __invdyn_solvers_hqp_base_h__
 
-#include <pininvdyn/math/utils.hpp>
 #include <pininvdyn/math/constraint-base.hpp>
 #include <pininvdyn/config.hh>
 

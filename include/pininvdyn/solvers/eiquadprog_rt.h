@@ -19,7 +19,6 @@
 #define RTEIQUADPROG_H_
 
 #include <Eigen/Dense>
-#include <pininvdyn/math/utils.hpp>
 
 #define OPTIMIZE_STEP_1_2         // compute s(x) = ci^T * x + ci0
 #define OPTIMIZE_COMPUTE_D        // use noalias

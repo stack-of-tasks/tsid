@@ -16,7 +16,6 @@
 //
 
 #include <pininvdyn/robot-wrapper.hpp>
-#include <pininvdyn/math/utils.hpp>
 
 using namespace se3;
 using namespace pininvdyn::math;

@@ -20,6 +20,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/utility/binary.hpp>
 
+#include <pininvdyn/math/utils.hpp>
 #include <pininvdyn/trajectories/trajectory-se3.hpp>
 #include <pininvdyn/trajectories/trajectory-euclidian.hpp>
 

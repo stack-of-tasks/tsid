@@ -18,7 +18,7 @@
 #ifndef __invdyn_math_constraint_base_hpp__
 #define __invdyn_math_constraint_base_hpp__
 
-#include <pininvdyn/math/utils.hpp>
+#include <pininvdyn/math/fwd.hpp>
 #include <Eigen/Core>
 #include <string>
 

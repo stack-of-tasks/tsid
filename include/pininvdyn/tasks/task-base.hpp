@@ -18,9 +18,9 @@
 #ifndef __invdyn_task_base_hpp__
 #define __invdyn_task_base_hpp__
 
-#include <pininvdyn/robot-wrapper.hpp>
-#include <pininvdyn/math/utils.hpp>
-#include <pininvdyn/math/constraint-base.hpp>
+#include "pininvdyn/math/fwd.hpp"
+#include "pininvdyn/robot-wrapper.hpp"
+#include "pininvdyn/math/constraint-base.hpp"
 
 namespace pininvdyn
 {

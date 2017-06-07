@@ -20,7 +20,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/utility/binary.hpp>
 
-#include <pinocchio/algorithm/joint-configuration.hpp>
+#include "pininvdyn/math/utils.hpp"
 
 #include <pininvdyn/tasks/task-se3-equality.hpp>
 #include <pininvdyn/tasks/task-com-equality.hpp>
@@ -29,6 +29,7 @@
 #include <pininvdyn/trajectories/trajectory-se3.hpp>
 #include <pininvdyn/trajectories/trajectory-euclidian.hpp>
 
+#include <pinocchio/algorithm/joint-configuration.hpp>
 #include <Eigen/SVD>
 
 #define HRP2_PKG_DIR "/home/adelpret/devel/sot_hydro/install/share"

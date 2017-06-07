@@ -15,7 +15,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <pininvdyn/contacts/contact-6d.hpp>
+#include "pininvdyn/math/utils.hpp"
+#include "pininvdyn/contacts/contact-6d.hpp"
 
 using namespace pininvdyn;
 using namespace pininvdyn::contacts;

@@ -15,7 +15,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <pininvdyn/trajectories/trajectory-se3.hpp>
+#include "pininvdyn/math/utils.hpp"
+#include "pininvdyn/trajectories/trajectory-se3.hpp"
 
 using namespace pininvdyn::math;
 

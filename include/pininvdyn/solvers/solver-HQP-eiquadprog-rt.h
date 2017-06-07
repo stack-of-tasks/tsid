@@ -18,8 +18,10 @@
 #ifndef __invdyn_solvers_hqp_eiquadprog_rt_hpp__
 #define __invdyn_solvers_hqp_eiquadprog_rt_hpp__
 
-#include <pininvdyn/solvers/solver-HQP-base.h>
-#include <pininvdyn/solvers/eiquadprog_rt.h>
+#include "pininvdyn/solvers/solver-HQP-base.h"
+#include "pininvdyn/math/utils.hpp"
+
+#include "pininvdyn/solvers/eiquadprog_rt.h"
 
 #define DEFAULT_HESSIAN_REGULARIZATION 1e-8
 
