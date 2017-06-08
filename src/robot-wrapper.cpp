@@ -54,6 +54,7 @@ namespace pininvdyn
   int RobotWrapper::nv() const { return m_model.nv; }
 
   const Model & RobotWrapper::model() const { return m_model; }
+  Model & RobotWrapper::model() { return m_model; }
 
   void RobotWrapper::computeAllTerms(Data & data, const Vector & q, const Vector & v) const
   {

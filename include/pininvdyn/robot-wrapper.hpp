@@ -75,6 +75,7 @@ namespace pininvdyn
     /// \returns a const reference on the model.
     ///
     const Model & model() const;
+    Model & model();
 
     void computeAllTerms(Data & data, const Vector & q, const Vector & v) const;
 
