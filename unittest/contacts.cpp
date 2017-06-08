@@ -24,8 +24,6 @@
 
 #include <pininvdyn/contacts/contact-6d.hpp>
 
-#define HRP2_PKG_DIR "/home/adelpret/devel/sot_hydro/install/share"
-
 using namespace pininvdyn;
 using namespace pininvdyn::trajectories;
 using namespace pininvdyn::math;
@@ -36,6 +34,8 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
 #define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(is_finite(A), #A<<": "<<A)
 
+const string romeo_model_path = INVDYN_SOURCE_DIR"/models/romeo";
+
 BOOST_AUTO_TEST_CASE ( test_contact_6d )
 {
   const double lx = 0.07;
@@ -44,11 +44,11 @@ BOOST_AUTO_TEST_CASE ( test_contact_6d )
   const double mu = 0.3;
   const double fMin = 10.0;
   const double fMax = 1000.0;
-  const std::string frameName = "RLEG_JOINT5";
+  const std::string frameName = "r_sole_joint";
 
   vector<string> package_dirs;
-  package_dirs.push_back(HRP2_PKG_DIR);
-  string urdfFileName = package_dirs[0] + "/hrp2_14_description/urdf/hrp2_14_reduced.urdf";
+  package_dirs.push_back(romeo_model_path);
+  string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
   RobotWrapper robot(urdfFileName,
                      package_dirs,
                      se3::JointModelFreeFlyer(),

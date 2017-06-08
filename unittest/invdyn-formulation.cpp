@@ -31,8 +31,7 @@
 #include <pininvdyn/utils/statistics.hpp>
 
 #include <pinocchio/algorithm/joint-configuration.hpp> // integrate
-
-#define HRP2_PKG_DIR "/home/adelpret/devel/sot_hydro/install/share"
+#include <pinocchio/parsers/srdf.hpp>
 
 using namespace pininvdyn;
 using namespace pininvdyn::trajectories;
@@ -40,7 +39,6 @@ using namespace pininvdyn::math;
 using namespace pininvdyn::contacts;
 using namespace pininvdyn::tasks;
 using namespace pininvdyn::solvers;
-//using namespace pininvdyn::utils;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
@@ -59,7 +57,9 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
                                         REQUIRE_FINITE(contact.getForceRegularizationTask().matrix()); \
                                         REQUIRE_FINITE(contact.getForceRegularizationTask().vector())
 
-class StandardHrp2InvDynCtrl
+const string romeo_model_path = INVDYN_SOURCE_DIR"/models/romeo";
+
+class StandardRomeoInvDynCtrl
 {
   public:
   const double lxp = 0.14;
@@ -70,8 +70,8 @@ class StandardHrp2InvDynCtrl
   const double mu = 0.3;
   const double fMin = 5.0;
   const double fMax = 1000.0;
-  const std::string rf_frame_name = "RLEG_JOINT5";
-  const std::string lf_frame_name = "LLEG_JOINT5";
+  const std::string rf_frame_name = "RAnkleRoll";
+  const std::string lf_frame_name = "LAnkleRoll";
   const Vector3 contactNormal = Vector3::UnitZ();
   const double w_com = 1.0;
   const double w_posture = 1e-2;
@@ -92,16 +92,20 @@ class StandardHrp2InvDynCtrl
   se3::SE3 H_rf_ref;
   se3::SE3 H_lf_ref;
 
-  StandardHrp2InvDynCtrl()
+  StandardRomeoInvDynCtrl()
   {
     vector<string> package_dirs;
-    package_dirs.push_back(HRP2_PKG_DIR);
-    string urdfFileName = package_dirs[0] + "/hrp2_14_description/urdf/hrp2_14_reduced.urdf";
+    package_dirs.push_back(romeo_model_path);
+    const string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
     robot = new RobotWrapper(urdfFileName, package_dirs, se3::JointModelFreeFlyer());
-
+    
+    const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
+    se3::srdf::getNeutralConfigurationFromSrdf(robot->model(),srdfFileName);
+    
     const unsigned int nv = robot->nv();
     q = robot->model().neutralConfiguration;
-    q(2) += 0.6;
+    std::cout << "q: " << q.transpose() << std::endl;
+    q(2) += 0.84;
     v = Vector::Zero(nv);
     BOOST_REQUIRE(robot->model().existFrame(rf_frame_name));
     BOOST_REQUIRE(robot->model().existFrame(lf_frame_name));
@@ -153,7 +157,11 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
 {
   cout<<"\n*** test_invdyn_formulation_acc_force_remove_contact ***\n";
   const double dt = 0.01;
+#ifndef NDEBUG
   const unsigned int N_DT = 300;
+#else
+  const unsigned int N_DT = 30;
+#endif
   const unsigned int PRINT_N = 10;
   const unsigned int REMOVE_CONTACT_N = 100;
   const double CONTACT_TRANSITION_TIME = 1.0;
@@ -161,25 +169,25 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   const double w_RF = 1e3;
   double t = 0.0;
 
-  StandardHrp2InvDynCtrl hrp2_inv_dyn;
-  RobotWrapper & robot = *(hrp2_inv_dyn.robot);
-  InverseDynamicsFormulationAccForce * invDyn = hrp2_inv_dyn.invDyn;
-  Contact6d & contactRF = *(hrp2_inv_dyn.contactRF);
-  Contact6d & contactLF = *(hrp2_inv_dyn.contactLF);
-  TaskComEquality & comTask = *(hrp2_inv_dyn.comTask);
-  TaskJointPosture & postureTask = *(hrp2_inv_dyn.postureTask);
-  Vector q = hrp2_inv_dyn.q;
-  Vector v = hrp2_inv_dyn.v;
+  StandardRomeoInvDynCtrl romeo_inv_dyn;
+  RobotWrapper & robot = *(romeo_inv_dyn.robot);
+  InverseDynamicsFormulationAccForce * invDyn = romeo_inv_dyn.invDyn;
+  Contact6d & contactRF = *(romeo_inv_dyn.contactRF);
+  Contact6d & contactLF = *(romeo_inv_dyn.contactLF);
+  TaskComEquality & comTask = *(romeo_inv_dyn.comTask);
+  TaskJointPosture & postureTask = *(romeo_inv_dyn.postureTask);
+  Vector q = romeo_inv_dyn.q;
+  Vector v = romeo_inv_dyn.v;
   const int nv = robot.model().nv;
 
   // Add the right foot task
   TaskSE3Equality * rightFootTask = new TaskSE3Equality("task-right-foot",
                                                        robot,
-                                                       hrp2_inv_dyn.rf_frame_name);
+                                                       romeo_inv_dyn.rf_frame_name);
   rightFootTask->Kp(kp_RF*Vector::Ones(6));
   rightFootTask->Kd(2.0*rightFootTask->Kp().cwiseSqrt());
   se3::SE3 H_rf_ref = robot.position(invDyn->data(),
-                                     robot.model().getJointId(hrp2_inv_dyn.rf_frame_name));
+                                     robot.model().getJointId(romeo_inv_dyn.rf_frame_name));
   invDyn->addMotionTask(*rightFootTask, w_RF, 1);
 
   TrajectorySample s(12, 6);
@@ -235,8 +243,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
 
     if(i>0)
     {
-      CHECK_LESS_THAN((tau-tau_old).norm(), 1e1);
-      if((tau-tau_old).norm()>1e1) // || (i>=197 && i<=200))
+      CHECK_LESS_THAN((tau-tau_old).norm(), 2e1);
+      if((tau-tau_old).norm()>2e1) // || (i>=197 && i<=200))
       {
 //        contactRF.computeMotionTask(t, q, v, invDyn->data());
 //        rightFootTask->compute(t, q, v, invDyn->data());
@@ -291,15 +299,15 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   const unsigned int PRINT_N = 100;
   double t = 0.0;
 
-  StandardHrp2InvDynCtrl hrp2_inv_dyn;
-  RobotWrapper & robot = *(hrp2_inv_dyn.robot);
-  InverseDynamicsFormulationAccForce * invDyn = hrp2_inv_dyn.invDyn;
-  Contact6d & contactRF = *(hrp2_inv_dyn.contactRF);
-  Contact6d & contactLF = *(hrp2_inv_dyn.contactLF);
-  TaskComEquality & comTask = *(hrp2_inv_dyn.comTask);
-  TaskJointPosture & postureTask = *(hrp2_inv_dyn.postureTask);
-  Vector q = hrp2_inv_dyn.q;
-  Vector v = hrp2_inv_dyn.v;
+  StandardRomeoInvDynCtrl romeo_inv_dyn;
+  RobotWrapper & robot = *(romeo_inv_dyn.robot);
+  InverseDynamicsFormulationAccForce * invDyn = romeo_inv_dyn.invDyn;
+  Contact6d & contactRF = *(romeo_inv_dyn.contactRF);
+  Contact6d & contactLF = *(romeo_inv_dyn.contactLF);
+  TaskComEquality & comTask = *(romeo_inv_dyn.comTask);
+  TaskJointPosture & postureTask = *(romeo_inv_dyn.postureTask);
+  Vector q = romeo_inv_dyn.q;
+  Vector v = romeo_inv_dyn.v;
   const int nv = robot.model().nv;
 
   Vector3 com_ref = robot.com(invDyn->data());
@@ -319,8 +327,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   cout<<"nEq "<<invDyn->nEq()<<endl;
   cout<<"nIn "<<invDyn->nIn()<<endl;
   cout<<"Initial CoM position: "<<robot.com(invDyn->data()).transpose()<<endl;
-  cout<<"Initial RF position: "<<hrp2_inv_dyn.H_rf_ref<<endl;
-  cout<<"Initial LF position: "<<hrp2_inv_dyn.H_lf_ref<<endl;
+  cout<<"Initial RF position: "<<romeo_inv_dyn.H_rf_ref<<endl;
+  cout<<"Initial LF position: "<<romeo_inv_dyn.H_lf_ref<<endl;
 
   Vector dv = Vector::Zero(nv);
   Vector f_RF(12), f_LF(12), f(24);
@@ -458,13 +466,13 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
   const unsigned int N_DT = 3000;
   double t = 0.0;
 
-  StandardHrp2InvDynCtrl hrp2_inv_dyn;
-  RobotWrapper & robot = *(hrp2_inv_dyn.robot);
-  InverseDynamicsFormulationAccForce * invDyn = hrp2_inv_dyn.invDyn;
-  TaskComEquality & comTask = *(hrp2_inv_dyn.comTask);
-  TaskJointPosture & postureTask = *(hrp2_inv_dyn.postureTask);
-  Vector q = hrp2_inv_dyn.q;
-  Vector v = hrp2_inv_dyn.v;
+  StandardRomeoInvDynCtrl romeo_inv_dyn;
+  RobotWrapper & robot = *(romeo_inv_dyn.robot);
+  InverseDynamicsFormulationAccForce * invDyn = romeo_inv_dyn.invDyn;
+  TaskComEquality & comTask = *(romeo_inv_dyn.comTask);
+  TaskJointPosture & postureTask = *(romeo_inv_dyn.postureTask);
+  Vector q = romeo_inv_dyn.q;
+  Vector v = romeo_inv_dyn.v;
   const int nv = robot.model().nv;
 
   Vector3 com_ref = robot.com(invDyn->data());

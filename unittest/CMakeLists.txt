@@ -52,11 +52,18 @@ ADD_CUSTOM_TARGET(check COMMAND ${CMAKE_CTEST_COMMAND})
 
 ADD_UNIT_TEST(constraints eigen3)
 ADD_UNIT_TEST(trajectories "eigen3;pinocchio")
+
 ADD_UNIT_TEST(robot-wrapper "eigen3;pinocchio")
 ADD_TEST_CFLAGS(robot-wrapper '-DINVDYN_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
 ADD_UNIT_TEST(tasks "eigen3;pinocchio")
+ADD_TEST_CFLAGS(tasks '-DINVDYN_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+
 ADD_UNIT_TEST(contacts "eigen3;pinocchio")
+ADD_TEST_CFLAGS(contacts '-DINVDYN_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+
 ADD_UNIT_TEST(invdyn-formulation "eigen3;pinocchio")
+ADD_TEST_CFLAGS(invdyn-formulation '-DINVDYN_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+
 ADD_UNIT_TEST(math_utils eigen3)
 ADD_UNIT_TEST(hqp_solvers eigen3)
