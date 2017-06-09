@@ -21,10 +21,8 @@ namespace pininvdyn
 {
   namespace tasks
   {
-    using namespace pininvdyn;
-
     TaskMotion::TaskMotion(const std::string & name,
-                                       RobotWrapper & robot):
+                           RobotWrapper & robot):
       TaskBase(name, robot)
     {}
     

@@ -18,9 +18,11 @@
 #ifndef __invdyn_task_se3_equality_hpp__
 #define __invdyn_task_se3_equality_hpp__
 
-#include <pininvdyn/tasks/task-motion.hpp>
-#include <pininvdyn/trajectories/trajectory-base.hpp>
-#include <pininvdyn/math/constraint-equality.hpp>
+#include "pininvdyn/tasks/task-motion.hpp"
+#include "pininvdyn/trajectories/trajectory-base.hpp"
+#include "pininvdyn/math/constraint-equality.hpp"
+
+#include <pinocchio/multibody/model.hpp>
 
 namespace pininvdyn
 {

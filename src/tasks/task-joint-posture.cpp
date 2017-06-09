@@ -16,6 +16,7 @@
 //
 
 #include <pininvdyn/tasks/task-joint-posture.hpp>
+#include "pininvdyn/robots/robot-wrapper.hpp"
 
 namespace pininvdyn
 {

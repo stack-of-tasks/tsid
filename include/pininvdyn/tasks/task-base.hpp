@@ -19,8 +19,10 @@
 #define __invdyn_task_base_hpp__
 
 #include "pininvdyn/math/fwd.hpp"
-#include "pininvdyn/robots/robot-wrapper.hpp"
+#include "pininvdyn/robots/fwd.hpp"
 #include "pininvdyn/math/constraint-base.hpp"
+
+#include <pinocchio/multibody/fwd.hpp>
 
 namespace pininvdyn
 {
@@ -39,6 +41,7 @@ namespace pininvdyn
       typedef math::ConstraintBase ConstraintBase;
       typedef math::ConstRefVector ConstRefVector;
       typedef se3::Data Data;
+      typedef robots::RobotWrapper RobotWrapper;
 
       TaskBase(const std::string & name,
                RobotWrapper & robot);
@@ -60,6 +63,7 @@ namespace pininvdyn
       
     protected:
       std::string m_name;
+      
       /// \brief Reference on the robot model.
       RobotWrapper & m_robot;
     };

@@ -18,9 +18,10 @@
 #ifndef __invdyn_task_com_equality_hpp__
 #define __invdyn_task_com_equality_hpp__
 
-#include <pininvdyn/tasks/task-motion.hpp>
-#include <pininvdyn/trajectories/trajectory-base.hpp>
-#include <pininvdyn/math/constraint-equality.hpp>
+#include "pininvdyn/math/fwd.hpp"
+#include "pininvdyn/tasks/task-motion.hpp"
+#include "pininvdyn/trajectories/trajectory-base.hpp"
+#include "pininvdyn/math/constraint-equality.hpp"
 
 namespace pininvdyn
 {
@@ -35,10 +36,6 @@ namespace pininvdyn
       typedef math::Vector Vector;
       typedef math::Vector3 Vector3;
       typedef math::ConstraintEquality ConstraintEquality;
-      typedef se3::Data Data;
-      typedef se3::Data::Matrix6x Matrix6x;
-      typedef se3::Motion Motion;
-      typedef se3::SE3 SE3;
 
       TaskComEquality(const std::string & name,
                       RobotWrapper & robot);

@@ -154,6 +154,7 @@ SET(${PROJECT_NAME}_SOLVERS_HEADERS
   )
 
 SET(${PROJECT_NAME}_ROBOTS_HEADERS
+    include/pininvdyn/robots/fwd.hpp
     include/pininvdyn/robots/robot-wrapper.hpp
   )
 

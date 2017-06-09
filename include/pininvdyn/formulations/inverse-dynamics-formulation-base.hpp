@@ -49,6 +49,7 @@ namespace pininvdyn
     typedef contacts::ContactBase ContactBase;
     typedef solvers::HqpData HqpData;
     typedef solvers::HqpOutput HqpOutput;
+    typedef robots::RobotWrapper RobotWrapper;
 
 
     InverseDynamicsFormulationBase(const std::string & name,

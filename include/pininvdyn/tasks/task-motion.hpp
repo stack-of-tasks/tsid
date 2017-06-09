@@ -18,8 +18,8 @@
 #ifndef __invdyn_task_motion_hpp__
 #define __invdyn_task_motion_hpp__
 
-#include <pininvdyn/tasks/task-base.hpp>
-#include <pininvdyn/trajectories/trajectory-base.hpp>
+#include "pininvdyn/tasks/task-base.hpp"
+#include "pininvdyn/trajectories/trajectory-base.hpp"
 
 namespace pininvdyn
 {

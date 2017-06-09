@@ -18,7 +18,9 @@
 #ifndef __invdyn_inverse_dynamics_formulation_acc_force_hpp__
 #define __invdyn_inverse_dynamics_formulation_acc_force_hpp__
 
-#include <pininvdyn/formulations/inverse-dynamics-formulation-base.hpp>
+#include "pininvdyn/formulations/inverse-dynamics-formulation-base.hpp"
+#include "pininvdyn/math/constraint-equality.hpp"
+
 #include <vector>
 
 namespace pininvdyn

@@ -18,7 +18,7 @@
 #ifndef __invdyn_math_constraint_inequality_hpp__
 #define __invdyn_math_constraint_inequality_hpp__
 
-#include <pininvdyn/math/constraint-base.hpp>
+#include "pininvdyn/math/constraint-base.hpp"
 
 namespace pininvdyn
 {

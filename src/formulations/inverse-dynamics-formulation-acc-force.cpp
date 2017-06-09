@@ -15,8 +15,9 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <pininvdyn/formulations/inverse-dynamics-formulation-acc-force.hpp>
-#include <pininvdyn/math/constraint-bound.hpp>
+#include "pininvdyn/formulations/inverse-dynamics-formulation-acc-force.hpp"
+#include "pininvdyn/math/constraint-bound.hpp"
+#include "pininvdyn/math/constraint-inequality.hpp"
 
 using namespace std;
 using namespace pininvdyn;

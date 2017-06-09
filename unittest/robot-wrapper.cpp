@@ -20,15 +20,18 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/utility/binary.hpp>
 
-#include <pininvdyn/robots/robot-wrapper.hpp>
+#include "pininvdyn/robots/robot-wrapper.hpp"
 #include <pinocchio/algorithm/joint-configuration.hpp>
+
+using namespace pininvdyn;
+using namespace pininvdyn::math;
+using namespace pininvdyn::robots;
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
 BOOST_AUTO_TEST_CASE ( test_robot_wrapper )
 {
-  using namespace pininvdyn;
-  using namespace pininvdyn::math;
+
   using namespace std;
   using namespace se3;
   

@@ -23,11 +23,13 @@
 #include <pinocchio/algorithm/joint-configuration.hpp>
 
 #include <pininvdyn/contacts/contact-6d.hpp>
+#include <pininvdyn/robots/robot-wrapper.hpp>
 
 using namespace pininvdyn;
 using namespace trajectories;
 using namespace math;
 using namespace contacts;
+using namespace pininvdyn::robots;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )

@@ -18,8 +18,10 @@
 #ifndef __invdyn_contact_6d_hpp__
 #define __invdyn_contact_6d_hpp__
 
-#include <pininvdyn/contacts/contact-base.hpp>
-#include <pininvdyn/tasks/task-se3-equality.hpp>
+#include "pininvdyn/contacts/contact-base.hpp"
+#include "pininvdyn/tasks/task-se3-equality.hpp"
+#include "pininvdyn/math/constraint-inequality.hpp"
+#include "pininvdyn/math/constraint-equality.hpp"
 
 namespace pininvdyn
 {

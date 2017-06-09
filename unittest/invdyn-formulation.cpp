@@ -40,6 +40,7 @@ using namespace pininvdyn::math;
 using namespace pininvdyn::contacts;
 using namespace pininvdyn::tasks;
 using namespace pininvdyn::solvers;
+using namespace pininvdyn::robots;
 using namespace std;
 
 

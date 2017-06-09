@@ -18,12 +18,10 @@
 #ifndef __invdyn_contact_base_hpp__
 #define __invdyn_contact_base_hpp__
 
-#include <pininvdyn/math/fwd.hpp>
-#include <pininvdyn/robots/robot-wrapper.hpp>
-#include <pininvdyn/tasks/task-motion.hpp>
-#include <pininvdyn/math/constraint-base.hpp>
-#include <pininvdyn/math/constraint-equality.hpp>
-#include <pininvdyn/math/constraint-inequality.hpp>
+#include "pininvdyn/math/fwd.hpp"
+#include "pininvdyn/robots/fwd.hpp"
+#include "pininvdyn/tasks/task-motion.hpp"
+
 
 namespace pininvdyn
 {
@@ -45,6 +43,7 @@ namespace pininvdyn
       typedef math::Matrix Matrix;
       typedef tasks::TaskMotion TaskMotion;
       typedef se3::Data Data;
+      typedef robots::RobotWrapper RobotWrapper;
 
       ContactBase(const std::string & name,
                   RobotWrapper & robot);

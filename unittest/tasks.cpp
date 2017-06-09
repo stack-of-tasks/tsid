@@ -20,7 +20,8 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/utility/binary.hpp>
 
-#include "pininvdyn/math/utils.hpp"
+#include <pininvdyn/math/utils.hpp>
+#include <pininvdyn/robots/robot-wrapper.hpp>
 
 #include <pininvdyn/tasks/task-se3-equality.hpp>
 #include <pininvdyn/tasks/task-com-equality.hpp>
@@ -38,6 +39,7 @@ using namespace math;
 using namespace tasks;
 using namespace std;
 using namespace Eigen;
+using namespace pininvdyn::robots;
 
 #define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(is_finite(A), #A<<": "<<A)
 

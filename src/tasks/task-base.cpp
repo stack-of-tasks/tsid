@@ -15,7 +15,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <pininvdyn/tasks/task-base.hpp>
+#include "pininvdyn/tasks/task-base.hpp"
 
 namespace pininvdyn
 {

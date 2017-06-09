@@ -17,6 +17,7 @@
 
 #include "pininvdyn/math/utils.hpp"
 #include "pininvdyn/tasks/task-se3-equality.hpp"
+#include "pininvdyn/robots/robot-wrapper.hpp"
 
 namespace pininvdyn
 {

@@ -42,6 +42,12 @@ namespace pininvdyn
     
     typedef std::size_t Index;
     
+    // Forward declaration of constraints
+    class ConstraintBase;
+    class ConstraintEquality;
+    class ConstraintInequality;
+    class ConstraintBound;
+    
   }
 }
 

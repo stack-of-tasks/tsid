@@ -16,6 +16,7 @@
 //
 
 #include <pininvdyn/tasks/task-com-equality.hpp>
+#include "pininvdyn/robots/robot-wrapper.hpp"
 
 namespace pininvdyn
 {
