@@ -76,16 +76,6 @@ namespace pininvdyn
 
       Solver_HQP_base(const std::string & name);
 
-      /**
-       * @brief Create a new HQP solver of the specified type.
-       * @param solverType Type of HQP solver.
-       * @return A pointer to the new solver.
-       */
-      static Solver_HQP_base* getNewSolver(SolverHQP solverType, const std::string & name);
-
-      template<int nVars, int nEqCon, int nIneqCon>
-      static Solver_HQP_base* getNewSolverFixedSize(SolverHQP solverType,
-                                                    const std::string & name);
 
       virtual const std::string & name(){ return m_name; }
 

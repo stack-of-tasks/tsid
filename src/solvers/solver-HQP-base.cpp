@@ -15,18 +15,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <pininvdyn/solvers/solver-HQP-base.h>
-#include <pininvdyn/solvers/solver-HQP-eiquadprog.hpp>
-#include <pininvdyn/solvers/solver-HQP-eiquadprog-fast.h>
-#include <iostream>
-
-#ifdef QPOASES_FOUND
-#include <pininvdyn/solvers/solver-HQP-qpoases.hh>
-#endif
-
-
-using namespace pininvdyn;
-using namespace std;
+#include "pininvdyn/solvers/solver-HQP-base.h"
 
 
 namespace pininvdyn
@@ -97,23 +86,6 @@ namespace pininvdyn
       return ss.str();
     }
           
-    Solver_HQP_base* Solver_HQP_base::getNewSolver(SolverHQP solverType, const std::string & name)
-    {
-      if(solverType==SOLVER_HQP_EIQUADPROG)
-        return new Solver_HQP_eiquadprog(name);
-
-      if(solverType==SOLVER_HQP_EIQUADPROG_FAST)
-        return new Solver_HQP_eiquadprog_fast(name);
-
-    #ifdef QPOASES_FOUND
-      if(solverType==SOLVER_HQP_QPOASES)
-        return new Solver_HQP_qpoases(name);
-    #endif
-
-      assert(false && "Specified solver type not recognized");
-      return NULL;
-    }
-
     Solver_HQP_base::Solver_HQP_base(const std::string & name)
     {
       m_name = name;

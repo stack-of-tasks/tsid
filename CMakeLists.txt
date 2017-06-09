@@ -144,6 +144,8 @@ SET(${PROJECT_NAME}_SOLVERS_HEADERS
     include/pininvdyn/solvers/fwd.hpp
     include/pininvdyn/solvers/solver-HQP-base.h
     include/pininvdyn/solvers/solver-HQP-base.hpp
+    include/pininvdyn/solvers/solver-HQP-factory.hpp
+    include/pininvdyn/solvers/solver-HQP-factory.hxx
     include/pininvdyn/solvers/solver-HQP-qpoases.hpp
     include/pininvdyn/solvers/solver-HQP-eiquadprog.hpp
     include/pininvdyn/solvers/solver-HQP-eiquadprog-rt.h

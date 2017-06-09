@@ -26,7 +26,7 @@
 #include <pininvdyn/tasks/task-se3-equality.hpp>
 #include <pininvdyn/tasks/task-joint-posture.hpp>
 #include <pininvdyn/trajectories/trajectory-euclidian.hpp>
-#include <pininvdyn/solvers/solver-HQP-base.hpp>
+#include <pininvdyn/solvers/solver-HQP-factory.hxx>
 #include <pininvdyn/utils/stop-watch.hpp>
 #include <pininvdyn/utils/statistics.hpp>
 
@@ -204,8 +204,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   TrajectorySample samplePosture(nv-6);
 
   // Create an HQP solver
-  Solver_HQP_base * solver = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG,
-                                                           "solver-eiquadprog");
+  Solver_HQP_base * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
+                                                               "solver-eiquadprog");
   solver->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
 
   Vector tau_old(nv-6);
@@ -320,8 +320,9 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   TrajectorySample samplePosture(nv-6);
 
   // Create an HQP solver
-  Solver_HQP_base * solver = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG,
-                                                           "solver-eiquadprog");
+  Solver_HQP_base * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
+                                                               "solver-eiquadprog");
+  
   solver->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
   cout<<"nVar "<<invDyn->nVar()<<endl;
   cout<<"nEq "<<invDyn->nEq()<<endl;
@@ -485,13 +486,14 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
   TrajectorySample samplePosture(nv-6);
 
   // Create an HQP solver
-  Solver_HQP_base * solver = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG,
-                                                           "eiquadprog");
-  Solver_HQP_base * solver_fast = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG_FAST,
-                                                                "eiquadprog-fast");
+  Solver_HQP_base * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
+                                                               "eiquadprog");
+  Solver_HQP_base * solver_fast = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG_FAST,
+                                                                    "eiquadprog-fast");
   Solver_HQP_base * solver_rt =
-      Solver_HQP_base::getNewSolverFixedSize<60,18,34>(SOLVER_HQP_EIQUADPROG_RT,
-                                                       "eiquadprog-rt");
+      SolverHQPFactory::createNewSolver<60,18,34>(SOLVER_HQP_EIQUADPROG_RT,
+                                                  "eiquadprog-rt");
+  
   solver->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
   solver_fast->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
 

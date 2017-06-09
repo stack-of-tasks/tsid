@@ -18,26 +18,5 @@
 #ifndef __invdyn_solvers_hqp_base_hpp__
 #define __invdyn_solvers_hqp_base_hpp__
 
-//#include <pininvdyn/solvers/solver-HQP-base.h>
-#include <pininvdyn/solvers/solver-HQP-eiquadprog-rt.hpp>
-
-
-namespace pininvdyn
-{
-  namespace solvers
-  {
-
-    template<int nVars, int nEqCon, int nIneqCon>
-    Solver_HQP_base* Solver_HQP_base::getNewSolverFixedSize(SolverHQP solverType,
-                                                            const std::string & name)
-    {
-      if(solverType==SOLVER_HQP_EIQUADPROG_RT)
-        return new Solver_HQP_eiquadprog_rt<nVars, nEqCon, nIneqCon>(name);
-
-      assert(false && "Specified solver type not recognized");
-      return NULL;
-    }
-  }
-}
 
 #endif // ifndef __invdyn_solvers_hqp_base_hpp__

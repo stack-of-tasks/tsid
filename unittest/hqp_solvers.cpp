@@ -20,8 +20,9 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/utility/binary.hpp>
 
-#include <pininvdyn/solvers/solver-HQP-base.hpp>
+#include <pininvdyn/solvers/solver-HQP-factory.hxx>
 #include <pininvdyn/solvers/solver-HQP-eiquadprog.hpp>
+#include <pininvdyn/solvers/solver-HQP-eiquadprog-rt.hpp>
 #include <pininvdyn/math/utils.hpp>
 #include <pininvdyn/math/constraint-equality.hpp>
 #include <pininvdyn/math/constraint-inequality.hpp>
@@ -196,17 +197,16 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
 	  neq<<" equalities, "<<nin<<" inequalities\n";
 
   // CREATE SOLVERS
-  Solver_HQP_base * solver_rt =
-      Solver_HQP_base::getNewSolverFixedSize<n,neq,nin>(SOLVER_HQP_EIQUADPROG_RT,
-                                                        "eiquadprog_rt");
+  Solver_HQP_base * solver_rt = SolverHQPFactory::createNewSolver<n,neq,nin>(SOLVER_HQP_EIQUADPROG_RT,
+                                                                             "eiquadprog_rt");
   solver_rt->resize(n, neq, nin);
 
-  Solver_HQP_base * solver_fast = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG_FAST,
-                                                                "eiquadprog_fast");
+  Solver_HQP_base * solver_fast = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG_FAST,
+                                                                    "eiquadprog_fast");
   solver_fast->resize(n, neq, nin);
 
-  Solver_HQP_base * solver = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG,
-                                                           "eiquadprog");
+  Solver_HQP_base * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
+                                                               "eiquadprog");
   solver->resize(n, neq, nin);
 
   // CREATE PROBLEM DATA
