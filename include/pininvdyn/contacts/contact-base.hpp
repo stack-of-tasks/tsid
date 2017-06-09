@@ -19,7 +19,7 @@
 #define __invdyn_contact_base_hpp__
 
 #include <pininvdyn/math/fwd.hpp>
-#include <pininvdyn/robot-wrapper.hpp>
+#include <pininvdyn/robots/robot-wrapper.hpp>
 #include <pininvdyn/tasks/task-motion.hpp>
 #include <pininvdyn/math/constraint-base.hpp>
 #include <pininvdyn/math/constraint-equality.hpp>

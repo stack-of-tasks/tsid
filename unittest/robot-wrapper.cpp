@@ -20,7 +20,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/utility/binary.hpp>
 
-#include <pininvdyn/robot-wrapper.hpp>
+#include <pininvdyn/robots/robot-wrapper.hpp>
 #include <pinocchio/algorithm/joint-configuration.hpp>
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )

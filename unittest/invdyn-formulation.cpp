@@ -21,7 +21,7 @@
 #include <boost/utility/binary.hpp>
 
 #include <pininvdyn/contacts/contact-6d.hpp>
-#include <pininvdyn/inverse-dynamics-formulation-acc-force.hpp>
+#include <pininvdyn/formulations/inverse-dynamics-formulation-acc-force.hpp>
 #include <pininvdyn/tasks/task-com-equality.hpp>
 #include <pininvdyn/tasks/task-se3-equality.hpp>
 #include <pininvdyn/tasks/task-joint-posture.hpp>

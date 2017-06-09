@@ -15,7 +15,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <pininvdyn/inverse-dynamics-formulation-base.hpp>
+#include <pininvdyn/formulations/inverse-dynamics-formulation-base.hpp>
 
 
 namespace pininvdyn

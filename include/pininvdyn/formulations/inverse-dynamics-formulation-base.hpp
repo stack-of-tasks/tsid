@@ -19,7 +19,7 @@
 #define __invdyn_inverse_dynamics_formulation_base_hpp__
 
 #include "pininvdyn/math/fwd.hpp"
-#include "pininvdyn/robot-wrapper.hpp"
+#include "pininvdyn/robots/robot-wrapper.hpp"
 #include "pininvdyn/tasks/task-actuation.hpp"
 #include "pininvdyn/tasks/task-motion.hpp"
 #include "pininvdyn/tasks/task-contact-force.hpp"

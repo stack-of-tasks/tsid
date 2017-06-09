@@ -15,9 +15,6 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <Eigen/Dense>
-#include <pinocchio/multibody/model.hpp>
-
 namespace pininvdyn
 {
   namespace tasks

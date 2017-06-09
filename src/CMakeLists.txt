@@ -57,10 +57,16 @@ SET(${LIBRARY_NAME}_SOLVERS_SOURCES
     solvers/solver-HQP-qpoases.cpp
   )
 
+SET(${LIBRARY_NAME}_ROBOTS_SOURCES
+    robots/robot-wrapper.cpp
+  )
+
+SET(${LIBRARY_NAME}_FORMULATIONS_SOURCES
+    formulations/inverse-dynamics-formulation-base.cpp
+    formulations/inverse-dynamics-formulation-acc-force.cpp
+  )
+
 SET(${LIBRARY_NAME}_SOURCES
-    robot-wrapper.cpp
-    inverse-dynamics-formulation-base.cpp
-    inverse-dynamics-formulation-acc-force.cpp
     utils/statistics.cpp
     utils/stop-watch.cpp
     ${${LIBRARY_NAME}_MATH_SOURCES}
@@ -68,6 +74,8 @@ SET(${LIBRARY_NAME}_SOURCES
     ${${LIBRARY_NAME}_CONTACTS_SOURCES}
     ${${LIBRARY_NAME}_TRAJECTORIES_SOURCES}
     ${${LIBRARY_NAME}_SOLVERS_SOURCES}
+    ${${LIBRARY_NAME}_ROBOTS_SOURCES}
+    ${${LIBRARY_NAME}_FORMULATIONS_SOURCES}
   )
 
 ADD_LIBRARY(${LIBRARY_NAME} SHARED ${HEADERS_FULL_PATH} ${${LIBRARY_NAME}_SOURCES})

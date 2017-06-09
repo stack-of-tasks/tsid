@@ -15,7 +15,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "pininvdyn/robot-wrapper.hpp"
+#include "pininvdyn/robots/robot-wrapper.hpp"
 
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/parsers/urdf.hpp>

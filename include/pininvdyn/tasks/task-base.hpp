@@ -19,7 +19,7 @@
 #define __invdyn_task_base_hpp__
 
 #include "pininvdyn/math/fwd.hpp"
-#include "pininvdyn/robot-wrapper.hpp"
+#include "pininvdyn/robots/robot-wrapper.hpp"
 #include "pininvdyn/math/constraint-base.hpp"
 
 namespace pininvdyn

@@ -153,11 +153,17 @@ SET(${PROJECT_NAME}_SOLVERS_HEADERS
     include/pininvdyn/solvers/solver-HQP-eiquadprog-fast.h
   )
 
+SET(${PROJECT_NAME}_ROBOTS_HEADERS
+    include/pininvdyn/robots/robot-wrapper.hpp
+  )
+
+SET(${PROJECT_NAME}_FORMULATIONS_HEADERS
+    include/pininvdyn/formulations/inverse-dynamics-formulation-base.hpp
+    include/pininvdyn/formulations/inverse-dynamics-formulation-acc-force.hpp
+  )
+
 SET(HEADERS
     include/pininvdyn/config.hpp
-    include/pininvdyn/robot-wrapper.hpp
-    include/pininvdyn/inverse-dynamics-formulation-base.hpp
-    include/pininvdyn/inverse-dynamics-formulation-acc-force.hpp
     include/pininvdyn/utils/statistics.hpp
     include/pininvdyn/utils/stop-watch.hpp
     include/pininvdyn/utils/Stdafx.hh
@@ -166,6 +172,8 @@ SET(HEADERS
     ${${PROJECT_NAME}_CONTACTS_HEADERS}
     ${${PROJECT_NAME}_TRAJECTORIES_HEADERS}
     ${${PROJECT_NAME}_SOLVERS_HEADERS}
+    ${${PROJECT_NAME}_ROBOTS_HEADERS}
+    ${${PROJECT_NAME}_FORMULATIONS_HEADERS}
  )
 
 LIST(REMOVE_DUPLICATES HEADERS)
