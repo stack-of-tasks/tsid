@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
     pseudoInverse(constraint.matrix(), Jpinv, 1e-5);
     Vector dv = Jpinv * constraint.vector();
     BOOST_REQUIRE(is_finite(Jpinv));
-    BOOST_CHECK(MatrixXd::Identity(6,6).isApprox(constraint.matrix()*Jpinv));
+    BOOST_CHECK(MatrixXd::Identity(constraint.rows(),constraint.rows()).isApprox(constraint.matrix()*Jpinv));
     BOOST_REQUIRE(is_finite(dv));
 
     v += dt*dv;
