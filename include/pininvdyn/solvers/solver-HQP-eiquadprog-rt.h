@@ -15,8 +15,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_solvers_hqp_eiquadprog_rt_hpp__
-#define __invdyn_solvers_hqp_eiquadprog_rt_hpp__
+#ifndef __invdyn_solvers_hqp_eiquadprog_rt_h__
+#define __invdyn_solvers_hqp_eiquadprog_rt_h__
 
 #include "pininvdyn/solvers/fwd.hpp"
 #include "pininvdyn/solvers/solver-HQP-base.h"
@@ -85,4 +85,4 @@ namespace pininvdyn
   }
 }
 
-#endif // ifndef __invdyn_solvers_hqp_eiquadprog_rt_hpp__
+#endif // ifndef __invdyn_solvers_hqp_eiquadprog_rt_h__
