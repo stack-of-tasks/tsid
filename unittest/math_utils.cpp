@@ -28,16 +28,14 @@ BOOST_AUTO_TEST_CASE ( test_pseudoinverse)
 {
   std::cout << "test_pseudoinverse\n";
   using namespace pininvdyn::math;
-  using namespace Eigen;
-  using namespace std;
   const unsigned int m = 3;
   const unsigned int n = 5;
 
-  MatrixXd A = MatrixXd::Random(m,n);
-  MatrixXd Apinv = MatrixXd::Zero(n,m);
+  Matrix A = Matrix::Random(m,n);
+  Matrix Apinv = Matrix::Zero(n,m);
   pseudoInverse(A, Apinv, 1e-5);
 
-  BOOST_CHECK(MatrixXd::Identity(m,m).isApprox(A*Apinv));
+  BOOST_CHECK(Matrix::Identity(m,m).isApprox(A*Apinv));
 }
 
 

@@ -18,15 +18,16 @@
 #include <pininvdyn/inverse-dynamics-formulation-base.hpp>
 
 
-using namespace pininvdyn;
+namespace pininvdyn
+{
 
-
-InverseDynamicsFormulationBase::InverseDynamicsFormulationBase(
-    const std::string & name,
-    RobotWrapper & robot,
-    bool verbose):
-  m_name(name),
-  m_robot(robot),
-  m_verbose(verbose)
-{}
+  InverseDynamicsFormulationBase::InverseDynamicsFormulationBase(const std::string & name,
+                                                                 RobotWrapper & robot,
+                                                                 bool verbose)
+  : m_name(name)
+  , m_robot(robot)
+  , m_verbose(verbose)
+  {}
+  
+}
 
