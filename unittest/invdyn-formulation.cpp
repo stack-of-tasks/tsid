@@ -62,7 +62,7 @@ const string romeo_model_path = INVDYN_SOURCE_DIR"/models/romeo";
 #ifndef NDEBUG
 const int max_it = 10;
 #else
-const int max_it = 100000;
+const int max_it = 1000;
 #endif
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
