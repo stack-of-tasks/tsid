@@ -492,7 +492,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
   Solver_HQP_base * solver_fast = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG_FAST,
                                                                     "eiquadprog-fast");
   Solver_HQP_base * solver_rt =
-      SolverHQPFactory::createNewSolver<60,18,34>(SOLVER_HQP_EIQUADPROG_RT,
+      SolverHQPFactory::createNewSolver<61,18,34>(SOLVER_HQP_EIQUADPROG_RT,
                                                   "eiquadprog-rt");
   
   solver->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
