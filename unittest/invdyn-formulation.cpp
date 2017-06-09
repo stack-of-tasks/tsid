@@ -42,7 +42,6 @@ using namespace pininvdyn::tasks;
 using namespace pininvdyn::solvers;
 using namespace std;
 
-BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
 #define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(is_finite(A), #A<<": "<<A)
 #define CHECK_LESS_THAN(A,B) BOOST_CHECK_MESSAGE(A<B, #A<<": "<<A<<">"<<B)
@@ -59,6 +58,14 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
                                         REQUIRE_FINITE(contact.getForceRegularizationTask().vector())
 
 const string romeo_model_path = INVDYN_SOURCE_DIR"/models/romeo";
+
+#ifndef NDEBUG
+const int max_it = 10;
+#else
+const int max_it = 100000;
+#endif
+
+BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
 class StandardRomeoInvDynCtrl
 {
@@ -158,11 +165,6 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
 {
   cout<<"\n*** test_invdyn_formulation_acc_force_remove_contact ***\n";
   const double dt = 0.01;
-#ifndef NDEBUG
-  const unsigned int N_DT = 300;
-#else
-  const unsigned int N_DT = 30;
-#endif
   const unsigned int PRINT_N = 10;
   const unsigned int REMOVE_CONTACT_N = 100;
   const double CONTACT_TRANSITION_TIME = 1.0;
@@ -210,7 +212,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   solver->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
 
   Vector tau_old(nv-6);
-  for(int i=0; i<N_DT; i++)
+  for(int i=0; i<max_it; i++)
   {
     if(i==REMOVE_CONTACT_N)
     {
@@ -296,7 +298,6 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   cout<<"\n*** test_invdyn_formulation_acc_force ***\n";
 
   const double dt = 0.001;
-  const unsigned int N_DT = 3000;
   const unsigned int PRINT_N = 100;
   double t = 0.0;
 
@@ -338,7 +339,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   contacts.push_back(&contactRF);
   contacts.push_back(&contactLF);
   Matrix Jc(24, nv);
-  for(int i=0; i<N_DT; i++)
+  for(int i=0; i<max_it; i++)
   {
     sampleCom = trajCom->computeNext();
     comTask.setReference(sampleCom);
@@ -465,7 +466,6 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
   cout<<"\n*** test_invdyn_formulation_acc_force_computation_time ***\n";
 
   const double dt = 0.001;
-  const unsigned int N_DT = 3000;
   double t = 0.0;
 
   StandardRomeoInvDynCtrl romeo_inv_dyn;
@@ -499,7 +499,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
   solver_fast->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
 
   Vector dv = Vector::Zero(nv);
-  for(int i=0; i<N_DT; i++)
+  for(int i=0; i<max_it; i++)
   {
     getProfiler().start(PROFILE_CONTROL_CYCLE);
 
