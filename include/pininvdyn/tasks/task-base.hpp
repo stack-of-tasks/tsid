@@ -36,9 +36,9 @@ namespace pininvdyn
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       
-      typedef pininvdyn::RobotWrapper RobotWrapper;
-      typedef pininvdyn::math::ConstraintBase ConstraintBase;
-      typedef pininvdyn::math::ConstRefVector ConstRefVector;
+      typedef RobotWrapper RobotWrapper;
+      typedef math::ConstraintBase ConstraintBase;
+      typedef math::ConstRefVector ConstRefVector;
       typedef se3::Data Data;
 
       TaskBase(const std::string & name,

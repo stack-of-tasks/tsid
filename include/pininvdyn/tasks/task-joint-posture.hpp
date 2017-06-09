@@ -31,12 +31,12 @@ namespace pininvdyn
         public TaskMotion
     {
     public:
-      typedef pininvdyn::RobotWrapper RobotWrapper;
-      typedef pininvdyn::math::Index Index;
-      typedef pininvdyn::trajectories::TrajectorySample TrajectorySample;
-      typedef pininvdyn::math::Vector Vector;
-      typedef pininvdyn::math::VectorXi VectorXi;
-      typedef pininvdyn::math::ConstraintEquality ConstraintEquality;
+      typedef RobotWrapper RobotWrapper;
+      typedef math::Index Index;
+      typedef trajectories::TrajectorySample TrajectorySample;
+      typedef math::Vector Vector;
+      typedef math::VectorXi VectorXi;
+      typedef math::ConstraintEquality ConstraintEquality;
       typedef se3::Data Data;
 
       TaskJointPosture(const std::string & name,

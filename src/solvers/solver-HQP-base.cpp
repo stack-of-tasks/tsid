@@ -17,6 +17,7 @@
 
 #include "pininvdyn/solvers/solver-HQP-base.h"
 
+#include <iostream>
 
 namespace pininvdyn
 {
@@ -31,6 +32,8 @@ namespace pininvdyn
 
     std::string hqpDataToString(const HqpData & data, bool printMatrices)
     {
+      using namespace std;
+      
       stringstream ss;
       unsigned int priority = 0;
       for(HqpData::const_iterator it=data.begin(); it!=data.end(); it++)
@@ -38,7 +41,7 @@ namespace pininvdyn
         ss<<"Level "<< priority<<endl;
         for(ConstraintLevel::const_iterator iit=it->begin(); iit!=it->end(); iit++)
         {
-          const pininvdyn::math::ConstraintBase* c = iit->second;
+          const math::ConstraintBase* c = iit->second;
           ss<<" - "<<c->name()<<": w="<<iit->first<<", ";
           if(c->isEquality())
             ss<<"equality, ";
@@ -58,7 +61,7 @@ namespace pininvdyn
         {
           for(ConstraintLevel::const_iterator iit=it->begin(); iit!=it->end(); iit++)
           {
-            const pininvdyn::math::ConstraintBase* c = iit->second;
+            const math::ConstraintBase* c = iit->second;
             ss<<"*** "<<c->name()<<" *** ";
             if(c->isEquality())
             {

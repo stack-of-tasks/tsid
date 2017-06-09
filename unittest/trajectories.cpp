@@ -29,8 +29,8 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 BOOST_AUTO_TEST_CASE ( test_trajectory_se3 )
 {
   using namespace pininvdyn;
-  using namespace pininvdyn::trajectories;
-  using namespace pininvdyn::math;
+  using namespace trajectories;
+  using namespace math;
   using namespace std;
   using namespace Eigen;
   using namespace se3;
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE ( test_trajectory_se3 )
 BOOST_AUTO_TEST_CASE ( test_trajectory_euclidian )
 {
   using namespace pininvdyn;
-  using namespace pininvdyn::trajectories;
+  using namespace trajectories;
   using namespace std;
   using namespace Eigen;
 

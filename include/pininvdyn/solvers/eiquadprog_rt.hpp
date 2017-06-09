@@ -19,7 +19,7 @@
 #define RTEIQUADPROG_HPP_
 
 #include "pininvdyn/solvers/eiquadprog_rt.h"
-#include <pininvdyn/utils/stop-watch.hpp>
+#include "pininvdyn/utils/stop-watch.hpp"
 
 
 namespace pininvdyn

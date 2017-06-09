@@ -18,9 +18,9 @@
 #ifndef __invdyn_solvers_hqp_eiquadprog_rt_h__
 #define __invdyn_solvers_hqp_eiquadprog_rt_h__
 
+#include "pininvdyn/math/fwd.hpp"
 #include "pininvdyn/solvers/fwd.hpp"
 #include "pininvdyn/solvers/solver-HQP-base.h"
-#include "pininvdyn/math/utils.hpp"
 
 #include "pininvdyn/solvers/eiquadprog_rt.h"
 
@@ -32,15 +32,14 @@ namespace pininvdyn
      * @brief
      */
     template<int nVars, int nEqCon, int nIneqCon>
-    class PININVDYN_DLLAPI Solver_HQP_eiquadprog_rt:
-        public Solver_HQP_base
+    class PININVDYN_DLLAPI Solver_HQP_eiquadprog_rt : public Solver_HQP_base
     {
     public:
-      typedef pininvdyn::math::Matrix Matrix;
-      typedef pininvdyn::math::Vector Vector;
-      typedef pininvdyn::math::RefVector RefVector;
-      typedef pininvdyn::math::ConstRefVector ConstRefVector;
-      typedef pininvdyn::math::ConstRefMatrix ConstRefMatrix;
+      typedef math::Matrix Matrix;
+      typedef math::Vector Vector;
+      typedef math::RefVector RefVector;
+      typedef math::ConstRefVector ConstRefVector;
+      typedef math::ConstRefMatrix ConstRefMatrix;
 
       Solver_HQP_eiquadprog_rt(const std::string & name);
 

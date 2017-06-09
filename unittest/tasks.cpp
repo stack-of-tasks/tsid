@@ -33,9 +33,9 @@
 #include <Eigen/SVD>
 
 using namespace pininvdyn;
-using namespace pininvdyn::trajectories;
-using namespace pininvdyn::math;
-using namespace pininvdyn::tasks;
+using namespace trajectories;
+using namespace math;
+using namespace tasks;
 using namespace std;
 using namespace Eigen;
 

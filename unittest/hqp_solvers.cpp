@@ -39,8 +39,8 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //{
 //  std::cout << "test_eiquadprog_unconstrained\n";
 //  using namespace pininvdyn;
-//  using namespace pininvdyn::math;
-//  using namespace pininvdyn::solvers;
+//  using namespace math;
+//  using namespace solvers;
 //  using namespace std;
 
 //  const unsigned int n = 5;
@@ -72,8 +72,8 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //{
 //  std::cout << "test_eiquadprog_equality_constrained\n";
 //  using namespace pininvdyn;
-//  using namespace pininvdyn::math;
-//  using namespace pininvdyn::solvers;
+//  using namespace math;
+//  using namespace solvers;
 //  using namespace std;
 
 //  const unsigned int n = 5;
@@ -111,8 +111,8 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //{
 //  std::cout << "test_eiquadprog_inequality_constrained\n";
 //  using namespace pininvdyn;
-//  using namespace pininvdyn::math;
-//  using namespace pininvdyn::solvers;
+//  using namespace math;
+//  using namespace solvers;
 //  using namespace std;
 
 //  const unsigned int n = 5;
@@ -169,8 +169,8 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
 {
   std::cout << "test_eiquadprog_classic_vs_rt_vs_fast\n";
   using namespace pininvdyn;
-  using namespace pininvdyn::math;
-  using namespace pininvdyn::solvers;
+  using namespace math;
+  using namespace solvers;
   using namespace std;
 
   const double EPS = 1e-10;

@@ -21,8 +21,8 @@ namespace pininvdyn
 {
   namespace tasks
   {
-    using namespace pininvdyn::math;
-    using namespace pininvdyn::trajectories;
+    using namespace math;
+    using namespace trajectories;
     using namespace se3;
 
     TaskComEquality::TaskComEquality(const std::string & name,

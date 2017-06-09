@@ -29,8 +29,8 @@ namespace pininvdyn
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      typedef pininvdyn::math::Vector         Vector;
-      typedef pininvdyn::math::ConstRefVector ConstRefVector;
+      typedef math::Vector         Vector;
+      typedef math::ConstRefVector ConstRefVector;
 
       TrajectoryEuclidianConstant(const std::string & name);
 

@@ -32,7 +32,7 @@ namespace pininvdyn
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       
-      pininvdyn::math::Vector pos, vel, acc;
+      math::Vector pos, vel, acc;
 
       TrajectorySample(unsigned int size=0)
       {

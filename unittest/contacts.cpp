@@ -25,9 +25,9 @@
 #include <pininvdyn/contacts/contact-6d.hpp>
 
 using namespace pininvdyn;
-using namespace pininvdyn::trajectories;
-using namespace pininvdyn::math;
-using namespace pininvdyn::contacts;
+using namespace trajectories;
+using namespace math;
+using namespace contacts;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )

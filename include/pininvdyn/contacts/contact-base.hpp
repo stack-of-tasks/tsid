@@ -38,13 +38,13 @@ namespace pininvdyn
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       
-      typedef pininvdyn::RobotWrapper RobotWrapper;
-      typedef pininvdyn::math::ConstraintBase ConstraintBase;
-      typedef pininvdyn::math::ConstraintInequality ConstraintInequality;
-      typedef pininvdyn::math::ConstraintEquality ConstraintEquality;
-      typedef pininvdyn::math::ConstRefVector ConstRefVector;
-      typedef pininvdyn::math::Matrix Matrix;
-      typedef pininvdyn::tasks::TaskMotion TaskMotion;
+      typedef RobotWrapper RobotWrapper;
+      typedef math::ConstraintBase ConstraintBase;
+      typedef math::ConstraintInequality ConstraintInequality;
+      typedef math::ConstraintEquality ConstraintEquality;
+      typedef math::ConstRefVector ConstRefVector;
+      typedef math::Matrix Matrix;
+      typedef tasks::TaskMotion TaskMotion;
       typedef se3::Data Data;
 
       ContactBase(const std::string & name,

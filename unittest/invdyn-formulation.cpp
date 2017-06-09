@@ -29,6 +29,7 @@
 #include <pininvdyn/solvers/solver-HQP-factory.hxx>
 #include <pininvdyn/utils/stop-watch.hpp>
 #include <pininvdyn/utils/statistics.hpp>
+#include <pininvdyn/math/utils.hpp>
 
 #include <pinocchio/algorithm/joint-configuration.hpp> // integrate
 #include <pinocchio/parsers/srdf.hpp>

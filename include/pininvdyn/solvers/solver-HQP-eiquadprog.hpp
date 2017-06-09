@@ -31,11 +31,11 @@ namespace pininvdyn
         public Solver_HQP_base
     {
     public:
-      typedef pininvdyn::math::Matrix Matrix;
-      typedef pininvdyn::math::Vector Vector;
-      typedef pininvdyn::math::RefVector RefVector;
-      typedef pininvdyn::math::ConstRefVector ConstRefVector;
-      typedef pininvdyn::math::ConstRefMatrix ConstRefMatrix;
+      typedef math::Matrix Matrix;
+      typedef math::Vector Vector;
+      typedef math::RefVector RefVector;
+      typedef math::ConstRefVector ConstRefVector;
+      typedef math::ConstRefMatrix ConstRefMatrix;
 
       Solver_HQP_eiquadprog(const std::string & name);
 

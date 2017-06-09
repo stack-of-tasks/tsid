@@ -18,9 +18,8 @@
 #ifndef __invdyn_solvers_hqp_base_h__
 #define __invdyn_solvers_hqp_base_h__
 
-#include <pininvdyn/math/constraint-base.hpp>
-#include <pininvdyn/config.hh>
 #include "pininvdyn/solvers/fwd.hpp"
+#include "pininvdyn/math/constraint-base.hpp"
 
 #include <vector>
 #include <utility>
@@ -30,8 +29,8 @@ namespace pininvdyn
   namespace solvers
   {
 
-    typedef std::vector< std::pair<double, pininvdyn::math::ConstraintBase*> > ConstraintLevel;
-    typedef std::vector< std::pair<double, const pininvdyn::math::ConstraintBase*> > ConstConstraintLevel;
+    typedef std::vector< std::pair<double, math::ConstraintBase*> > ConstraintLevel;
+    typedef std::vector< std::pair<double, const math::ConstraintBase*> > ConstConstraintLevel;
     typedef std::vector<ConstraintLevel> HqpData;
     typedef std::vector<ConstConstraintLevel> ConstHqpData;
 
@@ -41,9 +40,9 @@ namespace pininvdyn
     {
     public:
       HQP_status status;                    /// solver status
-      pininvdyn::math::Vector x;            /// solution
-      pininvdyn::math::Vector lambda;       /// Lagrange multipliers
-      pininvdyn::math::VectorXi activeSet;  /// indexes of active inequalities
+      math::Vector x;            /// solution
+      math::Vector lambda;       /// Lagrange multipliers
+      math::VectorXi activeSet;  /// indexes of active inequalities
       int iterations;                       /// number of iterations performed by the solver
 
       HqpOutput(){}
@@ -70,14 +69,13 @@ namespace pininvdyn
 
       static std::string const HQP_status_string [5];
 
-      typedef pininvdyn::math::RefVector RefVector;
-      typedef pininvdyn::math::ConstRefVector ConstRefVector;
-      typedef pininvdyn::math::ConstRefMatrix ConstRefMatrix;
+      typedef math::RefVector RefVector;
+      typedef math::ConstRefVector ConstRefVector;
+      typedef math::ConstRefMatrix ConstRefMatrix;
 
       Solver_HQP_base(const std::string & name);
 
-
-      virtual const std::string & name(){ return m_name; }
+      virtual const std::string & name() { return m_name; }
 
       virtual void resize(unsigned int n, unsigned int neq, unsigned int nin) = 0;
 

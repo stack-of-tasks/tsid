@@ -18,12 +18,13 @@
 #ifndef __invdyn_inverse_dynamics_formulation_base_hpp__
 #define __invdyn_inverse_dynamics_formulation_base_hpp__
 
-#include <pininvdyn/robot-wrapper.hpp>
-#include <pininvdyn/tasks/task-actuation.hpp>
-#include <pininvdyn/tasks/task-motion.hpp>
-#include <pininvdyn/tasks/task-contact-force.hpp>
-#include <pininvdyn/contacts/contact-base.hpp>
-#include <pininvdyn/solvers/solver-HQP-base.hpp>
+#include "pininvdyn/math/fwd.hpp"
+#include "pininvdyn/robot-wrapper.hpp"
+#include "pininvdyn/tasks/task-actuation.hpp"
+#include "pininvdyn/tasks/task-motion.hpp"
+#include "pininvdyn/tasks/task-contact-force.hpp"
+#include "pininvdyn/contacts/contact-base.hpp"
+#include "pininvdyn/solvers/solver-HQP-base.h"
 
 #include <string>
 
@@ -39,12 +40,15 @@ namespace pininvdyn
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     typedef se3::Data Data;
-    typedef pininvdyn::math::ConstRefVector ConstRefVector;
-    typedef pininvdyn::tasks::TaskMotion TaskMotion;
-    typedef pininvdyn::tasks::TaskContactForce TaskContactForce;
-    typedef pininvdyn::tasks::TaskActuation TaskActuation;
-    typedef pininvdyn::contacts::ContactBase ContactBase;
-    typedef pininvdyn::solvers::HqpData HqpData;
+    typedef math::Vector Vector;
+    typedef math::RefVector RefVector;
+    typedef math::ConstRefVector ConstRefVector;
+    typedef tasks::TaskMotion TaskMotion;
+    typedef tasks::TaskContactForce TaskContactForce;
+    typedef tasks::TaskActuation TaskActuation;
+    typedef contacts::ContactBase ContactBase;
+    typedef solvers::HqpData HqpData;
+    typedef solvers::HqpOutput HqpOutput;
 
 
     InverseDynamicsFormulationBase(const std::string & name,

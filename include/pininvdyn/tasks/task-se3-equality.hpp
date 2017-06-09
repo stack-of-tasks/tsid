@@ -32,11 +32,11 @@ namespace pininvdyn
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       
-      typedef pininvdyn::RobotWrapper RobotWrapper;
-      typedef pininvdyn::math::Index Index;
-      typedef pininvdyn::trajectories::TrajectorySample TrajectorySample;
-      typedef pininvdyn::math::Vector Vector;
-      typedef pininvdyn::math::ConstraintEquality ConstraintEquality;
+      typedef RobotWrapper RobotWrapper;
+      typedef math::Index Index;
+      typedef trajectories::TrajectorySample TrajectorySample;
+      typedef math::Vector Vector;
+      typedef math::ConstraintEquality ConstraintEquality;
       typedef se3::Data Data;
       typedef se3::Data::Matrix6x Matrix6x;
       typedef se3::Motion Motion;

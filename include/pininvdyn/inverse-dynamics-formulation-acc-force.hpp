@@ -27,12 +27,12 @@ namespace pininvdyn
   class TaskLevel
   {
   public:
-    pininvdyn::tasks::TaskBase & task;
-    pininvdyn::math::ConstraintBase * constraint;
+    tasks::TaskBase & task;
+    math::ConstraintBase * constraint;
     double weight;
     unsigned int priority;
 
-    TaskLevel(pininvdyn::tasks::TaskBase & task,
+    TaskLevel(tasks::TaskBase & task,
               double weight,
               unsigned int priority);
   };
@@ -40,13 +40,13 @@ namespace pininvdyn
   class ContactLevel
   {
   public:
-    pininvdyn::contacts::ContactBase & contact;
-    pininvdyn::math::ConstraintBase * motionConstraint;
-    pininvdyn::math::ConstraintInequality * forceConstraint;
-    pininvdyn::math::ConstraintEquality * forceRegTask;
+    contacts::ContactBase & contact;
+    math::ConstraintBase * motionConstraint;
+    math::ConstraintInequality * forceConstraint;
+    math::ConstraintEquality * forceRegTask;
     unsigned int index; /// index of 1st element of associated force variable in the force vector
 
-    ContactLevel(pininvdyn::contacts::ContactBase & contact);
+    ContactLevel(contacts::ContactBase & contact);
   };
 
   class ContactTransitionInfo
@@ -66,14 +66,14 @@ namespace pininvdyn
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     typedef se3::Data Data;
-    typedef pininvdyn::math::Vector Vector;
-    typedef pininvdyn::math::Matrix Matrix;
-    typedef pininvdyn::math::ConstRefVector ConstRefVector;
-    typedef pininvdyn::tasks::TaskBase TaskBase;
-    typedef pininvdyn::tasks::TaskMotion TaskMotion;
-    typedef pininvdyn::tasks::TaskContactForce TaskContactForce;
-    typedef pininvdyn::tasks::TaskActuation TaskActuation;
-    typedef pininvdyn::solvers::HqpOutput HqpOutput;
+    typedef math::Vector Vector;
+    typedef math::Matrix Matrix;
+    typedef math::ConstRefVector ConstRefVector;
+    typedef tasks::TaskBase TaskBase;
+    typedef tasks::TaskMotion TaskMotion;
+    typedef tasks::TaskContactForce TaskContactForce;
+    typedef tasks::TaskActuation TaskActuation;
+    typedef solvers::HqpOutput HqpOutput;
 
 
     InverseDynamicsFormulationAccForce(const std::string & name,
@@ -144,7 +144,7 @@ namespace pininvdyn
     unsigned int m_eq;  /// number of equality constraints
     unsigned int m_in;  /// number of inequality constraints
     Matrix m_Jc;        /// contact force Jacobian
-    pininvdyn::math::ConstraintEquality m_baseDynamics;
+    math::ConstraintEquality m_baseDynamics;
 
     bool m_solutionDecoded;
     Vector m_dv;

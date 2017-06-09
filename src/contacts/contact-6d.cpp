@@ -21,10 +21,10 @@
 #include <pinocchio/spatial/skew.hpp>
 
 using namespace pininvdyn;
-using namespace pininvdyn::contacts;
-using namespace pininvdyn::math;
-using namespace pininvdyn::trajectories;
-using namespace pininvdyn::tasks;
+using namespace contacts;
+using namespace math;
+using namespace trajectories;
+using namespace tasks;
 
 Contact6d::Contact6d(const std::string & name,
                      RobotWrapper & robot,

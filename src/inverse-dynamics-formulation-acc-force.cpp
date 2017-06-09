@@ -20,14 +20,14 @@
 
 using namespace std;
 using namespace pininvdyn;
-using namespace pininvdyn::math;
-using namespace pininvdyn::tasks;
-using namespace pininvdyn::contacts;
-using namespace pininvdyn::solvers;
+using namespace math;
+using namespace tasks;
+using namespace contacts;
+using namespace solvers;
 
 typedef se3::Data Data;
 
-TaskLevel::TaskLevel(pininvdyn::tasks::TaskBase & task,
+TaskLevel::TaskLevel(tasks::TaskBase & task,
                      double weight,
                      unsigned int priority):
   task(task),
@@ -36,7 +36,7 @@ TaskLevel::TaskLevel(pininvdyn::tasks::TaskBase & task,
 {}
 
 
-ContactLevel::ContactLevel(pininvdyn::contacts::ContactBase & contact):
+ContactLevel::ContactLevel(contacts::ContactBase & contact):
   contact(contact)
 {}
 

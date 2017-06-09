@@ -30,16 +30,16 @@ namespace pininvdyn
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       
-      typedef pininvdyn::RobotWrapper RobotWrapper;
-      typedef pininvdyn::math::ConstRefMatrix ConstRefMatrix;
-      typedef pininvdyn::math::ConstRefVector ConstRefVector;
-      typedef pininvdyn::math::Matrix3x Matrix3x;
-      typedef pininvdyn::math::Vector3 Vector3;
-      typedef pininvdyn::math::Vector Vector;
-      typedef pininvdyn::tasks::TaskMotion TaskMotion;
-      typedef pininvdyn::tasks::TaskSE3Equality TaskSE3Equality;
-      typedef pininvdyn::math::ConstraintInequality ConstraintInequality;
-      typedef pininvdyn::math::ConstraintEquality ConstraintEquality;
+      typedef RobotWrapper RobotWrapper;
+      typedef math::ConstRefMatrix ConstRefMatrix;
+      typedef math::ConstRefVector ConstRefVector;
+      typedef math::Matrix3x Matrix3x;
+      typedef math::Vector3 Vector3;
+      typedef math::Vector Vector;
+      typedef tasks::TaskMotion TaskMotion;
+      typedef tasks::TaskSE3Equality TaskSE3Equality;
+      typedef math::ConstraintInequality ConstraintInequality;
+      typedef math::ConstraintEquality ConstraintEquality;
       typedef se3::SE3 SE3;
 
       Contact6d(const std::string & name,
