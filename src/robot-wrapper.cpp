@@ -15,7 +15,14 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <pininvdyn/robot-wrapper.hpp>
+#include "pininvdyn/robot-wrapper.hpp"
+
+#include <pinocchio/multibody/model.hpp>
+#include <pinocchio/parsers/urdf.hpp>
+#include <pinocchio/algorithm/center-of-mass.hpp>
+#include <pinocchio/algorithm/compute-all-terms.hpp>
+#include <pinocchio/algorithm/jacobian.hpp>
+#include <pinocchio/algorithm/frames.hpp>
 
 using namespace se3;
 using namespace pininvdyn::math;
