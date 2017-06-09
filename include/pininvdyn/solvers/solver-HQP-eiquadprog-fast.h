@@ -21,8 +21,6 @@
 #include <pininvdyn/solvers/solver-HQP-base.h>
 #include <pininvdyn/solvers/eiquadprog_fast.h>
 
-#define DEFAULT_HESSIAN_REGULARIZATION 1e-8
-
 namespace pininvdyn
 {
   namespace solvers

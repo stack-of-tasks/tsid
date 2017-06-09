@@ -20,6 +20,7 @@
 
 #include <pininvdyn/math/constraint-base.hpp>
 #include <pininvdyn/config.hh>
+#include "pininvdyn/solvers/fwd.hpp"
 
 #include <vector>
 #include <utility>
@@ -28,33 +29,6 @@ namespace pininvdyn
 {
   namespace solvers
   {
-
-    /**
-    * Available HQP solvers.
-    */
-    enum PININVDYN_DLLAPI SolverHQP
-    {
-      SOLVER_HQP_EIQUADPROG = 0,
-      SOLVER_HQP_EIQUADPROG_FAST = 1,
-      SOLVER_HQP_EIQUADPROG_RT = 2
-#ifdef QPOASES_FOUND
-      ,SOLVER_HQP_OASES = 3
-#endif
-    };
-
-
-    /**
-    * Possible states of an HQP solver.
-    */
-    enum PININVDYN_DLLAPI HQP_status
-    {
-      HQP_STATUS_UNKNOWN=-1,
-      HQP_STATUS_OPTIMAL=0,
-      HQP_STATUS_INFEASIBLE=1,
-      HQP_STATUS_UNBOUNDED=2,
-      HQP_STATUS_MAX_ITER_REACHED=3,
-      HQP_STATUS_ERROR=4
-    };
 
     typedef std::vector< std::pair<double, pininvdyn::math::ConstraintBase*> > ConstraintLevel;
     typedef std::vector< std::pair<double, const pininvdyn::math::ConstraintBase*> > ConstConstraintLevel;
