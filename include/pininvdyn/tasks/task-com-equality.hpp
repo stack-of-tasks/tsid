@@ -27,11 +27,9 @@ namespace pininvdyn
   namespace tasks
   {
 
-    class TaskComEquality:
-        public TaskMotion
+    class TaskComEquality : public TaskMotion
     {
     public:
-      typedef RobotWrapper RobotWrapper;
       typedef math::Index Index;
       typedef trajectories::TrajectorySample TrajectorySample;
       typedef math::Vector Vector;

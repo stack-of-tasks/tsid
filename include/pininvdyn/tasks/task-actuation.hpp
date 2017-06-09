@@ -24,11 +24,9 @@ namespace pininvdyn
 {
   namespace tasks
   {
-    class TaskActuation:
-        public TaskBase
+    class TaskActuation : public TaskBase
     {
     public:
-      typedef RobotWrapper RobotWrapper;
 
       TaskActuation(const std::string & name,
                     RobotWrapper & robot);

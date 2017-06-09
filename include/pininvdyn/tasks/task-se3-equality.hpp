@@ -27,12 +27,11 @@ namespace pininvdyn
   namespace tasks
   {
 
-    class TaskSE3Equality: public TaskMotion
+    class TaskSE3Equality : public TaskMotion
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       
-      typedef RobotWrapper RobotWrapper;
       typedef math::Index Index;
       typedef trajectories::TrajectorySample TrajectorySample;
       typedef math::Vector Vector;

@@ -24,12 +24,9 @@ namespace pininvdyn
 {
   namespace tasks
   {
-    class TaskContactForce:
-        public TaskBase
+    class TaskContactForce : public TaskBase
     {
     public:
-      typedef RobotWrapper RobotWrapper;
-
       TaskContactForce(const std::string & name,
                        RobotWrapper & robot);
     };
