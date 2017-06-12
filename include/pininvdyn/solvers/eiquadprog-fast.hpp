@@ -74,27 +74,6 @@ namespace pininvdyn
       EIQUADPROG_FAST_REDUNDANT_EQUALITIES=4
     };
 
-    /// Compute sqrt(a^2 + b^2)
-    template<typename Scalar>
-    inline Scalar distance(Scalar a, Scalar b)
-    {
-      Scalar a1, b1, t;
-      a1 = std::abs(a);
-      b1 = std::abs(b);
-      if (a1 > b1)
-      {
-        t = (b1 / a1);
-        return a1 * std::sqrt(1.0 + t * t);
-      }
-      else
-        if (b1 > a1)
-        {
-          t = (a1 / b1);
-          return b1 * std::sqrt(1.0 + t * t);
-        }
-      return a1 * std::sqrt(2.0);
-    }
-
     class EiquadprogFast
     {
       typedef Eigen::MatrixXd MatrixXd;
@@ -137,10 +116,7 @@ namespace pininvdyn
       /**
        * @return The Lagrange multipliers
        */
-      const VectorXd & getLagrangeMultipliers() const
-      {
-        return u;
-      }
+      const VectorXd & getLagrangeMultipliers() const { return u; }
 
       /**
        * Return the active set, namely the indeces of active constraints.
@@ -150,10 +126,7 @@ namespace pininvdyn
        * is the size of the active set.
        * @return The set of indexes of the active constraints.
        */
-      const VectorXi & getActiveSet() const
-      {
-        return A;
-      }
+      const VectorXi & getActiveSet() const { return A; }
 
       /**
        * solves the problem
@@ -161,14 +134,13 @@ namespace pininvdyn
        * s.t. CE x + ce0 = 0
        *      CI x + ci0 >= 0
        */
-      inline EiquadprogFast_status solve_quadprog(
-          const MatrixXd & Hess,
-          const VectorXd & g0,
-          const MatrixXd & CE,
-          const VectorXd & ce0,
-          const MatrixXd & CI,
-          const VectorXd & ci0,
-          VectorXd & x);
+       EiquadprogFast_status solve_quadprog(const MatrixXd & Hess,
+                                            const VectorXd & g0,
+                                            const MatrixXd & CE,
+                                            const VectorXd & ce0,
+                                            const MatrixXd & CI,
+                                            const VectorXd & ci0,
+                                            VectorXd & x);
 
       MatrixXd m_J; // J * J' = Hessian <nVars,nVars>::d
       bool is_inverse_provided_;
@@ -267,20 +239,19 @@ namespace pininvdyn
         R.topLeftCorner(iq,iq).template triangularView<Eigen::Upper>().solveInPlace(r.head(iq));
       }
 
-      inline bool add_constraint(
-          MatrixXd & R,
-          MatrixXd & J,
-          VectorXd & d,
-          int& iq, double& R_norm);
+      inline bool add_constraint(MatrixXd & R,
+                                 MatrixXd & J,
+                                 VectorXd & d,
+                                 int& iq, double& R_norm);
 
-      inline void delete_constraint(
-          MatrixXd & R,
-          MatrixXd & J,
-          VectorXi & A,
-          VectorXd & u,
-          int nEqCon, int& iq, int l);
+      inline void delete_constraint(MatrixXd & R,
+                                    MatrixXd & J,
+                                    VectorXi & A,
+                                    VectorXd & u,
+                                    int nEqCon, int& iq, int l);
     };
 
   } /* namespace solvers */
 } /* namespace pininvdyn */
+
 #endif /* EIQUADPROGFAST_HH_ */

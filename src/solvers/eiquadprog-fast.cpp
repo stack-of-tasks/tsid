@@ -15,19 +15,35 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-//#ifndef RTEIQUADPROG_H_
-//#define RTEIQUADPROG_H_
-
-#include "pininvdyn/solvers/eiquadprog_fast.h"
-#include <pininvdyn/utils/stop-watch.hpp>
-
+#include "pininvdyn/solvers/eiquadprog-fast.hpp"
+#include "pininvdyn/utils/stop-watch.hpp"
 
 namespace pininvdyn
 {
-
   namespace solvers
   {
 
+    /// Compute sqrt(a^2 + b^2)
+    template<typename Scalar>
+    inline Scalar distance(Scalar a, Scalar b)
+    {
+      Scalar a1, b1, t;
+      a1 = std::abs(a);
+      b1 = std::abs(b);
+      if (a1 > b1)
+      {
+        t = (b1 / a1);
+        return a1 * std::sqrt(1.0 + t * t);
+      }
+      else
+        if (b1 > a1)
+        {
+          t = (a1 / b1);
+          return b1 * std::sqrt(1.0 + t * t);
+        }
+      return a1 * std::sqrt(2.0);
+    }
+    
     EiquadprogFast::EiquadprogFast()
     {
       m_maxIter = DEFAULT_MAX_ITER;
@@ -38,7 +54,7 @@ namespace pininvdyn
       m_nIneqCon = 0;
     }
 
-    EiquadprogFast::~EiquadprogFast(){}
+    EiquadprogFast::~EiquadprogFast() {}
 
     void EiquadprogFast::reset(int nVars, int nEqCon, int nIneqCon)
     {
@@ -685,6 +701,6 @@ l2a:/* Step 2a: determine step direction */
 
       goto l2a;
     }
+    
   } /* namespace solvers */
 } /* namespace pininvdyn */
-//#endif /* RTEIQUADPROG_H_ */

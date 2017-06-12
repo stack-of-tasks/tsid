@@ -18,8 +18,8 @@
 #ifndef __invdyn_solvers_hqp_eiquadprog_fast_h__
 #define __invdyn_solvers_hqp_eiquadprog_fast_h__
 
-#include <pininvdyn/solvers/solver-HQP-base.h>
-#include <pininvdyn/solvers/eiquadprog_fast.h>
+#include "pininvdyn/solvers/solver-HQP-base.hpp"
+#include "pininvdyn/solvers/eiquadprog-fast.hpp"
 
 namespace pininvdyn
 {
