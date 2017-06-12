@@ -29,6 +29,7 @@ namespace pininvdyn
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
       typedef math::Vector         Vector;
       typedef math::ConstRefVector ConstRefVector;
 

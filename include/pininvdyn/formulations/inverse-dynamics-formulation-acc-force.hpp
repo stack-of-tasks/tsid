@@ -29,6 +29,8 @@ namespace pininvdyn
   class TaskLevel
   {
   public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    
     tasks::TaskBase & task;
     math::ConstraintBase * constraint;
     double weight;
@@ -42,6 +44,8 @@ namespace pininvdyn
   class ContactLevel
   {
   public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    
     contacts::ContactBase & contact;
     math::ConstraintBase * motionConstraint;
     math::ConstraintInequality * forceConstraint;
@@ -54,6 +58,8 @@ namespace pininvdyn
   class ContactTransitionInfo
   {
   public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    
     double time_start;
     double time_end;
     double fMax_start;  /// max normal force at time time_start

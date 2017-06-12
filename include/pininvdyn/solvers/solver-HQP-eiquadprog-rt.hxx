@@ -70,7 +70,10 @@ namespace pininvdyn
     const HqpOutput & SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::solve(const HqpData & problemData)
     {
       using namespace pininvdyn::math;
+      
+//#ifndef EIGEN_RUNTIME_NO_MALLOC
       //  Eigen::internal::set_is_malloc_allowed(false);
+//#endif
       
       START_PROFILER_EIQUADPROG_RT(PROFILE_EIQUADPROG_PREPARATION);
       
@@ -173,7 +176,10 @@ namespace pininvdyn
       STOP_PROFILER_EIQUADPROG_RT(PROFILE_EIQUADPROG_SOLUTION);
       
       m_output.x = sol;
+      
+//#ifndef EIGEN_RUNTIME_NO_MALLOC
       //  Eigen::internal::set_is_malloc_allowed(true);
+//#endif
       
       if(status==RT_EIQUADPROG_OPTIMAL)
       {

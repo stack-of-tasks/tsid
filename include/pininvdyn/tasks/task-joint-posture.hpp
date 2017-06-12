@@ -30,6 +30,8 @@ namespace pininvdyn
     class TaskJointPosture : public TaskMotion
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
       typedef math::Index Index;
       typedef trajectories::TrajectorySample TrajectorySample;
       typedef math::Vector Vector;

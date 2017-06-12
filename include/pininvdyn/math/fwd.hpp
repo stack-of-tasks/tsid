@@ -35,8 +35,12 @@ namespace pininvdyn
     typedef Eigen::Matrix<Scalar,6,1> Vector6;
     typedef Eigen::Matrix<Scalar,3,Eigen::Dynamic> Matrix3x;
     
+    typedef Eigen::Ref<Vector3>             RefVector3;
+    typedef const Eigen::Ref<const Vector3> ConstRefVector3;
+    
     typedef Eigen::Ref<Vector>              RefVector;
-    typedef const Eigen::Ref<const Vector> & ConstRefVector;
+    typedef const Eigen::Ref<const Vector>  ConstRefVector;
+    
     typedef Eigen::Ref<Matrix>              RefMatrix;
     typedef const Eigen::Ref<const Matrix>  ConstRefMatrix;
     

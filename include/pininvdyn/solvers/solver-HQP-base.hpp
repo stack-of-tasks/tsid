@@ -39,6 +39,8 @@ namespace pininvdyn
     class HqpOutput
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
       HQP_status status;                    /// solver status
       math::Vector x;            /// solution
       math::Vector lambda;       /// Lagrange multipliers
@@ -66,6 +68,8 @@ namespace pininvdyn
     class PININVDYN_DLLAPI SolverHQPBase
     {
     public:
+      
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       static std::string const HQP_status_string [5];
 

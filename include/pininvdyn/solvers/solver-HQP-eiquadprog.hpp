@@ -31,6 +31,8 @@ namespace pininvdyn
         public SolverHQPBase
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
       typedef math::Matrix Matrix;
       typedef math::Vector Vector;
       typedef math::RefVector RefVector;

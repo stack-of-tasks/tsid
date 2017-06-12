@@ -27,6 +27,8 @@ namespace pininvdyn
     class TaskContactForce : public TaskBase
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
       TaskContactForce(const std::string & name,
                        RobotWrapper & robot);
     };

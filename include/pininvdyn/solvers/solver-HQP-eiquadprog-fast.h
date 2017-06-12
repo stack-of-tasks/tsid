@@ -15,8 +15,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_solvers_hqp_eiquadprog_fast_h__
-#define __invdyn_solvers_hqp_eiquadprog_fast_h__
+#ifndef __invdyn_solvers_hqp_eiquadprog_fast_hpp__
+#define __invdyn_solvers_hqp_eiquadprog_fast_hpp__
 
 #include "pininvdyn/solvers/solver-HQP-base.hpp"
 #include "pininvdyn/solvers/eiquadprog-fast.hpp"
@@ -31,6 +31,8 @@ namespace pininvdyn
     class PININVDYN_DLLAPI SolverHQuadProgFast : public SolverHQPBase
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
       typedef math::Matrix Matrix;
       typedef math::Vector Vector;
       typedef math::RefVector RefVector;
@@ -77,4 +79,4 @@ namespace pininvdyn
   }
 }
 
-#endif // ifndef __invdyn_solvers_hqp_eiquadprog_fast_h__
+#endif // ifndef __invdyn_solvers_hqp_eiquadprog_fast_hpp__

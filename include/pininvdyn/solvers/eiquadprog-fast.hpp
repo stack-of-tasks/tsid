@@ -81,6 +81,8 @@ namespace pininvdyn
       typedef Eigen::VectorXi VectorXi;
 
     public:
+      
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       EiquadprogFast();
       virtual ~EiquadprogFast();
