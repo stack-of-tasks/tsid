@@ -20,7 +20,7 @@
 
 #include "pininvdyn/math/fwd.hpp"
 #include "pininvdyn/solvers/fwd.hpp"
-#include "pininvdyn/solvers/solver-HQP-base.h"
+#include "pininvdyn/solvers/solver-HQP-base.hpp"
 
 #include "pininvdyn/solvers/eiquadprog_rt.h"
 

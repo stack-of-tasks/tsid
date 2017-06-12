@@ -18,7 +18,7 @@
 #ifndef __invdyn_solvers_hqp_eiquadprog_hpp__
 #define __invdyn_solvers_hqp_eiquadprog_hpp__
 
-#include <pininvdyn/solvers/solver-HQP-base.h>
+#include <pininvdyn/solvers/solver-HQP-base.hpp>
 
 namespace pininvdyn
 {

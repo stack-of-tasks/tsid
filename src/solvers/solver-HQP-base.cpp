@@ -15,7 +15,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "pininvdyn/solvers/solver-HQP-base.h"
+#include "pininvdyn/solvers/solver-HQP-base.hpp"
 
 #include <iostream>
 

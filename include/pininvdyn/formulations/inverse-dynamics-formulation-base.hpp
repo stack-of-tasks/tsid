@@ -24,7 +24,7 @@
 #include "pininvdyn/tasks/task-motion.hpp"
 #include "pininvdyn/tasks/task-contact-force.hpp"
 #include "pininvdyn/contacts/contact-base.hpp"
-#include "pininvdyn/solvers/solver-HQP-base.h"
+#include "pininvdyn/solvers/solver-HQP-base.hpp"
 
 #include <string>
 
