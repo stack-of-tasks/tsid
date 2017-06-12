@@ -15,12 +15,11 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef RTEIQUADPROG_HPP_
-#define RTEIQUADPROG_HPP_
+#ifndef __invdyn_eiquadprog_rt_hxx__
+#define __invdyn_eiquadprog_rt_hxx__
 
-#include "pininvdyn/solvers/eiquadprog_rt.h"
+#include "pininvdyn/solvers/eiquadprog-rt.hpp"
 #include "pininvdyn/utils/stop-watch.hpp"
-
 
 namespace pininvdyn
 {
@@ -646,4 +645,4 @@ l2a:/* Step 2a: determine step direction */
     }
   } /* namespace solvers */
 } /* namespace pininvdyn */
-#endif /* RTEIQUADPROG_HPP_ */
+#endif /* __invdyn_eiquadprog_rt_hxx__ */

@@ -15,8 +15,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef RTEIQUADPROG_H_
-#define RTEIQUADPROG_H_
+#ifndef __invdyn_eiquadprog_rt_hpp__
+#define __invdyn_eiquadprog_rt_hpp__
 
 #include <Eigen/Dense>
 
@@ -290,4 +290,5 @@ namespace pininvdyn
 
   } /* namespace solvers */
 } /* namespace pininvdyn */
-#endif /* RTEIQUADPROG_H_ */
+
+#endif /* __invdyn_eiquadprog_rt_hpp__ */

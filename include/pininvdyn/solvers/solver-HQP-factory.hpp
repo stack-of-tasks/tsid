@@ -19,7 +19,7 @@
 #define __invdyn_solvers_hqp_factory_hpp__
 
 #include <pininvdyn/solvers/solver-HQP-base.hpp>
-#include <pininvdyn/solvers/solver-HQP-eiquadprog-rt.h>
+#include <pininvdyn/solvers/solver-HQP-eiquadprog-rt.hpp>
 
 
 namespace pininvdyn
