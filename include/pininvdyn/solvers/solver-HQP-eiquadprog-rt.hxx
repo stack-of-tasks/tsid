@@ -145,7 +145,9 @@ namespace pininvdyn
           if(!constr->isEquality())
             assert(false && "Inequalities in the cost function are not implemented yet");
           
+          EIGEN_MALLOC_ALLOWED
           m_H.noalias() += w*constr->matrix().transpose()*constr->matrix();
+          EIGEN_MALLOC_NOT_ALLOWED
           m_g.noalias() -= w*(constr->matrix().transpose()*constr->vector());
         }
         m_H.diagonal().noalias() += m_hessian_regularization*Vector::Ones(m_n);
@@ -169,6 +171,7 @@ namespace pininvdyn
       //  CE x + ce0 = 0
       //  CI x + ci0 >= 0
       typename RtVectorX<nVars>::d sol(m_n);
+      EIGEN_MALLOC_ALLOWED
       RtEiquadprog_status status = m_solver.solve_quadprog(m_H, m_g,
                                                            m_CE, m_ce0,
                                                            m_CI, m_ci0,

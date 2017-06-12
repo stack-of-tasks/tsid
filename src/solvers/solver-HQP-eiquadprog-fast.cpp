@@ -100,7 +100,7 @@ namespace pininvdyn
     {
       
 //#ifndef EIGEN_RUNTIME_NO_MALLOC
-      Eigen::internal::set_is_malloc_allowed(false);
+      EIGEN_MALLOC_NOT_ALLOWED
 //#endif
       
       START_PROFILER_EIQUADPROG_FAST(PROFILE_EIQUADPROG_PREPARATION);
@@ -161,7 +161,6 @@ namespace pininvdyn
       else
         resize(m_n, neq, nin);
       
-//      Eigen::internal::set_is_malloc_allowed(true);
       if(problemData.size()>1)
       {
         const ConstraintLevel & cl1 = problemData[1];
@@ -176,13 +175,15 @@ namespace pininvdyn
           if(!constr->isEquality())
             assert(false && "Inequalities in the cost function are not implemented yet");
           
+          EIGEN_MALLOC_ALLOWED;
           m_H.noalias() += w*constr->matrix().transpose()*constr->matrix();
+          EIGEN_MALLOC_NOT_ALLOWED;
+          
           m_g.noalias() -= w*constr->matrix().transpose()*constr->vector();
         }
         
         m_H.diagonal().array() += m_hessian_regularization;
       }
-//      Eigen::internal::set_is_malloc_allowed(false);
       
       STOP_PROFILER_EIQUADPROG_FAST(PROFILE_EIQUADPROG_PREPARATION);
       
@@ -192,15 +193,14 @@ namespace pininvdyn
       //  s.t.
       //  CE x + ce0 = 0
       //  CI x + ci0 >= 0
+      EIGEN_MALLOC_ALLOWED
       EiquadprogFast_status status = m_solver.solve_quadprog(m_H, m_g,
                                                              m_CE, m_ce0,
                                                              m_CI, m_ci0,
                                                              m_output.x);
+    
       STOP_PROFILER_EIQUADPROG_FAST(PROFILE_EIQUADPROG_SOLUTION);
       
-//#ifndef EIGEN_RUNTIME_NO_MALLOC
-      Eigen::internal::set_is_malloc_allowed(true);
-//#endif
       
       if(status == EIQUADPROG_FAST_OPTIMAL)
       {

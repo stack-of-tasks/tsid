@@ -20,6 +20,9 @@
 
 #include <Eigen/Core>
 
+#define EIGEN_MALLOC_ALLOWED Eigen::internal::set_is_malloc_allowed(true);
+#define EIGEN_MALLOC_NOT_ALLOWED Eigen::internal::set_is_malloc_allowed(false);
+
 namespace pininvdyn
 {
   namespace math
