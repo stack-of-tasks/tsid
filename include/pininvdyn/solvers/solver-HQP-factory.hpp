@@ -38,7 +38,7 @@ namespace pininvdyn
        *
        * @return A pointer to the new solver.
        */
-      static Solver_HQP_base * createNewSolver(const SolverHQP solverType,
+      static SolverHQPBase * createNewSolver(const SolverHQP solverType,
                                                const std::string & name);
       
       /**
@@ -50,7 +50,7 @@ namespace pininvdyn
        * @return A pointer to the new solver.
        */
       template<int nVars, int nEqCon, int nIneqCon>
-      static Solver_HQP_base* createNewSolver(const SolverHQP solverType,
+      static SolverHQPBase* createNewSolver(const SolverHQP solverType,
                                               const std::string & name);
     };
     

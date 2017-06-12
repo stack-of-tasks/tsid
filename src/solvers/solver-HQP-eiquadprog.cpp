@@ -24,8 +24,8 @@ using namespace pininvdyn::math;
 using namespace pininvdyn::solvers;
 using namespace Eigen;
 
-Solver_HQP_eiquadprog::Solver_HQP_eiquadprog(const std::string & name):
-  Solver_HQP_base(name),
+SolverHQuadProg::SolverHQuadProg(const std::string & name):
+  SolverHQPBase(name),
   m_hessian_regularization(DEFAULT_HESSIAN_REGULARIZATION)
 {
   m_n = 0;
@@ -33,12 +33,12 @@ Solver_HQP_eiquadprog::Solver_HQP_eiquadprog(const std::string & name):
   m_nin = 0;
 }
 
-void Solver_HQP_eiquadprog::sendMsg(const std::string & s)
+void SolverHQuadProg::sendMsg(const std::string & s)
 {
-  std::cout<<"[Solver_HQP_eiquadprog."<<m_name<<"] "<<s<<std::endl;
+  std::cout<<"[SolverHQuadProg."<<m_name<<"] "<<s<<std::endl;
 }
 
-void Solver_HQP_eiquadprog::resize(unsigned int n, unsigned int neq, unsigned int nin)
+void SolverHQuadProg::resize(unsigned int n, unsigned int neq, unsigned int nin)
 {
   const bool resizeVar = n!=m_n;
   const bool resizeEq = (resizeVar || neq!=m_neq );
@@ -75,7 +75,7 @@ void Solver_HQP_eiquadprog::resize(unsigned int n, unsigned int neq, unsigned in
   m_nin = nin;
 }
 
-const HqpOutput & Solver_HQP_eiquadprog::solve(const HqpData & problemData)
+const HqpOutput & SolverHQuadProg::solve(const HqpData & problemData)
 {
   if(problemData.size()>2)
   {
@@ -288,7 +288,7 @@ const HqpOutput & Solver_HQP_eiquadprog::solve(const HqpData & problemData)
   return m_output;
 }
 
-double Solver_HQP_eiquadprog::getObjectiveValue()
+double SolverHQuadProg::getObjectiveValue()
 {
   return m_objValue;
 }

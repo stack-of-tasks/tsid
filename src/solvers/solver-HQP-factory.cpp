@@ -28,14 +28,14 @@ namespace pininvdyn
   namespace solvers
   {
     
-    Solver_HQP_base* SolverHQPFactory::createNewSolver(const SolverHQP solverType,
-                                                       const std::string & name)
+    SolverHQPBase* SolverHQPFactory::createNewSolver(const SolverHQP solverType,
+                                                     const std::string & name)
     {
       if(solverType==SOLVER_HQP_EIQUADPROG)
-        return new Solver_HQP_eiquadprog(name);
+        return new SolverHQuadProg(name);
       
       if(solverType==SOLVER_HQP_EIQUADPROG_FAST)
-        return new Solver_HQP_eiquadprog_fast(name);
+        return new SolverHQuadProgFast(name);
       
 #ifdef QPOASES_FOUND
       if(solverType==SOLVER_HQP_QPOASES)

@@ -27,8 +27,8 @@ namespace pininvdyn
     /**
      * @brief Abstract interface for a Quadratic Program (HQP) solver.
      */
-    class PININVDYN_DLLAPI Solver_HQP_eiquadprog:
-        public Solver_HQP_base
+    class PININVDYN_DLLAPI SolverHQuadProg:
+        public SolverHQPBase
     {
     public:
       typedef math::Matrix Matrix;
@@ -37,7 +37,7 @@ namespace pininvdyn
       typedef math::ConstRefVector ConstRefVector;
       typedef math::ConstRefMatrix ConstRefMatrix;
 
-      Solver_HQP_eiquadprog(const std::string & name);
+      SolverHQuadProg(const std::string & name);
 
       void resize(unsigned int n, unsigned int neq, unsigned int nin);
 

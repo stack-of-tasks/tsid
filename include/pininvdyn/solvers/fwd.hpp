@@ -54,10 +54,10 @@ namespace pininvdyn
       HQP_STATUS_ERROR=4
     };
     
-    class PININVDYN_DLLAPI Solver_HQP_base;
+    class PININVDYN_DLLAPI SolverHQPBase;
     
     template<int nVars, int nEqCon, int nIneqCon>
-    class PININVDYN_DLLAPI Solver_HQP_eiquadprog_rt;
+    class PININVDYN_DLLAPI SolverHQuadProgRT;
     
     
   }

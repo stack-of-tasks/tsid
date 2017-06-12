@@ -40,8 +40,8 @@ namespace pininvdyn
   {
     
     using namespace math;
-    Solver_HQP_eiquadprog_fast::Solver_HQP_eiquadprog_fast(const std::string & name):
-    Solver_HQP_base(name),
+    SolverHQuadProgFast::SolverHQuadProgFast(const std::string & name):
+    SolverHQPBase(name),
     m_hessian_regularization(DEFAULT_HESSIAN_REGULARIZATION)
     {
       m_n = 0;
@@ -49,12 +49,12 @@ namespace pininvdyn
       m_nin = 0;
     }
     
-    void Solver_HQP_eiquadprog_fast::sendMsg(const std::string & s)
+    void SolverHQuadProgFast::sendMsg(const std::string & s)
     {
-      std::cout<<"[Solver_HQP_eiquadprog_fast."<<m_name<<"] "<<s<<std::endl;
+      std::cout<<"[SolverHQuadProgFast."<<m_name<<"] "<<s<<std::endl;
     }
     
-    void Solver_HQP_eiquadprog_fast::resize(unsigned int n, unsigned int neq, unsigned int nin)
+    void SolverHQuadProgFast::resize(unsigned int n, unsigned int neq, unsigned int nin)
     {
       const bool resizeVar = n!=m_n;
       const bool resizeEq = (resizeVar || neq!=m_neq );
@@ -96,7 +96,7 @@ namespace pininvdyn
       m_nin = nin;
     }
     
-    const HqpOutput & Solver_HQP_eiquadprog_fast::solve(const HqpData & problemData)
+    const HqpOutput & SolverHQuadProgFast::solve(const HqpData & problemData)
     {
       Eigen::internal::set_is_malloc_allowed(false);
       
@@ -241,14 +241,14 @@ namespace pininvdyn
       return m_output;
     }
     
-    double Solver_HQP_eiquadprog_fast::getObjectiveValue()
+    double SolverHQuadProgFast::getObjectiveValue()
     {
       return m_solver.getObjValue();
     }
     
-    bool Solver_HQP_eiquadprog_fast::setMaximumIterations(unsigned int maxIter)
+    bool SolverHQuadProgFast::setMaximumIterations(unsigned int maxIter)
     {
-      Solver_HQP_base::setMaximumIterations(maxIter);
+      SolverHQPBase::setMaximumIterations(maxIter);
       return m_solver.setMaxIter(maxIter);
     }
   }

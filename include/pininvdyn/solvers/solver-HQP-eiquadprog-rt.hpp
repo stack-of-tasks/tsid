@@ -32,7 +32,7 @@ namespace pininvdyn
      * @brief
      */
     template<int nVars, int nEqCon, int nIneqCon>
-    class PININVDYN_DLLAPI Solver_HQP_eiquadprog_rt : public Solver_HQP_base
+    class PININVDYN_DLLAPI SolverHQuadProgRT : public SolverHQPBase
     {
     public:
       typedef math::Matrix Matrix;
@@ -41,7 +41,7 @@ namespace pininvdyn
       typedef math::ConstRefVector ConstRefVector;
       typedef math::ConstRefMatrix ConstRefMatrix;
 
-      Solver_HQP_eiquadprog_rt(const std::string & name);
+      SolverHQuadProgRT(const std::string & name);
 
       void resize(unsigned int n, unsigned int neq, unsigned int nin);
 

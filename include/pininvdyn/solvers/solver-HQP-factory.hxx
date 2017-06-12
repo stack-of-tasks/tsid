@@ -19,7 +19,7 @@
 #define __invdyn_solvers_hqp_factory_hxx__
 
 #include <pininvdyn/solvers/solver-HQP-factory.hpp>
-#include <pininvdyn/solvers/solver-HQP-eiquadprog-rt.hpp>
+#include <pininvdyn/solvers/solver-HQP-eiquadprog-rt.hxx>
 
 
 namespace pininvdyn
@@ -28,11 +28,11 @@ namespace pininvdyn
   {
     
     template<int nVars, int nEqCon, int nIneqCon>
-    Solver_HQP_base* SolverHQPFactory::createNewSolver(const SolverHQP solverType,
+    SolverHQPBase* SolverHQPFactory::createNewSolver(const SolverHQP solverType,
                                                        const std::string & name)
     {
       if(solverType==SOLVER_HQP_EIQUADPROG_RT)
-        return new Solver_HQP_eiquadprog_rt<nVars, nEqCon, nIneqCon>(name);
+        return new SolverHQuadProgRT<nVars, nEqCon, nIneqCon>(name);
       
       assert(false && "Specified solver type not recognized");
       return NULL;

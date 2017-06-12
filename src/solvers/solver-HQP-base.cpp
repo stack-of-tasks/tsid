@@ -24,7 +24,7 @@ namespace pininvdyn
   namespace solvers
   {
 
-    std::string const Solver_HQP_base::HQP_status_string[] = { "HQP_STATUS_OPTIMAL",
+    std::string const SolverHQPBase::HQP_status_string[] = { "HQP_STATUS_OPTIMAL",
                                                   "HQP_STATUS_INFEASIBLE",
                                                   "HQP_STATUS_UNBOUNDED",
                                                   "HQP_STATUS_MAX_ITER_REACHED",
@@ -89,7 +89,7 @@ namespace pininvdyn
       return ss.str();
     }
           
-    Solver_HQP_base::Solver_HQP_base(const std::string & name)
+    SolverHQPBase::SolverHQPBase(const std::string & name)
     {
       m_name = name;
       m_maxIter = 1000;
@@ -97,7 +97,7 @@ namespace pininvdyn
       m_useWarmStart = true;
     }
 
-    bool Solver_HQP_base::setMaximumIterations(unsigned int maxIter)
+    bool SolverHQPBase::setMaximumIterations(unsigned int maxIter)
     {
       if(maxIter==0)
         return false;
@@ -105,7 +105,7 @@ namespace pininvdyn
       return true;
     }
 
-    bool Solver_HQP_base::setMaximumTime(double seconds)
+    bool SolverHQPBase::setMaximumTime(double seconds)
     {
       if(seconds<=0.0)
         return false;

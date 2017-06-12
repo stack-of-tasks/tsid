@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //  const unsigned int neq = 0;
 //  const unsigned int nin = 0;
 //  const double damping = 1e-4;
-//  Solver_HQP_base * solver = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG, "solver-eiquadprog");
+//  SolverHQPBase * solver = SolverHQPBase::getNewSolver(SOLVER_HQP_EIQUADPROG, "solver-eiquadprog");
 //  solver->resize(n, neq, nin);
 
 //  HqpData hqpData(2);
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //  const unsigned int neq = 2;
 //  const unsigned int nin = 0;
 //  const double damping = 1e-4;
-//  Solver_HQP_base * solver = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG,
+//  SolverHQPBase * solver = SolverHQPBase::getNewSolver(SOLVER_HQP_EIQUADPROG,
 //                                                           "solver-eiquadprog");
 //  solver->resize(n, neq, nin);
 
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //  const unsigned int neq = 0;
 //  const unsigned int nin = 3;
 //  const double damping = 1e-5;
-//  Solver_HQP_base * solver = Solver_HQP_base::getNewSolver(SOLVER_HQP_EIQUADPROG,
+//  SolverHQPBase * solver = SolverHQPBase::getNewSolver(SOLVER_HQP_EIQUADPROG,
 //                                                           "solver-eiquadprog");
 //  solver->resize(n, neq, nin);
 
@@ -197,16 +197,16 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
 	  neq<<" equalities, "<<nin<<" inequalities\n";
 
   // CREATE SOLVERS
-  Solver_HQP_base * solver_rt = SolverHQPFactory::createNewSolver<n,neq,nin>(SOLVER_HQP_EIQUADPROG_RT,
-                                                                             "eiquadprog_rt");
+  SolverHQPBase * solver_rt = SolverHQPFactory::createNewSolver<n,neq,nin>(SOLVER_HQP_EIQUADPROG_RT,
+                                                                           "eiquadprog_rt");
   solver_rt->resize(n, neq, nin);
 
-  Solver_HQP_base * solver_fast = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG_FAST,
-                                                                    "eiquadprog_fast");
+  SolverHQPBase * solver_fast = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG_FAST,
+                                                                  "eiquadprog_fast");
   solver_fast->resize(n, neq, nin);
 
-  Solver_HQP_base * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
-                                                               "eiquadprog");
+  SolverHQPBase * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
+                                                             "eiquadprog");
   solver->resize(n, neq, nin);
 
   // CREATE PROBLEM DATA
@@ -279,11 +279,11 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
     getStatistics().store("solver iterations", output_rt.iterations);
 
     BOOST_REQUIRE_MESSAGE(output.status==output_rt.status,
-                          "Status "+Solver_HQP_base::HQP_status_string[output.status]+
-                          " Status RT "+Solver_HQP_base::HQP_status_string[output_rt.status]);
+                          "Status "+SolverHQPBase::HQP_status_string[output.status]+
+                          " Status RT "+SolverHQPBase::HQP_status_string[output_rt.status]);
     BOOST_REQUIRE_MESSAGE(output.status==output_fast.status,
-                          "Status "+Solver_HQP_base::HQP_status_string[output.status]+
-                          " Status FAST "+Solver_HQP_base::HQP_status_string[output_fast.status]);
+                          "Status "+SolverHQPBase::HQP_status_string[output.status]+
+                          " Status FAST "+SolverHQPBase::HQP_status_string[output_fast.status]);
 
     if(output.status==HQP_STATUS_OPTIMAL)
     {

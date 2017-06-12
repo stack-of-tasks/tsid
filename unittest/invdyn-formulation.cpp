@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   TrajectorySample samplePosture(nv-6);
 
   // Create an HQP solver
-  Solver_HQP_base * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
+  SolverHQPBase * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
                                                                "solver-eiquadprog");
   solver->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
 
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   TrajectorySample samplePosture(nv-6);
 
   // Create an HQP solver
-  Solver_HQP_base * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
+  SolverHQPBase * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
                                                                "solver-eiquadprog");
   
   solver->resize(invDyn->nVar(), invDyn->nEq(), invDyn->nIn());
@@ -488,11 +488,11 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
   TrajectorySample samplePosture(nv-6);
 
   // Create an HQP solver
-  Solver_HQP_base * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
-                                                               "eiquadprog");
-  Solver_HQP_base * solver_fast = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG_FAST,
-                                                                    "eiquadprog-fast");
-  Solver_HQP_base * solver_rt =
+  SolverHQPBase * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
+                                                             "eiquadprog");
+  SolverHQPBase * solver_fast = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG_FAST,
+                                                                  "eiquadprog-fast");
+  SolverHQPBase * solver_rt =
       SolverHQPFactory::createNewSolver<61,18,34>(SOLVER_HQP_EIQUADPROG_RT,
                                                   "eiquadprog-rt");
   

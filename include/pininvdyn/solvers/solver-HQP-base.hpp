@@ -63,7 +63,7 @@ namespace pininvdyn
     /**
      * @brief Abstract interface for a Quadratic Program (HQP) solver.
      */
-    class PININVDYN_DLLAPI Solver_HQP_base
+    class PININVDYN_DLLAPI SolverHQPBase
     {
     public:
 
@@ -73,7 +73,7 @@ namespace pininvdyn
       typedef math::ConstRefVector ConstRefVector;
       typedef math::ConstRefMatrix ConstRefMatrix;
 
-      Solver_HQP_base(const std::string & name);
+      SolverHQPBase(const std::string & name);
 
       virtual const std::string & name() { return m_name; }
 

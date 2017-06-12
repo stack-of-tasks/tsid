@@ -42,8 +42,8 @@ namespace pininvdyn
   {
     
     template<int nVars, int nEqCon, int nIneqCon>
-    Solver_HQP_eiquadprog_rt<nVars, nEqCon, nIneqCon>::Solver_HQP_eiquadprog_rt(const std::string & name)
-    : Solver_HQP_base(name)
+    SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::SolverHQuadProgRT(const std::string & name)
+    : SolverHQPBase(name)
     , m_hessian_regularization(DEFAULT_HESSIAN_REGULARIZATION)
     {
       m_n = nVars;
@@ -53,13 +53,13 @@ namespace pininvdyn
     }
     
     template<int nVars, int nEqCon, int nIneqCon>
-    void Solver_HQP_eiquadprog_rt<nVars, nEqCon, nIneqCon>::sendMsg(const std::string & s)
+    void SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::sendMsg(const std::string & s)
     {
-      std::cout<<"[Solver_HQP_eiquadprog_rt."<<m_name<<"] "<<s<<std::endl;
+      std::cout<<"[SolverHQuadProgRT."<<m_name<<"] "<<s<<std::endl;
     }
     
     template<int nVars, int nEqCon, int nIneqCon>
-    void Solver_HQP_eiquadprog_rt<nVars, nEqCon, nIneqCon>::resize(unsigned int n, unsigned int neq, unsigned int nin)
+    void SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::resize(unsigned int n, unsigned int neq, unsigned int nin)
     {
       assert(n==nVars);
       assert(neq==nEqCon);
@@ -67,7 +67,7 @@ namespace pininvdyn
     }
     
     template<int nVars, int nEqCon, int nIneqCon>
-    const HqpOutput & Solver_HQP_eiquadprog_rt<nVars, nEqCon, nIneqCon>::solve(const HqpData & problemData)
+    const HqpOutput & SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::solve(const HqpData & problemData)
     {
       using namespace pininvdyn::math;
       //  Eigen::internal::set_is_malloc_allowed(false);
@@ -226,15 +226,15 @@ namespace pininvdyn
     }
     
     template<int nVars, int nEqCon, int nIneqCon>
-    double Solver_HQP_eiquadprog_rt<nVars, nEqCon, nIneqCon>::getObjectiveValue()
+    double SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::getObjectiveValue()
     {
       return m_solver.getObjValue();
     }
     
     template<int nVars, int nEqCon, int nIneqCon>
-    bool Solver_HQP_eiquadprog_rt<nVars, nEqCon, nIneqCon>::setMaximumIterations(unsigned int maxIter)
+    bool SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::setMaximumIterations(unsigned int maxIter)
     {
-      Solver_HQP_base::setMaximumIterations(maxIter);
+      SolverHQPBase::setMaximumIterations(maxIter);
       return m_solver.setMaxIter(maxIter);
     }
   
