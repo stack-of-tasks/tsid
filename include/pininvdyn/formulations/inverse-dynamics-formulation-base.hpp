@@ -47,8 +47,8 @@ namespace pininvdyn
     typedef tasks::TaskContactForce TaskContactForce;
     typedef tasks::TaskActuation TaskActuation;
     typedef contacts::ContactBase ContactBase;
-    typedef solvers::HqpData HqpData;
-    typedef solvers::HqpOutput HqpOutput;
+    typedef solvers::HQPData HQPData;
+    typedef solvers::HQPOutput HQPOutput;
     typedef robots::RobotWrapper RobotWrapper;
 
 
@@ -85,15 +85,15 @@ namespace pininvdyn
     virtual bool removeRigidContact(const std::string & contactName,
                                     double transition_duration=0.0) = 0;
 
-    virtual const HqpData & computeProblemData(double time,
+    virtual const HQPData & computeProblemData(double time,
                                                ConstRefVector q,
                                                ConstRefVector v) = 0;
 
-    virtual const Vector & getActuatorForces(const HqpOutput & sol) = 0;
-    virtual const Vector & getAccelerations(const HqpOutput & sol) = 0;
-    virtual const Vector & getContactForces(const HqpOutput & sol) = 0;
+    virtual const Vector & getActuatorForces(const HQPOutput & sol) = 0;
+    virtual const Vector & getAccelerations(const HQPOutput & sol) = 0;
+    virtual const Vector & getContactForces(const HQPOutput & sol) = 0;
     virtual bool getContactForces(const std::string & name,
-                                  const HqpOutput & sol,
+                                  const HQPOutput & sol,
                                   RefVector f) = 0;
 
   protected:

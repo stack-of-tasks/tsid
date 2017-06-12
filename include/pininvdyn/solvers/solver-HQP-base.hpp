@@ -19,6 +19,7 @@
 #define __invdyn_solvers_hqp_base_hpp__
 
 #include "pininvdyn/solvers/fwd.hpp"
+#include "pininvdyn/solvers/solver-HQP-output.hpp"
 #include "pininvdyn/math/constraint-base.hpp"
 
 #include <vector>
@@ -28,39 +29,6 @@ namespace pininvdyn
 {
   namespace solvers
   {
-
-    typedef std::vector< std::pair<double, math::ConstraintBase*> > ConstraintLevel;
-    typedef std::vector< std::pair<double, const math::ConstraintBase*> > ConstConstraintLevel;
-    typedef std::vector<ConstraintLevel> HqpData;
-    typedef std::vector<ConstConstraintLevel> ConstHqpData;
-
-    std::string hqpDataToString(const HqpData & data, bool printMatrices=false);
-
-    class HqpOutput
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
-      HQP_status status;                    /// solver status
-      math::Vector x;            /// solution
-      math::Vector lambda;       /// Lagrange multipliers
-      math::VectorXi activeSet;  /// indexes of active inequalities
-      int iterations;                       /// number of iterations performed by the solver
-
-      HqpOutput(){}
-
-      HqpOutput(int nVars, int nEqCon, int nInCon)
-      {
-        resize(nVars, nEqCon, nInCon);
-      }
-
-      void resize(int nVars, int nEqCon, int nInCon)
-      {
-        x.resize(nVars);
-        lambda.resize(nEqCon+nInCon);
-        activeSet.resize(nInCon);
-      }
-    };
 
     /**
      * @brief Abstract interface for a Quadratic Program (HQP) solver.
@@ -85,7 +53,7 @@ namespace pininvdyn
 
       /** Solve the specified Hierarchical Quadratic Program.
        */
-      virtual const HqpOutput & solve(const HqpData & problemData) = 0;
+      virtual const HQPOutput & solve(const HQPData & problemData) = 0;
 
       /** Get the objective value of the last solved problem. */
       virtual double getObjectiveValue() = 0;
@@ -107,11 +75,12 @@ namespace pininvdyn
       virtual bool setMaximumTime(double seconds);
 
     protected:
+      
       std::string           m_name;
       bool                  m_useWarmStart;   // true if the solver is allowed to warm start
       int                   m_maxIter;        // max number of iterations
       double                m_maxTime;        // max time to solve the HQP [s]
-      HqpOutput             m_output;
+      HQPOutput             m_output;
     };
 
   }

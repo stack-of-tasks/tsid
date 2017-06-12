@@ -51,16 +51,16 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //  SolverHQPBase * solver = SolverHQPBase::getNewSolver(SOLVER_HQP_EIQUADPROG, "solver-eiquadprog");
 //  solver->resize(n, neq, nin);
 
-//  HqpData hqpData(2);
+//  HQPData HQPData(2);
 //  Matrix A = Matrix::Random(m, n);
 //  Vector b = Vector::Random(m);
 //  ConstraintEquality constraint1("c1", A, b);
-//  hqpData[1].push_back(make_pair<double, ConstraintBase*>(1.0, &constraint1));
+//  HQPData[1].push_back(make_pair<double, ConstraintBase*>(1.0, &constraint1));
 
 //  ConstraintEquality constraint2("c2", Matrix::Identity(n,n), Vector::Zero(n));
-//  hqpData[1].push_back(make_pair<double, ConstraintBase*>(damping, &constraint2));
+//  HQPData[1].push_back(make_pair<double, ConstraintBase*>(damping, &constraint2));
 
-//  const HqpOutput & output = solver->solve(hqpData);
+//  const HQPOutput & output = solver->solve(HQPData);
 //  BOOST_CHECK_MESSAGE(output.status==HQP_STATUS_OPTIMAL, "Status "+toString(output.status));
 
 //  Vector x(n);
@@ -85,22 +85,22 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //                                                           "solver-eiquadprog");
 //  solver->resize(n, neq, nin);
 
-//  HqpData hqpData(2);
+//  HQPData HQPData(2);
 
 //  Matrix A_eq = Matrix::Random(neq, n);
 //  Vector b_eq = Vector::Random(neq);
 //  ConstraintEquality eq_constraint("eq1", A_eq, b_eq);
-//  hqpData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &eq_constraint));
+//  HQPData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &eq_constraint));
 
 //  Matrix A = Matrix::Random(m, n);
 //  Vector b = Vector::Random(m);
 //  ConstraintEquality constraint1("c1", A, b);
-//  hqpData[1].push_back(make_pair<double, ConstraintBase*>(1.0, &constraint1));
+//  HQPData[1].push_back(make_pair<double, ConstraintBase*>(1.0, &constraint1));
 
 //  ConstraintEquality constraint2("c2", Matrix::Identity(n,n), Vector::Zero(n));
-//  hqpData[1].push_back(make_pair<double, ConstraintBase*>(damping, &constraint2));
+//  HQPData[1].push_back(make_pair<double, ConstraintBase*>(damping, &constraint2));
 
-//  const HqpOutput & output = solver->solve(hqpData);
+//  const HQPOutput & output = solver->solve(HQPData);
 //  BOOST_REQUIRE_MESSAGE(output.status==HQP_STATUS_OPTIMAL,
 //                        "Status "+toString(output.status));
 //  BOOST_CHECK_MESSAGE(b_eq.isApprox(A_eq*output.x),
@@ -124,15 +124,15 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //                                                           "solver-eiquadprog");
 //  solver->resize(n, neq, nin);
 
-//  HqpData hqpData(2);
+//  HQPData HQPData(2);
 
 //  Matrix A = Matrix::Random(m, n);
 //  Vector b = Vector::Random(m);
 //  ConstraintEquality constraint1("c1", A, b);
-//  hqpData[1].push_back(make_pair<double, ConstraintBase*>(1.0, &constraint1));
+//  HQPData[1].push_back(make_pair<double, ConstraintBase*>(1.0, &constraint1));
 
 //  ConstraintEquality constraint2("c2", Matrix::Identity(n,n), Vector::Zero(n));
-//  hqpData[1].push_back(make_pair<double, ConstraintBase*>(damping, &constraint2));
+//  HQPData[1].push_back(make_pair<double, ConstraintBase*>(damping, &constraint2));
 
 //  Vector x(n);
 //  svdSolveWithDamping(A, b, x, damping);
@@ -141,9 +141,9 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //  Vector A_lb = A_in*x - Vector::Ones(nin) + Vector::Random(nin);
 //  Vector A_ub = A_in*x + Vector::Ones(nin) + Vector::Random(nin);
 //  ConstraintInequality in_constraint("in1", A_in, A_lb, A_ub);
-//  hqpData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &in_constraint));
+//  HQPData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &in_constraint));
 
-//  const HqpOutput & output = solver->solve(hqpData);
+//  const HQPOutput & output = solver->solve(HQPData);
 //  BOOST_REQUIRE_MESSAGE(output.status==HQP_STATUS_OPTIMAL,
 //                        "Status "+toString(output.status));
 //  BOOST_CHECK_MESSAGE(((A_in*output.x).array() <= A_ub.array()).all(),
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
 //  A_lb[0] += 2.0;
 //  in_constraint.setLowerBound(A_lb);
-//  const HqpOutput & output2 = solver->solve(hqpData);
+//  const HQPOutput & output2 = solver->solve(HQPData);
 //  BOOST_REQUIRE_MESSAGE(output.status==HQP_STATUS_OPTIMAL,
 //                        "Status "+toString(output.status));
 //  BOOST_CHECK_MESSAGE((A_in.row(0)*output.x).isApproxToConstant(A_lb[0]),
@@ -210,12 +210,12 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   solver->resize(n, neq, nin);
 
   // CREATE PROBLEM DATA
-  HqpData hqpData(2);
+  HQPData HQPData(2);
 
   Matrix A1 = Matrix::Random(n, n);
   Vector b1 = Vector::Random(n);
   ConstraintEquality cost("c1", A1, b1);
-  hqpData[1].push_back(make_pair<double, ConstraintBase*>(1.0, &cost));
+  HQPData[1].push_back(make_pair<double, ConstraintBase*>(1.0, &cost));
 
   Vector x(n);
   svdSolveWithDamping(A1, b1, x, damping);
@@ -238,12 +238,12 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
       }
   }
   ConstraintInequality in_constraint("in1", A_in, A_lb, A_ub);
-  hqpData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &in_constraint));
+  HQPData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &in_constraint));
 
   Matrix A_eq = Matrix::Random(neq, n);
   Vector b_eq = A_eq*x;
   ConstraintEquality eq_constraint("eq1", A_eq, b_eq);
-  hqpData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &eq_constraint));
+  HQPData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &eq_constraint));
 
   // Prepare random data to perturb initial QP
   vector<Vector> gradientPerturbations(nTest);
@@ -264,15 +264,15 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
     }
 
     getProfiler().start(PROFILE_EIQUADPROG_FAST);
-    const HqpOutput & output_fast = solver_fast->solve(hqpData);
+    const HQPOutput & output_fast = solver_fast->solve(HQPData);
     getProfiler().stop(PROFILE_EIQUADPROG_FAST);
 
     getProfiler().start(PROFILE_EIQUADPROG_RT);
-    const HqpOutput & output_rt = solver_rt->solve(hqpData);
+    const HQPOutput & output_rt = solver_rt->solve(HQPData);
     getProfiler().stop(PROFILE_EIQUADPROG_RT);
 
     getProfiler().start(PROFILE_EIQUADPROG);
-    const HqpOutput & output    = solver->solve(hqpData);
+    const HQPOutput & output    = solver->solve(HQPData);
     getProfiler().stop(PROFILE_EIQUADPROG);
 
     getStatistics().store("active inequalities", output_rt.activeSet.size());

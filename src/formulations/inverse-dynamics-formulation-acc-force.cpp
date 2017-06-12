@@ -86,7 +86,7 @@ void InverseDynamicsFormulationAccForce::resizeHqpData()
 {
   m_Jc.setZero(m_k, m_v);
   m_baseDynamics.resize(6, m_v+m_k);
-  for(HqpData::iterator it=m_hqpData.begin(); it!=m_hqpData.end(); it++)
+  for(HQPData::iterator it=m_hqpData.begin(); it!=m_hqpData.end(); it++)
   {
     for(ConstraintLevel::iterator itt=it->begin(); itt!=it->end(); itt++)
     {
@@ -211,7 +211,7 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact)
 }
 
 
-const HqpData & InverseDynamicsFormulationAccForce::computeProblemData(double time,
+const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double time,
                                                                        ConstRefVector q,
                                                                        ConstRefVector v)
 {
@@ -336,7 +336,7 @@ const HqpData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   return m_hqpData;
 }
 
-bool InverseDynamicsFormulationAccForce::decodeSolution(const HqpOutput & sol)
+bool InverseDynamicsFormulationAccForce::decodeSolution(const HQPOutput & sol)
 {
   if(m_solutionDecoded)
     return true;
@@ -352,26 +352,26 @@ bool InverseDynamicsFormulationAccForce::decodeSolution(const HqpOutput & sol)
   return true;
 }
 
-const Vector & InverseDynamicsFormulationAccForce::getActuatorForces(const HqpOutput & sol)
+const Vector & InverseDynamicsFormulationAccForce::getActuatorForces(const HQPOutput & sol)
 {
   decodeSolution(sol);
   return m_tau;
 }
 
-const Vector & InverseDynamicsFormulationAccForce::getAccelerations(const HqpOutput & sol)
+const Vector & InverseDynamicsFormulationAccForce::getAccelerations(const HQPOutput & sol)
 {
   decodeSolution(sol);
   return m_dv;
 }
 
-const Vector & InverseDynamicsFormulationAccForce::getContactForces(const HqpOutput & sol)
+const Vector & InverseDynamicsFormulationAccForce::getContactForces(const HQPOutput & sol)
 {
   decodeSolution(sol);
   return m_f;
 }
 
 bool InverseDynamicsFormulationAccForce::getContactForces(const std::string & name,
-                                                          const HqpOutput & sol,
+                                                          const HQPOutput & sol,
                                                           RefVector f)
 {
   decodeSolution(sol);
@@ -502,7 +502,7 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
 bool InverseDynamicsFormulationAccForce::removeFromHqpData(const std::string & name)
 {
   bool found = false;
-  for(HqpData::iterator it=m_hqpData.begin(); !found && it!=m_hqpData.end(); it++)
+  for(HQPData::iterator it=m_hqpData.begin(); !found && it!=m_hqpData.end(); it++)
   {
     for(ConstraintLevel::iterator itt=it->begin(); !found && itt!=it->end(); itt++)
     {

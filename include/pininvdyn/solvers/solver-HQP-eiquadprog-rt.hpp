@@ -49,7 +49,7 @@ namespace pininvdyn
 
       /** Solve the given Hierarchical Quadratic Program
        */
-      const HqpOutput & solve(const HqpData & problemData);
+      const HQPOutput & solve(const HQPData & problemData);
 
       /** Get the objective value of the last solved problem. */
       double getObjectiveValue();

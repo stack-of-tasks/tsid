@@ -30,13 +30,13 @@ namespace pininvdyn
                                                   "HQP_STATUS_MAX_ITER_REACHED",
                                                   "HQP_STATUS_ERROR"};
 
-    std::string hqpDataToString(const HqpData & data, bool printMatrices)
+    std::string HQPDataToString(const HQPData & data, bool printMatrices)
     {
       using namespace std;
       
       stringstream ss;
       unsigned int priority = 0;
-      for(HqpData::const_iterator it=data.begin(); it!=data.end(); it++)
+      for(HQPData::const_iterator it=data.begin(); it!=data.end(); it++)
       {
         ss<<"Level "<< priority<<endl;
         for(ConstraintLevel::const_iterator iit=it->begin(); iit!=it->end(); iit++)
@@ -57,7 +57,7 @@ namespace pininvdyn
       if(printMatrices)
       {
         ss<<endl;
-        for(HqpData::const_iterator it=data.begin(); it!=data.end(); it++)
+        for(HQPData::const_iterator it=data.begin(); it!=data.end(); it++)
         {
           for(ConstraintLevel::const_iterator iit=it->begin(); iit!=it->end(); iit++)
           {

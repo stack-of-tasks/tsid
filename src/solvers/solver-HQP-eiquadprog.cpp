@@ -75,7 +75,7 @@ void SolverHQuadProg::resize(unsigned int n, unsigned int neq, unsigned int nin)
   m_nin = nin;
 }
 
-const HqpOutput & SolverHQuadProg::solve(const HqpData & problemData)
+const HQPOutput & SolverHQuadProg::solve(const HQPData & problemData)
 {
   if(problemData.size()>2)
   {

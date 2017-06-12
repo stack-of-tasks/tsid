@@ -67,7 +67,7 @@ namespace pininvdyn
     }
     
     template<int nVars, int nEqCon, int nIneqCon>
-    const HqpOutput & SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::solve(const HqpData & problemData)
+    const HQPOutput & SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::solve(const HQPData & problemData)
     {
       using namespace pininvdyn::math;
       

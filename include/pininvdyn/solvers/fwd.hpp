@@ -44,7 +44,7 @@ namespace pininvdyn
     /**
      * Possible states of an HQP solver.
      */
-    enum PININVDYN_DLLAPI HQP_status
+    enum PININVDYN_DLLAPI HQPStatus
     {
       HQP_STATUS_UNKNOWN=-1,
       HQP_STATUS_OPTIMAL=0,
@@ -53,6 +53,8 @@ namespace pininvdyn
       HQP_STATUS_MAX_ITER_REACHED=3,
       HQP_STATUS_ERROR=4
     };
+    
+    class HQPOutput;
     
     class PININVDYN_DLLAPI SolverHQPBase;
     

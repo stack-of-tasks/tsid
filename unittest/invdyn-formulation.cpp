@@ -226,9 +226,9 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
     samplePosture = trajPosture->computeNext();
     postureTask.setReference(samplePosture);
 
-    const HqpData & hqpData = invDyn->computeProblemData(t, q, v);
+    const HQPData & HQPData = invDyn->computeProblemData(t, q, v);
     if(i==0)
-      cout<< hqpDataToString(hqpData, false)<<endl;
+      cout<< HQPDataToString(HQPData, false)<<endl;
 
     REQUIRE_TASK_FINITE(postureTask);
     REQUIRE_TASK_FINITE(comTask);
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
     CHECK_LESS_THAN(contactRF.getMotionTask().position_error().norm(), 1e-3);
     CHECK_LESS_THAN(contactLF.getMotionTask().position_error().norm(), 1e-3);
 
-    const HqpOutput & sol = solver->solve(hqpData);
+    const HQPOutput & sol = solver->solve(HQPData);
 
     BOOST_CHECK_MESSAGE(sol.status==HQP_STATUS_OPTIMAL, "Status "+toString(sol.status));
 
@@ -347,9 +347,9 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
     samplePosture = trajPosture->computeNext();
     postureTask.setReference(samplePosture);
 
-    const HqpData & hqpData = invDyn->computeProblemData(t, q, v);
+    const HQPData & HQPData = invDyn->computeProblemData(t, q, v);
     if(i==0)
-      cout<< hqpDataToString(hqpData, false)<<endl;
+      cout<< HQPDataToString(HQPData, false)<<endl;
 
     REQUIRE_TASK_FINITE(postureTask);
     REQUIRE_TASK_FINITE(comTask);
@@ -387,11 +387,11 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
         PRINT_VECTOR(dv);
     }
 
-    const HqpOutput & sol = solver->solve(hqpData);
+    const HQPOutput & sol = solver->solve(HQPData);
 
     BOOST_CHECK_MESSAGE(sol.status==HQP_STATUS_OPTIMAL, "Status "+toString(sol.status));
 
-    for(ConstraintLevel::const_iterator it=hqpData[0].begin(); it!=hqpData[0].end(); it++)
+    for(ConstraintLevel::const_iterator it=HQPData[0].begin(); it!=HQPData[0].end(); it++)
     {
       const ConstraintBase* constr = it->second;
       if(constr->checkConstraint(sol.x)==false)
@@ -510,21 +510,21 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
     postureTask.setReference(samplePosture);
 
     getProfiler().start(PROFILE_PROBLEM_FORMULATION);
-    const HqpData & hqpData = invDyn->computeProblemData(t, q, v);
+    const HQPData & HQPData = invDyn->computeProblemData(t, q, v);
     getProfiler().stop(PROFILE_PROBLEM_FORMULATION);
 
     getProfiler().start(PROFILE_HQP);
-    const HqpOutput & sol = solver->solve(hqpData);
+    const HQPOutput & sol = solver->solve(HQPData);
     getProfiler().stop(PROFILE_HQP);
 
     getProfiler().stop(PROFILE_CONTROL_CYCLE);
 
     getProfiler().start(PROFILE_HQP_FAST);
-    const HqpOutput & sol_fast = solver_fast->solve(hqpData);
+    const HQPOutput & sol_fast = solver_fast->solve(HQPData);
     getProfiler().stop(PROFILE_HQP_FAST);
 
     getProfiler().start(PROFILE_HQP_RT);
-    solver_rt->solve(hqpData);
+    solver_rt->solve(HQPData);
     getProfiler().stop(PROFILE_HQP_RT);
 
     getStatistics().store("active inequalities", sol_fast.activeSet.size());

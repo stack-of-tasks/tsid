@@ -81,7 +81,7 @@ namespace pininvdyn
     typedef tasks::TaskMotion TaskMotion;
     typedef tasks::TaskContactForce TaskContactForce;
     typedef tasks::TaskActuation TaskActuation;
-    typedef solvers::HqpOutput HqpOutput;
+    typedef solvers::HQPOutput HQPOutput;
 
 
     InverseDynamicsFormulationAccForce(const std::string & name,
@@ -117,15 +117,15 @@ namespace pininvdyn
     bool removeRigidContact(const std::string & contactName,
                             double transition_duration=0.0);
 
-    const HqpData & computeProblemData(double time,
+    const HQPData & computeProblemData(double time,
                                        ConstRefVector q,
                                        ConstRefVector v);
 
-    const Vector & getActuatorForces(const HqpOutput & sol);
-    const Vector & getAccelerations(const HqpOutput & sol);
-    const Vector & getContactForces(const HqpOutput & sol);
+    const Vector & getActuatorForces(const HQPOutput & sol);
+    const Vector & getAccelerations(const HQPOutput & sol);
+    const Vector & getContactForces(const HQPOutput & sol);
     bool getContactForces(const std::string & name,
-                          const HqpOutput & sol,
+                          const HQPOutput & sol,
                           RefVector f);
 
   public:
@@ -138,10 +138,10 @@ namespace pininvdyn
 
     bool removeFromHqpData(const std::string & name);
 
-    bool decodeSolution(const HqpOutput & sol);
+    bool decodeSolution(const HQPOutput & sol);
 
     Data m_data;
-    HqpData m_hqpData;
+    HQPData m_hqpData;
     std::vector<TaskLevel*>     m_taskMotions;
     std::vector<TaskLevel*>     m_taskContactForces;
     std::vector<TaskLevel*>     m_taskActuations;

@@ -96,7 +96,7 @@ namespace pininvdyn
       m_nin = nin;
     }
     
-    const HqpOutput & SolverHQuadProgFast::solve(const HqpData & problemData)
+    const HQPOutput & SolverHQuadProgFast::solve(const HQPData & problemData)
     {
       
 //#ifndef EIGEN_RUNTIME_NO_MALLOC
