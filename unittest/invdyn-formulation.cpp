@@ -27,6 +27,7 @@
 #include <pininvdyn/tasks/task-joint-posture.hpp>
 #include <pininvdyn/trajectories/trajectory-euclidian.hpp>
 #include <pininvdyn/solvers/solver-HQP-factory.hxx>
+#include <pininvdyn/solvers/utils.hpp>
 #include <pininvdyn/utils/stop-watch.hpp>
 #include <pininvdyn/utils/statistics.hpp>
 #include <pininvdyn/math/utils.hpp>

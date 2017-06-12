@@ -56,6 +56,7 @@ SET(${LIBRARY_NAME}_SOLVERS_SOURCES
     solvers/solver-HQP-eiquadprog.cpp
     solvers/solver-HQP-eiquadprog-fast.cpp
     solvers/solver-HQP-qpoases.cpp
+    solvers/utils.cpp
   )
 
 SET(${LIBRARY_NAME}_ROBOTS_SOURCES

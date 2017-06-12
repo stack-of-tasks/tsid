@@ -171,7 +171,6 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   using namespace pininvdyn;
   using namespace math;
   using namespace solvers;
-  using namespace std;
 
   const double EPS = 1e-10;
 #ifdef NDEBUG
@@ -228,12 +227,12 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   {
       if(constrVal[i]>A_ub[i])
       {
-//        cout<<"Inequality constraint "<<i<<" active at first iteration. UB="<<A_ub[i]<<", value="<<constrVal[i]<<endl;
+//        std::cout<<"Inequality constraint "<<i<<" active at first iteration. UB="<<A_ub[i]<<", value="<<constrVal[i]<<endl;
         A_ub[i] = constrVal[i] + MARGIN_PERC*fabs(constrVal[i]);
       }
       if(constrVal[i]<A_lb[i])
       {
-//        cout<<"Inequality constraint "<<i<<" active at first iteration. LB="<<A_lb[i]<<", value="<<constrVal[i]<<endl;
+//        std::cout<<"Inequality constraint "<<i<<" active at first iteration. LB="<<A_lb[i]<<", value="<<constrVal[i]<<endl;
         A_lb[i] = constrVal[i] - MARGIN_PERC*fabs(constrVal[i]);
       }
   }
@@ -246,8 +245,8 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   HQPData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &eq_constraint));
 
   // Prepare random data to perturb initial QP
-  vector<Vector> gradientPerturbations(nTest);
-  vector<Matrix> hessianPerturbations(nTest);
+  std::vector<Vector> gradientPerturbations(nTest);
+  std::vector<Matrix> hessianPerturbations(nTest);
   for(int i=0; i<nTest; i++)
   {
     gradientPerturbations[i] = Vector::Random(n)*GRADIENT_PERTURBATION_VARIANCE;
@@ -307,9 +306,9 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
     }
   }
 
-  cout<<"\n### TEST FINISHED ###\n";
-  getProfiler().report_all(3, cout);
-  getStatistics().report_all(1, cout);
+  std::cout<<"\n### TEST FINISHED ###\n";
+  getProfiler().report_all(3, std::cout);
+  getStatistics().report_all(1, std::cout);
 }
 
 

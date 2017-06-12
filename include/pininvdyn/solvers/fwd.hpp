@@ -19,6 +19,8 @@
 #define __invdyn_solvers_fwd_hpp__
 
 #include "pininvdyn/config.hh"
+#include "pininvdyn/math/fwd.hpp"
+#include <pinocchio/container/aligned-vector.hpp>
 
 #define DEFAULT_HESSIAN_REGULARIZATION 1e-8
 
@@ -60,6 +62,29 @@ namespace pininvdyn
     
     template<int nVars, int nEqCon, int nIneqCon>
     class PININVDYN_DLLAPI SolverHQuadProgRT;
+    
+    template<typename T1, typename T2>
+    class aligned_pair
+    {
+    public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      
+      aligned_pair(const T1 & t1, const T2 & t2) : first(t1), second(t2) {}
+      
+      T1 first;
+      T2 second;
+      
+    };
+    
+    template<typename T1, typename T2>
+    inline aligned_pair<T1,T2> make_pair(const T1 & t1, const T2 & t2)
+    { return aligned_pair<T1,T2>(t1,t2); }
+    
+    
+    typedef se3::container::aligned_vector< aligned_pair<double, math::ConstraintBase*> > ConstraintLevel;
+    typedef se3::container::aligned_vector< aligned_pair<double, const math::ConstraintBase*> > ConstConstraintLevel;
+    typedef se3::container::aligned_vector<ConstraintLevel> HQPData;
+    typedef se3::container::aligned_vector<ConstConstraintLevel> ConstHQPData;
     
     
   }

@@ -29,23 +29,19 @@ namespace pininvdyn
   namespace solvers
   {
     
-    typedef std::vector< std::pair<double, math::ConstraintBase*> > ConstraintLevel;
-    typedef std::vector< std::pair<double, const math::ConstraintBase*> > ConstConstraintLevel;
-    typedef std::vector<ConstraintLevel> HQPData;
-    typedef std::vector<ConstConstraintLevel> ConstHQPData;
-    
-    std::string HQPDataToString(const HQPData & data, bool printMatrices=false);
-    
     class HQPOutput
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       
-      HQPStatus status;                    /// solver status
-      math::Vector x;            /// solution
-      math::Vector lambda;       /// Lagrange multipliers
-      math::VectorXi activeSet;  /// indexes of active inequalities
-      int iterations;                       /// number of iterations performed by the solver
+      typedef math::Vector Vector;
+      typedef math::VectorXi VectorXi;
+      
+      HQPStatus status;    /// solver status
+      Vector x;            /// solution
+      Vector lambda;       /// Lagrange multipliers
+      VectorXi activeSet;  /// indexes of active inequalities
+      int iterations;      /// number of iterations performed by the solver
       
       HQPOutput(){}
       

@@ -19,7 +19,6 @@
 #include "pininvdyn/math/constraint-bound.hpp"
 #include "pininvdyn/math/constraint-inequality.hpp"
 
-using namespace std;
 using namespace pininvdyn;
 using namespace math;
 using namespace tasks;
@@ -217,7 +216,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
 {
   m_t = time;
 
-  vector<ContactTransitionInfo*>::iterator it_ct;
+  std::vector<ContactTransitionInfo*>::iterator it_ct;
   for(it_ct=m_contactTransitions.begin(); it_ct!=m_contactTransitions.end(); it_ct++)
   {
     const ContactTransitionInfo * c = *it_ct;
@@ -242,7 +241,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
 
   m_robot.computeAllTerms(m_data, q, v);
 
-  for(vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+  for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
   {
     ContactLevel* cl = *it;
     unsigned int m = cl->contact.n_force();
@@ -275,7 +274,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   m_baseDynamics.matrix().rightCols(m_k) = -J_u.transpose();
   m_baseDynamics.vector() = -h_u;
 
-  vector<TaskLevel*>::iterator it;
+  std::vector<TaskLevel*>::iterator it;
   for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
   {
     const ConstraintBase & c = (*it)->task.compute(time, q, v, m_data);
@@ -375,7 +374,7 @@ bool InverseDynamicsFormulationAccForce::getContactForces(const std::string & na
                                                           RefVector f)
 {
   decodeSolution(sol);
-  for(vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+  for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
   {
     if((*it)->contact.name()==name)
     {
@@ -394,7 +393,7 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
   bool taskFound = removeFromHqpData(taskName);
   assert(taskFound);
 
-  vector<TaskLevel*>::iterator it;
+  std::vector<TaskLevel*>::iterator it;
   for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
   {
     if((*it)->task.name()==taskName)
@@ -442,7 +441,7 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
 {
   if(transition_duration>0.0)
   {
-    for(vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+    for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
     {
       if((*it)->contact.name()==contactName)
       {
@@ -475,7 +474,7 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
   assert(second_constraint_found);
 
   bool contact_found = false;
-  for(vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+  for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
   {
     if((*it)->contact.name()==contactName)
     {
@@ -490,7 +489,7 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
   }
 
   int k=0;
-  for(vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+  for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
   {
     ContactLevel * cl = *it;
     cl->index = k;
