@@ -15,7 +15,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "pininvdyn/solvers/solver-HQP-eiquadprog-fast.h"
+#include "pininvdyn/solvers/solver-HQP-eiquadprog-fast.hpp"
 #include "pininvdyn/math/utils.hpp"
 #include "pininvdyn/solvers/eiquadprog-fast.hpp"
 #include "pininvdyn/utils/stop-watch.hpp"

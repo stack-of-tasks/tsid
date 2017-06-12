@@ -150,7 +150,7 @@ SET(${PROJECT_NAME}_SOLVERS_HEADERS
     include/pininvdyn/solvers/solver-HQP-eiquadprog.hpp
     include/pininvdyn/solvers/solver-HQP-eiquadprog-rt.hpp
     include/pininvdyn/solvers/solver-HQP-eiquadprog-rt.hxx
-    include/pininvdyn/solvers/solver-HQP-eiquadprog-fast.h
+    include/pininvdyn/solvers/solver-HQP-eiquadprog-fast.hpp
   )
 
 SET(${PROJECT_NAME}_ROBOTS_HEADERS
