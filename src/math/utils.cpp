@@ -56,7 +56,7 @@ namespace pininvdyn
                              RefVector sol, double damping)
     {
       assert(A.rows()==b.size());
-      Eigen::JacobiSVD<typename Eigen::MatrixXd::PlainObject> svd(A.rows(), A.cols());
+      Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> svd(A.rows(), A.cols());
       svd.compute(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
       
       Eigen::VectorXd tmp(A.cols());
@@ -80,7 +80,7 @@ namespace pininvdyn
                        unsigned int computationOptions)
     
     {
-      Eigen::JacobiSVD<typename Eigen::MatrixXd::PlainObject> svdDecomposition(A.rows(), A.cols());
+      Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> svdDecomposition(A.rows(), A.cols());
       pseudoInverse(A, svdDecomposition, Apinv, tolerance, computationOptions);
     }
     
