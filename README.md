@@ -1,6 +1,6 @@
-# invdyn
-C++ library for optimization-based inverse-dynamics control based on the rigid multi-body dynamics library [Pinocchio](https://github.com/stack-of-tasks/pinocchio).
-Take a look at the project [wiki](https://github.com/stack-of-tasks/invdyn/wiki) for more details.
+# TSID - Task Space Inverse Dynamics
+TSID is C++ library for optimization-based inverse-dynamics control based on the rigid multi-body dynamics library [Pinocchio](https://github.com/stack-of-tasks/pinocchio).
+Take a look at the project [wiki](https://github.com/stack-of-tasks/tsid/wiki) for more details.
 
 ## Dependencies
 * boost (unit_test_framework)
@@ -15,8 +15,8 @@ To install [pinocchio](https://github.com/stack-of-tasks/pinocchio) follow the i
 ## Installation
 
     cd $DEVEL/openrobots/src/
-    git clone --recursive git@github.com:stack-of-tasks/invdyn.git
-    cd invdyn
+    git clone --recursive git@github.com:stack-of-tasks/tsid.git
+    cd tsid
     mkdir _build-RELEASE
     cd _build-RELEASE
     cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=$DEVEL/openrobots

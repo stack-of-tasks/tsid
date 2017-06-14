@@ -1,17 +1,17 @@
 //
 // Copyright (c) 2017 CNRS
 //
-// This file is part of PinInvDyn
-// PinInvDyn is free software: you can redistribute it
+// This file is part of tsid
+// tsid is free software: you can redistribute it
 // and/or modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
-// PinInvDyn is distributed in the hope that it will be
+// tsid is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // General Lesser Public License for more details. You should have
 // received a copy of the GNU Lesser General Public License along with
-// PinInvDyn If not, see
+// tsid If not, see
 // <http://www.gnu.org/licenses/>.
 //
 
@@ -20,16 +20,16 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/utility/binary.hpp>
 
-#include <pininvdyn/math/constraint-bound.hpp>
-#include <pininvdyn/math/constraint-equality.hpp>
-#include <pininvdyn/math/constraint-inequality.hpp>
+#include <tsid/math/constraint-bound.hpp>
+#include <tsid/math/constraint-equality.hpp>
+#include <tsid/math/constraint-inequality.hpp>
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
 BOOST_AUTO_TEST_CASE ( test_constraint_bounds )
 {
   std::cout << "test_constraint_bounds\n";
-  using namespace pininvdyn::math;
+  using namespace tsid::math;
   using namespace Eigen;
   const unsigned int n = 5;
 
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE ( test_constraint_bounds )
 
 BOOST_AUTO_TEST_CASE ( test_constraint_equality )
 {
-  using namespace pininvdyn::math;
+  using namespace tsid::math;
   using namespace Eigen;
   using namespace std;
 
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE ( test_constraint_equality )
 
 BOOST_AUTO_TEST_CASE ( test_constraint_inequality )
 {
-  using namespace pininvdyn::math;
+  using namespace tsid::math;
   using namespace Eigen;
   using namespace std;
 

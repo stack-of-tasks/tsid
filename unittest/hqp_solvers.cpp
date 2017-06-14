@@ -1,17 +1,17 @@
 //
 // Copyright (c) 2017 CNRS
 //
-// This file is part of PinInvDyn
-// PinInvDyn is free software: you can redistribute it
+// This file is part of tsid
+// tsid is free software: you can redistribute it
 // and/or modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
-// PinInvDyn is distributed in the hope that it will be
+// tsid is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // General Lesser Public License for more details. You should have
 // received a copy of the GNU Lesser General Public License along with
-// PinInvDyn If not, see
+// tsid If not, see
 // <http://www.gnu.org/licenses/>.
 //
 
@@ -20,15 +20,15 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/utility/binary.hpp>
 
-#include <pininvdyn/solvers/solver-HQP-factory.hxx>
-#include <pininvdyn/solvers/solver-HQP-eiquadprog.hpp>
-#include <pininvdyn/solvers/solver-HQP-eiquadprog-rt.hpp>
-#include <pininvdyn/math/utils.hpp>
-#include <pininvdyn/math/constraint-equality.hpp>
-#include <pininvdyn/math/constraint-inequality.hpp>
-#include <pininvdyn/math/constraint-bound.hpp>
-#include <pininvdyn/utils/stop-watch.hpp>
-#include <pininvdyn/utils/statistics.hpp>
+#include <tsid/solvers/solver-HQP-factory.hxx>
+#include <tsid/solvers/solver-HQP-eiquadprog.hpp>
+#include <tsid/solvers/solver-HQP-eiquadprog-rt.hpp>
+#include <tsid/math/utils.hpp>
+#include <tsid/math/constraint-equality.hpp>
+#include <tsid/math/constraint-inequality.hpp>
+#include <tsid/math/constraint-bound.hpp>
+#include <tsid/utils/stop-watch.hpp>
+#include <tsid/utils/statistics.hpp>
 
 #define CHECK_LESS_THAN(A,B) BOOST_CHECK_MESSAGE(A<B, #A<<": "<<A<<">"<<B)
 #define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(is_finite(A), #A<<": "<<A)
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //BOOST_AUTO_TEST_CASE ( test_eiquadprog_unconstrained)
 //{
 //  std::cout << "test_eiquadprog_unconstrained\n";
-//  using namespace pininvdyn;
+//  using namespace tsid;
 //  using namespace math;
 //  using namespace solvers;
 //  using namespace std;
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //BOOST_AUTO_TEST_CASE ( test_eiquadprog_equality_constrained)
 //{
 //  std::cout << "test_eiquadprog_equality_constrained\n";
-//  using namespace pininvdyn;
+//  using namespace tsid;
 //  using namespace math;
 //  using namespace solvers;
 //  using namespace std;
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 //BOOST_AUTO_TEST_CASE ( test_eiquadprog_inequality_constrained)
 //{
 //  std::cout << "test_eiquadprog_inequality_constrained\n";
-//  using namespace pininvdyn;
+//  using namespace tsid;
 //  using namespace math;
 //  using namespace solvers;
 //  using namespace std;
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
 {
   std::cout << "test_eiquadprog_classic_vs_rt_vs_fast\n";
-  using namespace pininvdyn;
+  using namespace tsid;
   using namespace math;
   using namespace solvers;
 

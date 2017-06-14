@@ -1,17 +1,17 @@
 #
 # Copyright (c) 2017 CNRS
 #
-# This file is part of PinInvDyn
-# PinInvDyn is free software: you can redistribute it
+# This file is part of tsid
+# tsid is free software: you can redistribute it
 # and/or modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation, either version
 # 3 of the License, or (at your option) any later version.
-# PinInvDyn is distributed in the hope that it will be
+# tsid is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 # of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Lesser Public License for more details. You should have
 # received a copy of the GNU Lesser General Public License along with
-# PinInvDyn. If not, see
+# tsid. If not, see
 # <http://www.gnu.org/licenses/>.
 
 # --- MACROS ------------------------------------------------------------------
@@ -54,16 +54,16 @@ ADD_UNIT_TEST(constraints eigen3)
 ADD_UNIT_TEST(trajectories "eigen3;pinocchio")
 
 ADD_UNIT_TEST(robot-wrapper "eigen3;pinocchio")
-ADD_TEST_CFLAGS(robot-wrapper '-DINVDYN_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+ADD_TEST_CFLAGS(robot-wrapper '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
 ADD_UNIT_TEST(tasks "eigen3;pinocchio")
-ADD_TEST_CFLAGS(tasks '-DINVDYN_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+ADD_TEST_CFLAGS(tasks '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
 ADD_UNIT_TEST(contacts "eigen3;pinocchio")
-ADD_TEST_CFLAGS(contacts '-DINVDYN_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+ADD_TEST_CFLAGS(contacts '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-ADD_UNIT_TEST(invdyn-formulation "eigen3;pinocchio")
-ADD_TEST_CFLAGS(invdyn-formulation '-DINVDYN_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+ADD_UNIT_TEST(tsid-formulation "eigen3;pinocchio")
+ADD_TEST_CFLAGS(tsid-formulation '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
 ADD_UNIT_TEST(math_utils "eigen3;pinocchio")
 ADD_UNIT_TEST(hqp_solvers "eigen3;pinocchio")

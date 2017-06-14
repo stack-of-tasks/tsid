@@ -1,17 +1,17 @@
 //
 // Copyright (c) 2017 CNRS
 //
-// This file is part of PinInvDyn
-// PinInvDyn is free software: you can redistribute it
+// This file is part of tsid
+// tsid is free software: you can redistribute it
 // and/or modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
-// PinInvDyn is distributed in the hope that it will be
+// tsid is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // General Lesser Public License for more details. You should have
 // received a copy of the GNU Lesser General Public License along with
-// PinInvDyn If not, see
+// tsid If not, see
 // <http://www.gnu.org/licenses/>.
 //
 
@@ -22,21 +22,21 @@
 
 #include <pinocchio/algorithm/joint-configuration.hpp>
 
-#include <pininvdyn/contacts/contact-6d.hpp>
-#include <pininvdyn/robots/robot-wrapper.hpp>
+#include <tsid/contacts/contact-6d.hpp>
+#include <tsid/robots/robot-wrapper.hpp>
 
-using namespace pininvdyn;
+using namespace tsid;
 using namespace trajectories;
 using namespace math;
 using namespace contacts;
-using namespace pininvdyn::robots;
+using namespace tsid::robots;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
 #define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(is_finite(A), #A<<": "<<A)
 
-const string romeo_model_path = INVDYN_SOURCE_DIR"/models/romeo";
+const string romeo_model_path = TSID_SOURCE_DIR"/models/romeo";
 
 BOOST_AUTO_TEST_CASE ( test_contact_6d )
 {

@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2017 CNRS
 #
-# This file is part of PinInvDyn
+# This file is part of tsid
 # pinocchio is free software: you can redistribute it
 # and/or modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation, either version
@@ -22,7 +22,7 @@ INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/python.cmake)
 INCLUDE(cmake2/ide.cmake)
 
-SET(PROJECT_NAME PinInvDyn)
+SET(PROJECT_NAME tsid)
 SET(PROJECT_DESCRIPTION "Efficient Inverse Dynamics for Multi-body Systems")
 SET(PROJECT_URL "http://github.com/stack-of-tasks/pinocchio")
 OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" FALSE)
@@ -99,75 +99,75 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 # ----------------------------------------------------
 
 SET(${PROJECT_NAME}_MATH_HEADERS
-    include/pininvdyn/math/fwd.hpp
-    include/pininvdyn/math/utils.hpp
-    include/pininvdyn/math/constraint-base.hpp
-    include/pininvdyn/math/constraint-equality.hpp
-    include/pininvdyn/math/constraint-inequality.hpp
-    include/pininvdyn/math/constraint-bound.hpp
+    include/tsid/math/fwd.hpp
+    include/tsid/math/utils.hpp
+    include/tsid/math/constraint-base.hpp
+    include/tsid/math/constraint-equality.hpp
+    include/tsid/math/constraint-inequality.hpp
+    include/tsid/math/constraint-bound.hpp
   )
 
 SET(${PROJECT_NAME}_TASKS_HEADERS
-    include/pininvdyn/tasks/fwd.hpp
-    include/pininvdyn/tasks/task-base.hpp
-    include/pininvdyn/tasks/task-motion.hpp
-    include/pininvdyn/tasks/task-actuation.hpp
-    include/pininvdyn/tasks/task-contact-force.hpp
-    include/pininvdyn/tasks/task-com-equality.hpp
-    include/pininvdyn/tasks/task-se3-equality.hpp
-    include/pininvdyn/tasks/task-contact-force-equality.hpp
-    include/pininvdyn/tasks/task-actuation-equality.hpp
-    include/pininvdyn/tasks/task-actuation-bounds.hpp
-    include/pininvdyn/tasks/task-joint-bounds.hpp
-    include/pininvdyn/tasks/task-joint-posture.hpp
+    include/tsid/tasks/fwd.hpp
+    include/tsid/tasks/task-base.hpp
+    include/tsid/tasks/task-motion.hpp
+    include/tsid/tasks/task-actuation.hpp
+    include/tsid/tasks/task-contact-force.hpp
+    include/tsid/tasks/task-com-equality.hpp
+    include/tsid/tasks/task-se3-equality.hpp
+    include/tsid/tasks/task-contact-force-equality.hpp
+    include/tsid/tasks/task-actuation-equality.hpp
+    include/tsid/tasks/task-actuation-bounds.hpp
+    include/tsid/tasks/task-joint-bounds.hpp
+    include/tsid/tasks/task-joint-posture.hpp
   )
 
 SET(${PROJECT_NAME}_CONTACTS_HEADERS
-    include/pininvdyn/contacts/fwd.hpp
-    include/pininvdyn/contacts/contact-base.hpp
-    include/pininvdyn/contacts/contact-6d.hpp
+    include/tsid/contacts/fwd.hpp
+    include/tsid/contacts/contact-base.hpp
+    include/tsid/contacts/contact-6d.hpp
   )
 
 SET(${PROJECT_NAME}_TRAJECTORIES_HEADERS
-    include/pininvdyn/trajectories/fwd.hpp
-    include/pininvdyn/trajectories/trajectory-base.hpp
-    include/pininvdyn/trajectories/trajectory-se3.hpp
-    include/pininvdyn/trajectories/trajectory-euclidian.hpp
+    include/tsid/trajectories/fwd.hpp
+    include/tsid/trajectories/trajectory-base.hpp
+    include/tsid/trajectories/trajectory-se3.hpp
+    include/tsid/trajectories/trajectory-euclidian.hpp
   )
 
 SET(${PROJECT_NAME}_SOLVERS_HEADERS
-    include/pininvdyn/solvers/eiquadprog_2011.hpp
-    include/pininvdyn/solvers/eiquadprog-rt.hpp
-    include/pininvdyn/solvers/eiquadprog-rt.hxx
-    include/pininvdyn/solvers/eiquadprog-fast.hpp
-    include/pininvdyn/solvers/fwd.hpp
-    include/pininvdyn/solvers/utils.hpp
-    include/pininvdyn/solvers/solver-HQP-output.hpp
-    include/pininvdyn/solvers/solver-HQP-base.hpp
-    include/pininvdyn/solvers/solver-HQP-factory.hpp
-    include/pininvdyn/solvers/solver-HQP-factory.hxx
-    include/pininvdyn/solvers/solver-HQP-qpoases.hpp
-    include/pininvdyn/solvers/solver-HQP-eiquadprog.hpp
-    include/pininvdyn/solvers/solver-HQP-eiquadprog-rt.hpp
-    include/pininvdyn/solvers/solver-HQP-eiquadprog-rt.hxx
-    include/pininvdyn/solvers/solver-HQP-eiquadprog-fast.hpp
+    include/tsid/solvers/eiquadprog_2011.hpp
+    include/tsid/solvers/eiquadprog-rt.hpp
+    include/tsid/solvers/eiquadprog-rt.hxx
+    include/tsid/solvers/eiquadprog-fast.hpp
+    include/tsid/solvers/fwd.hpp
+    include/tsid/solvers/utils.hpp
+    include/tsid/solvers/solver-HQP-output.hpp
+    include/tsid/solvers/solver-HQP-base.hpp
+    include/tsid/solvers/solver-HQP-factory.hpp
+    include/tsid/solvers/solver-HQP-factory.hxx
+    include/tsid/solvers/solver-HQP-qpoases.hpp
+    include/tsid/solvers/solver-HQP-eiquadprog.hpp
+    include/tsid/solvers/solver-HQP-eiquadprog-rt.hpp
+    include/tsid/solvers/solver-HQP-eiquadprog-rt.hxx
+    include/tsid/solvers/solver-HQP-eiquadprog-fast.hpp
   )
 
 SET(${PROJECT_NAME}_ROBOTS_HEADERS
-    include/pininvdyn/robots/fwd.hpp
-    include/pininvdyn/robots/robot-wrapper.hpp
+    include/tsid/robots/fwd.hpp
+    include/tsid/robots/robot-wrapper.hpp
   )
 
 SET(${PROJECT_NAME}_FORMULATIONS_HEADERS
-    include/pininvdyn/formulations/inverse-dynamics-formulation-base.hpp
-    include/pininvdyn/formulations/inverse-dynamics-formulation-acc-force.hpp
+    include/tsid/formulations/inverse-dynamics-formulation-base.hpp
+    include/tsid/formulations/inverse-dynamics-formulation-acc-force.hpp
   )
 
 SET(HEADERS
-    include/pininvdyn/config.hpp
-    include/pininvdyn/utils/statistics.hpp
-    include/pininvdyn/utils/stop-watch.hpp
-    include/pininvdyn/utils/Stdafx.hh
+    include/tsid/config.hpp
+    include/tsid/utils/statistics.hpp
+    include/tsid/utils/stop-watch.hpp
+    include/tsid/utils/Stdafx.hh
     ${${PROJECT_NAME}_MATH_HEADERS}
     ${${PROJECT_NAME}_TASKS_HEADERS}
     ${${PROJECT_NAME}_CONTACTS_HEADERS}

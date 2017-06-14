@@ -24,7 +24,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "pininvdyn/utils/Stdafx.hh"
+#include "tsid/utils/Stdafx.hh"
 
 #ifndef WIN32
         #include <sys/time.h>
@@ -34,7 +34,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #include <iomanip>      // std::setprecision
-#include "pininvdyn/utils/stop-watch.hpp"
+#include "tsid/utils/stop-watch.hpp"
 
 using std::map;
 using std::string;

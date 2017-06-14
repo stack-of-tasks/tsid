@@ -1,27 +1,27 @@
 //
 // Copyright (c) 2017 CNRS
 //
-// This file is part of PinInvDyn
-// PinInvDyn is free software: you can redistribute it
+// This file is part of tsid
+// tsid is free software: you can redistribute it
 // and/or modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
-// PinInvDyn is distributed in the hope that it will be
+// tsid is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // General Lesser Public License for more details. You should have
 // received a copy of the GNU Lesser General Public License along with
-// PinInvDyn If not, see
+// tsid If not, see
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "pininvdyn/solvers/solver-HQP-eiquadprog.hpp"
-#include "pininvdyn/math/utils.hpp"
-#include "pininvdyn/solvers/eiquadprog_2011.hpp"
-#include "pininvdyn/utils/stop-watch.hpp"
+#include "tsid/solvers/solver-HQP-eiquadprog.hpp"
+#include "tsid/math/utils.hpp"
+#include "tsid/solvers/eiquadprog_2011.hpp"
+#include "tsid/utils/stop-watch.hpp"
 
-using namespace pininvdyn::math;
-using namespace pininvdyn::solvers;
+using namespace tsid::math;
+using namespace tsid::solvers;
 using namespace Eigen;
 
 SolverHQuadProg::SolverHQuadProg(const std::string & name):

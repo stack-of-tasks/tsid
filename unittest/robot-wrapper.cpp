@@ -1,17 +1,17 @@
 //
 // Copyright (c) 2017 CNRS
 //
-// This file is part of PinInvDyn
-// PinInvDyn is free software: you can redistribute it
+// This file is part of tsid
+// tsid is free software: you can redistribute it
 // and/or modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
-// PinInvDyn is distributed in the hope that it will be
+// tsid is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // General Lesser Public License for more details. You should have
 // received a copy of the GNU Lesser General Public License along with
-// PinInvDyn If not, see
+// tsid If not, see
 // <http://www.gnu.org/licenses/>.
 //
 
@@ -20,12 +20,12 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/utility/binary.hpp>
 
-#include "pininvdyn/robots/robot-wrapper.hpp"
+#include "tsid/robots/robot-wrapper.hpp"
 #include <pinocchio/algorithm/joint-configuration.hpp>
 
-using namespace pininvdyn;
-using namespace pininvdyn::math;
-using namespace pininvdyn::robots;
+using namespace tsid;
+using namespace tsid::math;
+using namespace tsid::robots;
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE ( test_robot_wrapper )
   using namespace std;
   using namespace se3;
   
-  const string romeo_model_path = INVDYN_SOURCE_DIR"/models/romeo";
+  const string romeo_model_path = TSID_SOURCE_DIR"/models/romeo";
 
   vector<string> package_dirs;
   package_dirs.push_back(romeo_model_path);
