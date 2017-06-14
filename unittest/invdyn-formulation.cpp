@@ -72,24 +72,24 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 class StandardRomeoInvDynCtrl
 {
   public:
-  const double lxp = 0.14;
-  const double lxn = 0.077;
-  const double lyp = 0.069;
-  const double lyn = 0.069;
-  const double lz = 0.105;
-  const double mu = 0.3;
-  const double fMin = 5.0;
-  const double fMax = 1000.0;
-  const std::string rf_frame_name = "RAnkleRoll";
-  const std::string lf_frame_name = "LAnkleRoll";
-  const Vector3 contactNormal = Vector3::UnitZ();
-  const double w_com = 1.0;
-  const double w_posture = 1e-2;
-  const double w_forceReg = 1e-5;
-  const double kp_contact = 100.0;
-  const double kp_com = 30.0;
-  const double kp_posture = 30.0;
-  double t = 0.0;
+  static const double lxp;
+  static const double lxn;
+  static const double lyp;
+  static const double lyn;
+  static const double lz;
+  static const double mu;
+  static const double fMin;
+  static const double fMax;
+  static const std::string rf_frame_name;
+  static const std::string lf_frame_name;
+  static const Vector3 contactNormal;
+  static const double w_com;
+  static const double w_posture;
+  static const double w_forceReg;
+  static const double kp_contact;
+  static const double kp_com;
+  static const double kp_posture;
+  double t;
 
   RobotWrapper * robot;
   InverseDynamicsFormulationAccForce * invDyn;
@@ -102,7 +102,7 @@ class StandardRomeoInvDynCtrl
   se3::SE3 H_rf_ref;
   se3::SE3 H_lf_ref;
 
-  StandardRomeoInvDynCtrl()
+  StandardRomeoInvDynCtrl() : t(0.)
   {
     vector<string> package_dirs;
     package_dirs.push_back(romeo_model_path);
@@ -162,6 +162,24 @@ class StandardRomeoInvDynCtrl
   }
 
 };
+
+const double StandardRomeoInvDynCtrl::lxp = 0.14;
+const double StandardRomeoInvDynCtrl::lxn = 0.077;
+const double StandardRomeoInvDynCtrl::lyp = 0.069;
+const double StandardRomeoInvDynCtrl::lyn = 0.069;
+const double StandardRomeoInvDynCtrl::lz = 0.105;
+const double StandardRomeoInvDynCtrl::mu = 0.3;
+const double StandardRomeoInvDynCtrl::fMin = 5.0;
+const double StandardRomeoInvDynCtrl::fMax = 1000.0;
+const std::string StandardRomeoInvDynCtrl::rf_frame_name = "RAnkleRoll";
+const std::string StandardRomeoInvDynCtrl::lf_frame_name = "LAnkleRoll";
+const Vector3 StandardRomeoInvDynCtrl::contactNormal = Vector3::UnitZ();
+const double StandardRomeoInvDynCtrl::w_com = 1.0;
+const double StandardRomeoInvDynCtrl::w_posture = 1e-2;
+const double StandardRomeoInvDynCtrl::w_forceReg = 1e-5;
+const double StandardRomeoInvDynCtrl::kp_contact = 100.0;
+const double StandardRomeoInvDynCtrl::kp_com = 30.0;
+const double StandardRomeoInvDynCtrl::kp_posture = 30.0;
 
 BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
 {
