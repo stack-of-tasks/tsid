@@ -238,7 +238,7 @@ namespace pininvdyn
                            int iq)
       {
         r.head(iq)= d.head(iq);
-        R.topLeftCorner(iq,iq).template triangularView<Eigen::Upper>().solveInPlace(r.head(iq));
+        R.topLeftCorner(iq,iq).triangularView<Eigen::Upper>().solveInPlace(r.head(iq));
       }
 
       inline bool add_constraint(MatrixXd & R,
