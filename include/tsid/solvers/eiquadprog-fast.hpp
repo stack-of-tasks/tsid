@@ -87,7 +87,7 @@ namespace tsid
       EiquadprogFast();
       virtual ~EiquadprogFast();
 
-      inline void reset(int dim_qp, int num_eq, int num_ineq);
+      void reset(int dim_qp, int num_eq, int num_ineq);
 
       int getMaxIter() const { return m_maxIter; }
 
