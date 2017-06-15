@@ -34,7 +34,7 @@ using namespace std;
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
-#define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(is_finite(A), #A<<": "<<A)
+#define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(isFinite(A), #A<<": "<<A)
 
 const string romeo_model_path = TSID_SOURCE_DIR"/models/romeo";
 

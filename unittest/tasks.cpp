@@ -43,7 +43,7 @@ using namespace std;
 using namespace Eigen;
 using namespace tsid::robots;
 
-#define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(is_finite(A), #A<<": "<<A)
+#define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(isFinite(A), #A<<": "<<A)
 
 const string romeo_model_path = TSID_SOURCE_DIR"/models/romeo";
 
@@ -95,13 +95,13 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
     BOOST_CHECK(constraint.rows()==6);
     BOOST_CHECK(constraint.cols()==robot.nv());
     REQUIRE_FINITE(constraint.matrix());
-    BOOST_REQUIRE(is_finite(constraint.vector()));
+    BOOST_REQUIRE(isFinite(constraint.vector()));
 
     pseudoInverse(constraint.matrix(), Jpinv, 1e-4);
     Vector dv = Jpinv * constraint.vector();
-    BOOST_REQUIRE(is_finite(Jpinv));
+    BOOST_REQUIRE(isFinite(Jpinv));
     BOOST_CHECK(MatrixXd::Identity(6,6).isApprox(constraint.matrix()*Jpinv));
-    if(!is_finite(dv))
+    if(!isFinite(dv))
     {
       cout<< "Jpinv" << Jpinv.transpose() <<endl;
       cout<< "b" << constraint.vector().transpose() <<endl;
@@ -110,12 +110,12 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
 
     v += dt*dv;
     q = se3::integrate(robot.model(), q, dt*v);
-    BOOST_REQUIRE(is_finite(v));
-    BOOST_REQUIRE(is_finite(q));
+    BOOST_REQUIRE(isFinite(v));
+    BOOST_REQUIRE(isFinite(q));
     t += dt;
 
     error = task.position_error().norm();
-    BOOST_REQUIRE(is_finite(task.position_error()));
+    BOOST_REQUIRE(isFinite(task.position_error()));
     BOOST_CHECK(error <= error_past);
     error_past = error;
 
@@ -173,23 +173,23 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
     const ConstraintBase & constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows()==3);
     BOOST_CHECK(constraint.cols()==robot.nv());
-    BOOST_REQUIRE(is_finite(constraint.matrix()));
-    BOOST_REQUIRE(is_finite(constraint.vector()));
+    BOOST_REQUIRE(isFinite(constraint.matrix()));
+    BOOST_REQUIRE(isFinite(constraint.vector()));
 
     pseudoInverse(constraint.matrix(), Jpinv, 1e-5);
     Vector dv = Jpinv * constraint.vector();
-    BOOST_REQUIRE(is_finite(Jpinv));
+    BOOST_REQUIRE(isFinite(Jpinv));
     BOOST_CHECK(MatrixXd::Identity(constraint.rows(),constraint.rows()).isApprox(constraint.matrix()*Jpinv));
-    BOOST_REQUIRE(is_finite(dv));
+    BOOST_REQUIRE(isFinite(dv));
 
     v += dt*dv;
     q = se3::integrate(robot.model(), q, dt*v);
-    BOOST_REQUIRE(is_finite(v));
-    BOOST_REQUIRE(is_finite(q));
+    BOOST_REQUIRE(isFinite(v));
+    BOOST_REQUIRE(isFinite(q));
     t += dt;
 
     error = task.position_error().norm();
-    BOOST_REQUIRE(is_finite(task.position_error()));
+    BOOST_REQUIRE(isFinite(task.position_error()));
     BOOST_CHECK((error - error_past) <= 1e-4);
     error_past = error;
     
@@ -245,23 +245,23 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
     const ConstraintBase & constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows()==na);
     BOOST_CHECK(constraint.cols()==robot.nv());
-    BOOST_REQUIRE(is_finite(constraint.matrix()));
-    BOOST_REQUIRE(is_finite(constraint.vector()));
+    BOOST_REQUIRE(isFinite(constraint.matrix()));
+    BOOST_REQUIRE(isFinite(constraint.vector()));
 
     pseudoInverse(constraint.matrix(), Jpinv, 1e-5);
     Vector dv = Jpinv * constraint.vector();
-    BOOST_REQUIRE(is_finite(Jpinv));
+    BOOST_REQUIRE(isFinite(Jpinv));
     BOOST_CHECK(MatrixXd::Identity(na,na).isApprox(constraint.matrix()*Jpinv));
-    BOOST_REQUIRE(is_finite(dv));
+    BOOST_REQUIRE(isFinite(dv));
 
     v += dt*dv;
     q = se3::integrate(robot.model(), q, dt*v);
-    BOOST_REQUIRE(is_finite(v));
-    BOOST_REQUIRE(is_finite(q));
+    BOOST_REQUIRE(isFinite(v));
+    BOOST_REQUIRE(isFinite(q));
     t += dt;
 
     error = task.position_error().norm();
-    BOOST_REQUIRE(is_finite(task.position_error()));
+    BOOST_REQUIRE(isFinite(task.position_error()));
     BOOST_CHECK(error <= error_past);
     error_past = error;
 

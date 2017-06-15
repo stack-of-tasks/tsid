@@ -31,7 +31,7 @@
 #include <tsid/utils/statistics.hpp>
 
 #define CHECK_LESS_THAN(A,B) BOOST_CHECK_MESSAGE(A<B, #A<<": "<<A<<">"<<B)
-#define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(is_finite(A), #A<<": "<<A)
+#define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(isFinite(A), #A<<": "<<A)
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 

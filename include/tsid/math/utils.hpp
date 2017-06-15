@@ -137,7 +137,7 @@ namespace tsid
                                          int &rows, int &cols);
 
     template<typename Derived>
-    inline bool is_finite(const Eigen::MatrixBase<Derived>& x)
+    inline bool isFinite(const Eigen::MatrixBase<Derived>& x)
     {
       return ( (x - x).array() == (x - x).array()).all();
     }

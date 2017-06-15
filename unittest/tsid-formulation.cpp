@@ -45,7 +45,7 @@ using namespace tsid::robots;
 using namespace std;
 
 
-#define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(is_finite(A), #A<<": "<<A)
+#define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(isFinite(A), #A<<": "<<A)
 #define CHECK_LESS_THAN(A,B) BOOST_CHECK_MESSAGE(A<B, #A<<": "<<A<<">"<<B)
 
 #define REQUIRE_TASK_FINITE(task) REQUIRE_FINITE(task.getConstraint().matrix()); \
