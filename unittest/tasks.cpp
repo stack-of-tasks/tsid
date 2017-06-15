@@ -30,7 +30,9 @@
 #include <tsid/trajectories/trajectory-se3.hpp>
 #include <tsid/trajectories/trajectory-euclidian.hpp>
 
+#include <pinocchio/parsers/srdf.hpp>
 #include <pinocchio/algorithm/joint-configuration.hpp>
+#include <pinocchio/algorithm/center-of-mass.hpp>
 #include <Eigen/SVD>
 
 using namespace tsid;
@@ -133,6 +135,17 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
                      package_dirs,
                      se3::JointModelFreeFlyer(),
                      false);
+  
+  se3::Data data(robot.model());
+  const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
+  se3::srdf::getNeutralConfigurationFromSrdf(robot.model(),srdfFileName);
+  
+  const unsigned int nv = robot.nv();
+  VectorXd q = robot.model().neutralConfiguration;
+  std::cout << "q: " << q.transpose() << std::endl;
+  q(2) += 0.84;
+  
+  se3::centerOfMass(robot.model(),data,q);
 
   TaskComEquality task("task-com", robot);
 
@@ -143,7 +156,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
   BOOST_CHECK(task.Kp().isApprox(Kp));
   BOOST_CHECK(task.Kd().isApprox(Kd));
 
-  Vector3 com_ref = Vector3::Random();
+  Vector3 com_ref = data.com[0] + se3::SE3::Vector3(0.02,0.02,0.02);
   TrajectoryBase *traj = new TrajectoryEuclidianConstant("traj_com", com_ref);
   TrajectorySample sample;
 
@@ -151,9 +164,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
   const double dt = 0.001;
   MatrixXd Jpinv(robot.nv(), 3);
   double error, error_past=1e100;
-  VectorXd q = robot.model().neutralConfiguration;
   VectorXd v = VectorXd::Zero(robot.nv());
-  se3::Data data(robot.model());
   for(int i=0; i<max_it; i++)
   {
     robot.computeAllTerms(data, q, v);
@@ -179,8 +190,10 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
 
     error = task.position_error().norm();
     BOOST_REQUIRE(is_finite(task.position_error()));
-    BOOST_CHECK(error <= error_past);
+    BOOST_CHECK((error - error_past) <= 1e-4);
     error_past = error;
+    
+    if(error < 1e-8) break;
 
     if(i%100==0)
       cout << "Time "<<t<<"\t CoM pos error "<<error<<
