@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   using namespace math;
   using namespace solvers;
 
-  const double EPS = 1e-10;
+  const double EPS = 1e-8;
 #ifdef NDEBUG
   const unsigned int nTest = 1000;
 #else
