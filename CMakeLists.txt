@@ -79,7 +79,7 @@ ENDIF(EIGEN_NO_AUTOMATIC_RESIZING)
 # ----------------------------------------------------
 # --- DEPENDANCIES -----------------------------------
 # ----------------------------------------------------
-ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.1.0") # Not sure about the needed version of Eigen, but you need Eigen::Ref, so 3.0.5 is not enough
+ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.0") # Eigen::Ref appeared from 3.2.0
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.2.0")
 
 SET(BOOST_COMPONENTS unit_test_framework)
