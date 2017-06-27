@@ -28,7 +28,7 @@ namespace tsid
       xyzQuat.head<3>() = M.translation();
       xyzQuat.tail<4>() = Eigen::Quaterniond(M.rotation()).coeffs();
     }
-    
+
     void SE3ToVector(const se3::SE3 & M, RefVector vec)
     {
       assert(vec.size()==12);
@@ -36,7 +36,7 @@ namespace tsid
       typedef Eigen::Matrix<double,9,1> Vector9;
       vec.tail<9>() = Eigen::Map<const Vector9>(&M.rotation()(0), 9);
     }
-    
+
     void vectorToSE3(RefVector vec, se3::SE3 & M)
     {
       assert(vec.size()==12);
@@ -52,18 +52,17 @@ namespace tsid
       error = se3::log6(Mdes.inverse() * M);
     }
     
-    void svdSolveWithDamping(ConstRefMatrix A, ConstRefVector b,
-                             RefVector sol, double damping)
+    void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> svd,
+                                 ConstRefVector b,
+                                 RefVector sol, double damping)
     {
-      assert(A.rows()==b.size());
-      Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> svd(A.rows(), A.cols());
-      svd.compute(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
-      
-      Eigen::VectorXd tmp(A.cols());
-      const unsigned int nzsv = svd.nonzeroSingularValues();
+      assert(svd.rows()==b.size());
+      const double d2 = damping*damping;
+      const long int nzsv = svd.nonzeroSingularValues();
+      Eigen::VectorXd tmp(svd.cols());
       tmp.noalias() = svd.matrixU().leftCols(nzsv).adjoint() * b;
-      double sv, d2 = damping*damping;
-      for(int i=0; i<nzsv; i++)
+      double sv;
+      for(long int i=0; i<nzsv; i++)
       {
         sv = svd.singularValues()(i);
         tmp(i) *= sv/(sv*sv + d2);
@@ -72,6 +71,16 @@ namespace tsid
       //  cout<<"sing val = "+toString(svd.singularValues(),3);
       //  cout<<"solution with damp "+toString(damping)+" = "+toString(res.norm());
       //  cout<<"solution without damping  ="+toString(svd.solve(b).norm());
+    }
+
+    void svdSolveWithDamping(ConstRefMatrix A, ConstRefVector b,
+                             RefVector sol, double damping)
+    {
+      assert(A.rows()==b.size());
+      Eigen::JacobiSVD<typename Eigen::MatrixXd::PlainObject> svd(A.rows(), A.cols());
+      svd.compute(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
+
+      solveWithDampingFromSvd(svd, b, sol, damping);
     }
     
     void pseudoInverse(ConstRefMatrix A,
@@ -110,9 +119,9 @@ namespace tsid
       svdDecomposition.compute(A, computationOptions);
       
       JacobiSVD<MatrixXd::PlainObject>::SingularValuesType singularValues = svdDecomposition.singularValues();
-      int singularValuesSize = singularValues.size();
+      long int singularValuesSize = singularValues.size();
       int rank = 0;
-      for (int idx = 0; idx < singularValuesSize; idx++) {
+      for (long int idx = 0; idx < singularValuesSize; idx++) {
         if (tolerance > 0 && singularValues(idx) > tolerance) {
           singularValues(idx) = 1.0 / singularValues(idx);
           rank++;
@@ -148,7 +157,7 @@ namespace tsid
       
       //rank will be used for the null space basis.
       //not sure if this is correct
-      const int singularValuesSize = singularValues.size();
+      const long int singularValuesSize = singularValues.size();
       const double d2 = dampingFactor * dampingFactor;
       int rank = 0;
       for (int idx = 0; idx < singularValuesSize; idx++)
@@ -194,8 +203,8 @@ namespace tsid
       using namespace Eigen;
       const MatrixXd &vMatrix = svdDecomposition.matrixV();
       //A \in \mathbb{R}^{uMatrix.rows() \times vMatrix.cols()}
-      rows = vMatrix.cols();
-      cols = vMatrix.cols() - rank;
+      rows = (int) vMatrix.cols();
+      cols = (int) vMatrix.cols() - rank;
       Map<MatrixXd> map(nullSpaceBasisMatrix, rows, cols);
       map = vMatrix.rightCols(vMatrix.cols() - rank);
     }
