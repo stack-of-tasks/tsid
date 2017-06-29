@@ -52,7 +52,7 @@ namespace tsid
       error = se3::log6(Mdes.inverse() * M);
     }
     
-    void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> svd,
+    void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> & svd,
                                  ConstRefVector b,
                                  RefVector sol, double damping)
     {

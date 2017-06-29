@@ -94,7 +94,7 @@ namespace tsid
                      const se3::SE3 & Mdes,
                      se3::Motion & error);
 
-    void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> svd,
+    void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> & svd,
                              ConstRefVector b,
                              RefVector sol, double damping=0.0);
 
