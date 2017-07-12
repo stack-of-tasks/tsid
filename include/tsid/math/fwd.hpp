@@ -20,8 +20,13 @@
 
 #include <Eigen/Core>
 
-#define EIGEN_MALLOC_ALLOWED Eigen::internal::set_is_malloc_allowed(true);
-#define EIGEN_MALLOC_NOT_ALLOWED Eigen::internal::set_is_malloc_allowed(false);
+#ifdef EIGEN_RUNTIME_NO_MALLOC
+  #define EIGEN_MALLOC_ALLOWED Eigen::internal::set_is_malloc_allowed(true);
+  #define EIGEN_MALLOC_NOT_ALLOWED Eigen::internal::set_is_malloc_allowed(false);
+#else
+  #define EIGEN_MALLOC_ALLOWED
+  #define EIGEN_MALLOC_NOT_ALLOWED 
+#endif
 
 namespace tsid
 {
