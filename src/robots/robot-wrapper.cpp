@@ -69,6 +69,7 @@ namespace tsid
     {
       se3::computeAllTerms(m_model, data, q, v);
       se3::framesForwardKinematics(m_model, data);
+      se3::centerOfMass(m_model, data, q, v, Eigen::VectorXd::Zero(nv()));
     }
     
     const Vector & RobotWrapper::rotor_inertias() const
