@@ -33,6 +33,11 @@ namespace tsid
     {
       m_Kp.setZero(3);
       m_Kd.setZero(3);
+      m_p_error_vec.setZero(3);
+      m_v_error_vec.setZero(3);
+      m_p_com.setZero(3);
+      m_v_com.setZero(3);
+      m_a_des_vec.setZero(3);
     }
 
     int TaskComEquality::dim() const
@@ -69,7 +74,7 @@ namespace tsid
 
     const Vector & TaskComEquality::getDesiredAcceleration() const
     {
-      return m_a_des;
+      return m_a_des_vec;
     }
 
     Vector TaskComEquality::getAcceleration(ConstRefVector dv) const
@@ -89,22 +94,22 @@ namespace tsid
 
     const Vector & TaskComEquality::position() const
     {
-      return m_p_error_vec;
+      return m_p_com;
     }
 
     const Vector & TaskComEquality::velocity() const
     {
-      return m_p_error_vec;
+      return m_v_com;
     }
 
     const Vector & TaskComEquality::position_ref() const
     {
-      return m_p_error_vec;
+      return m_ref.pos;
     }
 
     const Vector & TaskComEquality::velocity_ref() const
     {
-      return m_p_error_vec;
+      return m_ref.vel;
     }
 
     const ConstraintBase & TaskComEquality::getConstraint() const
@@ -117,18 +122,18 @@ namespace tsid
                                                     ConstRefVector v,
                                                     const Data & data)
     {
-      Vector3 p_com, v_com;
-      m_robot.com(data, p_com, v_com, m_drift);
+      m_robot.com(data, m_p_com, m_v_com, m_drift);
 
       // Compute errors
-      m_p_error = p_com - m_ref.pos;
-      m_v_error = v_com - m_ref.vel;
+      m_p_error = m_p_com - m_ref.pos;
+      m_v_error = m_v_com - m_ref.vel;
       m_a_des = - m_Kp.cwiseProduct(m_p_error)
                 - m_Kd.cwiseProduct(m_v_error)
                 + m_ref.acc;
 
       m_p_error_vec = m_p_error;
       m_v_error_vec = m_v_error;
+      m_a_des_vec = m_a_des;
 #ifndef NDEBUG
 //      std::cout<<m_name<<" errors: "<<m_p_error.norm()<<" "
 //        <<m_v_error.norm()<<std::endl;
