@@ -219,6 +219,7 @@ namespace tsid
             const ConstraintBase* constr = it->second;
             if(constr->checkConstraint(x)==false)
             {
+              m_output.status = HQP_STATUS_ERROR;
               if(constr->isEquality())
               {
                 sendMsg("Equality "+constr->name()+" violated: "+
