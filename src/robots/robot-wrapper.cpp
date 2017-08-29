@@ -68,6 +68,8 @@ namespace tsid
     void RobotWrapper::computeAllTerms(Data & data, const Vector & q, const Vector & v) const
     {
       se3::computeAllTerms(m_model, data, q, v);
+      // computeAllTerms does not compute the com acceleration, so we need to call centerOfMass
+      se3::centerOfMass<true,true,true>(m_model, data, false);
       se3::framesForwardKinematics(m_model, data);
     }
     
