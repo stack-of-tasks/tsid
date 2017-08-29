@@ -146,6 +146,12 @@ namespace tsid
       return ( (x - x).array() == (x - x).array()).all();
     }
 
+    template<typename Derived>
+    inline bool is_nan(const Eigen::MatrixBase<Derived>& x)
+    {
+            return ((x.array() == x.array())).all();
+    }
+
     /**
      * Write the specified matrix to a binary file with the specified name.
      */
