@@ -46,6 +46,7 @@ namespace tsid
     typedef tasks::TaskMotion TaskMotion;
     typedef tasks::TaskContactForce TaskContactForce;
     typedef tasks::TaskActuation TaskActuation;
+    typedef tasks::TaskBase TaskBase;
     typedef contacts::ContactBase ContactBase;
     typedef solvers::HQPData HQPData;
     typedef solvers::HQPOutput HQPOutput;
@@ -76,6 +77,9 @@ namespace tsid
                                double weight,
                                unsigned int priorityLevel,
                                double transition_duration=0.0) = 0;
+
+    virtual bool updateTaskWeight(const std::string & task_name,
+                                  double weight) = 0;
 
     virtual bool addRigidContact(ContactBase & contact) = 0;
 

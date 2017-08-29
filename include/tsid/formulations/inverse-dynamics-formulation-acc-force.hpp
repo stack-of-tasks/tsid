@@ -109,6 +109,9 @@ namespace tsid
                        unsigned int priorityLevel,
                        double transition_duration=0.0);
 
+    bool updateTaskWeight(const std::string & task_name,
+                          double weight);
+
     bool addRigidContact(ContactBase & contact);
 
     bool removeTask(const std::string & taskName,

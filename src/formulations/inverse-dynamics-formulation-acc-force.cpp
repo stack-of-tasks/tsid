@@ -181,6 +181,37 @@ bool InverseDynamicsFormulationAccForce::addTorqueTask(TaskActuation & task,
   return true;
 }
 
+bool InverseDynamicsFormulationAccForce::updateTaskWeight(const std::string & task_name,
+                                                          double weight)
+{
+  std::vector<TaskLevel*>::iterator it;
+  for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
+  {
+    if((*it)->task.name()==task_name)
+    {
+      (*it)->weight = weight;
+      return true;
+    }
+  }
+  for(it=m_taskContactForces.begin(); it!=m_taskContactForces.end(); it++)
+  {
+    if((*it)->task.name()==task_name)
+    {
+      (*it)->weight = weight;
+      return true;
+    }
+  }
+  for(it=m_taskActuations.begin(); it!=m_taskActuations.end(); it++)
+  {
+    if((*it)->task.name()==task_name)
+    {
+      (*it)->weight = weight;
+      return true;
+    }
+  }
+  return false;
+}
+
 
 bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact)
 {
