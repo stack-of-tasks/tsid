@@ -182,7 +182,6 @@ bool InverseDynamicsFormulationAccForce::addTorqueTask(TaskActuation & task,
 bool InverseDynamicsFormulationAccForce::updateTaskWeight(const std::string & task_name,
                                                           double weight)
 {
-  std::cout<<"Change weight of task "<<task_name<<" to "<<weight<<std::endl;
   ConstraintLevel::iterator it;
   // do not look into first priority level because weights do not matter there
   for(int i=1; i<m_hqpData.size(); i++)
@@ -191,17 +190,11 @@ bool InverseDynamicsFormulationAccForce::updateTaskWeight(const std::string & ta
     {
       if(it->second->name() == task_name)
       {
-        std::cout<<"Task "<<task_name<<" found! Weight change executed!\n";
         it->first = weight;
         return true;
       }
-      else
-      {
-        std::cout<<"Weight of task "<<it->second->name()<<" is "<<it->first<<"\n";
-      }
     }
   }
-  std::cout<<"Could not find task "<<task_name<<". Weight change FAILED!\n";
   return false;
 }
 
