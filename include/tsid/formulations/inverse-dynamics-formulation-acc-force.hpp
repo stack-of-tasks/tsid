@@ -33,11 +33,10 @@ namespace tsid
     
     tasks::TaskBase & task;
     math::ConstraintBase * constraint;
-    double weight;
+//    double weight;
     unsigned int priority;
 
     TaskLevel(tasks::TaskBase & task,
-              double weight,
               unsigned int priority);
   };
 

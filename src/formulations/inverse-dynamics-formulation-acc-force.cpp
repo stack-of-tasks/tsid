@@ -28,10 +28,8 @@ using namespace solvers;
 typedef se3::Data Data;
 
 TaskLevel::TaskLevel(tasks::TaskBase & task,
-                     double weight,
                      unsigned int priority):
   task(task),
-  weight(weight),
   priority(priority)
 {}
 
@@ -127,7 +125,7 @@ bool InverseDynamicsFormulationAccForce::addMotionTask(TaskMotion & task,
 {
   assert(weight>=0.0);
   assert(transition_duration>=0.0);
-  TaskLevel *tl = new TaskLevel(task, weight, priorityLevel);
+  TaskLevel *tl = new TaskLevel(task, priorityLevel);
   m_taskMotions.push_back(tl);
   addTask(tl, weight, priorityLevel);
 
@@ -142,7 +140,7 @@ bool InverseDynamicsFormulationAccForce::addForceTask(TaskContactForce & task,
 {
   assert(weight>=0.0);
   assert(transition_duration>=0.0);
-  TaskLevel *tl = new TaskLevel(task, weight, priorityLevel);
+  TaskLevel *tl = new TaskLevel(task, priorityLevel);
   m_taskContactForces.push_back(tl);
   addTask(tl, weight, priorityLevel);
   return true;
@@ -156,7 +154,7 @@ bool InverseDynamicsFormulationAccForce::addTorqueTask(TaskActuation & task,
 {
   assert(weight>=0.0);
   assert(transition_duration>=0.0);
-  TaskLevel *tl = new TaskLevel(task, weight, priorityLevel);
+  TaskLevel *tl = new TaskLevel(task, priorityLevel);
   m_taskActuations.push_back(tl);
 
   if(priorityLevel > m_hqpData.size())
@@ -184,31 +182,26 @@ bool InverseDynamicsFormulationAccForce::addTorqueTask(TaskActuation & task,
 bool InverseDynamicsFormulationAccForce::updateTaskWeight(const std::string & task_name,
                                                           double weight)
 {
-  std::vector<TaskLevel*>::iterator it;
-  for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
+  std::cout<<"Change weight of task "<<task_name<<" to "<<weight<<std::endl;
+  ConstraintLevel::iterator it;
+  // do not look into first priority level because weights do not matter there
+  for(int i=1; i<m_hqpData.size(); i++)
   {
-    if((*it)->task.name()==task_name)
+    for(it=m_hqpData[i].begin(); it!=m_hqpData[i].end(); it++)
     {
-      (*it)->weight = weight;
-      return true;
+      if(it->second->name() == task_name)
+      {
+        std::cout<<"Task "<<task_name<<" found! Weight change executed!\n";
+        it->first = weight;
+        return true;
+      }
+      else
+      {
+        std::cout<<"Weight of task "<<it->second->name()<<" is "<<it->first<<"\n";
+      }
     }
   }
-  for(it=m_taskContactForces.begin(); it!=m_taskContactForces.end(); it++)
-  {
-    if((*it)->task.name()==task_name)
-    {
-      (*it)->weight = weight;
-      return true;
-    }
-  }
-  for(it=m_taskActuations.begin(); it!=m_taskActuations.end(); it++)
-  {
-    if((*it)->task.name()==task_name)
-    {
-      (*it)->weight = weight;
-      return true;
-    }
-  }
+  std::cout<<"Could not find task "<<task_name<<". Weight change FAILED!\n";
   return false;
 }
 
@@ -539,7 +532,7 @@ bool InverseDynamicsFormulationAccForce::removeFromHqpData(const std::string & n
       if(itt->second->name()==name)
       {
         it->erase(itt);
-        found = true;
+        found = true; // keep looking because there may be more constraints associated to the same task
       }
     }
   }
