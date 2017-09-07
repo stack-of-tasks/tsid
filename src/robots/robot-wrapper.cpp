@@ -68,6 +68,8 @@ namespace tsid
     void RobotWrapper::computeAllTerms(Data & data, const Vector & q, const Vector & v) const
     {
       se3::computeAllTerms(m_model, data, q, v);
+      data.M.triangularView<Eigen::StrictlyLower>()
+            = data.M.transpose().triangularView<Eigen::StrictlyLower>();
       // computeAllTerms does not compute the com acceleration, so we need to call centerOfMass
       se3::centerOfMass<true,true,true>(m_model, data, false);
       se3::framesForwardKinematics(m_model, data);
