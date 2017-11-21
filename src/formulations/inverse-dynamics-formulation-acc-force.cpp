@@ -278,6 +278,20 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     const ConstraintEquality & fr = cl->contact.computeForceRegularizationTask(time, q, v, m_data);
     cl->forceRegTask->matrix().middleCols(m_v+cl->index, m) = fr.matrix();
     cl->forceRegTask->vector() = fr.vector();
+
+    // update weight of force regularization task
+    ConstraintLevel::iterator itt;
+    for(int i=1; i<m_hqpData.size(); i++)
+    {
+      for(itt=m_hqpData[i].begin(); itt!=m_hqpData[i].end(); itt++)
+      {
+        if(itt->second->name() == cl->contact.name())
+        {
+          itt->first = cl->contact.getForceRegularizationWeight();
+          break;
+        }
+      }
+    }
   }
 
   const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-6);
