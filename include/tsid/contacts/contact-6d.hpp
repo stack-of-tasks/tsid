@@ -35,6 +35,7 @@ namespace tsid
       typedef math::ConstRefMatrix ConstRefMatrix;
       typedef math::ConstRefVector ConstRefVector;
       typedef math::Matrix3x Matrix3x;
+      typedef math::Vector6 Vector6;
       typedef math::Vector3 Vector3;
       typedef math::Vector Vector;
       typedef tasks::TaskMotion TaskMotion;
@@ -99,6 +100,8 @@ namespace tsid
       bool setMaxNormalForce(const double maxNormalForce);
       bool setRegularizationTaskWeight(const double w);
       void setReference(const SE3 & ref);
+      void setForceReference(ConstRefVector & f_ref);
+      void setRegularizationTaskWeightVector(ConstRefVector & w);
 
     protected:
 
@@ -111,6 +114,8 @@ namespace tsid
       ConstraintEquality m_forceRegTask;
       Matrix3x m_contactPoints;
       Vector3 m_contactNormal;
+      Vector6 m_fRef;
+      Vector6 m_weightForceRegTask;
       double m_mu;
       double m_fMin;
       double m_fMax;

@@ -46,7 +46,9 @@ Contact6d::Contact6d(const std::string & name,
   m_fMax(maxNormalForce),
   m_regularizationTaskWeight(regularizationTaskWeight)
 {
+  m_weightForceRegTask << 1, 1, 1e-3, 2, 2, 2;
   m_forceGenMat.resize(6,12);
+  m_fRef = Vector6::Zero();
   updateForceGeneratorMatrix();
   updateForceInequalityConstraints();
   updateForceRegularizationTask();
@@ -98,16 +100,19 @@ double Contact6d::getNormalForce(ConstRefVector f) const
   return n;
 }
 
+void Contact6d::setRegularizationTaskWeightVector(ConstRefVector & w)
+{
+  m_weightForceRegTask = w;
+  updateForceRegularizationTask();
+}
+
 void Contact6d::updateForceRegularizationTask()
 {
-  // [1, 1, 1e-3, 2, 2, 2] weights of force regularization task
 typedef Eigen::Matrix<double,6,6> Matrix6;
-  Vector6 m_weightForceRegTask;
-  m_weightForceRegTask << 1, 1, 1e-3, 2, 2, 2;
   Matrix6 A = Matrix6::Zero();
   A.diagonal() = m_weightForceRegTask;
   m_forceRegTask.setMatrix(A*m_forceGenMat);
-  m_forceRegTask.setVector(Vector6::Zero());
+  m_forceRegTask.setVector(m_fRef);
 }
 
 void Contact6d:: updateForceGeneratorMatrix()
@@ -189,6 +194,12 @@ bool Contact6d::setRegularizationTaskWeight(const double w)
     return false;
   m_regularizationTaskWeight = w;
   return true;
+}
+
+void Contact6d::setForceReference(ConstRefVector & f_ref)
+{
+  m_fRef = f_ref;
+  updateForceRegularizationTask();
 }
 
 void Contact6d::setReference(const SE3 & ref)
