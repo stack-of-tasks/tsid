@@ -126,7 +126,7 @@ namespace tsid
 
     Vector TaskSE3Equality::getAcceleration(ConstRefVector dv) const
     {
-      return m_constraint.matrix()*dv - m_drift.toVector();
+      return m_constraint.matrix()*dv + m_drift.toVector();
     }
 
     const ConstraintBase & TaskSE3Equality::getConstraint() const
