@@ -504,6 +504,9 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
   bool second_constraint_found = removeFromHqpData(contactName);
   assert(second_constraint_found);
 
+  bool third_constraint_found = removeFromHqpData(contactName);
+  assert(third_constraint_found);
+
   bool contact_found = false;
   for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
   {
@@ -526,7 +529,7 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
     cl->index = k;
     k += cl->contact.n_force();
   }
-  return contact_found;
+  return contact_found && first_constraint_found && second_constraint_found && third_constraint_found;
 }
 
 bool InverseDynamicsFormulationAccForce::removeFromHqpData(const std::string & name)
@@ -539,9 +542,9 @@ bool InverseDynamicsFormulationAccForce::removeFromHqpData(const std::string & n
       if(itt->second->name()==name)
       {
         it->erase(itt);
-        found = true; // keep looking because there may be more constraints associated to the same task
+        return true;
       }
     }
   }
-  return found;
+  return false;
 }
