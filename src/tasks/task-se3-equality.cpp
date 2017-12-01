@@ -129,6 +129,11 @@ namespace tsid
       return m_constraint.matrix()*dv + m_drift.toVector();
     }
 
+    Index TaskSE3Equality::frame_id() const
+    {
+      return m_frame_id;
+    }
+
     const ConstraintBase & TaskSE3Equality::getConstraint() const
     {
       return m_constraint;

@@ -74,6 +74,8 @@ namespace tsid
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
 
+      Index frame_id() const;
+
     protected:
       
       std::string m_frame_name;
