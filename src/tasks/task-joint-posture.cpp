@@ -55,7 +55,7 @@ namespace tsid
         if(mask(i)!=0.0)
         {
           assert(mask(i)==1.0);
-          S(i,6+i) = 1.0;
+          S(j,6+i) = 1.0;
           m_activeAxes(j) = i;
           j++;
         }
