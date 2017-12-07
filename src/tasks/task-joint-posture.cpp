@@ -43,18 +43,18 @@ namespace tsid
       return m_mask;
     }
 
-    bool TaskJointPosture::mask(const Vector & mask)
+    void TaskJointPosture::mask(const Vector & m)
     {
-      assert(mask.size()==m_robot.nv()-6);
-      m_mask = mask;
-      const unsigned int dim = mask.sum();
+      assert(m.size()==m_robot.nv()-6);
+      m_mask = m;
+      const unsigned int dim = m.sum();
       Matrix S = Matrix::Zero(dim, m_robot.nv());
       m_activeAxes.resize(dim);
       unsigned int j=0;
-      for(unsigned int i=0; i<mask.size(); i++)
-        if(mask(i)!=0.0)
+      for(unsigned int i=0; i<m.size(); i++)
+        if(m(i)!=0.0)
         {
-          assert(mask(i)==1.0);
+          assert(m(i)==1.0);
           S(j,6+i) = 1.0;
           m_activeAxes(j) = i;
           j++;
