@@ -249,7 +249,7 @@ namespace tsid
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      return se3::getJacobian<se3::WORLD>(m_model, data, index, J);
+      return se3::getJacobian<se3::WORLD>(m_model, data, m_model.frames[index].parent, J);
     }
     
     void RobotWrapper::frameJacobianLocal(const Data & data,
