@@ -58,7 +58,7 @@ namespace tsid
       Vector getAcceleration(ConstRefVector dv) const;
 
       const Vector & mask() const;
-      bool mask(const Vector & mask);
+      void mask(const Vector & mask);
 
       const Vector & position_error() const;
       const Vector & velocity_error() const;
