@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
     task.setReference(sample);
     const ConstraintBase & constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows()==6);
-    BOOST_CHECK(constraint.cols()==static_cast<Eigen::Index>(robot.nv()));
+    BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols())==static_cast<tsid::math::Index>(robot.nv()));
     REQUIRE_FINITE(constraint.matrix());
     BOOST_REQUIRE(isFinite(constraint.vector()));
 
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
     task.setReference(sample);
     const ConstraintBase & constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows()==3);
-    BOOST_CHECK(constraint.cols()==static_cast<Eigen::Index>(robot.nv()));
+    BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols())==static_cast<tsid::math::Index>(robot.nv()));
     BOOST_REQUIRE(isFinite(constraint.matrix()));
     BOOST_REQUIRE(isFinite(constraint.vector()));
 
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
     task.setReference(sample);
     const ConstraintBase & constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows()==na);
-    BOOST_CHECK(constraint.cols()==static_cast<Eigen::Index>(robot.nv()));
+    BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols())==static_cast<tsid::math::Index>(robot.nv()));
     BOOST_REQUIRE(isFinite(constraint.matrix()));
     BOOST_REQUIRE(isFinite(constraint.vector()));
 

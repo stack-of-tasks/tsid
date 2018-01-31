@@ -181,7 +181,7 @@ const HQPOutput & SolverHQuadProg::solve(const HQPData & problemData)
 //	Z = m_CE_dec.matrixZ(); // * m_CE_dec.colsPermutation();
 	ZT.setIdentity();
 	//m_CE_dec.applyZAdjointOnTheLeftInPlace(ZT);
-	typedef Eigen::Index Index;
+	typedef tsid::math::Index Index;
         const Index rank = m_CE_dec.rank();
         Vector temp(m_n);
         for (Index k = 0; k < rank; ++k)
