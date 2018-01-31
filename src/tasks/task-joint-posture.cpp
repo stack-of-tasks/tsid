@@ -29,8 +29,8 @@ namespace tsid
     TaskJointPosture::TaskJointPosture(const std::string & name,
                                      RobotWrapper & robot):
       TaskMotion(name, robot),
-      m_constraint(name, robot.nv()-6, robot.nv()),
-      m_ref(robot.nv()-6)
+      m_ref(robot.nv()-6),
+      m_constraint(name, robot.nv()-6, robot.nv())
     {
       m_Kp.setZero(robot.nv()-6);
       m_Kd.setZero(robot.nv()-6);
@@ -47,7 +47,7 @@ namespace tsid
     {
       assert(m.size()==m_robot.nv()-6);
       m_mask = m;
-      const unsigned int dim = m.sum();
+      const Vector::Index dim = static_cast<Vector::Index>(m.sum());
       Matrix S = Matrix::Zero(dim, m_robot.nv());
       m_activeAxes.resize(dim);
       unsigned int j=0;
@@ -59,13 +59,13 @@ namespace tsid
           m_activeAxes(j) = i;
           j++;
         }
-      m_constraint.resize(dim, m_robot.nv());
+      m_constraint.resize((unsigned int)dim, m_robot.nv());
       m_constraint.setMatrix(S);
     }
 
     int TaskJointPosture::dim() const
     {
-      return m_mask.sum();
+      return (int)m_mask.sum();
     }
 
     const Vector & TaskJointPosture::Kp(){ return m_Kp; }
@@ -142,10 +142,10 @@ namespace tsid
       return m_constraint;
     }
 
-    const ConstraintBase & TaskJointPosture::compute(const double t,
+    const ConstraintBase & TaskJointPosture::compute(const double ,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    const Data & data)
+                                                    const Data & )
     {
       // Compute errors
       m_p = q.tail(m_robot.nv()-6);

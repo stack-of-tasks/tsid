@@ -72,9 +72,9 @@ namespace tsid
       Eigen::VectorXi m_activeSet;  /// vector containing the indexes of the active inequalities
       int m_activeSetSize;
 
-      int m_neq;  /// number of equality constraints
-      int m_nin;  /// number of inequality constraints
-      int m_n;    /// number of variables
+      unsigned int m_neq;  /// number of equality constraints
+      unsigned int m_nin;  /// number of inequality constraints
+      unsigned int m_n;    /// number of variables
     };
   }
 }

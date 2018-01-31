@@ -61,16 +61,16 @@ bool ConstraintEquality::isInequality() const  { return false; }
 bool ConstraintEquality::isBound() const       { return false; }
 
 const Vector & ConstraintEquality::vector()     const { return m_b; }
-const Vector & ConstraintEquality::lowerBound() const { assert(false); }
-const Vector & ConstraintEquality::upperBound() const { assert(false); }
+const Vector & ConstraintEquality::lowerBound() const { assert(false); return m_b; }
+const Vector & ConstraintEquality::upperBound() const { assert(false); return m_b; }
 
 Vector & ConstraintEquality::vector()     { return m_b; }
-Vector & ConstraintEquality::lowerBound() { assert(false); }
-Vector & ConstraintEquality::upperBound() { assert(false); }
+Vector & ConstraintEquality::lowerBound() { assert(false); return m_b; }
+Vector & ConstraintEquality::upperBound() { assert(false); return m_b;}
 
 bool ConstraintEquality::setVector(ConstRefVector b) { m_b = b; return true; }
-bool ConstraintEquality::setLowerBound(ConstRefVector lb) { assert(false); return false; }
-bool ConstraintEquality::setUpperBound(ConstRefVector ub) { assert(false); return false; }
+bool ConstraintEquality::setLowerBound(ConstRefVector ) { assert(false); return false; }
+bool ConstraintEquality::setUpperBound(ConstRefVector ) { assert(false); return false; }
 
 bool ConstraintEquality::checkConstraint(ConstRefVector x, double tol) const
 {

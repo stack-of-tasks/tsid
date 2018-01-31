@@ -66,15 +66,15 @@ bool ConstraintInequality::isEquality() const    { return false; }
 bool ConstraintInequality::isInequality() const  { return true; }
 bool ConstraintInequality::isBound() const       { return false; }
 
-const Vector & ConstraintInequality::vector()     const { assert(false); }
+const Vector & ConstraintInequality::vector()     const { assert(false); return m_lb;}
 const Vector & ConstraintInequality::lowerBound() const { return m_lb; }
 const Vector & ConstraintInequality::upperBound() const { return m_ub; }
 
-Vector & ConstraintInequality::vector()     { assert(false); }
+Vector & ConstraintInequality::vector()     { assert(false); return m_lb;}
 Vector & ConstraintInequality::lowerBound() { return m_lb; }
 Vector & ConstraintInequality::upperBound() { return m_ub; }
 
-bool ConstraintInequality::setVector(ConstRefVector b) { assert(false); return false; }
+bool ConstraintInequality::setVector(ConstRefVector ) { assert(false); return false; }
 bool ConstraintInequality::setLowerBound(ConstRefVector lb) { m_lb = lb; return true; }
 bool ConstraintInequality::setUpperBound(ConstRefVector ub) { m_ub = ub; return true; }
 

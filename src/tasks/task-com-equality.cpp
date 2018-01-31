@@ -117,9 +117,9 @@ namespace tsid
       return m_constraint;
     }
 
-    const ConstraintBase & TaskComEquality::compute(const double t,
-                                                    ConstRefVector q,
-                                                    ConstRefVector v,
+    const ConstraintBase & TaskComEquality::compute(const double ,
+                                                    ConstRefVector ,
+                                                    ConstRefVector ,
                                                     const Data & data)
     {
       m_robot.com(data, m_p_com, m_v_com, m_drift);

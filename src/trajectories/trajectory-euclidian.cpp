@@ -42,10 +42,10 @@ namespace tsid
 
     unsigned int TrajectoryEuclidianConstant::size() const
     {
-      return m_sample.pos.size();
+      return (unsigned int)m_sample.pos.size();
     }
 
-    const TrajectorySample & TrajectoryEuclidianConstant::operator()(double time)
+    const TrajectorySample & TrajectoryEuclidianConstant::operator()(double )
     {
       return m_sample;
     }

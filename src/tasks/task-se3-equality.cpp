@@ -139,9 +139,9 @@ namespace tsid
       return m_constraint;
     }
 
-    const ConstraintBase & TaskSE3Equality::compute(const double t,
-                                                    ConstRefVector q,
-                                                    ConstRefVector v,
+    const ConstraintBase & TaskSE3Equality::compute(const double ,
+                                                    ConstRefVector ,
+                                                    ConstRefVector ,
                                                     const Data & data)
     {
       SE3 oMi;

@@ -121,7 +121,7 @@ void InverseDynamicsFormulationAccForce::addTask(TaskLevel* tl,
 bool InverseDynamicsFormulationAccForce::addMotionTask(TaskMotion & task,
                                                        double weight,
                                                        unsigned int priorityLevel,
-                                                       double transition_duration)
+                                                       double )
 {
   assert(weight>=0.0);
   assert(transition_duration>=0.0);
@@ -136,7 +136,7 @@ bool InverseDynamicsFormulationAccForce::addMotionTask(TaskMotion & task,
 bool InverseDynamicsFormulationAccForce::addForceTask(TaskContactForce & task,
                                                       double weight,
                                                       unsigned int priorityLevel,
-                                                      double transition_duration)
+                                                      double )
 {
   assert(weight>=0.0);
   assert(transition_duration>=0.0);
@@ -150,7 +150,7 @@ bool InverseDynamicsFormulationAccForce::addForceTask(TaskContactForce & task,
 bool InverseDynamicsFormulationAccForce::addTorqueTask(TaskActuation & task,
                                                        double weight,
                                                        unsigned int priorityLevel,
-                                                       double transition_duration)
+                                                       double )
 {
   assert(weight>=0.0);
   assert(transition_duration>=0.0);
@@ -184,7 +184,7 @@ bool InverseDynamicsFormulationAccForce::updateTaskWeight(const std::string & ta
 {
   ConstraintLevel::iterator it;
   // do not look into first priority level because weights do not matter there
-  for(int i=1; i<m_hqpData.size(); i++)
+  for(unsigned int i=1; i<m_hqpData.size(); i++)
   {
     for(it=m_hqpData[i].begin(); it!=m_hqpData[i].end(); it++)
     {
@@ -281,7 +281,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
 
     // update weight of force regularization task
     ConstraintLevel::iterator itt;
-    for(int i=1; i<m_hqpData.size(); i++)
+    for(unsigned int i=1; i<m_hqpData.size(); i++)
     {
       for(itt=m_hqpData[i].begin(); itt!=m_hqpData[i].end(); itt++)
       {
@@ -419,11 +419,15 @@ bool InverseDynamicsFormulationAccForce::getContactForces(const std::string & na
 }
 
 bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName,
-                                                    double transition_duration)
+                                                    double )
 {
+#ifndef NDEBUG
   bool taskFound = removeFromHqpData(taskName);
   assert(taskFound);
-
+#else
+  removeFromHqpData(taskName);
+#endif
+  
   std::vector<TaskLevel*>::iterator it;
   for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
   {

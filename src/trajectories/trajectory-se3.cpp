@@ -42,7 +42,7 @@ namespace tsid
       return 6;
     }
 
-    const TrajectorySample & TrajectorySE3Constant::operator()(double time)
+    const TrajectorySample & TrajectorySE3Constant::operator()(double )
     {
       return m_sample;
     }

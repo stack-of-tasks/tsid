@@ -17,7 +17,7 @@
 
 #include "tsid/solvers/eiquadprog-fast.hpp"
 #include "tsid/utils/stop-watch.hpp"
-
+ 
 namespace tsid
 {
   namespace solvers
@@ -56,7 +56,9 @@ namespace tsid
 
     EiquadprogFast::~EiquadprogFast() {}
 
-    void EiquadprogFast::reset(int nVars, int nEqCon, int nIneqCon)
+    void EiquadprogFast::reset(Eigen::Index nVars,
+			       Eigen::Index nEqCon,
+			       Eigen::Index nIneqCon)
     {
       m_nVars = nVars;
       m_nEqCon = nEqCon;
@@ -89,11 +91,11 @@ namespace tsid
                                         int& iq,
                                         double& R_norm)
     {
-      int nVars = J.rows();
+      Eigen::Index nVars = J.rows();
 #ifdef TRACE_SOLVER
       std::cerr << "Add constraint " << iq << '/';
 #endif
-      int j, k;
+      Eigen::Index j, k;
       double cc, ss, h, t1, t2, xny;
 
 #ifdef OPTIMIZE_ADD_CONSTRAINT
@@ -171,17 +173,17 @@ namespace tsid
                                            MatrixXd & J,
                                            VectorXi & A,
                                            VectorXd & u,
-                                           int nEqCon,
+                                           Eigen::Index nEqCon,
                                            int& iq,
-                                           int l)
+                                           Eigen::Index l)
     {
 
-      int nVars = R.rows();
+      MatrixXd::Index nVars = R.rows();
 #ifdef TRACE_SOLVER
       std::cerr << "Delete constraint " << l << ' ' << iq;
 #endif
-      int i, j, k;
-      int qq =0;
+      Eigen::Index i, j, k;
+      Eigen::Index qq =0;
       double cc, ss, h, xny, t1, t2;
 
       /* Find the index qq for active constraint l to be removed */
@@ -269,9 +271,9 @@ namespace tsid
                                                          const VectorXd & ci0,
                                                          VectorXd & x)
     {
-      const int nVars = g0.size();
-      const int nEqCon = ce0.size();
-      const int nIneqCon = ci0.size();
+      const VectorXd::Index nVars = g0.size();
+      const VectorXd::Index nEqCon = ce0.size();
+      const VectorXd::Index nIneqCon = ci0.size();
 
       if(nVars!=m_nVars || nEqCon!=m_nEqCon || nIneqCon!=m_nIneqCon)
         reset(nVars, nEqCon, nIneqCon);
@@ -283,8 +285,8 @@ namespace tsid
       assert(CI.rows()==m_nIneqCon && CI.cols()==m_nVars);
       assert(ci0.size()==m_nIneqCon);
 
-      int i, k, l;  // indices
-      int ip;       // index of the chosen violated constraint
+      Eigen::Index i, k, l;  // indices
+      Eigen::Index ip;       // index of the chosen violated constraint
       int iq;       // current number of active constraints
       double psi;   // current sum of constraint violations
       double c1;    // Hessian trace
@@ -401,7 +403,7 @@ namespace tsid
 
         /* compute the new solution value */
         f_value += 0.5 * (t2 * t2) * z.dot(np);
-        A(i) = -i - 1;
+        A(i) = static_cast<VectorXi::Scalar>(-i - 1);
         STOP_PROFILER_EIQUADPROG_FAST(EIQUADPROG_FAST_ADD_EQ_CONSTR_1);
 
         START_PROFILER_EIQUADPROG_FAST(EIQUADPROG_FAST_ADD_EQ_CONSTR_2);
@@ -416,7 +418,7 @@ namespace tsid
 
       /* set iai = K \ A */
       for (i = 0; i < nIneqCon; i++)
-        iai(i) = i;
+        iai(i) = static_cast<VectorXi::Scalar>(i);
 
 #ifdef USE_WARM_START
       //      DEBUG_STREAM("Gonna warm start using previous active set:\n"<<A.transpose()<<"\n")
@@ -504,7 +506,9 @@ l1:
 
       STOP_PROFILER_EIQUADPROG_FAST(EIQUADPROG_FAST_STEP_1);
 
-      if (std::abs(psi) <= nIneqCon * std::numeric_limits<double>::epsilon() * c1 * c2* 100.0)
+    if (std::abs(psi) <= static_cast<double>(nIneqCon) *
+	std::numeric_limits<double>::epsilon() *
+	  c1 * c2* 100.0)
       {
         /* numerically there are not infeasibilities anymore */
         q = iq;
@@ -540,7 +544,7 @@ l2: /* Step 2: check for feasibility and determine a new S-pair */
       /* set u = (u 0)^T */
       u(iq) = 0.0;
       /* add ip to the active set A */
-      A(iq) = ip;
+    A(iq) = static_cast<VectorXi::Scalar>( ip);
 
       //      DEBUG_STREAM("Add constraint "<<ip<<" to active set\n")
 
@@ -619,7 +623,7 @@ l2a:/* Step 2a: determine step direction */
         /* set u = u +  t * [-r 1) and drop constraint l from the active set A */
         u.head(iq) -= t * r.head(iq);
         u(iq) += t;
-        iai(l) = l;
+        iai(l) = static_cast<VectorXi::Scalar>(l);
         delete_constraint(R, m_J, A, u, nEqCon, iq, l);
 #ifdef TRACE_SOLVER
         std::cerr << " in dual space: "<< f_value << std::endl;
@@ -664,7 +668,7 @@ l2a:/* Step 2a: determine step direction */
           print_vector("A", A, iq);
 #endif
           for (i = 0; i < nIneqCon; i++)
-            iai(i) = i;
+            iai(i) = static_cast<VectorXi::Scalar>(i);
           for (i = 0; i < iq; i++)
           {
             A(i) = A_old(i);
@@ -686,7 +690,7 @@ l2a:/* Step 2a: determine step direction */
       }
 
       /* a partial step has been taken => drop constraint l */
-      iai(l) = l;
+      iai(l) = static_cast<VectorXi::Scalar>(l);
       delete_constraint(R, m_J, A, u, nEqCon, iq, l);
       s(ip) = CI.row(ip).dot(x) + ci0(ip);
 

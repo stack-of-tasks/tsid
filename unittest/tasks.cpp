@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
     task.setReference(sample);
     const ConstraintBase & constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows()==6);
-    BOOST_CHECK(constraint.cols()==robot.nv());
+    BOOST_CHECK(constraint.cols()==static_cast<Eigen::Index>(robot.nv()));
     REQUIRE_FINITE(constraint.matrix());
     BOOST_REQUIRE(isFinite(constraint.vector()));
 
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
   const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
   se3::srdf::getNeutralConfigurationFromSrdf(robot.model(),srdfFileName);
   
-  const unsigned int nv = robot.nv();
+  //  const unsigned int nv = robot.nv();
   VectorXd q = robot.model().neutralConfiguration;
   std::cout << "q: " << q.transpose() << std::endl;
   q(2) += 0.84;
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
     task.setReference(sample);
     const ConstraintBase & constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows()==3);
-    BOOST_CHECK(constraint.cols()==robot.nv());
+    BOOST_CHECK(constraint.cols()==static_cast<Eigen::Index>(robot.nv()));
     BOOST_REQUIRE(isFinite(constraint.matrix()));
     BOOST_REQUIRE(isFinite(constraint.vector()));
 
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
     task.setReference(sample);
     const ConstraintBase & constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows()==na);
-    BOOST_CHECK(constraint.cols()==robot.nv());
+    BOOST_CHECK(constraint.cols()==static_cast<Eigen::Index>(robot.nv()));
     BOOST_REQUIRE(isFinite(constraint.matrix()));
     BOOST_REQUIRE(isFinite(constraint.vector()));
 

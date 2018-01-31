@@ -129,7 +129,7 @@ namespace Eigen {
     }
 
     bool add_constraint(MatrixXd& R, MatrixXd& J, VectorXd& d, int& iq, double& R_norm);
-    void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  int p, int& iq, int l);
+  void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  Eigen::Index p, int& iq, Eigen::Index l);
 
     /* solve_quadprog2 is used when the Cholesky decomposition of the G matrix is precomputed */
     double solve_quadprog2(LLT<MatrixXd,Lower> &chol,  double c1, VectorXd & g0,
@@ -165,11 +165,11 @@ namespace Eigen {
                                   const MatrixXd & CI, const VectorXd & ci0,
                                   VectorXd& x, VectorXi& A, int& q)
     {
-        int i, j, k, l; /* indices */
-        int ip, me, mi;
-        int n=g0.size();
-        int p=CE.cols();
-        int m=CI.cols();
+        Eigen::Index i, k, l; /* indices */
+	Eigen::Index ip, me, mi;
+	Eigen::Index n=g0.size();
+	Eigen::Index p=CE.cols();
+	Eigen::Index m=CI.cols();
         MatrixXd R(g0.size(),g0.size()), J(g0.size(),g0.size());
 
 
@@ -255,7 +255,7 @@ namespace Eigen {
 
             /* compute the new solution value */
             f_value += 0.5 * (t2 * t2) * z.dot(np);
-            A(i) = -i - 1;
+            A(i) = static_cast<VectorXi::Scalar>(-i - 1);
 
             if (!add_constraint(R, J, d, iq, R_norm))
             {
@@ -267,7 +267,7 @@ namespace Eigen {
 
         /* set iai = K \ A */
         for (i = 0; i < mi; i++)
-            iai(i) = i;
+	  iai(i) = static_cast<VectorXi::Scalar>(i);
 
     l1:	iter++;
 #ifdef TRACE_SOLVER
@@ -296,7 +296,7 @@ namespace Eigen {
 #endif
 
 
-        if (std::abs(psi) <= mi * std::numeric_limits<double>::epsilon() * c1 * c2* 100.0)
+        if (std::abs(psi) <= static_cast<double>(mi) * std::numeric_limits<double>::epsilon() * c1 * c2* 100.0)
         {
             /* numerically there are not infeasibilities anymore */
             q = iq;
@@ -328,7 +328,7 @@ namespace Eigen {
         /* set u = (u 0)^T */
         u(iq) = 0.0;
         /* add ip to the active set A */
-        A(iq) = ip;
+        A(iq) = static_cast<VectorXi::Scalar>(ip);
 
 #ifdef TRACE_SOLVER
         std::cerr << "Trying with constraint " << ip << std::endl;
@@ -393,7 +393,7 @@ namespace Eigen {
             /* set u = u +  t * [-r 1) and drop constraint l from the active set A */
             u.head(iq) -= t * r.head(iq);
             u(iq) += t;
-            iai(l) = l;
+            iai(l) = static_cast<VectorXi::Scalar>(l);
             delete_constraint(R, J, A, u, p, iq, l);
 #ifdef TRACE_SOLVER
             std::cerr << " in dual space: "
@@ -439,7 +439,7 @@ namespace Eigen {
                 print_ivector("A", A, iq);
 #endif
                 for (i = 0; i < m; i++)
-                    iai(i) = i;
+		  iai(i) = static_cast<VectorXi::Scalar>(i);
                 for (i = 0; i < iq; i++)
                 {
                     A(i) = A_old(i);
@@ -464,7 +464,7 @@ namespace Eigen {
         print_vector("x", x, n);
 #endif
         /* drop constraint l */
-        iai(l) = l;
+        iai(l) = static_cast<VectorXi::Scalar>(l);
         delete_constraint(R, J, A, u, p, iq, l);
 #ifdef TRACE_SOLVER
         print_matrix("R", R, n);
@@ -482,11 +482,11 @@ namespace Eigen {
 
     inline bool add_constraint(MatrixXd& R, MatrixXd& J, VectorXd& d, int& iq, double& R_norm)
     {
-        int n=J.rows();
+      Eigen::Index n=J.rows();
 #ifdef TRACE_SOLVER
         std::cerr << "Add constraint " << iq << '/';
 #endif
-        int i, j, k;
+	Eigen::Index j, k;
         double cc, ss, h, t1, t2, xny;
 
         /* we have to find the Givens rotation which will reduce the element
@@ -546,14 +546,14 @@ namespace Eigen {
     }
 
 
-    inline void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  int p, int& iq, int l)
+  inline void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  Eigen::Index p, int& iq, Eigen::Index l)
     {
 
-        int n = R.rows();
+      Eigen::Index n = R.rows();
 #ifdef TRACE_SOLVER
         std::cerr << "Delete constraint " << l << ' ' << iq;
 #endif
-        int i, j, k, qq;
+	Eigen::Index i, j, k, qq=0;
         double cc, ss, h, xny, t1, t2;
 
         /* Find the index qq for active constraint l to be removed */

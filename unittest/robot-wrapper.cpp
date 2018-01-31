@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE ( test_robot_wrapper )
   robot.computeAllTerms(data, q, v);
 
   Vector3 com = robot.com(data);
-  
+  std::cout << com << std::endl;
   BOOST_CHECK(robot.nq() == 38);
   BOOST_CHECK(robot.nv() == 37);
 }

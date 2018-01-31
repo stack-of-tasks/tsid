@@ -33,11 +33,11 @@
 #define DEBUG_STREAM(msg)
 
 #ifdef PROFILE_EIQUADPROG
-#define START_PROFILER_EIQUADPROG_FAST START_PROFILER
-#define STOP_PROFILER_EIQUADPROG_FAST  STOP_PROFILER
+#define START_PROFILER_EIQUADPROG_FAST(x) START_PROFILER(x)
+#define STOP_PROFILER_EIQUADPROG_FAST(x)  STOP_PROFILER(x)
 #else
-#define START_PROFILER_EIQUADPROG_FAST
-#define STOP_PROFILER_EIQUADPROG_FAST
+#define START_PROFILER_EIQUADPROG_FAST(x)
+#define STOP_PROFILER_EIQUADPROG_FAST(x)
 #endif
 
 #define EIQUADPROG_FAST_CHOWLESKY_DECOMPOSITION "EIQUADPROG_FAST Chowlesky dec"
@@ -87,7 +87,7 @@ namespace tsid
       EiquadprogFast();
       virtual ~EiquadprogFast();
 
-      void reset(int dim_qp, int num_eq, int num_ineq);
+      void reset(Eigen::Index dim_qp, Eigen::Index num_eq, Eigen::Index num_ineq);
 
       int getMaxIter() const { return m_maxIter; }
 
@@ -148,9 +148,9 @@ namespace tsid
       bool is_inverse_provided_;
 
     private:
-      int m_nVars;
-      int m_nEqCon;
-      int m_nIneqCon;
+      Eigen::Index m_nVars;
+      Eigen::Index m_nEqCon;
+      Eigen::Index m_nIneqCon;
 
       int m_maxIter;  /// max number of active-set iterations
       double f_value; /// current value of cost function
@@ -250,7 +250,8 @@ namespace tsid
                                     MatrixXd & J,
                                     VectorXi & A,
                                     VectorXd & u,
-                                    int nEqCon, int& iq, int l);
+                                    Eigen::Index nEqCon, int& iq,
+				    Eigen::Index l);
     };
 
   } /* namespace solvers */

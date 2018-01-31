@@ -217,10 +217,10 @@ const ConstraintBase & Contact6d::computeMotionTask(const double t,
   return m_motionTask.compute(t, q, v, data);
 }
 
-const ConstraintInequality & Contact6d::computeForceTask(const double t,
-                                                         ConstRefVector q,
-                                                         ConstRefVector v,
-                                                         const Data & data)
+const ConstraintInequality & Contact6d::computeForceTask(const double,
+                                                         ConstRefVector ,
+                                                         ConstRefVector ,
+                                                         const Data & )
 {
   return m_forceInequality;
 }
@@ -230,10 +230,11 @@ const Matrix & Contact6d::getForceGeneratorMatrix()
   return m_forceGenMat;
 }
 
-const ConstraintEquality & Contact6d::computeForceRegularizationTask(const double t,
-                                                                     ConstRefVector q,
-                                                                     ConstRefVector v,
-                                                                     const Data & data)
+const ConstraintEquality & Contact6d::
+computeForceRegularizationTask(const double ,
+			       ConstRefVector ,
+			       ConstRefVector ,
+			       const Data & )
 {
   return m_forceRegTask;
 }

@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   Vector A_lb = Vector::Random(nin)*NORMAL_DISTR_VAR;
   Vector A_ub = Vector::Random(nin)*NORMAL_DISTR_VAR;
   Vector constrVal = A_in*x;
-  for(int i=0; i<nin; i++)
+  for(unsigned int i=0; i<nin; i++)
   {
       if(constrVal[i]>A_ub[i])
       {
@@ -247,14 +247,14 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   // Prepare random data to perturb initial QP
   std::vector<Vector> gradientPerturbations(nTest);
   std::vector<Matrix> hessianPerturbations(nTest);
-  for(int i=0; i<nTest; i++)
+  for(unsigned int i=0; i<nTest; i++)
   {
     gradientPerturbations[i] = Vector::Random(n)*GRADIENT_PERTURBATION_VARIANCE;
     hessianPerturbations[i] = Matrix::Random(n,n)*HESSIAN_PERTURBATION_VARIANCE;
   }
 
   // START COMPUTING
-  for(int i=0; i<nTest; i++)
+  for(unsigned int i=0; i<nTest; i++)
   {
     if(true || i==0)
     {
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
     const HQPOutput & output    = solver->solve(HQPData);
     getProfiler().stop(PROFILE_EIQUADPROG);
 
-    getStatistics().store("active inequalities", output_rt.activeSet.size());
+    getStatistics().store("active inequalities", (double)output_rt.activeSet.size());
     getStatistics().store("solver iterations", output_rt.iterations);
 
     BOOST_REQUIRE_MESSAGE(output.status==output_rt.status,

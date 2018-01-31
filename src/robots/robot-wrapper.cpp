@@ -33,7 +33,7 @@ namespace tsid
   {
     
     RobotWrapper::RobotWrapper(const std::string & filename,
-                               const std::vector<std::string> & package_dirs,
+                               const std::vector<std::string> & ,
                                bool verbose)
     : m_verbose(verbose)
     {
@@ -46,7 +46,7 @@ namespace tsid
     }
     
     RobotWrapper::RobotWrapper(const std::string & filename,
-                               const std::vector<std::string> & package_dirs,
+                               const std::vector<std::string> & ,
                                const se3::JointModelVariant & rootJoint,
                                bool verbose)
     : m_verbose(verbose)

@@ -132,7 +132,7 @@ void Statistics::report(string name, int precision, std::ostream& output)
   QuantityData& quant_info = records_of->find(name)->second;
 
   string pad = "";
-  for (int i = name.length(); i<STATISTICS_MAX_NAME_LENGTH; i++)
+  for (std::string::size_type i = name.length(); i<STATISTICS_MAX_NAME_LENGTH; i++)
     pad.append(" ");
 
   output << name << pad;

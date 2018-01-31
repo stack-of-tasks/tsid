@@ -65,15 +65,15 @@ bool ConstraintBound::isEquality() const    { return false; }
 bool ConstraintBound::isInequality() const  { return false; }
 bool ConstraintBound::isBound() const       { return true; }
 
-const Vector & ConstraintBound::vector()     const { assert(false); }
+const Vector & ConstraintBound::vector()     const { assert(false); return m_lb;}
 const Vector & ConstraintBound::lowerBound() const { return m_lb; }
 const Vector & ConstraintBound::upperBound() const { return m_ub; }
 
-Vector & ConstraintBound::vector()     { assert(false); }
+Vector & ConstraintBound::vector()     { assert(false); return m_lb;}
 Vector & ConstraintBound::lowerBound() { return m_lb; }
 Vector & ConstraintBound::upperBound() { return m_ub; }
 
-bool ConstraintBound::setVector(ConstRefVector b) { assert(false); return false; }
+bool ConstraintBound::setVector(ConstRefVector ) { assert(false); return false; }
 bool ConstraintBound::setLowerBound(ConstRefVector lb) { m_lb = lb; return true; }
 bool ConstraintBound::setUpperBound(ConstRefVector ub) { m_ub = ub; return true; }
 

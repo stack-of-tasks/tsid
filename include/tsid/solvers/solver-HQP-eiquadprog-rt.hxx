@@ -23,15 +23,6 @@
 #include "tsid/utils/stop-watch.hpp"
 #include "tsid/math/utils.hpp"
 
-//#define PROFILE_EIQUADPROG_RT
-
-#ifdef PROFILE_EIQUADPROG_RT
-#define START_PROFILER_EIQUADPROG_RT START_PROFILER
-#define STOP_PROFILER_EIQUADPROG_RT  STOP_PROFILER
-#else
-#define START_PROFILER_EIQUADPROG_RT
-#define STOP_PROFILER_EIQUADPROG_RT
-#endif
 
 #define PROFILE_EIQUADPROG_PREPARATION "EiquadprogRT problem preparation"
 #define PROFILE_EIQUADPROG_SOLUTION "EiquadprogRT problem solution"
@@ -59,11 +50,15 @@ namespace tsid
     }
     
     template<int nVars, int nEqCon, int nIneqCon>
-    void SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::resize(unsigned int n, unsigned int neq, unsigned int nin)
+    void SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::resize(unsigned int n,
+							    unsigned int neq,
+							    unsigned int nin)
     {
       assert(n==nVars);
       assert(neq==nEqCon);
       assert(nin==nIneqCon);
+      if ((n!=nVars) || (neq==nEqCon) || (nin==nIneqCon))
+	std::cerr << "(n!=nVars) || (neq==nEqCon) || (nin==nIneqCon)" << std::endl;
     }
     
     template<int nVars, int nEqCon, int nIneqCon>

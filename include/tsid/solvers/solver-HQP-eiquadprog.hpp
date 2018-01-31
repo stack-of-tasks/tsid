@@ -77,9 +77,9 @@ namespace tsid
       Matrix m_CI_Z;
 #endif
 
-      int m_neq;  /// number of equality constraints
-      int m_nin;  /// number of inequality constraints
-      int m_n;    /// number of variables
+      unsigned int m_neq;  /// number of equality constraints
+      unsigned int m_nin;  /// number of inequality constraints
+      unsigned int m_n;    /// number of variables
     };
   }
 }

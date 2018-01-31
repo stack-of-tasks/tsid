@@ -546,7 +546,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
     solver_rt->solve(HQPData);
     getProfiler().stop(PROFILE_HQP_RT);
 
-    getStatistics().store("active inequalities", sol_fast.activeSet.size());
+    getStatistics().store("active inequalities",
+			  static_cast<double>(sol_fast.activeSet.size()));
     getStatistics().store("solver iterations", sol_fast.iterations);
 
     dv = sol.x.head(nv);
