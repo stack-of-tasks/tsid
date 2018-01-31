@@ -52,8 +52,7 @@ namespace tsid
     typedef Eigen::Ref<Matrix>              RefMatrix;
     typedef const Eigen::Ref<const Matrix>  ConstRefMatrix;
     
-    //typedef std::size_t Index;
-    typedef Eigen::Index Index;
+    typedef std::size_t Index;
     
     // Forward declaration of constraints
     class ConstraintBase;

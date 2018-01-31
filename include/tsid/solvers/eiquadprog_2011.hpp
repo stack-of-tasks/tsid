@@ -120,30 +120,32 @@ namespace Eigen {
         d = J.adjoint() * np;
     }
 
-    inline void update_z(VectorXd& z, const MatrixXd& J, const VectorXd& d,  int iq)
+  inline void update_z(VectorXd& z, const MatrixXd& J, const VectorXd& d,  tsid::math::Index iq)
     {
         z = J.rightCols(z.size()-iq) * d.tail(d.size()-iq);
     }
 
-    inline void update_r(const MatrixXd& R, VectorXd& r, const VectorXd& d, int iq)
+  inline void update_r(const MatrixXd& R, VectorXd& r, const VectorXd& d, tsid::math::Index iq)
     {
         r.head(iq)= R.topLeftCorner(iq,iq).triangularView<Upper>().solve(d.head(iq));
     }
 
-    bool add_constraint(MatrixXd& R, MatrixXd& J, VectorXd& d, int& iq, double& R_norm);
-  void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  tsid::math::Index p, int& iq, tsid::math::Index l);
+  bool add_constraint(MatrixXd& R, MatrixXd& J, VectorXd& d, tsid::math::Index & iq, double& R_norm);
+  void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,
+			 tsid::math::Index p, tsid::math::Index& iq, tsid::math::Index l);
 
     /* solve_quadprog2 is used when the Cholesky decomposition of the G matrix is precomputed */
     double solve_quadprog2(LLT<MatrixXd,Lower> &chol,  double c1, VectorXd & g0,
                            const MatrixXd & CE, const VectorXd & ce0,
                            const MatrixXd & CI, const VectorXd & ci0,
-                           VectorXd& x, VectorXi& A, int& q);
+                           VectorXd& x, VectorXi& A, tsid::math::Index& q);
 
     /* solve_quadprog is used for on-demand QP solving */
     inline double solve_quadprog(MatrixXd & G,  VectorXd & g0,
                                  const MatrixXd & CE, const VectorXd & ce0,
                                  const MatrixXd & CI, const VectorXd & ci0,
-                                 VectorXd& x, VectorXi& activeSet, int& activeSetSize){
+                                 VectorXd& x, VectorXi& activeSet, tsid::math::Index& activeSetSize)
+    {
 
         LLT<MatrixXd,Lower> chol(G.cols());
         double c1;
@@ -165,7 +167,7 @@ namespace Eigen {
     inline double solve_quadprog2(LLT<MatrixXd,Lower> &chol,  double c1, VectorXd & g0,
                                   const MatrixXd & CE, const VectorXd & ce0,
                                   const MatrixXd & CI, const VectorXd & ci0,
-                                  VectorXd& x, VectorXi& A, int& q)
+                                  VectorXd& x, VectorXi& A, tsid::math::Index& q)
     {
         tsid::math::Index i, k, l; /* indices */
 	tsid::math::Index ip, me, mi;
@@ -182,11 +184,11 @@ namespace Eigen {
         double t, t1, t2; /* t is the step length, which is the minimum of the partial step length t1
                            * and the full step length t2 */
 //        VectorXi A(m + p); // Del Prete: active set is now an output parameter
-        if(A.size()!=m+p)
+        if(static_cast<tsid::math::Index>(A.size())!=m+p)
           A.resize(m+p);
         VectorXi A_old(m + p), iai(m + p), iaexcl(m+p);
 //        int q;
-        int iq, iter = 0;
+	tsid::math::Index iq, iter = 0;
 
         me = p; /* number of equality constraints */
         mi = m; /* number of inequality constraints */
@@ -482,7 +484,8 @@ namespace Eigen {
     }
 
 
-    inline bool add_constraint(MatrixXd& R, MatrixXd& J, VectorXd& d, int& iq, double& R_norm)
+  inline bool add_constraint(MatrixXd& R, MatrixXd& J, VectorXd& d,
+			     tsid::math::Index& iq,  double& R_norm)
     {
       tsid::math::Index n=J.rows();
 #ifdef TRACE_SOLVER
@@ -548,7 +551,7 @@ namespace Eigen {
     }
 
 
-  inline void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  tsid::math::Index p, int& iq, tsid::math::Index l)
+  inline void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  tsid::math::Index p, tsid::math::Index& iq, tsid::math::Index l)
     {
 
       tsid::math::Index n = R.rows();
@@ -560,7 +563,7 @@ namespace Eigen {
 
         /* Find the index qq for active constraint l to be removed */
         for (i = p; i < iq; i++)
-            if (A(i) == l)
+	  if (static_cast<tsid::math::Index>(A(i)) == l)
             {
                 qq = i;
                 break;

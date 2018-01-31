@@ -65,7 +65,7 @@ namespace tsid
       double m_hessian_regularization;
 
       Eigen::VectorXi m_activeSet;  /// vector containing the indexes of the active inequalities
-      int m_activeSetSize;
+      tsid::math::Index m_activeSetSize;
 
 #ifdef ELIMINATE_EQUALITY_CONSTRAINTS
 //      Eigen::FullPivLU<Matrix>                        m_CE_dec;
