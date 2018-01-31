@@ -278,12 +278,12 @@ namespace tsid
       if(nVars!=m_nVars || nEqCon!=m_nEqCon || nIneqCon!=m_nIneqCon)
         reset(nVars, nEqCon, nIneqCon);
 
-      assert(Hess.rows()==m_nVars && Hess.cols()==m_nVars);
-      assert(g0.size()==m_nVars);
-      assert(CE.rows()==m_nEqCon && CE.cols()==m_nVars);
-      assert(ce0.size()==m_nEqCon);
-      assert(CI.rows()==m_nIneqCon && CI.cols()==m_nVars);
-      assert(ci0.size()==m_nIneqCon);
+      assert(static_cast<math::Index>(Hess.rows())==m_nVars && static_cast<math::Index>(Hess.cols())==m_nVars);
+      assert(static_cast<math::Index>(g0.size())==m_nVars);
+      assert(static_cast<math::Index>(CE.rows())==m_nEqCon && static_cast<math::Index>(CE.cols())==m_nVars);
+      assert(static_cast<math::Index>(ce0.size())==m_nEqCon);
+      assert(static_cast<math::Index>(CI.rows())==m_nIneqCon && static_cast<math::Index>(CI.cols())==m_nVars);
+      assert(static_cast<math::Index>(ci0.size())==m_nIneqCon);
 
       math::Index i, k, l;  // indices
       math::Index ip;       // index of the chosen violated constraint
