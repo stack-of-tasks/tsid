@@ -19,6 +19,7 @@
 #define EIQUADPROGFAST_HH_
 
 #include <Eigen/Dense>
+#include <tsid/math/fwd.hpp>
 
 #define OPTIMIZE_STEP_1_2   // compute s(x) = ci^T * x + ci0
 #define OPTIMIZE_COMPUTE_D
@@ -87,7 +88,7 @@ namespace tsid
       EiquadprogFast();
       virtual ~EiquadprogFast();
 
-      void reset(Eigen::Index dim_qp, Eigen::Index num_eq, Eigen::Index num_ineq);
+      void reset(math::Index dim_qp, math::Index num_eq, math::Index num_ineq);
 
       int getMaxIter() const { return m_maxIter; }
 
@@ -103,7 +104,7 @@ namespace tsid
        * @return The size of the active set, namely the number of
        * active constraints (including the equalities).
        */
-      int getActiveSetSize() const { return q; }
+      math::Index getActiveSetSize() const { return q; }
 
       /**
        * @return The number of active-set iteratios.
@@ -148,9 +149,9 @@ namespace tsid
       bool is_inverse_provided_;
 
     private:
-      Eigen::Index m_nVars;
-      Eigen::Index m_nEqCon;
-      Eigen::Index m_nIneqCon;
+      math::Index m_nVars;
+      math::Index m_nEqCon;
+      math::Index m_nIneqCon;
 
       int m_maxIter;  /// max number of active-set iterations
       double f_value; /// current value of cost function
@@ -204,7 +205,7 @@ namespace tsid
 #endif
 
       /// size of the active set A (containing the indices of the active constraints)
-      int q;
+      math::Index q;
 
       /// number of active-set iterations
       int iter;
@@ -223,7 +224,7 @@ namespace tsid
       inline void update_z(VectorXd & z,
                            const MatrixXd & J,
                            const VectorXd & d,
-                           int iq)
+                           math::Index iq)
       {
 #ifdef OPTIMIZE_UPDATE_Z
         z.noalias() = J.rightCols(z.size()-iq) * d.tail(z.size()-iq);
@@ -235,7 +236,7 @@ namespace tsid
       inline void update_r(const MatrixXd & R,
                            VectorXd & r,
                            const VectorXd & d,
-                           int iq)
+                           math::Index iq)
       {
         r.head(iq)= d.head(iq);
         R.topLeftCorner(iq,iq).triangularView<Eigen::Upper>().solveInPlace(r.head(iq));
@@ -244,14 +245,14 @@ namespace tsid
       inline bool add_constraint(MatrixXd & R,
                                  MatrixXd & J,
                                  VectorXd & d,
-                                 int& iq, double& R_norm);
+                                 math::Index& iq, double& R_norm);
 
       inline void delete_constraint(MatrixXd & R,
                                     MatrixXd & J,
                                     VectorXi & A,
                                     VectorXd & u,
-                                    Eigen::Index nEqCon, int& iq,
-				    Eigen::Index l);
+                                    math::Index nEqCon, math::Index& iq,
+				    math::Index l);
     };
 
   } /* namespace solvers */

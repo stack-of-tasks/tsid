@@ -56,9 +56,9 @@ namespace tsid
 
     EiquadprogFast::~EiquadprogFast() {}
 
-    void EiquadprogFast::reset(Eigen::Index nVars,
-			       Eigen::Index nEqCon,
-			       Eigen::Index nIneqCon)
+    void EiquadprogFast::reset(math::Index nVars,
+			       math::Index nEqCon,
+			       math::Index nIneqCon)
     {
       m_nVars = nVars;
       m_nEqCon = nEqCon;
@@ -88,14 +88,14 @@ namespace tsid
     bool EiquadprogFast::add_constraint(MatrixXd & R,
                                         MatrixXd & J,
                                         VectorXd & d,
-                                        int& iq,
+                                        math::Index& iq,
                                         double& R_norm)
     {
-      Eigen::Index nVars = J.rows();
+      math::Index nVars = J.rows();
 #ifdef TRACE_SOLVER
       std::cerr << "Add constraint " << iq << '/';
 #endif
-      Eigen::Index j, k;
+      math::Index j, k;
       double cc, ss, h, t1, t2, xny;
 
 #ifdef OPTIMIZE_ADD_CONSTRAINT
@@ -173,22 +173,22 @@ namespace tsid
                                            MatrixXd & J,
                                            VectorXi & A,
                                            VectorXd & u,
-                                           Eigen::Index nEqCon,
-                                           int& iq,
-                                           Eigen::Index l)
+                                           math::Index nEqCon,
+                                           math::Index& iq,
+                                           math::Index l)
     {
-
-      MatrixXd::Index nVars = R.rows();
+      
+      math::Index nVars = R.rows();
 #ifdef TRACE_SOLVER
       std::cerr << "Delete constraint " << l << ' ' << iq;
 #endif
-      Eigen::Index i, j, k;
-      Eigen::Index qq =0;
+      math::Index i, j, k;
+      math::Index qq =0;
       double cc, ss, h, xny, t1, t2;
 
       /* Find the index qq for active constraint l to be removed */
       for (i = nEqCon; i < iq; i++)
-        if (A(i) == l)
+        if (A(i) == static_cast<VectorXi::Scalar>(l))
         {
           qq = i;
           break;
@@ -271,9 +271,9 @@ namespace tsid
                                                          const VectorXd & ci0,
                                                          VectorXd & x)
     {
-      const VectorXd::Index nVars = g0.size();
-      const VectorXd::Index nEqCon = ce0.size();
-      const VectorXd::Index nIneqCon = ci0.size();
+      const math::Index nVars = g0.size();
+      const math::Index nEqCon = ce0.size();
+      const math::Index nIneqCon = ci0.size();
 
       if(nVars!=m_nVars || nEqCon!=m_nEqCon || nIneqCon!=m_nIneqCon)
         reset(nVars, nEqCon, nIneqCon);
@@ -285,9 +285,9 @@ namespace tsid
       assert(CI.rows()==m_nIneqCon && CI.cols()==m_nVars);
       assert(ci0.size()==m_nIneqCon);
 
-      Eigen::Index i, k, l;  // indices
-      Eigen::Index ip;       // index of the chosen violated constraint
-      int iq;       // current number of active constraints
+      math::Index i, k, l;  // indices
+      math::Index ip;       // index of the chosen violated constraint
+      math::Index iq;       // current number of active constraints
       double psi;   // current sum of constraint violations
       double c1;    // Hessian trace
       double c2;    // Hessian Chowlesky factor trace

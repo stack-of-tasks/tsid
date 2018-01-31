@@ -87,6 +87,8 @@
 
 #include <iostream>
 
+#include <tsid/math/fwd.hpp>
+
 namespace Eigen {
 
     // namespace internal {
@@ -129,7 +131,7 @@ namespace Eigen {
     }
 
     bool add_constraint(MatrixXd& R, MatrixXd& J, VectorXd& d, int& iq, double& R_norm);
-  void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  Eigen::Index p, int& iq, Eigen::Index l);
+  void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  tsid::math::Index p, int& iq, tsid::math::Index l);
 
     /* solve_quadprog2 is used when the Cholesky decomposition of the G matrix is precomputed */
     double solve_quadprog2(LLT<MatrixXd,Lower> &chol,  double c1, VectorXd & g0,
@@ -165,11 +167,11 @@ namespace Eigen {
                                   const MatrixXd & CI, const VectorXd & ci0,
                                   VectorXd& x, VectorXi& A, int& q)
     {
-        Eigen::Index i, k, l; /* indices */
-	Eigen::Index ip, me, mi;
-	Eigen::Index n=g0.size();
-	Eigen::Index p=CE.cols();
-	Eigen::Index m=CI.cols();
+        tsid::math::Index i, k, l; /* indices */
+	tsid::math::Index ip, me, mi;
+	tsid::math::Index n=g0.size();
+	tsid::math::Index p=CE.cols();
+	tsid::math::Index m=CI.cols();
         MatrixXd R(g0.size(),g0.size()), J(g0.size(),g0.size());
 
 
@@ -482,11 +484,11 @@ namespace Eigen {
 
     inline bool add_constraint(MatrixXd& R, MatrixXd& J, VectorXd& d, int& iq, double& R_norm)
     {
-      Eigen::Index n=J.rows();
+      tsid::math::Index n=J.rows();
 #ifdef TRACE_SOLVER
         std::cerr << "Add constraint " << iq << '/';
 #endif
-	Eigen::Index j, k;
+	tsid::math::Index j, k;
         double cc, ss, h, t1, t2, xny;
 
         /* we have to find the Givens rotation which will reduce the element
@@ -546,14 +548,14 @@ namespace Eigen {
     }
 
 
-  inline void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  Eigen::Index p, int& iq, Eigen::Index l)
+  inline void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  tsid::math::Index p, int& iq, tsid::math::Index l)
     {
 
-      Eigen::Index n = R.rows();
+      tsid::math::Index n = R.rows();
 #ifdef TRACE_SOLVER
         std::cerr << "Delete constraint " << l << ' ' << iq;
 #endif
-	Eigen::Index i, j, k, qq=0;
+	tsid::math::Index i, j, k, qq=0;
         double cc, ss, h, xny, t1, t2;
 
         /* Find the index qq for active constraint l to be removed */
