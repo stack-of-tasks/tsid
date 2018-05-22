@@ -54,7 +54,7 @@ ELSE(APPLE)
   ADD_CUSTOM_TARGET(check COMMAND ${CMAKE_CTEST_COMMAND})
 ENDIF(APPLE)
 
-ADD_UNIT_TEST(constraints eigen3)
+ADD_UNIT_TEST(constraints "eigen3;pinocchio")
 ADD_UNIT_TEST(trajectories "eigen3;pinocchio")
 
 ADD_UNIT_TEST(robot-wrapper "eigen3;pinocchio")
@@ -69,5 +69,5 @@ ADD_TEST_CFLAGS(contacts '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\
 ADD_UNIT_TEST(tsid-formulation "eigen3;pinocchio")
 ADD_TEST_CFLAGS(tsid-formulation '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-ADD_UNIT_TEST(math_utils "eigen3;pinocchio")
+ADD_UNIT_TEST(math_utils "eigen3")
 ADD_UNIT_TEST(hqp_solvers "eigen3;pinocchio")
