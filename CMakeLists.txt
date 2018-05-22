@@ -23,8 +23,8 @@ INCLUDE(cmake/python.cmake)
 INCLUDE(cmake/ide.cmake)
 
 SET(PROJECT_NAME tsid)
-SET(PROJECT_DESCRIPTION "Efficient Inverse Dynamics for Multi-body Systems")
-SET(PROJECT_URL "http://github.com/stack-of-tasks/pinocchio")
+SET(PROJECT_DESCRIPTION "Efficient Task Space Inverse Dynamics for Multi-body Systems based on Pinocchio")
+SET(PROJECT_URL "http://github.com/stack-of-tasks/tsid")
 OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" FALSE)
 
 SET(DOXYGEN_USE_MATHJAX YES)
