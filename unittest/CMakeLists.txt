@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017 CNRS
+# Copyright (c) 2017-2018 CNRS
 #
 # This file is part of tsid
 # tsid is free software: you can redistribute it
@@ -48,7 +48,11 @@ ENDMACRO(ADD_UNIT_TEST)
 # --- RULES -------------------------------------------------------------------
 # --- RULES -------------------------------------------------------------------
 # --- RULES -------------------------------------------------------------------
-ADD_CUSTOM_TARGET(check COMMAND ${CMAKE_CTEST_COMMAND})
+IF(APPLE)
+  ADD_CUSTOM_TARGET(check COMMAND export DYLD_LIBRARY_PATH=$ENV{DYLD_LIBRARY_PATH} && ${CMAKE_CTEST_COMMAND})
+ELSE(APPLE)
+  ADD_CUSTOM_TARGET(check COMMAND ${CMAKE_CTEST_COMMAND})
+ENDIF(APPLE)
 
 ADD_UNIT_TEST(constraints eigen3)
 ADD_UNIT_TEST(trajectories "eigen3;pinocchio")
