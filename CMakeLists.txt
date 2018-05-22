@@ -20,7 +20,7 @@ INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/python.cmake)
-INCLUDE(cmake2/ide.cmake)
+INCLUDE(cmake/ide.cmake)
 
 SET(PROJECT_NAME tsid)
 SET(PROJECT_DESCRIPTION "Efficient Inverse Dynamics for Multi-body Systems")
