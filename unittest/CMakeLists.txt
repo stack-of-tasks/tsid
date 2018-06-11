@@ -18,16 +18,20 @@
 # --- MACROS ------------------------------------------------------------------
 # --- MACROS ------------------------------------------------------------------
 
+IF(BUILD_UNIT_TESTS)
+  SET(DISABLE_TESTS OFF)
+ELSE(BUILD_UNIT_TESTS)
+  SET(DISABLE_TESTS ON)
+ENDIF(BUILD_UNIT_TESTS)
+include(../cmake/test.cmake)
+
 MACRO(ADD_TEST_CFLAGS target flag)
   SET_PROPERTY(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS " ${flag}")
 ENDMACRO(ADD_TEST_CFLAGS)
 
-MACRO(ADD_UNIT_TEST NAME PKGS)
-  IF (BUILD_UNIT_TESTS)
-    ADD_EXECUTABLE(${NAME} ${NAME})
-  ELSE (BUILD_UNIT_TESTS)
-    ADD_EXECUTABLE(${NAME} EXCLUDE_FROM_ALL ${NAME})
-  ENDIF (BUILD_UNIT_TESTS)
+MACRO(ADD_TESTCASE NAME PKGS)
+  ADD_UNIT_TEST(${NAME} ${NAME})
+
   SET_TARGET_PROPERTIES(${NAME} PROPERTIES LINKER_LANGUAGE CXX)
   ADD_TEST_CFLAGS(${NAME} "-DBOOST_TEST_DYN_LINK") 
   SET(MODULE_NAME "${NAME}Test")
@@ -40,34 +44,26 @@ MACRO(ADD_UNIT_TEST NAME PKGS)
 
   TARGET_LINK_LIBRARIES(${NAME} ${PROJECT_NAME})
   TARGET_LINK_LIBRARIES(${NAME} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-
-  ADD_TEST(NAME ${NAME} COMMAND ${NAME})
-  ADD_DEPENDENCIES(check ${NAME})
-ENDMACRO(ADD_UNIT_TEST)
+ENDMACRO(ADD_TESTCASE)
 
 # --- RULES -------------------------------------------------------------------
 # --- RULES -------------------------------------------------------------------
 # --- RULES -------------------------------------------------------------------
-IF(APPLE)
-  ADD_CUSTOM_TARGET(check COMMAND export DYLD_LIBRARY_PATH=$ENV{DYLD_LIBRARY_PATH} && ${CMAKE_CTEST_COMMAND})
-ELSE(APPLE)
-  ADD_CUSTOM_TARGET(check COMMAND ${CMAKE_CTEST_COMMAND})
-ENDIF(APPLE)
 
-ADD_UNIT_TEST(constraints "eigen3;pinocchio")
-ADD_UNIT_TEST(trajectories "eigen3;pinocchio")
+ADD_TESTCASE(constraints "eigen3;pinocchio")
+ADD_TESTCASE(trajectories "eigen3;pinocchio")
 
-ADD_UNIT_TEST(robot-wrapper "eigen3;pinocchio")
+ADD_TESTCASE(robot-wrapper "eigen3;pinocchio")
 ADD_TEST_CFLAGS(robot-wrapper '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-ADD_UNIT_TEST(tasks "eigen3;pinocchio")
+ADD_TESTCASE(tasks "eigen3;pinocchio")
 ADD_TEST_CFLAGS(tasks '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-ADD_UNIT_TEST(contacts "eigen3;pinocchio")
+ADD_TESTCASE(contacts "eigen3;pinocchio")
 ADD_TEST_CFLAGS(contacts '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-ADD_UNIT_TEST(tsid-formulation "eigen3;pinocchio")
+ADD_TESTCASE(tsid-formulation "eigen3;pinocchio")
 ADD_TEST_CFLAGS(tsid-formulation '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-ADD_UNIT_TEST(math_utils "eigen3;pinocchio")
-ADD_UNIT_TEST(hqp_solvers "eigen3;pinocchio")
+ADD_TESTCASE(math_utils "eigen3;pinocchio")
+ADD_TESTCASE(hqp_solvers "eigen3;pinocchio")

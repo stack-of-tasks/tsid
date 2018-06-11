@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017 CNRS
+# Copyright (c) 2017-2018 CNRS
 #
 # This file is part of tsid
 # pinocchio is free software: you can redistribute it
@@ -21,25 +21,18 @@ INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/python.cmake)
 INCLUDE(cmake/ide.cmake)
+INCLUDE(cmake/apple.cmake)
 
 SET(PROJECT_NAME tsid)
 SET(PROJECT_DESCRIPTION "Efficient Task Space Inverse Dynamics for Multi-body Systems based on Pinocchio")
 SET(PROJECT_URL "http://github.com/stack-of-tasks/tsid")
-OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" FALSE)
+OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" OFF)
 
 SET(DOXYGEN_USE_MATHJAX YES)
 
+# Handle APPLE Cmake policy
 IF(APPLE)
-  SET(CMAKE_MACOSX_RPATH TRUE)
-  SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-  SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-  SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-  list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
-  if("${isSystemDir}" STREQUAL "-1")
-     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-  endif("${isSystemDir}" STREQUAL "-1")
+  APPLY_DEFAULT_APPLE_CONFIGURATION()
 ENDIF(APPLE)
 
 # Disable -Werror on Unix for now.

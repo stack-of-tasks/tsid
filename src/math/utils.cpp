@@ -52,7 +52,7 @@ namespace tsid
       error = se3::log6(Mdes.inverse() * M);
     }
     
-    void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> & svd,
+    void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd> & svd,
                                  ConstRefVector b,
                                  RefVector sol, double damping)
     {
@@ -77,7 +77,7 @@ namespace tsid
                              RefVector sol, double damping)
     {
       assert(A.rows()==b.size());
-      Eigen::JacobiSVD<typename Eigen::MatrixXd::PlainObject> svd(A.rows(), A.cols());
+      Eigen::JacobiSVD<Eigen::MatrixXd> svd(A.rows(), A.cols());
       svd.compute(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
       solveWithDampingFromSvd(svd, b, sol, damping);
@@ -89,12 +89,12 @@ namespace tsid
                        unsigned int computationOptions)
     
     {
-      Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> svdDecomposition(A.rows(), A.cols());
+      Eigen::JacobiSVD<Eigen::MatrixXd> svdDecomposition(A.rows(), A.cols());
       pseudoInverse(A, svdDecomposition, Apinv, tolerance, computationOptions);
     }
     
     void pseudoInverse(ConstRefMatrix A,
-                       Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                       Eigen::JacobiSVD<Eigen::MatrixXd> & svdDecomposition,
                        RefMatrix Apinv,
                        double tolerance,
                        unsigned int computationOptions)
@@ -106,7 +106,7 @@ namespace tsid
     }
     
     void pseudoInverse(ConstRefMatrix A,
-                       Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                       Eigen::JacobiSVD<Eigen::MatrixXd> & svdDecomposition,
                        RefMatrix Apinv,
                        double tolerance,
                        double * nullSpaceBasisOfA,
@@ -118,7 +118,7 @@ namespace tsid
       if (computationOptions == 0) return; //if no computation options we cannot compute the pseudo inverse
       svdDecomposition.compute(A, computationOptions);
       
-      JacobiSVD<MatrixXd::PlainObject>::SingularValuesType singularValues = svdDecomposition.singularValues();
+      JacobiSVD<MatrixXd>::SingularValuesType singularValues = svdDecomposition.singularValues();
       long int singularValuesSize = singularValues.size();
       int rank = 0;
       for (long int idx = 0; idx < singularValuesSize; idx++) {
@@ -140,7 +140,7 @@ namespace tsid
     }
     
     void dampedPseudoInverse(ConstRefMatrix A,
-                             Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                             Eigen::JacobiSVD<Eigen::MatrixXd>& svdDecomposition,
                              RefMatrix Apinv,
                              double tolerance,
                              double dampingFactor,
@@ -153,7 +153,7 @@ namespace tsid
       if (computationOptions == 0) return; //if no computation options we cannot compute the pseudo inverse
       svdDecomposition.compute(A, computationOptions);
       
-      JacobiSVD<MatrixXd::PlainObject>::SingularValuesType singularValues = svdDecomposition.singularValues();
+      JacobiSVD<MatrixXd>::SingularValuesType singularValues = svdDecomposition.singularValues();
       
       //rank will be used for the null space basis.
       //not sure if this is correct
@@ -178,13 +178,13 @@ namespace tsid
       }
     }
     
-    void nullSpaceBasisFromDecomposition(const Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+    void nullSpaceBasisFromDecomposition(const Eigen::JacobiSVD<Eigen::MatrixXd>& svdDecomposition,
                                          double tolerance,
                                          double * nullSpaceBasisMatrix,
                                          int &rows, int &cols)
     {
       using namespace Eigen;
-      JacobiSVD<MatrixXd::PlainObject>::SingularValuesType singularValues = svdDecomposition.singularValues();
+      JacobiSVD<MatrixXd>::SingularValuesType singularValues = svdDecomposition.singularValues();
       int rank = 0;
       for (int idx = 0; idx < singularValues.size(); idx++) {
         if (tolerance > 0 && singularValues(idx) > tolerance) {
@@ -195,7 +195,7 @@ namespace tsid
       
     }
     
-    void nullSpaceBasisFromDecomposition(const Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> & svdDecomposition,
+    void nullSpaceBasisFromDecomposition(const Eigen::JacobiSVD<Eigen::MatrixXd> & svdDecomposition,
                                          int rank,
                                          double * nullSpaceBasisMatrix,
                                          int &rows, int &cols)

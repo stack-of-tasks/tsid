@@ -94,7 +94,7 @@ namespace tsid
                      const se3::SE3 & Mdes,
                      se3::Motion & error);
 
-    void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> & svd,
+    void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd> & svd,
                              ConstRefVector b,
                              RefVector sol, double damping=0.0);
 
@@ -107,13 +107,13 @@ namespace tsid
                        unsigned int computationOptions = Eigen::ComputeThinU | Eigen::ComputeThinV);
 
     void pseudoInverse(ConstRefMatrix A,
-                       Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                       Eigen::JacobiSVD<Eigen::MatrixXd>& svdDecomposition,
                        RefMatrix Apinv,
                        double tolerance,
                        unsigned int computationOptions);
 
     void pseudoInverse(ConstRefMatrix A,
-                       Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                       Eigen::JacobiSVD<Eigen::MatrixXd>& svdDecomposition,
                        RefMatrix Apinv,
                        double tolerance,
                        double * nullSpaceBasisOfA,
@@ -122,7 +122,7 @@ namespace tsid
                        unsigned int computationOptions);
 
     void dampedPseudoInverse(ConstRefMatrix A,
-                             Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject>& svdDecomposition,
+                             Eigen::JacobiSVD<Eigen::MatrixXd>& svdDecomposition,
                              RefMatrix Apinv,
                              double tolerance,
                              double dampingFactor,
@@ -130,12 +130,12 @@ namespace tsid
                              double * nullSpaceBasisOfA=0,
                              int *nullSpaceRows=0, int *nullSpaceCols=0);
 
-    void nullSpaceBasisFromDecomposition(const Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> & svdDecomposition,
+    void nullSpaceBasisFromDecomposition(const Eigen::JacobiSVD<Eigen::MatrixXd> & svdDecomposition,
                                          double tolerance,
                                          double * nullSpaceBasisMatrix,
                                          int &rows, int &cols);
     
-    void nullSpaceBasisFromDecomposition(const Eigen::JacobiSVD<Eigen::MatrixXd::PlainObject> & svdDecomposition,
+    void nullSpaceBasisFromDecomposition(const Eigen::JacobiSVD<Eigen::MatrixXd> & svdDecomposition,
                                          int rank,
                                          double * nullSpaceBasisMatrix,
                                          int &rows, int &cols);
