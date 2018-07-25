@@ -1,4 +1,9 @@
 # TSID - Task Space Inverse Dynamics
+
+[![Building Status](https://travis-ci.org/stack-of-tasks/tsid.svg?branch=master)](https://travis-ci.org/stack-of-tasks/tsid)
+[![Pipeline status](https://gepgitlab.laas.fr/stack-of-tasks/tsid/badges/master/pipeline.svg)](https://gepgitlab.laas.fr/stack-of-tasks/tsid/commits/master)
+[![Coverage report](https://gepgitlab.laas.fr/stack-of-tasks/tsid/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/stack-of-tasks/tsid/master/coverage/)
+
 TSID is C++ library for optimization-based inverse-dynamics control based on the rigid multi-body dynamics library [Pinocchio](https://github.com/stack-of-tasks/pinocchio).
 Take a look at the project [wiki](https://github.com/stack-of-tasks/tsid/wiki) for more details.
 
