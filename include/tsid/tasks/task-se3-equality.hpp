@@ -23,6 +23,7 @@
 #include "tsid/math/constraint-equality.hpp"
 
 #include <pinocchio/multibody/model.hpp>
+#include <pinocchio/multibody/data.hpp>
 
 namespace tsid
 {
