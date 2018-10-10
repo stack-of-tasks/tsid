@@ -22,6 +22,7 @@
 #include "tsid/robots/fwd.hpp"
 
 #include <pinocchio/multibody/model.hpp>
+#include <pinocchio/multibody/data.hpp>
 #include <pinocchio/spatial/fwd.hpp>
 
 #include <string>
