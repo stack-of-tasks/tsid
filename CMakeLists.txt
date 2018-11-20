@@ -48,7 +48,7 @@ ELSE(WIN32)
 ENDIF(WIN32)
 
 # --- OPTIONS ----------------------------------------
-OPTION (BUILD_PYTHON_INTERFACE "Build the python binding" OFF)
+OPTION (BUILD_PYTHON_INTERFACE "Build the python binding" ON)
 OPTION (BUILD_UNIT_TESTS "Build the unitary tests" ON)
 OPTION (INITIALIZE_WITH_NAN "Initialize Eigen entries with NaN" OFF)
 OPTION (EIGEN_RUNTIME_NO_MALLOC "If ON, it can assert in case of runtime allocation" ON)
@@ -75,16 +75,19 @@ ENDIF(EIGEN_NO_AUTOMATIC_RESIZING)
 ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.0") # Eigen::Ref appeared from 3.2.0
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.3.0")
 
-SET(BOOST_COMPONENTS unit_test_framework)
+SET(BOOST_REQUIERED_COMPONENTS filesystem system)
+SET(BOOST_BUILD_COMPONENTS unit_test_framework)
+SET(BOOST_OPTIONAL_COMPONENTS "")
 
 IF(BUILD_PYTHON_INTERFACE)
-  ADD_COMPILE_DEPENDENCY("eigenpy >= 1.3.1")
-  SET(BOOST_COMPONENTS ${BOOST_COMPONENTS} python)
-  FINDPYTHON(2.7 EXACT REQUIRED)
-  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
+  SET(BOOST_OPTIONAL_COMPONENTS ${BOOST_OPTIONAL_COMPONENTS} python)
+  FINDPYTHON()
+  INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS}) 
 ENDIF(BUILD_PYTHON_INTERFACE)
 
+SET(BOOST_COMPONENTS ${BOOST_REQUIERED_COMPONENTS} ${BOOST_OPTIONAL_COMPONENTS} ${BOOST_BUILD_COMPONENTS})
 SEARCH_FOR_BOOST()
+
 # Path to boost headers
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 # ----------------------------------------------------
@@ -186,7 +189,8 @@ ENDFOREACH(header ${HEADERS})
 ADD_SUBDIRECTORY(src)
 
 # --- BINDINGS ----------------------------------------------------------------
-#ADD_SUBDIRECTORY(bindings)
+SET(PYWRAP ${PROJECT_NAME}_pywrap)
+ADD_SUBDIRECTORY(bindings)
 
 # --- UNIT TESTS ---------------------------------------------------------------
 ADD_SUBDIRECTORY(unittest)
