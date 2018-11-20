@@ -18,7 +18,7 @@ namespace tsid
     struct RobotPythonVisitor
     : public boost::python::def_visitor< RobotPythonVisitor<Robot> >
     {
-      typedef typename Robot::std_vec std_vec;
+      typedef std::vector<std::string> std_vec;
       typedef math::Vector  Vector;
       typedef Eigen::Matrix<double,6,6> Matrix6d;
       typedef Eigen::Matrix<double,6,1> Vector6d;
