@@ -33,7 +33,7 @@ namespace tsid
        
       static void expose(const std::string & class_name)
       {
-        std::string doc = "ConstriantLevel info.";
+        std::string doc = "ConstraintLevel info.";
         bp::class_<T>(class_name.c_str(),
                           doc.c_str(),
                           bp::no_init)
@@ -50,7 +50,7 @@ namespace tsid
       void visit(PyClass& cl) const
       {
         cl
-        .def(bp::init<>("Defulat Constructor"))
+        .def(bp::init<>("Default Constructor"))
         .def("print_all", &T::print)
         .def("resize", &T::resize, bp::arg("i"))
         .def("append", &T::append_helper, bp::arg("constraintLevel"))  

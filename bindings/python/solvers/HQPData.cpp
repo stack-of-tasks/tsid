@@ -6,7 +6,7 @@ namespace tsid
 {
   namespace python
   {
-    void exposeConstriantLevel()
+    void exposeConstraintLevel()
     {
       ConstPythonVisitor<ConstraintLevels>::expose("ConstraintLevel");
     }

@@ -29,7 +29,7 @@ namespace tsid
         .def(bp::init<std::string>((bp::arg("name")), "Default Constructor with name"))
         
         .def("resize", &SolverQuadProgPythonVisitor::resize, bp::args("n", "neq", "nin"))
-        .add_property("ObjVal", &Solver::getObjectiveValue, "retrun obj value")
+        .add_property("ObjVal", &Solver::getObjectiveValue, "return obj value")
         .def("solve", &SolverQuadProgPythonVisitor::solve, bp::args("HQPData"))
         .def("solve", &SolverQuadProgPythonVisitor::solver_helper, bp::args("HQPData for Python"))
 

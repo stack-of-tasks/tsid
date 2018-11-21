@@ -10,13 +10,13 @@ namespace tsid
   namespace python
   {
     void exposeSolverQuadProg();
-    void exposeConstriantLevel();
+    void exposeConstraintLevel();
     void exposeHQPData();
     void exposeHQPOutput();
     inline void exposeSolvers()
     {
       exposeSolverQuadProg();
-      exposeConstriantLevel();
+      exposeConstraintLevel();
       exposeHQPData();
       exposeHQPOutput();
     }
