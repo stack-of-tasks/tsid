@@ -73,7 +73,7 @@ assert robot.model().existFrame(rf_frame_name)
 assert robot.model().existFrame(lf_frame_name)
 
 t = 0.0                         # time
-invdyn = tsid.InvDyn("tsid", robot, False)
+invdyn = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
 invdyn.computeProblemData(t, q, v)
 data = invdyn.data()
 contact_Point = np.matrix(np.ones((3,4)) * lz)
@@ -94,7 +94,7 @@ H_lf_ref = robot.position(data, robot.model().getJointId(lf_frame_name))
 contactLF.setReference(H_lf_ref)
 invdyn.addRigidContact(contactLF)
 
-comTask = tsid.TaskCOM("task-com", robot)
+comTask = tsid.TaskComEquality("task-com", robot)
 comTask.setKp(kp_com * np.matrix(np.ones(3)).transpose())
 comTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(3)).transpose())
 invdyn.addMotionTask(comTask, w_com, 1, 0.0)
@@ -104,22 +104,22 @@ postureTask.setKp(kp_posture * np.matrix(np.ones(robot.nv-6)).transpose())
 postureTask.setKd(2.0 * np.sqrt(kp_posture) * np.matrix(np.ones(robot.nv-6)).transpose())
 invdyn.addMotionTask(postureTask, w_posture, 1, 0.0)
 
-rightFootTask = tsid.TaskSE3("task-right-foot", robot, rf_frame_name)
+rightFootTask = tsid.TaskSE3Equality("task-right-foot", robot, rf_frame_name)
 rightFootTask.setKp(kp_RF * np.matrix(np.ones(6)).transpose())
 rightFootTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(6)).transpose())
 invdyn.addMotionTask(rightFootTask, w_RF, 1, 0.0)
 
 H_rf_ref.translation += np.matrix([0., 0., DELTA_FOOT_Z]).T
-rightFootTraj = tsid.TrajSE3Constant("traj-right-foot", H_rf_ref)
+rightFootTraj = tsid.TrajectorySE3Constant("traj-right-foot", H_rf_ref)
 
 com_ref = robot.com(data)
 com_ref[1] += DELTA_COM_Y
-trajCom = tsid.TrajEuclidianConstant("traj_com", com_ref)
+trajCom = tsid.TrajectoryEuclidianConstant("traj_com", com_ref)
 
 q_ref = q[7:]
-trajPosture = tsid.TrajEuclidianConstant("traj_joint", q_ref)
+trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
 
-solver = tsid.SolverQuadProg("qp solver")
+solver = tsid.SolverHQuadProg("qp solver")
 solver.resize(invdyn.nVar, invdyn.nEq, invdyn.nIn)
 
 for i in range(0, N_SIMULATION):
