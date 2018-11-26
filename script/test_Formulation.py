@@ -65,7 +65,7 @@ H_lf_ref = robot.position(data, robot.model().getJointId(lf_frame_name))
 contactLF.setReference(H_lf_ref)
 invdyn.addRigidContact(contactLF)
 
-comTask = tsid.TaskCOM("task-com", robot)
+comTask = tsid.TaskComEquality("task-com", robot)
 comTask.setKp(kp_com * np.matrix(np.ones(3)).transpose())
 comTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(3)).transpose())
 invdyn.addMotionTask(comTask, w_com, 1, 0.0)
@@ -83,7 +83,7 @@ CONTACT_TRANSITION_TIME = 1.0
 kp_RF = 100.0
 w_RF = 1e3
 max_it = 1000
-rightFootTask = tsid.TaskSE3("task-right-foo", robot, rf_frame_name)
+rightFootTask = tsid.TaskSE3Equality("task-right-foot", robot, rf_frame_name)
 rightFootTask.setKp(kp_RF * np.matrix(np.ones(6)).transpose())
 rightFootTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(6)).transpose())
 H_rf_ref = robot.position(data, robot.model().getJointId(rf_frame_name))

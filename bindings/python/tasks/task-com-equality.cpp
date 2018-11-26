@@ -5,9 +5,9 @@ namespace tsid
 {
   namespace python
   {
-    void exposeTaskCOM()
+    void exposeTaskComEquality()
     {
-      TaskCOMPythonVisitor<tsid::tasks::TaskComEquality>::expose("TaskCOM");
+      TaskCOMEqualityPythonVisitor<tsid::tasks::TaskComEquality>::expose("TaskComEquality");
     }
   }
 }

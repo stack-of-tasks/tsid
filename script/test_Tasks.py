@@ -24,7 +24,7 @@ print "q:", q.transpose()
 
 se3.centerOfMass(model, data, q)
 
-taskCOM = tsid.TaskCOM("task-com", robot)
+taskCOM = tsid.TaskComEquality("task-com", robot)
 
 Kp = 100 * np.matrix(np.ones(3)).transpose()
 Kd = 20.0 * np.matrix(np.ones(3)).transpose()
@@ -125,7 +125,7 @@ print ""
 q = robot.model().neutralConfiguration
 q[2] += 0.84
 
-task_se3 = tsid.TaskSE3("task-se3", robot, "RWristPitch")
+task_se3 = tsid.TaskSE3Equality("task-se3", robot, "RWristPitch")
 
 na = 6
 Kp = 100 * np.matrix(np.ones(na)).transpose()

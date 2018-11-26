@@ -18,8 +18,8 @@ namespace tsid
     namespace bp = boost::python;
 
     template<typename TaskSE3>
-    struct TaskSE3PythonVisitor
-    : public boost::python::def_visitor< TaskSE3PythonVisitor<TaskSE3> >
+    struct TaskSE3EqualityPythonVisitor
+    : public boost::python::def_visitor< TaskSE3EqualityPythonVisitor<TaskSE3> >
     {
       
       template<class PyClass>     
@@ -30,23 +30,23 @@ namespace tsid
         cl
         .def(bp::init<std::string, robots::RobotWrapper &, std::string> ((bp::arg("name"), bp::arg("robot"), bp::arg("framename")), "Default Constructor"))
         .add_property("dim", &TaskSE3::dim, "return dimension size")
-        .def("setReference", &TaskSE3PythonVisitor::setReference, bp::arg("ref"))
-        .add_property("getDesiredAcceleration", bp::make_function(&TaskSE3PythonVisitor::getDesiredAcceleration, bp::return_value_policy<bp::copy_const_reference>()), "Return Acc_desired")
-        .def("getAcceleration", &TaskSE3PythonVisitor::getAcceleration, bp::arg("dv"))
-        .add_property("position_error", bp::make_function(&TaskSE3PythonVisitor::position_error, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("velocity_error", bp::make_function(&TaskSE3PythonVisitor::velocity_error, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("position", bp::make_function(&TaskSE3PythonVisitor::position, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("velocity", bp::make_function(&TaskSE3PythonVisitor::velocity, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("position_ref", bp::make_function(&TaskSE3PythonVisitor::position_ref, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("velocity_ref", bp::make_function(&TaskSE3PythonVisitor::velocity_ref, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("Kp", bp::make_function(&TaskSE3PythonVisitor::Kp, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("Kd", bp::make_function(&TaskSE3PythonVisitor::Kd, bp::return_value_policy<bp::copy_const_reference>()))
-        .def("setKp", &TaskSE3PythonVisitor::setKp, bp::arg("Kp"))
-        .def("setKd", &TaskSE3PythonVisitor::setKd, bp::arg("Kd"))
-        .def("compute", &TaskSE3PythonVisitor::compute, bp::args("t", "q", "v", "data"))
-        .def("getConstraint",  &TaskSE3PythonVisitor::getConstraint)
+        .def("setReference", &TaskSE3EqualityPythonVisitor::setReference, bp::arg("ref"))
+        .add_property("getDesiredAcceleration", bp::make_function(&TaskSE3EqualityPythonVisitor::getDesiredAcceleration, bp::return_value_policy<bp::copy_const_reference>()), "Return Acc_desired")
+        .def("getAcceleration", &TaskSE3EqualityPythonVisitor::getAcceleration, bp::arg("dv"))
+        .add_property("position_error", bp::make_function(&TaskSE3EqualityPythonVisitor::position_error, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("velocity_error", bp::make_function(&TaskSE3EqualityPythonVisitor::velocity_error, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("position", bp::make_function(&TaskSE3EqualityPythonVisitor::position, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("velocity", bp::make_function(&TaskSE3EqualityPythonVisitor::velocity, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("position_ref", bp::make_function(&TaskSE3EqualityPythonVisitor::position_ref, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("velocity_ref", bp::make_function(&TaskSE3EqualityPythonVisitor::velocity_ref, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("Kp", bp::make_function(&TaskSE3EqualityPythonVisitor::Kp, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("Kd", bp::make_function(&TaskSE3EqualityPythonVisitor::Kd, bp::return_value_policy<bp::copy_const_reference>()))
+        .def("setKp", &TaskSE3EqualityPythonVisitor::setKp, bp::arg("Kp"))
+        .def("setKd", &TaskSE3EqualityPythonVisitor::setKd, bp::arg("Kd"))
+        .def("compute", &TaskSE3EqualityPythonVisitor::compute, bp::args("t", "q", "v", "data"))
+        .def("getConstraint",  &TaskSE3EqualityPythonVisitor::getConstraint)
         .add_property("frame_id", &TaskSE3::frame_id, "frame id return")
-        .add_property("name", &TaskSE3PythonVisitor::name)
+        .add_property("name", &TaskSE3EqualityPythonVisitor::name)
         ;
       }
        static std::string name(TaskSE3 & self){
@@ -110,7 +110,7 @@ namespace tsid
         bp::class_<TaskSE3>(class_name.c_str(),
                           doc.c_str(),
                           bp::no_init)
-        .def(TaskSE3PythonVisitor<TaskSE3>());
+        .def(TaskSE3EqualityPythonVisitor<TaskSE3>());
 
       //  bp::register_ptr_to_python< boost::shared_ptr<math::ConstraintBase> >();
       }

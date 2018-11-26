@@ -10,14 +10,14 @@ namespace tsid
 {
   namespace python
   {
-    void exposeTaskCOM();
-    void exposeTaskSE3();
+    void exposeTaskComEquality();
+    void exposeTaskSE3Equality();
     void exposeTaskJointPosture();
 
     inline void exposeTasks()
     {
-      exposeTaskCOM();
-      exposeTaskSE3();
+      exposeTaskComEquality();
+      exposeTaskSE3Equality();
       exposeTaskJointPosture();
     }
     

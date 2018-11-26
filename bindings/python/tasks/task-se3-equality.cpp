@@ -5,9 +5,9 @@ namespace tsid
 {
   namespace python
   {
-    void exposeTaskSE3()
+    void exposeTaskSE3Equality()
     {
-      TaskSE3PythonVisitor<tsid::tasks::TaskSE3Equality>::expose("TaskSE3");
+      TaskSE3EqualityPythonVisitor<tsid::tasks::TaskSE3Equality>::expose("TaskSE3Equality");
     }
   }
 }
