@@ -18,12 +18,6 @@ namespace tsid
     struct ConstraintEqPythonVisitor
     : public boost::python::def_visitor< ConstraintEqPythonVisitor<ConstraintEquality> >
     {
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      typedef double Scalar;
-      typedef Eigen::Matrix<Scalar,Eigen::Dynamic,1> Vector;
-      typedef Eigen::Ref<Vector>              RefVector;
-      typedef const Eigen::Ref<const Vector>  ConstRefVector;
-
       template<class PyClass>     
 
       void visit(PyClass& cl) const

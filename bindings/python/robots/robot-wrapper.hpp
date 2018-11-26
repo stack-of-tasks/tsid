@@ -19,12 +19,7 @@ namespace tsid
     : public boost::python::def_visitor< RobotPythonVisitor<Robot> >
     {
       typedef std::vector<std::string> std_vec;
-      typedef math::Vector  Vector;
-      typedef Eigen::Matrix<double,6,6> Matrix6d;
-      typedef Eigen::Matrix<double,6,1> Vector6d;
-      typedef Eigen::Matrix<double,6,Eigen::Dynamic> Matrix6x;
       typedef Eigen::Matrix<double,3,Eigen::Dynamic> Matrix3x;
-
 
       template<class PyClass>     
 
