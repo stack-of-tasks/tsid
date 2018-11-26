@@ -28,9 +28,9 @@ To install [pinocchio](https://github.com/stack-of-tasks/pinocchio) follow the i
     make install
 
 ## TSID for Python 
-To operate it in python environment, we offer python binding module using boost::python and eigenpy
+To operate it in python environment, we offer python binding module using Boost.Python and EigenPy
 
-To install eigenpy on Ubuntu, 
+To install EigenPy on Ubuntu, 
 
     git clone https://github.com/stack-of-tasks/eigenpy
     or  sudo apt install robotpkg-py27-eigenpy
