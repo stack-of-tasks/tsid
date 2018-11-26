@@ -1,3 +1,20 @@
+//
+// Copyright (c) 2018 CNRS
+//
+// This file is part of tsid
+// tsid is free software: you can redistribute it
+// and/or modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
+// tsid is distributed in the hope that it will be
+// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Lesser Public License for more details. You should have
+// received a copy of the GNU Lesser General Public License along with
+// tsid If not, see
+// <http://www.gnu.org/licenses/>.
+//
+
 #ifndef __tsid_python_robot_wrapper_hpp__
 #define __tsid_python_robot_wrapper_hpp__
 
@@ -54,12 +71,7 @@ namespace tsid
         .def("frameVelocity", &RobotPythonVisitor::frameVelocity, bp::args("data", "index"))
         .def("frameAcceleration", &RobotPythonVisitor::frameAcceleration, bp::args("data", "index"))
         .def("frameClassicAcceleration", &RobotPythonVisitor::frameClassicAcceleration, bp::args("data", "index"))
-        
-        //.def("jacobianWorld", &RobotPythonVisitor::jacobianWorld, bp::args("data", "index", "J"))
-        //.def("jacobianLocal", &RobotPythonVisitor::jacobianLocal, bp::args("data", "index", "J")) // maybe these ftn are not used.
-        //.def("framePosition", &RobotPythonVisitor::framePosition, bp::args("data", "index"))
-        //.def("framePosition", &RobotPythonVisitor::framePosition, bp::args("data", "index", "framePosition"))
-        
+   
         ;
       }
       static se3::Model model (const Robot & self){
@@ -112,42 +124,18 @@ namespace tsid
       static se3::Motion acceleration(const Robot & self, const se3::Data & data, const se3::Model::JointIndex & index){
         return self.acceleration(data, index);
       }
-      // static void jacobianWorld(const Robot & self, const se3::Data & data, const se3::Model::JointIndex & index, se3::Data::Matrix6x & J){
-      //   self.jacobianWorld(data, index, J);
-      // }
-      // static void jacobianLocal(const Robot & self, const se3::Data & data, const se3::Model::JointIndex & index, se3::Data::Matrix6x & J){
-      //   self.jacobianLocal(data, index, J);
-      // }
       static se3::SE3 framePosition(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index){
         return self.framePosition(data, index);
       }
-      //static void framePosition(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index, se3::SE3 & framePosition){
-      //  self.framePosition(data, index, framePosition);
-     // }
       static se3::Motion frameVelocity(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index){
         return self.frameVelocity(data, index);
       }
-      // static void frameVelocity(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index, se3::Motion & frameVelocity){
-      //   self.frameVelocity(data, index, frameVelocity);
-      // }
       static se3::Motion frameAcceleration(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index){
         return self.frameAcceleration(data, index);
       }
-      // static void frameAcceleration(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index, se3::Motion & frameAcceleration){
-      //   self.frameAcceleration(data, index, frameAcceleration);
-      // }
       static se3::Motion frameClassicAcceleration(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index){
         return self.frameClassicAcceleration(data, index);
       }
-      // static void frameClassicAcceleration(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index, se3::Motion & frameAcceleration){
-      //   self.frameClassicAcceleration(data, index, frameAcceleration);
-      // }
-      // static void frameJacobianWorld(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index, se3::Data::Matrix6x & J){
-      //   self.frameJacobianWorld(data, index, J);
-      // }
-      // static void frameJacobianLocal(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index, se3::Data::Matrix6x & J){
-      //   self.frameJacobianLocal(data, index, J);
-      // }
       
       static void expose(const std::string & class_name)
       {
@@ -156,8 +144,6 @@ namespace tsid
                           doc.c_str(),
                           bp::no_init)
         .def(RobotPythonVisitor<Robot>());
-       // bp::class_< std::vector<std::string> >("StdVec_StdString")
-       //   .def(bp::vector_indexing_suite< std::vector<std::string> >())
         ;
       }
     };
