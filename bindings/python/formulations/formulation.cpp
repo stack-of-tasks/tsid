@@ -6,9 +6,9 @@ namespace tsid
 {
   namespace python
   {
-    void exposeInvDyn()
+    void exposeInverseDynamicsFormulationAccForce()
     {
-      InvDynPythonVisitor<tsid::InverseDynamicsFormulationAccForce>::expose("InvDyn");
+      InvDynPythonVisitor<tsid::InverseDynamicsFormulationAccForce>::expose("InverseDynamicsFormulationAccForce");
     }
   }
 }

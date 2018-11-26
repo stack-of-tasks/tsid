@@ -7,11 +7,11 @@ namespace tsid
 {
   namespace python
   {
-    void exposeInvDyn();
+    void exposeInverseDynamicsFormulationAccForce();
 
     inline void exposeFormulations()
     {
-      exposeInvDyn();
+      exposeInverseDynamicsFormulationAccForce();
     }
     
   } // namespace python

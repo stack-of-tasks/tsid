@@ -44,7 +44,7 @@ kp_posture = 30.0
 assert robot.model().existFrame(rf_frame_name)
 assert robot.model().existFrame(lf_frame_name)
 
-invdyn = tsid.InvDyn("tsid", robot, False)
+invdyn = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
 invdyn.computeProblemData(t, q, v)
 data = invdyn.data()
 contact_Point = np.matrix(np.ones((3,4)) * lz)
