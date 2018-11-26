@@ -189,9 +189,10 @@ ENDFOREACH(header ${HEADERS})
 ADD_SUBDIRECTORY(src)
 
 # --- BINDINGS ----------------------------------------------------------------
-SET(PYWRAP ${PROJECT_NAME}_pywrap)
-ADD_SUBDIRECTORY(bindings)
-
+IF(BUILD_PYTHON_INTERFACE)
+  SET(PYWRAP ${PROJECT_NAME}_pywrap)
+  ADD_SUBDIRECTORY(bindings)
+ENDIF(BUILD_PYTHON_INTERFACE)
 # --- UNIT TESTS ---------------------------------------------------------------
 ADD_SUBDIRECTORY(unittest)
 
