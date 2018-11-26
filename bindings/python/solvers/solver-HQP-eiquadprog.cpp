@@ -6,9 +6,9 @@ namespace tsid
 {
   namespace python
   {
-    void exposeSolverQuadProg()
+    void exposeSolverHQuadProg()
     {
-      SolverQuadProgPythonVisitor<tsid::solvers::SolverHQuadProg>::expose("SolverQuadProg");
+      SolverHQuadProgPythonVisitor<tsid::solvers::SolverHQuadProg>::expose("SolverHQuadProg");
     }
   }
 }

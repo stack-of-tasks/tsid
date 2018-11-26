@@ -18,8 +18,8 @@ namespace tsid
     namespace bp = boost::python;
     
     template<typename Solver>
-    struct SolverQuadProgPythonVisitor
-    : public boost::python::def_visitor< SolverQuadProgPythonVisitor<Solver> >
+    struct SolverHQuadProgPythonVisitor
+    : public boost::python::def_visitor< SolverHQuadProgPythonVisitor<Solver> >
     {
       template<class PyClass>     
 
@@ -28,10 +28,10 @@ namespace tsid
         cl
         .def(bp::init<std::string>((bp::arg("name")), "Default Constructor with name"))
         
-        .def("resize", &SolverQuadProgPythonVisitor::resize, bp::args("n", "neq", "nin"))
+        .def("resize", &SolverHQuadProgPythonVisitor::resize, bp::args("n", "neq", "nin"))
         .add_property("ObjVal", &Solver::getObjectiveValue, "return obj value")
-        .def("solve", &SolverQuadProgPythonVisitor::solve, bp::args("HQPData"))
-        .def("solve", &SolverQuadProgPythonVisitor::solver_helper, bp::args("HQPData for Python"))
+        .def("solve", &SolverHQuadProgPythonVisitor::solve, bp::args("HQPData"))
+        .def("solve", &SolverHQuadProgPythonVisitor::solver_helper, bp::args("HQPData for Python"))
 
         ;
       }
@@ -59,7 +59,7 @@ namespace tsid
         bp::class_<Solver>(class_name.c_str(),
                           doc.c_str(),
                           bp::no_init)
-        .def(SolverQuadProgPythonVisitor<Solver>());       
+        .def(SolverHQuadProgPythonVisitor<Solver>());       
       }
     };
   }

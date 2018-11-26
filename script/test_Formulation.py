@@ -106,7 +106,7 @@ q_ref = q[7:]
 trajPosture = tsid.TrajEuclidianConstant("traj_joint", q_ref)
 samplePosture = tsid.TrajSample(robot.nv-6)
 
-solver = tsid.SolverQuadProg("qp solver")
+solver = tsid.SolverHQuadProg("qp solver")
 solver.resize(invdyn.nVar, invdyn.nEq, invdyn.nIn)
 
 tau_old = np.matrix(np.zeros(robot.nv-6)).transpose()

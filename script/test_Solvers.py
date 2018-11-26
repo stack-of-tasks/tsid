@@ -22,7 +22,7 @@ MARGIN_PERC = 1e-3
 
 print "Gonna perform", nTest, "tests with", n, "variables, ", neq, "equalities", nin, "inequalities"
 
-solver = tsid.SolverQuadProg("qp solver")
+solver = tsid.SolverHQuadProg("qp solver")
 solver.resize(n, neq, nin)
 
 HQPData = tsid.HQPData()
