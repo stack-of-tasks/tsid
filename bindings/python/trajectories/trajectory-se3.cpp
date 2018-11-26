@@ -7,7 +7,7 @@ namespace tsid
   {
     void exposeTrajectorySE3Constant()
     {
-      TrajSE3PythonVisitor<tsid::trajectories::TrajectorySE3Constant>::expose("TrajSE3Constant");
+      TrajectorySE3ConstantPythonVisitor<tsid::trajectories::TrajectorySE3Constant>::expose("TrajectorySE3Constant");
     }
   }
 }

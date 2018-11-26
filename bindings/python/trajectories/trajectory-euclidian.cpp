@@ -7,7 +7,7 @@ namespace tsid
   {
     void exposeTrajectoryEuclidianConstant()
     {
-      TrajEuclidianPythonVisitor<tsid::trajectories::TrajectoryEuclidianConstant>::expose("TrajEuclidianConstant");
+      TrajectoryEuclidianConstantPythonVisitor<tsid::trajectories::TrajectoryEuclidianConstant>::expose("TrajectoryEuclidianConstant");
     }
   }
 }

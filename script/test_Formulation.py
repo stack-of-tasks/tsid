@@ -89,7 +89,7 @@ rightFootTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(6)).transpose())
 H_rf_ref = robot.position(data, robot.model().getJointId(rf_frame_name))
 invdyn.addMotionTask(rightFootTask, w_RF, 1, 0.0)
 
-s = tsid.TrajSample(12, 6)
+s = tsid.TrajectorySample(12, 6)
 H_rf_ref_vec = np.matrix(np.zeros(12)).transpose()
 H_rf_ref_vec[0:3] = H_rf_ref.translation
 for i in range(0,3):
@@ -99,12 +99,12 @@ rightFootTask.setReference(s)
 
 com_ref = robot.com(data)
 com_ref[1] += 0.1
-trajCom = tsid.TrajEuclidianConstant("traj_com", com_ref)
-sampleCom = tsid.TrajSample(3)
+trajCom = tsid.TrajectoryEuclidianConstant("traj_com", com_ref)
+sampleCom = tsid.TrajectorySample(3)
 
 q_ref = q[7:]
-trajPosture = tsid.TrajEuclidianConstant("traj_joint", q_ref)
-samplePosture = tsid.TrajSample(robot.nv-6)
+trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
+samplePosture = tsid.TrajectorySample(robot.nv-6)
 
 solver = tsid.SolverHQuadProg("qp solver")
 solver.resize(invdyn.nVar, invdyn.nEq, invdyn.nIn)

@@ -35,8 +35,8 @@ assert np.linalg.norm(Kp - taskCOM.Kp ,2) < tol
 assert np.linalg.norm(Kd - taskCOM.Kd ,2) < tol
 
 com_ref  = data.com[0] + np.matrix(np.ones(3)*0.02).transpose()
-traj = tsid.TrajEuclidianConstant("traj_se3", com_ref)
-sample = tsid.TrajSample(0)
+traj = tsid.TrajectoryEuclidianConstant("traj_se3", com_ref)
+sample = tsid.TrajectorySample(0)
 
 t = 0.0
 dt = 0.001
@@ -87,8 +87,8 @@ assert np.linalg.norm(Kp - task_joint.Kp ,2) < tol
 assert np.linalg.norm(Kd - task_joint.Kd ,2) < tol
 
 q_ref = np.matrix(np.random.randn(na)).transpose()
-traj = tsid.TrajEuclidianConstant("traj_joint", q_ref)
-sample = tsid.TrajSample(0)
+traj = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
+sample = tsid.TrajectorySample(0)
 
 error_past = 1e100
 t = 0.0
@@ -138,8 +138,8 @@ assert np.linalg.norm(Kd - task_se3.Kd ,2) < tol
 
 M_ref =se3.SE3.Random()
 
-traj = tsid.TrajSE3Constant("traj_se3", M_ref)
-sample = tsid.TrajSample(0)
+traj = tsid.TrajectorySE3Constant("traj_se3", M_ref)
+sample = tsid.TrajectorySample(0)
 
 t = 0.0
 max_it = 1000

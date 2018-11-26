@@ -15,8 +15,8 @@ namespace tsid
     namespace bp = boost::python;
     
     template<typename TrajSample>
-    struct TrajSamplePythonVisitor
-    : public boost::python::def_visitor< TrajSamplePythonVisitor<TrajSample> >
+    struct TrajectorySamplePythonVisitor
+    : public boost::python::def_visitor< TrajectorySamplePythonVisitor<TrajSample> >
     {
       
       template<class PyClass>     
@@ -27,16 +27,16 @@ namespace tsid
         .def(bp::init<unsigned int>((bp::arg("size")), "Default Constructor with size"))
         .def(bp::init<unsigned int, unsigned int>((bp::arg("pos_size"), bp::arg("vel_size")), "Default Constructor with pos and vel size"))
         
-        .def("resize", &TrajSamplePythonVisitor::resize, bp::arg("size"))
-        .def("resize", &TrajSamplePythonVisitor::resize2, bp::args("pos_size", "vel_size"))
+        .def("resize", &TrajectorySamplePythonVisitor::resize, bp::arg("size"))
+        .def("resize", &TrajectorySamplePythonVisitor::resize2, bp::args("pos_size", "vel_size"))
        
-        .def("pos", &TrajSamplePythonVisitor::pos)
-        .def("vel", &TrajSamplePythonVisitor::vel)
-        .def("acc", &TrajSamplePythonVisitor::acc)
+        .def("pos", &TrajectorySamplePythonVisitor::pos)
+        .def("vel", &TrajectorySamplePythonVisitor::vel)
+        .def("acc", &TrajectorySamplePythonVisitor::acc)
 
-        .def("pos", &TrajSamplePythonVisitor::setpos)
-        .def("vel", &TrajSamplePythonVisitor::setvel)
-        .def("acc", &TrajSamplePythonVisitor::setacc)
+        .def("pos", &TrajectorySamplePythonVisitor::setpos)
+        .def("vel", &TrajectorySamplePythonVisitor::setvel)
+        .def("acc", &TrajectorySamplePythonVisitor::setacc)
         ;
       }
      
@@ -70,11 +70,11 @@ namespace tsid
       
       static void expose(const std::string & class_name)
       {
-        std::string doc = "Traj Sample info.";
+        std::string doc = "Trajectory Sample info.";
         bp::class_<TrajSample>(class_name.c_str(),
                           doc.c_str(),
                           bp::no_init)
-        .def(TrajSamplePythonVisitor<TrajSample>());
+        .def(TrajectorySamplePythonVisitor<TrajSample>());
       }
     };
   }

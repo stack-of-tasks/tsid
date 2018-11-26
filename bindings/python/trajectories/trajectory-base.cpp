@@ -7,7 +7,7 @@ namespace tsid
   {
     void exposeTrajectorySample()
     {
-      TrajSamplePythonVisitor<tsid::trajectories::TrajectorySample>::expose("TrajSample");
+      TrajectorySamplePythonVisitor<tsid::trajectories::TrajectorySample>::expose("TrajectorySample");
     }
   }
 }

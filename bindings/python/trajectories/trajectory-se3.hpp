@@ -14,8 +14,8 @@ namespace tsid
     namespace bp = boost::python;
     
     template<typename TrajSE3>
-    struct TrajSE3PythonVisitor
-    : public boost::python::def_visitor< TrajSE3PythonVisitor<TrajSE3> >
+    struct TrajectorySE3ConstantPythonVisitor
+    : public boost::python::def_visitor< TrajectorySE3ConstantPythonVisitor<TrajSE3> >
     {
       
       template<class PyClass>     
@@ -27,11 +27,11 @@ namespace tsid
         .def(bp::init<std::string, se3::SE3>((bp::arg("name"), bp::arg("reference")), "Default Constructor with name and ref_vec"))
 
         .add_property("size", &TrajSE3::size)
-        .def("setReference", &TrajSE3PythonVisitor::setReference, bp::arg("M_ref"))
-        .def("computeNext", &TrajSE3PythonVisitor::computeNext)
-        .def("getLastSample", &TrajSE3PythonVisitor::getLastSample, bp::arg("sample"))
-        .def("has_trajectory_ended", &TrajSE3PythonVisitor::has_trajectory_ended)
-        .def("getSample", &TrajSE3PythonVisitor::getSample, bp::arg("time"))
+        .def("setReference", &TrajectorySE3ConstantPythonVisitor::setReference, bp::arg("M_ref"))
+        .def("computeNext", &TrajectorySE3ConstantPythonVisitor::computeNext)
+        .def("getLastSample", &TrajectorySE3ConstantPythonVisitor::getLastSample, bp::arg("sample"))
+        .def("has_trajectory_ended", &TrajectorySE3ConstantPythonVisitor::has_trajectory_ended)
+        .def("getSample", &TrajectorySE3ConstantPythonVisitor::getSample, bp::arg("time"))
         ;
       }
       static void setReference(TrajSE3 & self, const se3::SE3 & ref){
@@ -53,11 +53,11 @@ namespace tsid
 
       static void expose(const std::string & class_name)
       {
-        std::string doc = "Traj SE3 Constant info.";
+        std::string doc = "Trajectory SE3 Constant info.";
         bp::class_<TrajSE3>(class_name.c_str(),
                           doc.c_str(),
                           bp::no_init)
-        .def(TrajSE3PythonVisitor<TrajSE3>());
+        .def(TrajectorySE3ConstantPythonVisitor<TrajSE3>());
       }
     };
   }

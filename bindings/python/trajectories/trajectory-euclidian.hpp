@@ -14,8 +14,8 @@ namespace tsid
     namespace bp = boost::python;
     
     template<typename Traj>
-    struct TrajEuclidianPythonVisitor
-    : public boost::python::def_visitor< TrajEuclidianPythonVisitor<Traj> >
+    struct TrajectoryEuclidianConstantPythonVisitor
+    : public boost::python::def_visitor< TrajectoryEuclidianConstantPythonVisitor<Traj> >
     {
       
       template<class PyClass>     
@@ -27,11 +27,11 @@ namespace tsid
         .def(bp::init<std::string, Eigen::VectorXd>((bp::arg("name"), bp::arg("reference")), "Default Constructor with name and ref_vec"))
 
         .add_property("size", &Traj::size)
-        .def("setReference", &TrajEuclidianPythonVisitor::setReference, bp::arg("ref_vec"))
-        .def("computeNext", &TrajEuclidianPythonVisitor::computeNext)
-        .def("getLastSample", &TrajEuclidianPythonVisitor::getLastSample, bp::arg("sample"))
-        .def("has_trajectory_ended", &TrajEuclidianPythonVisitor::has_trajectory_ended)
-        .def("getSample", &TrajEuclidianPythonVisitor::getSample, bp::arg("time"))
+        .def("setReference", &TrajectoryEuclidianConstantPythonVisitor::setReference, bp::arg("ref_vec"))
+        .def("computeNext", &TrajectoryEuclidianConstantPythonVisitor::computeNext)
+        .def("getLastSample", &TrajectoryEuclidianConstantPythonVisitor::getLastSample, bp::arg("sample"))
+        .def("has_trajectory_ended", &TrajectoryEuclidianConstantPythonVisitor::has_trajectory_ended)
+        .def("getSample", &TrajectoryEuclidianConstantPythonVisitor::getSample, bp::arg("time"))
         ;
       }
       static void setReference(Traj & self, const Eigen::VectorXd & ref){
@@ -53,11 +53,11 @@ namespace tsid
 
       static void expose(const std::string & class_name)
       {
-        std::string doc = "Traj Euclidian Constant info.";
+        std::string doc = "Trajectory Euclidian Constant info.";
         bp::class_<Traj>(class_name.c_str(),
                           doc.c_str(),
                           bp::no_init)
-        .def(TrajEuclidianPythonVisitor<Traj>());
+        .def(TrajectoryEuclidianConstantPythonVisitor<Traj>());
       }
     };
   }
