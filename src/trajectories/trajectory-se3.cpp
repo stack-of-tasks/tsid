@@ -41,6 +41,12 @@ namespace tsid
     {
       return 6;
     }
+    
+    void TrajectorySE3Constant::setReference(const se3::SE3 & ref)
+    {
+      m_sample.resize(12, 6);
+      SE3ToVector(ref, m_sample.pos);
+    }
 
     const TrajectorySample & TrajectorySE3Constant::operator()(double )
     {
