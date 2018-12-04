@@ -15,25 +15,16 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __tsid_python_expose_contact_hpp__
-#define __tsid_python_expose_contact_hpp__
-
-#include "tsid/bindings/python/contacts/contact-6d.hpp"
 #include "tsid/bindings/python/contacts/contact-point.hpp"
+#include "tsid/bindings/python/contacts/expose-contact.hpp"
 
 namespace tsid
 {
   namespace python
   {
-    void exposeContact6d();
-    void exposeContactPoint();
-
-    inline void exposeContact()
+    void exposeContactPoint()
     {
-      exposeContact6d();
-      exposeContactPoint();
+      ContactPointPythonVisitor<tsid::contacts::ContactPoint>::expose("ContactPoint");
     }
-    
-  } // namespace python
-} // namespace tsid
-#endif // ifndef __tsid_python_expose_contact_hpp__
+  }
+}
