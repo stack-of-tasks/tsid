@@ -37,11 +37,13 @@ SET(${LIBRARY_NAME}_TASKS_SOURCES
     tasks/task-joint-posture.cpp
     tasks/task-motion.cpp
     tasks/task-se3-equality.cpp
+    tasks/task-point-equality.cpp
   )
 
 SET(${LIBRARY_NAME}_CONTACTS_SOURCES
     contacts/contact-base.cpp
     contacts/contact-6d.cpp
+    contacts/contact-point.cpp
   )
 
 SET(${LIBRARY_NAME}_TRAJECTORIES_SOURCES
