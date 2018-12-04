@@ -18,13 +18,14 @@
 #ifndef __tsid_python_expose_contact_hpp__
 #define __tsid_python_expose_contact_hpp__
 
-#include "tsid/bindings/python/contacts/contact.hpp"
+#include "tsid/bindings/python/contacts/contact-6d.hpp"
 
 namespace tsid
 {
   namespace python
   {
     void exposeContact6d();
+
     inline void exposeContact()
     {
       exposeContact6d();
