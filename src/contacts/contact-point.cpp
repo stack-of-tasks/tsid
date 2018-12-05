@@ -36,8 +36,8 @@ ContactPoint::ContactPoint(const std::string & name,
                      const double regularizationTaskWeight):
   ContactBase(name, robot),
   m_motionTask(name, robot, frameName),
-  m_forceInequality(name, 16, 12),
-  m_forceRegTask(name, 12, 12),
+  m_forceInequality(name, 5, 3),
+  m_forceRegTask(name, 3, 3),
   m_contactNormal(contactNormal),
   m_mu(frictionCoefficient),
   m_fMin(minNormalForce),
@@ -55,8 +55,8 @@ ContactPoint::ContactPoint(const std::string & name,
 void ContactPoint::updateForceInequalityConstraints()
 {
   Vector3 t1, t2;
-  const int n_in = 4*4 + 1;
-  const int n_var = 3*4;
+  const int n_in = 4*1 + 1;
+  const int n_var = 3*1;
   Matrix B = Matrix::Zero(n_in, n_var);
   Vector lb = -1e10*Vector::Ones(n_in);
   Vector ub =  Vector::Zero(n_in);
@@ -72,15 +72,7 @@ void ContactPoint::updateForceInequalityConstraints()
   B.block<1,3>(2,0) = (-t2 - m_mu*m_contactNormal).transpose();
   B.block<1,3>(3,0) = (t2 - m_mu*m_contactNormal).transpose();
 
-  for(int i=1; i<4; i++)
-  {
-    B.block<4,3>(4*i,3*i)   = B.topLeftCorner<4,3>();
-  }
-
   B.block<1,3>(n_in-1,0) = m_contactNormal.transpose();
-  B.block<1,3>(n_in-1,3) = m_contactNormal.transpose();
-  B.block<1,3>(n_in-1,6) = m_contactNormal.transpose();
-  B.block<1,3>(n_in-1,9) = m_contactNormal.transpose();
   ub(n_in-1)    = m_fMax;
   lb(n_in-1)    = m_fMin;
 
@@ -118,8 +110,8 @@ void ContactPoint:: updateForceGeneratorMatrix()
   m_forceGenMat.setIdentity();
 }
 
-unsigned int ContactPoint::n_motion() const { return 6; }
-unsigned int ContactPoint::n_force() const { return 12; }
+unsigned int ContactPoint::n_motion() const { return 3; }
+unsigned int ContactPoint::n_force() const { return 3; }
 
 const Vector & ContactPoint::Kp() const { return m_motionTask.Kp(); }
 const Vector & ContactPoint::Kd() const { return m_motionTask.Kd(); }
