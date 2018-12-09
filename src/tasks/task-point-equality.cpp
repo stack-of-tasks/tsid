@@ -44,10 +44,10 @@ namespace tsid
       m_wMl.setIdentity();
       m_p_error_vec.setZero(3);
       m_v_error_vec.setZero(3);
-      m_p.resize(3);
-      m_v.resize(3);
-      m_p_ref.resize(3);
-      m_v_ref_vec.resize(3);
+      m_p.resize(12);
+      m_v.resize(6);
+      m_p_ref.resize(12);
+      m_v_ref_vec.resize(6);
       m_Kp.setZero(3);
       m_Kd.setZero(3);
       m_a_des.setZero(3);
@@ -66,13 +66,13 @@ namespace tsid
 
     void TaskPointEquality::Kp(ConstRefVector Kp)
     {
-      assert(Kp.size()==6);
+      assert(Kp.size()==3);
       m_Kp = Kp;
     }
 
     void TaskPointEquality::Kd(ConstRefVector Kd)
     {
-      assert(Kd.size()==6);
+      assert(Kd.size()==3);
       m_Kd = Kd;
     }
 
@@ -80,8 +80,8 @@ namespace tsid
     {
       m_ref = ref;
       vectorToSE3(ref.pos, m_M_ref);
-      m_v_ref = Motion(ref.vel).linear();
-      m_a_ref = Motion(ref.acc).linear();
+      m_v_ref = Motion(ref.vel);
+      m_a_ref = Motion(ref.acc);
     }
 
     const TrajectorySample & TaskPointEquality::getReference() const
@@ -153,13 +153,14 @@ namespace tsid
       // Transformation from local to world
       m_wMl.rotation(oMi.rotation());
 
-      errorInSE3(oMi, m_M_ref, m_p_error);          // pos err in local frame
-      m_v_error = v_frame - m_wMl.actInv(m_v_ref);  // vel err in local frame
+      m_v_error = m_wMl.act(v_frame) - m_v_ref;  // vel err in world frame
 
-      m_p_error_vec = m_p_error.toVector().topRows(3);
-      m_v_error_vec = m_v_error.toVector().topRows(3);
       SE3ToVector(m_M_ref, m_p_ref);
       m_v_ref_vec = m_v_ref.toVector();
+
+      m_p_error_vec = oMi.translation() - m_p_ref.topRows(3);
+      m_v_error_vec = m_v_error.toVector().topRows(3);
+
       SE3ToVector(oMi, m_p);
       m_v = v_frame.toVector();
 
@@ -171,14 +172,13 @@ namespace tsid
       // desired acc in local frame
       m_a_des = - m_Kp.cwiseProduct(m_p_error_vec)
                 - m_Kd.cwiseProduct(m_v_error_vec)
-                + m_wMl.actInv(m_a_ref).toVector().topRows(3);
+                + m_a_ref.linear();
 
-      // @todo Since Jacobian computation is cheaper in world frame
-      // we could do all computations in world frame
-      m_robot.frameJacobianLocal(data, m_frame_id, m_J);
+      // Express the jacobian and desired acceloration in world oriented frame.
+      m_robot.frameJacobianLocalWorldOriented(data, m_frame_id, m_J);
 
       m_constraint.setMatrix(m_J.topRows(3));
-      m_constraint.setVector(m_a_des - m_drift.toVector());
+      m_constraint.setVector(m_a_des - oMi.act(m_drift).linear());
       return m_constraint;
     }
     
