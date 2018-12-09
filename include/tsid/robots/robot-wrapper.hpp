@@ -153,6 +153,9 @@ namespace tsid
                               const Model::FrameIndex index,
                               Data::Matrix6x & J) const;
       
+      void frameJacobianLocalWorldOriented(const Data & data,
+                                           const Model::FrameIndex index,
+                                           Data::Matrix6x & J) const;
       
     protected:
       
