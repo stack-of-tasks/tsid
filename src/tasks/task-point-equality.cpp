@@ -169,7 +169,7 @@ namespace tsid
 //      PRINT_VECTOR(m_v_ref.toVector());
 #endif
 
-      // desired acc in local frame
+      // desired acc in world frame
       m_a_des = - m_Kp.cwiseProduct(m_p_error_vec)
                 - m_Kd.cwiseProduct(m_v_error_vec)
                 + m_a_ref.linear();
