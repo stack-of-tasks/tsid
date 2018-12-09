@@ -26,6 +26,7 @@
 #include "tsid/formulations/inverse-dynamics-formulation-acc-force.hpp"
 #include "tsid/bindings/python/solvers/HQPData.hpp"
 #include "tsid/contacts/contact-6d.hpp"
+#include "tsid/contacts/contact-point.hpp"
 #include "tsid/tasks/task-joint-posture.hpp"
 #include "tsid/tasks/task-se3-equality.hpp"
 #include "tsid/tasks/task-com-equality.hpp"
@@ -56,7 +57,8 @@ namespace tsid
         
         
         .def("updateTaskWeight", &InvDynPythonVisitor::updateTaskWeight, bp::args("task_name", "weight"))
-        .def("addRigidContact", &InvDynPythonVisitor::addRigidContact, bp::args("contact"))
+        .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6d, bp::args("contact"))
+        .def("addRigidContact", &InvDynPythonVisitor::addRigidContactPoint, bp::args("contact"))
         .def("removeTask", &InvDynPythonVisitor::removeTask, bp::args("task_name", "duration"))
         .def("removeRigidContact", &InvDynPythonVisitor::removeRigidContact, bp::args("contact_name", "duration"))
         .def("computeProblemData", &InvDynPythonVisitor::computeProblemData, bp::args("time", "q", "v"))
@@ -84,7 +86,10 @@ namespace tsid
       static bool updateTaskWeight(T& self, const std::string & task_name, double weight){
         return self.updateTaskWeight(task_name, weight);
       }
-      static bool addRigidContact(T& self, contacts::Contact6d & contact){
+      static bool addRigidContact6d(T& self, contacts::Contact6d & contact){
+        return self.addRigidContact(contact);
+      }
+      static bool addRigidContactPoint(T& self, contacts::ContactPoint & contact){
         return self.addRigidContact(contact);
       }  
       static bool removeTask(T& self, const std::string & task_name, double transition_duration){
