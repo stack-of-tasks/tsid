@@ -40,7 +40,7 @@ namespace tsid
       void visit(PyClass& cl) const
       {
         cl
-        .def(bp::init<>("Defulat Constructor"))
+        .def(bp::init<>("Default Constructor"))
         .def("print_all", &T::print)
         .def("append", &T::append_eq, bp::arg("data"))
         .def("append", &T::append_ineq, bp::arg("data"))
