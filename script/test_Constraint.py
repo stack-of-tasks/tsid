@@ -2,9 +2,9 @@ import pinocchio as se3
 import tsid
 import numpy as np
 
-print ""
-print "Test Constraint Bound"
-print ""
+print("")
+print("Test Constraint Bound")
+print("")
 
 tol = 1e-5
 n = 5
@@ -33,9 +33,9 @@ ConstBound.setUpperBound(ub)
 assert ub.all() == ConstBound.upperBound.all()
 assert np.linalg.norm(ub - ConstBound.upperBound, 2) < tol
 
-print ""
-print "Test Constraint Equality"
-print ""
+print("")
+print("Test Constraint Equality")
+print("")
 n = 5
 m = 2
 A = np.matrix(np.ones((m, n)))
@@ -62,9 +62,9 @@ assert np.linalg.norm(A - equality.matrix, 2)is not 0
 equality.setMatrix(A)
 assert np.linalg.norm(A - equality.matrix, 2) < tol
 
-print ""
-print "Test Constraint Inequality"
-print ""
+print("")
+print("Test Constraint Inequality")
+print("")
 
 n = 5
 m = 2
@@ -90,4 +90,4 @@ assert np.linalg.norm(A - inequality.matrix, 2)is not 0
 inequality.setMatrix(A)
 assert np.linalg.norm(A - inequality.matrix, 2) < tol
 
-print "All test is done"
+print("All test is done")
