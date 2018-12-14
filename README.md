@@ -13,7 +13,7 @@ Take a look at the project [wiki](https://github.com/stack-of-tasks/tsid/wiki) f
 * [pinocchio](https://github.com/stack-of-tasks/pinocchio)
 
 To install eigen3 on Ubuntu you can use apt-get:
-  sudo apt-get install libeigen3-dev
+  `sudo apt-get install libeigen3-dev`
 
 To install [pinocchio](https://github.com/stack-of-tasks/pinocchio) follow the instruction on its website.
 
@@ -27,22 +27,22 @@ To install [pinocchio](https://github.com/stack-of-tasks/pinocchio) follow the i
     cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=$DEVEL/openrobots
     make install
 
-## TSID for Python 
-To operate it in python environment, we offer python binding module using Boost.Python and EigenPy
+## Python Bindings
+To use this library in python, we offer python bindings based on Boost.Python and EigenPy.
 
-To install EigenPy on Ubuntu, 
+To install EigenPy you can compile the source code:
 
     git clone https://github.com/stack-of-tasks/eigenpy
-    or  sudo apt install robotpkg-py27-eigenpy
-     
+    
+or, on Ubuntu, you can use apt-get:
 
-For testing TSID in python, you can operate unit test scripts in script folder. 
-For instance,
+    sudo apt-get install robotpkg-py27-eigenpy
+     
+For testing the python bindings, you can run the unit test scripts in the `script` folder, for instance:
 
     ipython script/test_formulation.py
     
-
-To operate demo with gepetto-viewer
+To run the demo using gepetto-viewer:
 
     ipython demo/demo_romeo.py
 
