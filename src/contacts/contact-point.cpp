@@ -45,7 +45,7 @@ ContactPoint::ContactPoint(const std::string & name,
   m_regularizationTaskWeight(regularizationTaskWeight)
 {
   m_weightForceRegTask << 1, 1, 1e-3;
-  m_forceGenMat.resize(3,3);
+  m_forceGenMat.resize(6,3);
   m_fRef = Vector3::Zero();
   updateForceGeneratorMatrix();
   updateForceInequalityConstraints();
@@ -98,7 +98,7 @@ void ContactPoint::updateForceRegularizationTask()
   typedef Eigen::Matrix<double,3,3> Matrix3;
   Matrix3 A = Matrix3::Zero();
   A.diagonal() = m_weightForceRegTask;
-  m_forceRegTask.setMatrix(A*m_forceGenMat);
+  m_forceRegTask.setMatrix(A);
   m_forceRegTask.setVector(m_fRef);
 }
 
