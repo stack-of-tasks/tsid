@@ -84,10 +84,7 @@ void ContactPoint::updateForceInequalityConstraints()
 double ContactPoint::getNormalForce(ConstRefVector f) const
 {
   assert(f.size()==n_force());
-  double n=0.0;
-  for(int i=0; i<4; i++)
-    n += m_contactNormal.dot(f.segment<3>(i*3));
-  return n;
+  return m_contactNormal.dot(f);
 }
 
 void ContactPoint::setRegularizationTaskWeightVector(ConstRefVector & w)
