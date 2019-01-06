@@ -19,7 +19,7 @@
 #define __invdyn_contact_point_hpp__
 
 #include "tsid/contacts/contact-base.hpp"
-#include "tsid/tasks/task-point-equality.hpp"
+#include "tsid/tasks/task-se3-equality.hpp"
 #include "tsid/math/constraint-inequality.hpp"
 #include "tsid/math/constraint-equality.hpp"
 
@@ -39,7 +39,7 @@ namespace tsid
       typedef math::Vector3 Vector3;
       typedef math::Vector Vector;
       typedef tasks::TaskMotion TaskMotion;
-      typedef tasks::TaskPointEquality TaskPointEquality;
+      typedef tasks::TaskSE3Equality TaskSE3Equality;
       typedef math::ConstraintInequality ConstraintInequality;
       typedef math::ConstraintEquality ConstraintEquality;
       typedef se3::SE3 SE3;
@@ -107,7 +107,7 @@ namespace tsid
       void updateForceRegularizationTask();
       void updateForceGeneratorMatrix();
 
-      TaskPointEquality m_motionTask;
+      TaskSE3Equality m_motionTask;
       ConstraintInequality m_forceInequality;
       ConstraintEquality m_forceRegTask;
       Vector3 m_contactNormal;

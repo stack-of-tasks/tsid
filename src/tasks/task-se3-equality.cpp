@@ -52,6 +52,9 @@ namespace tsid
       m_Kd.setZero(6);
       m_a_des.setZero(6);
       m_J.setZero(6, robot.nv());
+
+      m_mask.resize(6);
+      m_mask.setIdentity();
     }
 
     int TaskSE3Equality::dim() const
@@ -177,8 +180,8 @@ namespace tsid
       // we could do all computations in world frame
       m_robot.frameJacobianLocal(data, m_frame_id, m_J);
 
-      m_constraint.setMatrix(m_J);
-      m_constraint.setVector(m_a_des - m_drift.toVector());
+      m_constraint.setMatrix(m_mask.transpose() * m_J);
+      m_constraint.setVector(m_mask.transpose() * (m_a_des - m_drift.toVector()));
       return m_constraint;
     }
     

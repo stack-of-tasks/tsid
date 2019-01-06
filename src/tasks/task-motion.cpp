@@ -23,8 +23,17 @@ namespace tsid
   {
     TaskMotion::TaskMotion(const std::string & name,
                            RobotWrapper & robot):
-      TaskBase(name, robot)
+      TaskBase(name, robot), m_mask(0)
     {}
     
+    void TaskMotion::setMask(math::ConstRefVector mask)
+    {
+      m_mask = mask;
+    }
+
+    bool TaskMotion::hasMask()
+    {
+      return m_mask.size() > 0;
+    }
   }
 }

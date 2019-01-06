@@ -20,7 +20,6 @@
 
 #include "tsid/bindings/python/tasks/task-com-equality.hpp"
 #include "tsid/bindings/python/tasks/task-se3-equality.hpp"
-#include "tsid/bindings/python/tasks/task-point-equality.hpp"
 #include "tsid/bindings/python/tasks/task-joint-posture.hpp"
 
 
@@ -31,14 +30,12 @@ namespace tsid
   {
     void exposeTaskComEquality();
     void exposeTaskSE3Equality();
-    void exposeTaskPointEquality();
     void exposeTaskJointPosture();
 
     inline void exposeTasks()
     {
       exposeTaskComEquality();
       exposeTaskSE3Equality();
-      exposeTaskPointEquality();
       exposeTaskJointPosture();
     }
     
