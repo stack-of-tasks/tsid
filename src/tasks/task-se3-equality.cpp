@@ -54,7 +54,7 @@ namespace tsid
       m_J.setZero(6, robot.nv());
 
       m_mask.resize(6);
-      m_mask.setIdentity();
+      m_mask.fill(1.);
 
       m_local_frame = true;
     }
@@ -196,8 +196,8 @@ namespace tsid
       m_v_ref_vec = m_v_ref.toVector();
       m_v = v_frame.toVector();
 
-      m_constraint.setMatrix(m_mask.transpose() * m_J);
-      m_constraint.setVector(m_mask.transpose() * (m_a_des - m_drift.toVector()));
+      m_constraint.setMatrix(m_mask.asDiagonal() * m_J);
+      m_constraint.setVector(m_mask.asDiagonal() * (m_a_des - m_drift.toVector()));
       return m_constraint;
     }
   }
