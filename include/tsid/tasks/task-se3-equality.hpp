@@ -77,6 +77,8 @@ namespace tsid
 
       Index frame_id() const;
 
+      void useLocalFrame(bool local_frame);
+
     protected:
       
       std::string m_frame_name;
@@ -94,6 +96,7 @@ namespace tsid
       Matrix6x m_J;
       ConstraintEquality m_constraint;
       TrajectorySample m_ref;
+      bool m_local_frame;
     };
     
   }

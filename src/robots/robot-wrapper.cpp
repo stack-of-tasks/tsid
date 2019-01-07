@@ -258,20 +258,6 @@ namespace tsid
     {
       return se3::getFrameJacobian(m_model, data, index, J);
     }
-
-    void RobotWrapper::frameJacobianLocalWorldOriented(const Data & data,
-                                                       const Model::FrameIndex index,
-                                                       Data::Matrix6x & J) const
-    {
-      se3::getFrameJacobian(m_model, data, index, J);
-
-      Eigen::Matrix3d rotation = data.oMf[index].rotation();
-      Eigen::Vector3d translation = Eigen::Vector3d::Zero();
-
-      J = (SE3(rotation, translation).toActionMatrix() * J);
-    }
-
-
     
     //    const Vector3 & com(Data & data,const Vector & q,
     //                        const bool computeSubtreeComs = true,

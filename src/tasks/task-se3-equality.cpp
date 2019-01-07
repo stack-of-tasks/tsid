@@ -55,6 +55,8 @@ namespace tsid
 
       m_mask.resize(6);
       m_mask.setIdentity();
+
+      m_local_frame = true;
     }
 
     int TaskSE3Equality::dim() const
@@ -142,6 +144,11 @@ namespace tsid
       return m_constraint;
     }
 
+    void TaskSE3Equality::useLocalFrame(bool local_frame)
+    {
+      m_local_frame = local_frame;
+    }
+
     const ConstraintBase & TaskSE3Equality::compute(const double ,
                                                     ConstRefVector ,
                                                     ConstRefVector ,
@@ -153,37 +160,45 @@ namespace tsid
       m_robot.frameVelocity(data, m_frame_id, v_frame);
       m_robot.frameClassicAcceleration(data, m_frame_id, m_drift);
 
-      // Transformation from local to world
-      m_wMl.rotation(oMi.rotation());
-
-      errorInSE3(oMi, m_M_ref, m_p_error);          // pos err in local frame
-      m_v_error = v_frame - m_wMl.actInv(m_v_ref);  // vel err in local frame
-
-      m_p_error_vec = m_p_error.toVector();
-      m_v_error_vec = m_v_error.toVector();
-      SE3ToVector(m_M_ref, m_p_ref);
-      m_v_ref_vec = m_v_ref.toVector();
-      SE3ToVector(oMi, m_p);
-      m_v = v_frame.toVector();
-
-#ifndef NDEBUG
-//      PRINT_VECTOR(v_frame.toVector());
-//      PRINT_VECTOR(m_v_ref.toVector());
-#endif
-
-      // desired acc in local frame
-      m_a_des = - m_Kp.cwiseProduct(m_p_error.toVector())
-                - m_Kd.cwiseProduct(m_v_error.toVector())
-                + m_wMl.actInv(m_a_ref).toVector();
-
       // @todo Since Jacobian computation is cheaper in world frame
       // we could do all computations in world frame
       m_robot.frameJacobianLocal(data, m_frame_id, m_J);
+
+      errorInSE3(oMi, m_M_ref, m_p_error);          // pos err in local frame
+      m_p_error_vec = m_p_error.toVector();
+      SE3ToVector(m_M_ref, m_p_ref);
+      SE3ToVector(oMi, m_p);
+
+      // Transformation from local to world
+      m_wMl.rotation(oMi.rotation());
+
+      if (m_local_frame) {
+        m_v_error = v_frame - m_wMl.actInv(m_v_ref);  // vel err in local frame
+
+        // desired acc in local frame
+        m_a_des = - m_Kp.cwiseProduct(m_p_error.toVector())
+                  - m_Kd.cwiseProduct(m_v_error.toVector())
+                  + m_wMl.actInv(m_a_ref).toVector();
+      } else {
+        m_v_error = m_wMl.act(v_frame) - m_v_ref;  // vel err in local oriented frame.
+
+        m_drift = m_wMl.act(m_drift);
+
+        // desired acc in local oriented frame
+        m_a_des = - m_Kp.cwiseProduct(m_p_error.toVector())
+                  - m_Kd.cwiseProduct(m_v_error.toVector())
+                  + m_a_ref.toVector();
+
+        m_J = m_wMl.toActionMatrix() * m_J;
+      }
+
+      m_v_error_vec = m_v_error.toVector();
+      m_v_ref_vec = m_v_ref.toVector();
+      m_v = v_frame.toVector();
 
       m_constraint.setMatrix(m_mask.transpose() * m_J);
       m_constraint.setVector(m_mask.transpose() * (m_a_des - m_drift.toVector()));
       return m_constraint;
     }
-    
   }
 }
