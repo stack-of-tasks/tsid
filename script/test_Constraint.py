@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import pinocchio as se3
 import tsid
 import numpy as np
