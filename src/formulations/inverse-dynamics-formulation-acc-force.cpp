@@ -225,7 +225,8 @@ bool InverseDynamicsFormulationAccForce::updateTaskWeight(const std::string & ta
 }
 
 
-bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact)
+bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact, 
+                                                        unsigned int motionPriorityLevel)
 {
   ContactLevel *cl = new ContactLevel(contact);
   cl->index = m_k;
@@ -235,7 +236,7 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact)
 
   const ConstraintBase & motionConstr = contact.getMotionConstraint();
   cl->motionConstraint = new ConstraintEquality(contact.name(), motionConstr.rows(), m_v+m_k);
-  m_hqpData[0].push_back(make_pair<double, ConstraintBase*>(1.0, cl->motionConstraint));
+  m_hqpData[motionPriorityLevel].push_back(make_pair<double, ConstraintBase*>(1.0, cl->motionConstraint));
 
   const ConstraintInequality & forceConstr = contact.getForceConstraint();
   cl->forceConstraint = new ConstraintInequality(contact.name(), forceConstr.rows(), m_v+m_k);

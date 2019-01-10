@@ -31,7 +31,7 @@ namespace tsid
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
+
       typedef math::ConstRefMatrix ConstRefMatrix;
       typedef math::ConstRefVector ConstRefVector;
       typedef math::Matrix3x Matrix3x;

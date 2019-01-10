@@ -81,7 +81,7 @@ namespace tsid
     virtual bool updateTaskWeight(const std::string & task_name,
                                   double weight) = 0;
 
-    virtual bool addRigidContact(ContactBase & contact) = 0;
+    virtual bool addRigidContact(ContactBase & contact, unsigned int motionPriorityLevel=0) = 0;
 
     virtual bool removeTask(const std::string & taskName,
                             double transition_duration=0.0) = 0;
