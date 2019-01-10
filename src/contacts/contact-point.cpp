@@ -52,6 +52,11 @@ ContactPoint::ContactPoint(const std::string & name,
   updateForceRegularizationTask();
 }
 
+void ContactPoint::useLocalFrame(bool local_frame)
+{
+  m_motionTask.useLocalFrame(local_frame);
+}
+
 void ContactPoint::updateForceInequalityConstraints()
 {
   Vector3 t1, t2;
