@@ -52,6 +52,7 @@ namespace tsid
       m_Kd.setZero(6);
       m_a_des.setZero(6);
       m_J.setZero(6, robot.nv());
+      m_J_rotated.setZero(6, robot.nv());
 
       m_mask.resize(6);
       m_mask.fill(1.);
@@ -189,7 +190,9 @@ namespace tsid
                   - m_Kd.cwiseProduct(m_v_error.toVector())
                   + m_a_ref.toVector();
 
-        m_J = m_wMl.toActionMatrix() * m_J;
+        // Use an explicit temporary `m_J_rotated` here to avoid allocations.
+        m_J_rotated.noalias() = m_wMl.toActionMatrix() * m_J;
+        m_J = m_J_rotated;
       }
 
       m_v_error_vec = m_v_error.toVector();

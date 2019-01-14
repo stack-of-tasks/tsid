@@ -34,7 +34,7 @@ namespace tsid
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
+
       typedef math::Index Index;
       typedef trajectories::TrajectorySample TrajectorySample;
       typedef math::Vector Vector;
@@ -80,7 +80,7 @@ namespace tsid
       void useLocalFrame(bool local_frame);
 
     protected:
-      
+
       std::string m_frame_name;
       Index m_frame_id;
       Motion m_p_error, m_v_error;
@@ -94,11 +94,12 @@ namespace tsid
       Vector m_a_des;
       Motion m_drift;
       Matrix6x m_J;
+      Matrix6x m_J_rotated;
       ConstraintEquality m_constraint;
       TrajectorySample m_ref;
       bool m_local_frame;
     };
-    
+
   }
 }
 
