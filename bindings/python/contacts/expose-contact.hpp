@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 CNRS
+// Copyright (c) 2018 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -33,7 +33,7 @@ namespace tsid
       exposeContact6d();
       exposeContactPoint();
     }
-    
+
   } // namespace python
 } // namespace tsid
 #endif // ifndef __tsid_python_expose_contact_hpp__

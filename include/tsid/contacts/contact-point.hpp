@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -108,7 +108,7 @@ namespace tsid
        * the specified frame.
        *
        * @param local_frame If true, use the local frame, otherwise use the
-       * local world oriented frame.
+       * local world oriented
        */
       void useLocalFrame(bool local_frame);
       void setMotionMask(math::ConstRefVector mask);

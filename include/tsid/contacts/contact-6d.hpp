@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -31,7 +31,7 @@ namespace tsid
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
+
       typedef math::ConstRefMatrix ConstRefMatrix;
       typedef math::ConstRefVector ConstRefVector;
       typedef math::Matrix3x Matrix3x;
