@@ -102,6 +102,7 @@ namespace tsid
       void setRegularizationTaskWeightVector(ConstRefVector & w);
 
       void useLocalFrame(bool local_frame);
+      void setMotionMask(math::ConstRefVector mask);
 
     protected:
 

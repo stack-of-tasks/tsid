@@ -57,6 +57,11 @@ void ContactPoint::useLocalFrame(bool local_frame)
   m_motionTask.useLocalFrame(local_frame);
 }
 
+void ContactPoint::setMotionMask(math::ConstRefVector mask)
+{
+  m_motionTask.setMask(mask);
+}
+
 void ContactPoint::updateForceInequalityConstraints()
 {
   Vector3 t1, t2;
