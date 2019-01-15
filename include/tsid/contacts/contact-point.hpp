@@ -101,6 +101,15 @@ namespace tsid
       void setForceReference(ConstRefVector & f_ref);
       void setRegularizationTaskWeightVector(ConstRefVector & w);
 
+      /**
+       * @brief Specifies if properties of the contact point and motion task
+       * are expressed in the local or local world oriented frame. The contact
+       * forces, contact normal and contact coefficients are interpreted in
+       * the specified frame.
+       *
+       * @param local_frame If true, use the local frame, otherwise use the
+       * local world oriented frame.
+       */
       void useLocalFrame(bool local_frame);
       void setMotionMask(math::ConstRefVector mask);
 

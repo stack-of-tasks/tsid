@@ -77,6 +77,13 @@ namespace tsid
 
       Index frame_id() const;
 
+      /**
+       * @brief Specifies if the jacobian and desired acceloration should be
+       * expressed in the local frame or the local world oriented frame.
+       *
+       * @param local_frame If true, represent jacobian and acceloration in the
+       *   local frame. If false, represent them in the local world oriented frame.
+       */
       void useLocalFrame(bool local_frame);
 
     protected:
