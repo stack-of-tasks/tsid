@@ -117,7 +117,7 @@ void ContactPoint:: updateForceGeneratorMatrix()
   m_forceGenMat.setIdentity();
 }
 
-unsigned int ContactPoint::n_motion() const { return 3; }
+unsigned int ContactPoint::n_motion() const { return 6; }
 unsigned int ContactPoint::n_force() const { return 3; }
 
 const Vector & ContactPoint::Kp() const { return m_motionTask.Kp(); }
