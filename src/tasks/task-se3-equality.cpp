@@ -181,7 +181,7 @@ namespace tsid
                   - m_Kd.cwiseProduct(m_v_error.toVector())
                   + m_wMl.actInv(m_a_ref).toVector();
       } else {
-        m_v_error = m_wMl.act(v_frame) - m_v_ref;  // vel err in local oriented frame.
+        m_v_error = m_wMl.act(v_frame) - m_v_ref;  // vel err in local world-oriented frame
 
         m_drift = m_wMl.act(m_drift);
 
