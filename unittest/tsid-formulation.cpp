@@ -478,23 +478,20 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
 }
 
 
-BOOST_AUTO_TEST_CASE ( test_contact_point )
+BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
 {
-  const double lx = 0.07;
-  const double ly = 0.12;
-  const double lz = 0.105;
+  cout<<"\n*** test_contact_point_invdyn_formulation_acc_force ***\n";
+
   const double mu = 0.3;
-  const double fMin = 10.0;
-  const double fMax = 1000.0;
+  const double fMin = 0.0;
+  const double fMax = 10.0;
   const std::string frameName = "base_link";
   const double dt = 1e-3;
 
   double t = 0.;
 
   double w_com = 1.0;                     // weight of center of mass task
-  double w_posture = 1e-3;                // weight of joint posture task
   double w_forceRef = 1e-5;               // weight of force regularization task
-  double w_RF = 1.0;                      // weight of right foot motion task
   double kp_contact = 100.0;              // proportional gain of contact constraint
   double kp_com = 1.0;                    // proportional gain of center of mass task
 
@@ -528,8 +525,10 @@ BOOST_AUTO_TEST_CASE ( test_contact_point )
   const se3::Data & data = tsid->data();
 
   // Place the robot onto the ground.
-  se3::SE3 fl_contact = robot.position(data, robot.model().getJointId("FL_contact"));
+
+  se3::SE3 fl_contact = robot.framePosition(data, robot.model().getFrameId("FL_contact"));
   q[2] -= fl_contact.translation()(2);
+
   tsid->computeProblemData(t, q, v);
 
   // Add task for the COM.
@@ -544,6 +543,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_point )
   sampleCom = trajCom->computeNext();
   comTask->setReference(sampleCom);
 
+
   // Add contact constraints.
   std::string contactFrames[] = {
     "BL_contact", "BR_contact", "FL_contact", "FR_contact"
@@ -553,12 +553,16 @@ BOOST_AUTO_TEST_CASE ( test_contact_point )
   std::array<ContactPoint*, 4> contacts;
 
   for (int i = 0; i < 4; i++) {
+    math::Vector motion_mask(6);
+    motion_mask << 1., 1., 1., 0., 0., 0.;
+
     ContactPoint* cp = new ContactPoint("contact_" + contactFrames[i], robot,
-        contactFrames[i], contactNormal, 0.6, 0., 10., w_forceRef);
+        contactFrames[i], contactNormal, mu, fMin, fMax, w_forceRef);
     cp->Kp(kp_contact*Vector::Ones(6));
     cp->Kd(2.0*cp->Kp().cwiseSqrt());
-    cp->setReference(robot.position(data, robot.model().getJointId(contactFrames[i])));
+    cp->setReference(robot.framePosition(data, robot.model().getFrameId(contactFrames[i])));
     cp->useLocalFrame(false);
+    cp->setMotionMask(motion_mask);
     tsid->addRigidContact(*cp, 1);
 
     contacts[i] = cp;
@@ -571,7 +575,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_point )
 
   Vector dv = Vector::Zero(nv);
   const HQPOutput *sol;
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < max_it; i++) {
     const HQPData & HQPData = tsid->computeProblemData(t, q, v);
 
     REQUIRE_TASK_FINITE((*comTask));
@@ -626,9 +630,8 @@ BOOST_AUTO_TEST_CASE ( test_contact_point )
   for (int i = 0; i < 4; i++) {
     Eigen::Matrix<double, 3, 1> f;
     tsid->getContactForces(contacts[i]->name(), *sol, f);
-    cout << contacts[i]->name() << " force:" << f << endl;
+    cout << contacts[i]->name() << " force:" << f.transpose() << endl;
   }
-
 
   cout<<"\n### TEST FINISHED ###\n";
   PRINT_VECTOR(v);
