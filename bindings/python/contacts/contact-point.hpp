@@ -1,11 +1,3 @@
-#ifndef __tsid_python_contact_6d_hpp__
-#define __tsid_python_contact_6d_hpp__
-
-#include <boost/python.hpp>
-#include <string>
-#include <eigenpy/eigenpy.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-
 //
 // Copyright (c) 2018 CNRS
 //
@@ -22,6 +14,14 @@
 // tsid If not, see
 // <http://www.gnu.org/licenses/>.
 //
+
+#ifndef __tsid_python_contact_6d_hpp__
+#define __tsid_python_contact_6d_hpp__
+
+#include <boost/python.hpp>
+#include <string>
+#include <eigenpy/eigenpy.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 #include "tsid/contacts/contact-point.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
