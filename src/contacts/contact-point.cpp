@@ -45,21 +45,20 @@ ContactPoint::ContactPoint(const std::string & name,
   m_regularizationTaskWeight(regularizationTaskWeight)
 {
   m_weightForceRegTask << 1, 1, 1e-3;
-  m_forceGenMat.resize(6,3);
+  m_forceGenMat.resize(3, 3);
   m_fRef = Vector3::Zero();
   updateForceGeneratorMatrix();
   updateForceInequalityConstraints();
   updateForceRegularizationTask();
+
+  math::Vector motion_mask(6);
+  motion_mask << 1., 1., 1., 0., 0., 0.;
+  m_motionTask.setMask(motion_mask);
 }
 
 void ContactPoint::useLocalFrame(bool local_frame)
 {
   m_motionTask.useLocalFrame(local_frame);
-}
-
-void ContactPoint::setMotionMask(math::ConstRefVector mask)
-{
-  m_motionTask.setMask(mask);
 }
 
 void ContactPoint::updateForceInequalityConstraints()
@@ -117,7 +116,7 @@ void ContactPoint:: updateForceGeneratorMatrix()
   m_forceGenMat.setIdentity();
 }
 
-unsigned int ContactPoint::n_motion() const { return 6; }
+unsigned int ContactPoint::n_motion() const { return m_motionTask.dim(); }
 unsigned int ContactPoint::n_force() const { return 3; }
 
 const Vector & ContactPoint::Kp() const { return m_motionTask.Kp(); }

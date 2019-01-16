@@ -162,7 +162,6 @@ class StandardRomeoInvDynCtrl
     postureTask->Kd(2.0*postureTask->Kp().cwiseSqrt());
     tsid->addMotionTask(*postureTask, w_posture, 1);
   }
-
 };
 
 const double StandardRomeoInvDynCtrl::lxp = 0.14;
@@ -553,16 +552,12 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
   std::array<ContactPoint*, 4> contacts;
 
   for (int i = 0; i < 4; i++) {
-    math::Vector motion_mask(6);
-    motion_mask << 1., 1., 1., 0., 0., 0.;
-
     ContactPoint* cp = new ContactPoint("contact_" + contactFrames[i], robot,
         contactFrames[i], contactNormal, mu, fMin, fMax, w_forceRef);
     cp->Kp(kp_contact*Vector::Ones(6));
     cp->Kd(2.0*cp->Kp().cwiseSqrt());
     cp->setReference(robot.framePosition(data, robot.model().getFrameId(contactFrames[i])));
     cp->useLocalFrame(false);
-    cp->setMotionMask(motion_mask);
     tsid->addRigidContact(*cp, 1);
 
     contacts[i] = cp;

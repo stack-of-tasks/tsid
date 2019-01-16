@@ -60,10 +60,15 @@ namespace tsid
       m_local_frame = true;
     }
 
+    void TaskSE3Equality::setMask(math::ConstRefVector mask)
+    {
+      TaskMotion::setMask(mask);
+      m_constraint.resize(dim(), m_J.cols());
+    }
+
     int TaskSE3Equality::dim() const
     {
-      //return self._mask.sum ()
-      return 6;
+      return m_mask.sum();
     }
 
     const Vector & TaskSE3Equality::Kp() const { return m_Kp; }
@@ -177,16 +182,18 @@ namespace tsid
         m_v_error = v_frame - m_wMl.actInv(m_v_ref);  // vel err in local frame
 
         // desired acc in local frame
-        m_a_des = - m_Kp.cwiseProduct(m_p_error.toVector())
+        m_a_des = - m_Kp.cwiseProduct(m_p_error_vec)
                   - m_Kd.cwiseProduct(m_v_error.toVector())
                   + m_wMl.actInv(m_a_ref).toVector();
       } else {
+        m_p_error_vec = m_wMl.toActionMatrix() *   // pos err in local world-oriented frame
+            m_p_error.toVector();
         m_v_error = m_wMl.act(v_frame) - m_v_ref;  // vel err in local world-oriented frame
 
         m_drift = m_wMl.act(m_drift);
 
         // desired acc in local oriented frame
-        m_a_des = - m_Kp.cwiseProduct(m_p_error.toVector())
+        m_a_des = - m_Kp.cwiseProduct(m_p_error_vec)
                   - m_Kd.cwiseProduct(m_v_error.toVector())
                   + m_a_ref.toVector();
 
@@ -199,8 +206,18 @@ namespace tsid
       m_v_ref_vec = m_v_ref.toVector();
       m_v = v_frame.toVector();
 
-      m_constraint.setMatrix(m_mask.asDiagonal() * m_J);
-      m_constraint.setVector(m_mask.asDiagonal() * (m_a_des - m_drift.toVector()));
+
+      m_a_des -= m_drift.toVector();
+
+      int idx = 0;
+      for (int i = 0; i < 6; i++) {
+        if (m_mask(i) != 1.) continue;
+
+        m_constraint.matrix().row(idx) = m_J.row(idx);
+        m_constraint.vector().row(idx) = m_a_des.row(idx);
+
+        idx += 1;
+      }
       return m_constraint;
     }
   }
