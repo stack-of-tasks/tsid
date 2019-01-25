@@ -206,15 +206,12 @@ namespace tsid
       m_v_ref_vec = m_v_ref.toVector();
       m_v = v_frame.toVector();
 
-
-      m_a_des -= m_drift.toVector();
-
       int idx = 0;
       for (int i = 0; i < 6; i++) {
         if (m_mask(i) != 1.) continue;
 
-        m_constraint.matrix().row(idx) = m_J.row(idx);
-        m_constraint.vector().row(idx) = m_a_des.row(idx);
+        m_constraint.matrix().row(idx) = m_J.row(i);
+        m_constraint.vector().row(idx) = (m_a_des - m_drift.toVector()).row(i);
 
         idx += 1;
       }
