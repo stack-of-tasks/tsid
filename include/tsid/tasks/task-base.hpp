@@ -40,7 +40,7 @@ namespace tsid
       
       typedef math::ConstraintBase ConstraintBase;
       typedef math::ConstRefVector ConstRefVector;
-      typedef se3::Data Data;
+      typedef pinocchio::Data Data;
       typedef robots::RobotWrapper RobotWrapper;
 
       TaskBase(const std::string & name,
