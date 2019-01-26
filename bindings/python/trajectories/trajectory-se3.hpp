@@ -41,7 +41,7 @@ namespace tsid
       {
         cl
         .def(bp::init<std::string>((bp::arg("name")), "Default Constructor with name"))
-        .def(bp::init<std::string, se3::SE3>((bp::arg("name"), bp::arg("reference")), "Default Constructor with name and ref_vec"))
+        .def(bp::init<std::string, pinocchio::SE3>((bp::arg("name"), bp::arg("reference")), "Default Constructor with name and ref_vec"))
 
         .add_property("size", &TrajSE3::size)
         .def("setReference", &TrajectorySE3ConstantPythonVisitor::setReference, bp::arg("M_ref"))
@@ -51,7 +51,7 @@ namespace tsid
         .def("getSample", &TrajectorySE3ConstantPythonVisitor::getSample, bp::arg("time"))
         ;
       }
-      static void setReference(TrajSE3 & self, const se3::SE3 & ref){
+      static void setReference(TrajSE3 & self, const pinocchio::SE3 & ref){
           self.setReference(ref);
       }
       static trajectories::TrajectorySample computeNext(TrajSE3 & self){
