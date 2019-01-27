@@ -25,7 +25,7 @@ using namespace tasks;
 using namespace contacts;
 using namespace solvers;
 
-typedef pinocchio::Data Data;
+typedef se3::Data Data;
 
 TaskLevel::TaskLevel(tasks::TaskBase & task,
                      unsigned int priority):
