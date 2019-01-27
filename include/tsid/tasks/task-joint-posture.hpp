@@ -37,7 +37,7 @@ namespace tsid
       typedef math::Vector Vector;
       typedef math::VectorXi VectorXi;
       typedef math::ConstraintEquality ConstraintEquality;
-      typedef pinocchio::Data Data;
+      typedef se3::Data Data;
 
       TaskJointPosture(const std::string & name,
                       RobotWrapper & robot);

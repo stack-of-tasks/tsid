@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
   string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
   RobotWrapper robot(urdfFileName,
                      package_dirs,
-                     pinocchio::JointModelFreeFlyer(),
+                     se3::JointModelFreeFlyer(),
                      false);
 
   TaskSE3Equality task("task-se3", robot, "RWristPitch");
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
   BOOST_CHECK(task.Kp().isApprox(Kp));
   BOOST_CHECK(task.Kd().isApprox(Kd));
 
-  pinocchio::SE3 M_ref = pinocchio::SE3::Random();
+  se3::SE3 M_ref = se3::SE3::Random();
   TrajectoryBase *traj = new TrajectorySE3Constant("traj_SE3", M_ref);
   TrajectorySample sample;
 
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
   double error, error_past=1e100;
   VectorXd q = robot.model().neutralConfiguration;
   VectorXd v = VectorXd::Zero(robot.nv());
-  pinocchio::Data data(robot.model());
+  se3::Data data(robot.model());
   for(int i=0; i<max_it; i++)
   {
     robot.computeAllTerms(data, q, v);
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
     REQUIRE_FINITE(dv.transpose());
 
     v += dt*dv;
-    q = pinocchio::integrate(robot.model(), q, dt*v);
+    q = se3::integrate(robot.model(), q, dt*v);
     BOOST_REQUIRE(isFinite(v));
     BOOST_REQUIRE(isFinite(q));
     t += dt;
@@ -133,19 +133,19 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
   string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
   RobotWrapper robot(urdfFileName,
                      package_dirs,
-                     pinocchio::JointModelFreeFlyer(),
+                     se3::JointModelFreeFlyer(),
                      false);
   
-  pinocchio::Data data(robot.model());
+  se3::Data data(robot.model());
   const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
-  pinocchio::srdf::getNeutralConfigurationFromSrdf(robot.model(),srdfFileName);
+  se3::srdf::getNeutralConfigurationFromSrdf(robot.model(),srdfFileName);
   
   //  const unsigned int nv = robot.nv();
   VectorXd q = robot.model().neutralConfiguration;
   std::cout << "q: " << q.transpose() << std::endl;
   q(2) += 0.84;
   
-  pinocchio::centerOfMass(robot.model(),data,q);
+  se3::centerOfMass(robot.model(),data,q);
 
   TaskComEquality task("task-com", robot);
 
@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
   BOOST_CHECK(task.Kp().isApprox(Kp));
   BOOST_CHECK(task.Kd().isApprox(Kd));
 
-  Vector3 com_ref = data.com[0] + pinocchio::SE3::Vector3(0.02,0.02,0.02);
+  Vector3 com_ref = data.com[0] + se3::SE3::Vector3(0.02,0.02,0.02);
   TrajectoryBase *traj = new TrajectoryEuclidianConstant("traj_com", com_ref);
   TrajectorySample sample;
 
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
     BOOST_REQUIRE(isFinite(dv));
 
     v += dt*dv;
-    q = pinocchio::integrate(robot.model(), q, dt*v);
+    q = se3::integrate(robot.model(), q, dt*v);
     BOOST_REQUIRE(isFinite(v));
     BOOST_REQUIRE(isFinite(q));
     t += dt;
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
   string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
   RobotWrapper robot(urdfFileName,
                      package_dirs,
-                     pinocchio::JointModelFreeFlyer(),
+                     se3::JointModelFreeFlyer(),
                      false);
   const unsigned int na = robot.nv()-6;
 
@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
   double error, error_past=1e100;
   VectorXd q = robot.model().neutralConfiguration;
   VectorXd v = VectorXd::Zero(robot.nv());
-  pinocchio::Data data(robot.model());
+  se3::Data data(robot.model());
   for(int i=0; i<max_it; i++)
   {
     robot.computeAllTerms(data, q, v);
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
     BOOST_REQUIRE(isFinite(dv));
 
     v += dt*dv;
-    q = pinocchio::integrate(robot.model(), q, dt*v);
+    q = se3::integrate(robot.model(), q, dt*v);
     BOOST_REQUIRE(isFinite(v));
     BOOST_REQUIRE(isFinite(q));
     t += dt;

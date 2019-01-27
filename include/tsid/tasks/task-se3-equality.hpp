@@ -39,10 +39,10 @@ namespace tsid
       typedef trajectories::TrajectorySample TrajectorySample;
       typedef math::Vector Vector;
       typedef math::ConstraintEquality ConstraintEquality;
-      typedef pinocchio::Data Data;
-      typedef pinocchio::Data::Matrix6x Matrix6x;
-      typedef pinocchio::Motion Motion;
-      typedef pinocchio::SE3 SE3;
+      typedef se3::Data Data;
+      typedef se3::Data::Matrix6x Matrix6x;
+      typedef se3::Motion Motion;
+      typedef se3::SE3 SE3;
 
       TaskSE3Equality(const std::string & name,
                       RobotWrapper & robot,

@@ -41,11 +41,11 @@ namespace tsid
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       
       typedef math::Scalar Scalar;
-      typedef pinocchio::Model Model;
-      typedef pinocchio::Data Data;
-      typedef pinocchio::Motion Motion;
-      typedef pinocchio::Frame Frame;
-      typedef pinocchio::SE3 SE3;
+      typedef se3::Model Model;
+      typedef se3::Data Data;
+      typedef se3::Motion Motion;
+      typedef se3::Frame Frame;
+      typedef se3::SE3 SE3;
       typedef math::Vector  Vector;
       typedef math::Vector3 Vector3;
       typedef math::Vector6 Vector6;
@@ -61,7 +61,7 @@ namespace tsid
       
       RobotWrapper(const std::string & filename,
                    const std::vector<std::string> & package_dirs,
-                   const pinocchio::JointModelVariant & rootJoint,
+                   const se3::JointModelVariant & rootJoint,
                    bool verbose=false);
       
       virtual int nq() const;

@@ -42,7 +42,7 @@ namespace tsid
       typedef tasks::TaskSE3Equality TaskSE3Equality;
       typedef math::ConstraintInequality ConstraintInequality;
       typedef math::ConstraintEquality ConstraintEquality;
-      typedef pinocchio::SE3 SE3;
+      typedef se3::SE3 SE3;
 
       Contact6d(const std::string & name,
                 RobotWrapper & robot,
