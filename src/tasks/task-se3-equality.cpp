@@ -25,7 +25,7 @@ namespace tsid
   {
     using namespace math;
     using namespace trajectories;
-    using namespace pinocchio;
+    using namespace se3;
 
     TaskSE3Equality::TaskSE3Equality(const std::string & name,
                                      RobotWrapper & robot,

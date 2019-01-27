@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE ( test_robot_wrapper )
 {
 
   using namespace std;
-  using namespace pinocchio;
+  using namespace se3;
   
   const string romeo_model_path = TSID_SOURCE_DIR"/models/romeo";
 
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE ( test_robot_wrapper )
   
   RobotWrapper robot(urdfFileName,
                      package_dirs,
-                     pinocchio::JointModelFreeFlyer(),
+                     se3::JointModelFreeFlyer(),
                      false);
   
   const Model & model = robot.model();
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE ( test_robot_wrapper )
   ub.head<3>().fill(10.);
   ub.segment<4>(3).fill(1.);
   
-  Vector q = pinocchio::randomConfiguration(model,lb,ub);
+  Vector q = se3::randomConfiguration(model,lb,ub);
   Vector v = Vector::Ones(robot.nv());
   Data data(robot.model());
   robot.computeAllTerms(data, q, v);

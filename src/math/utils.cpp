@@ -22,14 +22,14 @@ namespace tsid
   namespace math
   {
     
-    void SE3ToXYZQUAT(const pinocchio::SE3 & M, RefVector xyzQuat)
+    void SE3ToXYZQUAT(const se3::SE3 & M, RefVector xyzQuat)
     {
       assert(xyzQuat.size()==7);
       xyzQuat.head<3>() = M.translation();
       xyzQuat.tail<4>() = Eigen::Quaterniond(M.rotation()).coeffs();
     }
 
-    void SE3ToVector(const pinocchio::SE3 & M, RefVector vec)
+    void SE3ToVector(const se3::SE3 & M, RefVector vec)
     {
       assert(vec.size()==12);
       vec.head<3>() = M.translation();
@@ -37,7 +37,7 @@ namespace tsid
       vec.tail<9>() = Eigen::Map<const Vector9>(&M.rotation()(0), 9);
     }
 
-    void vectorToSE3(RefVector vec, pinocchio::SE3 & M)
+    void vectorToSE3(RefVector vec, se3::SE3 & M)
     {
       assert(vec.size()==12);
       M.translation( vec.head<3>() );
@@ -45,11 +45,11 @@ namespace tsid
       M.rotation( Eigen::Map<const Matrix3>(&vec(3), 3, 3) );
     }
     
-    void errorInSE3 (const pinocchio::SE3 & M,
-                     const pinocchio::SE3 & Mdes,
-                     pinocchio::Motion & error)
+    void errorInSE3 (const se3::SE3 & M,
+                     const se3::SE3 & Mdes,
+                     se3::Motion & error)
     {
-      error = pinocchio::log6(Mdes.inverse() * M);
+      error = se3::log6(Mdes.inverse() * M);
     }
     
     void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd> & svd,

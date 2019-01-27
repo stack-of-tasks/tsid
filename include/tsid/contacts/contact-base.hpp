@@ -42,7 +42,7 @@ namespace tsid
       typedef math::ConstRefVector ConstRefVector;
       typedef math::Matrix Matrix;
       typedef tasks::TaskMotion TaskMotion;
-      typedef pinocchio::Data Data;
+      typedef se3::Data Data;
       typedef robots::RobotWrapper RobotWrapper;
 
       ContactBase(const std::string & name,

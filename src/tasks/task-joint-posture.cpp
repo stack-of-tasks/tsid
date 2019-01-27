@@ -24,7 +24,7 @@ namespace tsid
   {
     using namespace math;
     using namespace trajectories;
-    using namespace pinocchio;
+    using namespace se3;
 
     TaskJointPosture::TaskJointPosture(const std::string & name,
                                      RobotWrapper & robot):
