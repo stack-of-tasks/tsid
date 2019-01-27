@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE ( test_trajectory_se3 )
   using namespace math;
   using namespace std;
   using namespace Eigen;
-  using namespace se3;
+  using namespace pinocchio;
 
   SE3 M_ref = SE3::Identity();
   VectorXd M_vec(12);

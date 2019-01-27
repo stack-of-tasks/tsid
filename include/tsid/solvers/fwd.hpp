@@ -81,10 +81,10 @@ namespace tsid
     { return aligned_pair<T1,T2>(t1,t2); }
     
     
-    typedef se3::container::aligned_vector< aligned_pair<double, math::ConstraintBase*> > ConstraintLevel;
-    typedef se3::container::aligned_vector< aligned_pair<double, const math::ConstraintBase*> > ConstConstraintLevel;
-    typedef se3::container::aligned_vector<ConstraintLevel> HQPData;
-    typedef se3::container::aligned_vector<ConstConstraintLevel> ConstHQPData;
+    typedef pinocchio::container::aligned_vector< aligned_pair<double, math::ConstraintBase*> > ConstraintLevel;
+    typedef pinocchio::container::aligned_vector< aligned_pair<double, const math::ConstraintBase*> > ConstConstraintLevel;
+    typedef pinocchio::container::aligned_vector<ConstraintLevel> HQPData;
+    typedef pinocchio::container::aligned_vector<ConstConstraintLevel> ConstHQPData;
     
     
   }
