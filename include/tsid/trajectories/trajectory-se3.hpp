@@ -32,7 +32,7 @@ namespace tsid
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      typedef se3::SE3 SE3;
+      typedef pinocchio::SE3 SE3;
 
       TrajectorySE3Constant(const std::string & name);
 
