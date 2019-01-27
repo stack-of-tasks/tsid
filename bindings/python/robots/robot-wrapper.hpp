@@ -44,7 +44,7 @@ namespace tsid
       {
         cl
         .def(bp::init<std::string, std_vec, bool>((bp::arg("filename"), bp::arg("package_dir"), bp::arg("verbose")), "Default constructor without RootJoint."))
-        .def(bp::init<std::string, std_vec, se3::JointModelVariant, bool>((bp::arg("filename"), bp::arg("package_dir"), bp::arg("roottype"), bp::arg("verbose")), "Default constructor without RootJoint."))
+        .def(bp::init<std::string, std_vec, pinocchio::JointModelVariant, bool>((bp::arg("filename"), bp::arg("package_dir"), bp::arg("roottype"), bp::arg("verbose")), "Default constructor without RootJoint."))
         .add_property("nq", &Robot::nq)
         .add_property("nv", &Robot::nv)
         
@@ -74,11 +74,11 @@ namespace tsid
    
         ;
       }
-      static se3::Model model (const Robot & self){
+      static pinocchio::Model model (const Robot & self){
         return self.model();
       }
-      static se3::Data data(const Robot & self){
-        se3::Data data(self.model());
+      static pinocchio::Data data(const Robot & self){
+        pinocchio::Data data(self.model());
         return data;
       }
       static Eigen::VectorXd rotor_inertias(const Robot & self){
@@ -94,46 +94,46 @@ namespace tsid
         return self.gear_ratios(gear_ratios);
       }
 
-      static Eigen::Vector3d com (const Robot & self, const se3::Data & data){
+      static Eigen::Vector3d com (const Robot & self, const pinocchio::Data & data){
         return self.com(data);
       }
-      static Eigen::Vector3d com_vel (const Robot & self, const se3::Data & data){
+      static Eigen::Vector3d com_vel (const Robot & self, const pinocchio::Data & data){
         return self.com_vel(data);
       }
-      static Eigen::Vector3d com_acc (const Robot & self, const se3::Data & data){
+      static Eigen::Vector3d com_acc (const Robot & self, const pinocchio::Data & data){
         return self.com_acc(data);
       } 
-      static Matrix3x Jcom (const Robot & self, const se3::Data & data){
+      static Matrix3x Jcom (const Robot & self, const pinocchio::Data & data){
         return self.Jcom(data);
       } 
-      static void computeAllTerms (const Robot & self, se3::Data & data, const Eigen::VectorXd & q, const Eigen::VectorXd & v){
+      static void computeAllTerms (const Robot & self, pinocchio::Data & data, const Eigen::VectorXd & q, const Eigen::VectorXd & v){
          self.computeAllTerms(data, q, v);
       }
-      static Eigen::MatrixXd mass (Robot & self, se3::Data & data){
+      static Eigen::MatrixXd mass (Robot & self, pinocchio::Data & data){
         return self.mass(data);
       }
-      static Eigen::VectorXd nonLinearEffects(const Robot & self, const se3::Data & data){
+      static Eigen::VectorXd nonLinearEffects(const Robot & self, const pinocchio::Data & data){
         return self.nonLinearEffects(data);
       }
-      static se3::SE3 position(const Robot & self, const se3::Data & data, const se3::Model::JointIndex & index){
+      static pinocchio::SE3 position(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::JointIndex & index){
         return self.position(data, index);
       }
-      static se3::Motion velocity(const Robot & self, const se3::Data & data, const se3::Model::JointIndex & index){
+      static pinocchio::Motion velocity(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::JointIndex & index){
         return self.velocity(data, index);
       }
-      static se3::Motion acceleration(const Robot & self, const se3::Data & data, const se3::Model::JointIndex & index){
+      static pinocchio::Motion acceleration(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::JointIndex & index){
         return self.acceleration(data, index);
       }
-      static se3::SE3 framePosition(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index){
+      static pinocchio::SE3 framePosition(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::FrameIndex & index){
         return self.framePosition(data, index);
       }
-      static se3::Motion frameVelocity(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index){
+      static pinocchio::Motion frameVelocity(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::FrameIndex & index){
         return self.frameVelocity(data, index);
       }
-      static se3::Motion frameAcceleration(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index){
+      static pinocchio::Motion frameAcceleration(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::FrameIndex & index){
         return self.frameAcceleration(data, index);
       }
-      static se3::Motion frameClassicAcceleration(const Robot & self, const se3::Data & data, const se3::Model::FrameIndex & index){
+      static pinocchio::Motion frameClassicAcceleration(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::FrameIndex & index){
         return self.frameClassicAcceleration(data, index);
       }
       

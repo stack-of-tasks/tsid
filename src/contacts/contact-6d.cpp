@@ -122,7 +122,7 @@ void Contact6d:: updateForceGeneratorMatrix()
   for(int i=0; i<4; i++)
   {
     m_forceGenMat.block<3,3>(0, i*3).setIdentity();
-    m_forceGenMat.block<3,3>(3, i*3) = se3::skew(m_contactPoints.col(i));
+    m_forceGenMat.block<3,3>(3, i*3) = pinocchio::skew(m_contactPoints.col(i));
   }
 }
 
