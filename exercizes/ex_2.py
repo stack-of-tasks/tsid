@@ -61,7 +61,7 @@ cl = gepetto.corbaserver.Client()
 gui = cl.gui
 robot_display.initDisplay(loadModel=True)
 
-q = se3.getNeutralConfigurationFromSrdf(robot.model(), srdf, False)
+q = se3.getNeutralConfiguration(robot.model(), srdf, False)
 q[2] += 0.84
 v = np.matrix(np.zeros(robot.nv)).T
 
