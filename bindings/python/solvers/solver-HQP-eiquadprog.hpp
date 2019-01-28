@@ -24,6 +24,7 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 #include "tsid/solvers/solver-HQP-eiquadprog.hpp"
+#include "tsid/solvers/solver-HQP-eiquadprog-fast.hpp"
 #include "tsid/solvers/solver-HQP-output.hpp"
 #include "tsid/solvers/fwd.hpp"
 #include "tsid/bindings/python/utils/container.hpp"
