@@ -57,8 +57,8 @@ namespace tsid
       assert(n==nVars);
       assert(neq==nEqCon);
       assert(nin==nIneqCon);
-      if ((n!=nVars) || (neq==nEqCon) || (nin==nIneqCon))
-	std::cerr << "(n!=nVars) || (neq==nEqCon) || (nin==nIneqCon)" << std::endl;
+      if ((n!=nVars) || (neq!=nEqCon) || (nin!=nIneqCon))
+	std::cerr << "[SolverHQuadProgRT] (n!=nVars) || (neq!=nEqCon) || (nin!=nIneqCon)" << std::endl;
     }
     
     template<int nVars, int nEqCon, int nIneqCon>
