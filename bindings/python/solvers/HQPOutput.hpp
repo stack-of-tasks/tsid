@@ -43,9 +43,11 @@ namespace tsid
         .def(bp::init<>("Defulat Constructor"))
         .def(bp::init<int, int, int>((bp::args("nVars", "nEq", "nInCon"))))
         .add_property("x", &HQPOutputPythonVisitor::x)
+        .add_property("status", &HQPOutputPythonVisitor::status)
         ;
       }
       static Eigen::VectorXd x (const T & self) {return self.x;}
+      static int status (const T & self) {return self.status;}
       static void expose(const std::string & class_name)
       {
         std::string doc = "HQPOutput info.";
