@@ -70,7 +70,7 @@ namespace tsid
         std::string name = self.name();
         return name;
       }
-      static math::ConstraintEquality compute(TaskSE3 & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, const se3::Data & data){
+      static math::ConstraintEquality compute(TaskSE3 & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, const pinocchio::Data & data){
         self.compute(t, q, v, data);
         math::ConstraintEquality cons(self.getConstraint().name(), self.getConstraint().matrix(), self.getConstraint().vector());
         return cons;
