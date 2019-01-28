@@ -127,7 +127,7 @@ bool InverseDynamicsFormulationAccForce::addMotionTask(TaskMotion & task,
   assert(transition_duration>=0.0);
   
   // This part is not used frequently so we can do some tests.
-  if (weight>=0.0)
+  if (weight<0.0)
     std::cerr << __FILE__ <<  " " << __LINE__ << " "
       << "weight should be positive" << std::endl;
 
@@ -151,7 +151,7 @@ bool InverseDynamicsFormulationAccForce::addForceTask(TaskContactForce & task,
   assert(weight>=0.0);
   assert(transition_duration>=0.0);
   // This part is not used frequently so we can do some tests.
-  if (weight>=0.0)
+  if (weight<0.0)
     std::cerr << __FILE__ <<  " " << __LINE__ << " "
       << "weight should be positive" << std::endl;
 
@@ -172,7 +172,7 @@ bool InverseDynamicsFormulationAccForce::addTorqueTask(TaskActuation & task,
 {
   assert(weight>=0.0);
   assert(transition_duration>=0.0);
-  if (weight>=0.0)
+  if (weight<0.0)
     std::cerr << __FILE__ <<  " " << __LINE__ << " "
 	      << "weight should be positive" << std::endl;
 
