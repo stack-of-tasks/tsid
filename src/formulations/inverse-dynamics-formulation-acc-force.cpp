@@ -132,7 +132,7 @@ bool InverseDynamicsFormulationAccForce::addMotionTask(TaskMotion & task,
       << "weight should be positive" << std::endl;
 
   // This part is not used frequently so we can do some tests.
-  if (transition_duration>=0.0)
+  if (transition_duration<0.0)
     std::cerr << "transition_duration should be positive" << std::endl;
 
   TaskLevel *tl = new TaskLevel(task, priorityLevel);
@@ -156,7 +156,7 @@ bool InverseDynamicsFormulationAccForce::addForceTask(TaskContactForce & task,
       << "weight should be positive" << std::endl;
 
   // This part is not used frequently so we can do some tests.
-  if (transition_duration>=0.0)
+  if (transition_duration<0.0)
     std::cerr << "transition_duration should be positive" << std::endl;
   TaskLevel *tl = new TaskLevel(task, priorityLevel);
   m_taskContactForces.push_back(tl);
@@ -177,7 +177,7 @@ bool InverseDynamicsFormulationAccForce::addTorqueTask(TaskActuation & task,
 	      << "weight should be positive" << std::endl;
 
   // This part is not used frequently so we can do some tests.
-  if (transition_duration>=0.0)
+  if (transition_duration<0.0)
     std::cerr << "transition_duration should be positive" << std::endl;
 
   TaskLevel *tl = new TaskLevel(task, priorityLevel);
