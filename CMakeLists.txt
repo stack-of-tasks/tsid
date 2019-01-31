@@ -73,6 +73,12 @@ ENDIF(EIGEN_NO_AUTOMATIC_RESIZING)
 # --- DEPENDENCIES -----------------------------------
 # ----------------------------------------------------
 ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.0") # Eigen::Ref appeared from 3.2.0
+
+# Fail-safe support for catkin-ized pinocchio:
+#  - If catkin-based pinocchio is installed it runs the CFG_EXTRAS to set up the Pinocchio preprocessor directives
+#  - If it isn't, nothing happens and the subsequent pkg-config check takes care of everything.
+find_package(catkin QUIET COMPONENTS pinocchio)
+
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.3.0")
 
 SET(BOOST_REQUIERED_COMPONENTS filesystem system)
