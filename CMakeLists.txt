@@ -70,7 +70,7 @@ IF(EIGEN_NO_AUTOMATIC_RESIZING)
 ENDIF(EIGEN_NO_AUTOMATIC_RESIZING)
 
 # ----------------------------------------------------
-# --- DEPENDANCIES -----------------------------------
+# --- DEPENDENCIES -----------------------------------
 # ----------------------------------------------------
 ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.0") # Eigen::Ref appeared from 3.2.0
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.3.0")
