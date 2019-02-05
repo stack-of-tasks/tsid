@@ -42,6 +42,7 @@ SET(${LIBRARY_NAME}_TASKS_SOURCES
 SET(${LIBRARY_NAME}_CONTACTS_SOURCES
     contacts/contact-base.cpp
     contacts/contact-6d.cpp
+    contacts/contact-point.cpp
   )
 
 SET(${LIBRARY_NAME}_TRAJECTORIES_SOURCES

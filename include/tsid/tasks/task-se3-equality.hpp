@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -34,7 +34,7 @@ namespace tsid
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
+
       typedef math::Index Index;
       typedef trajectories::TrajectorySample TrajectorySample;
       typedef math::Vector Vector;
@@ -63,6 +63,8 @@ namespace tsid
       const Vector & getDesiredAcceleration() const;
       Vector getAcceleration(ConstRefVector dv) const;
 
+      virtual void setMask(math::ConstRefVector mask) override;
+
       const Vector & position_error() const;
       const Vector & velocity_error() const;
       const Vector & position() const;
@@ -77,8 +79,17 @@ namespace tsid
 
       Index frame_id() const;
 
+      /**
+       * @brief Specifies if the jacobian and desired acceloration should be
+       * expressed in the local frame or the local world oriented frame.
+       *
+       * @param local_frame If true, represent jacobian and acceloration in the
+       *   local frame. If false, represent them in the local world oriented frame.
+       */
+      void useLocalFrame(bool local_frame);
+
     protected:
-      
+
       std::string m_frame_name;
       Index m_frame_id;
       Motion m_p_error, m_v_error;
@@ -92,10 +103,12 @@ namespace tsid
       Vector m_a_des;
       Motion m_drift;
       Matrix6x m_J;
+      Matrix6x m_J_rotated;
       ConstraintEquality m_constraint;
       TrajectorySample m_ref;
+      bool m_local_frame;
     };
-    
+
   }
 }
 

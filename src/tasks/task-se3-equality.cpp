@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -52,12 +52,23 @@ namespace tsid
       m_Kd.setZero(6);
       m_a_des.setZero(6);
       m_J.setZero(6, robot.nv());
+      m_J_rotated.setZero(6, robot.nv());
+
+      m_mask.resize(6);
+      m_mask.fill(1.);
+
+      m_local_frame = true;
+    }
+
+    void TaskSE3Equality::setMask(math::ConstRefVector mask)
+    {
+      TaskMotion::setMask(mask);
+      m_constraint.resize(dim(), m_J.cols());
     }
 
     int TaskSE3Equality::dim() const
     {
-      //return self._mask.sum ()
-      return 6;
+      return m_mask.sum();
     }
 
     const Vector & TaskSE3Equality::Kp() const { return m_Kp; }
@@ -139,6 +150,11 @@ namespace tsid
       return m_constraint;
     }
 
+    void TaskSE3Equality::useLocalFrame(bool local_frame)
+    {
+      m_local_frame = local_frame;
+    }
+
     const ConstraintBase & TaskSE3Equality::compute(const double ,
                                                     ConstRefVector ,
                                                     ConstRefVector ,
@@ -150,37 +166,56 @@ namespace tsid
       m_robot.frameVelocity(data, m_frame_id, v_frame);
       m_robot.frameClassicAcceleration(data, m_frame_id, m_drift);
 
-      // Transformation from local to world
-      m_wMl.rotation(oMi.rotation());
-
-      errorInSE3(oMi, m_M_ref, m_p_error);          // pos err in local frame
-      m_v_error = v_frame - m_wMl.actInv(m_v_ref);  // vel err in local frame
-
-      m_p_error_vec = m_p_error.toVector();
-      m_v_error_vec = m_v_error.toVector();
-      SE3ToVector(m_M_ref, m_p_ref);
-      m_v_ref_vec = m_v_ref.toVector();
-      SE3ToVector(oMi, m_p);
-      m_v = v_frame.toVector();
-
-#ifndef NDEBUG
-//      PRINT_VECTOR(v_frame.toVector());
-//      PRINT_VECTOR(m_v_ref.toVector());
-#endif
-
-      // desired acc in local frame
-      m_a_des = - m_Kp.cwiseProduct(m_p_error.toVector())
-                - m_Kd.cwiseProduct(m_v_error.toVector())
-                + m_wMl.actInv(m_a_ref).toVector();
-
       // @todo Since Jacobian computation is cheaper in world frame
       // we could do all computations in world frame
       m_robot.frameJacobianLocal(data, m_frame_id, m_J);
 
-      m_constraint.setMatrix(m_J);
-      m_constraint.setVector(m_a_des - m_drift.toVector());
+      errorInSE3(oMi, m_M_ref, m_p_error);          // pos err in local frame
+      m_p_error_vec = m_p_error.toVector();
+      SE3ToVector(m_M_ref, m_p_ref);
+      SE3ToVector(oMi, m_p);
+
+      // Transformation from local to world
+      m_wMl.rotation(oMi.rotation());
+
+      if (m_local_frame) {
+        m_v_error = v_frame - m_wMl.actInv(m_v_ref);  // vel err in local frame
+
+        // desired acc in local frame
+        m_a_des = - m_Kp.cwiseProduct(m_p_error_vec)
+                  - m_Kd.cwiseProduct(m_v_error.toVector())
+                  + m_wMl.actInv(m_a_ref).toVector();
+      } else {
+        m_p_error_vec = m_wMl.toActionMatrix() *   // pos err in local world-oriented frame
+            m_p_error.toVector();
+        m_v_error = m_wMl.act(v_frame) - m_v_ref;  // vel err in local world-oriented frame
+
+        m_drift = m_wMl.act(m_drift);
+
+        // desired acc in local oriented frame
+        m_a_des = - m_Kp.cwiseProduct(m_p_error_vec)
+                  - m_Kd.cwiseProduct(m_v_error.toVector())
+                  + m_a_ref.toVector();
+
+        // Use an explicit temporary `m_J_rotated` here to avoid allocations.
+        m_J_rotated.noalias() = m_wMl.toActionMatrix() * m_J;
+        m_J = m_J_rotated;
+      }
+
+      m_v_error_vec = m_v_error.toVector();
+      m_v_ref_vec = m_v_ref.toVector();
+      m_v = v_frame.toVector();
+
+      int idx = 0;
+      for (int i = 0; i < 6; i++) {
+        if (m_mask(i) != 1.) continue;
+
+        m_constraint.matrix().row(idx) = m_J.row(i);
+        m_constraint.vector().row(idx) = (m_a_des - m_drift.toVector()).row(i);
+
+        idx += 1;
+      }
       return m_constraint;
     }
-    
   }
 }

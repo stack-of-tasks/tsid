@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
+// Copyright (c) 2018 CNRS
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -15,25 +15,16 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "tsid/tasks/task-motion.hpp"
+#include "tsid/bindings/python/contacts/contact-point.hpp"
+#include "tsid/bindings/python/contacts/expose-contact.hpp"
 
 namespace tsid
 {
-  namespace tasks
+  namespace python
   {
-    TaskMotion::TaskMotion(const std::string & name,
-                           RobotWrapper & robot):
-      TaskBase(name, robot)
-    {}
-    
-    void TaskMotion::setMask(math::ConstRefVector mask)
+    void exposeContactPoint()
     {
-      m_mask = mask;
-    }
-
-    bool TaskMotion::hasMask()
-    {
-      return m_mask.size() > 0;
+      ContactPointPythonVisitor<tsid::contacts::ContactPoint>::expose("ContactPoint");
     }
   }
 }

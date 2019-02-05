@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 CNRS
+// Copyright (c) 2018 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -15,7 +15,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "tsid/bindings/python/contacts/contact.hpp"
+#include "tsid/bindings/python/contacts/contact-6d.hpp"
 #include "tsid/bindings/python/contacts/expose-contact.hpp"
 
 namespace tsid
@@ -24,7 +24,7 @@ namespace tsid
   {
     void exposeContact6d()
     {
-      ContactPythonVisitor<tsid::contacts::Contact6d>::expose("Contact6d");
+      Contact6DPythonVisitor<tsid::contacts::Contact6d>::expose("Contact6d");
     }
   }
 }

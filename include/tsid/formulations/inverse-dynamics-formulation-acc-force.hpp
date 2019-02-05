@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -111,7 +111,7 @@ namespace tsid
     bool updateTaskWeight(const std::string & task_name,
                           double weight);
 
-    bool addRigidContact(ContactBase & contact);
+    bool addRigidContact(ContactBase & contact, unsigned int motionPriorityLevel=0);
 
     bool removeTask(const std::string & taskName,
                     double transition_duration=0.0);

@@ -15,8 +15,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_contact_6d_hpp__
-#define __invdyn_contact_6d_hpp__
+#ifndef __invdyn_contact_point_hpp__
+#define __invdyn_contact_point_hpp__
 
 #include "tsid/contacts/contact-base.hpp"
 #include "tsid/tasks/task-se3-equality.hpp"
@@ -27,7 +27,7 @@ namespace tsid
 {
   namespace contacts
   {
-    class Contact6d : public ContactBase
+    class ContactPoint : public ContactBase
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -44,10 +44,9 @@ namespace tsid
       typedef math::ConstraintEquality ConstraintEquality;
       typedef se3::SE3 SE3;
 
-      Contact6d(const std::string & name,
+      ContactPoint(const std::string & name,
                 RobotWrapper & robot,
                 const std::string & frameName,
-                ConstRefMatrix contactPoints,
                 ConstRefVector contactNormal,
                 const double frictionCoefficient,
                 const double minNormalForce,
@@ -92,7 +91,6 @@ namespace tsid
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
 
-      bool setContactPoints(ConstRefMatrix contactPoints);
       bool setContactNormal(ConstRefVector contactNormal);
 
       bool setFrictionCoefficient(const double frictionCoefficient);
@@ -103,6 +101,17 @@ namespace tsid
       void setForceReference(ConstRefVector & f_ref);
       void setRegularizationTaskWeightVector(ConstRefVector & w);
 
+      /**
+       * @brief Specifies if properties of the contact point and motion task
+       * are expressed in the local or local world oriented frame. The contact
+       * forces, contact normal and contact coefficients are interpreted in
+       * the specified frame.
+       *
+       * @param local_frame If true, use the local frame, otherwise use the
+       * local world oriented
+       */
+      void useLocalFrame(bool local_frame);
+
     protected:
 
       void updateForceInequalityConstraints();
@@ -112,10 +121,9 @@ namespace tsid
       TaskSE3Equality m_motionTask;
       ConstraintInequality m_forceInequality;
       ConstraintEquality m_forceRegTask;
-      Matrix3x m_contactPoints;
       Vector3 m_contactNormal;
-      Vector6 m_fRef;
-      Vector6 m_weightForceRegTask;
+      Vector3 m_fRef;
+      Vector3 m_weightForceRegTask;
       double m_mu;
       double m_fMin;
       double m_fMax;
