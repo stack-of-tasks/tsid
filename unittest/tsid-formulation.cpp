@@ -549,7 +549,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
   };
 
   Vector3 contactNormal = Vector3::UnitZ();
-  std::array<ContactPoint*, 4> contacts;
+  std::vector<ContactPoint*> contacts(4);
 
   for (int i = 0; i < 4; i++) {
     ContactPoint* cp = new ContactPoint("contact_" + contactFrames[i], robot,
@@ -575,8 +575,8 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
 
     REQUIRE_TASK_FINITE((*comTask));
 
-    for(const auto &cp : contacts) {
-      REQUIRE_CONTACT_FINITE((*cp));
+    for(unsigned int i=0; i<contacts.size(); i++) {
+      REQUIRE_CONTACT_FINITE((*(contacts[i])));
     }
 
     sol = &(solver->solve(HQPData));
