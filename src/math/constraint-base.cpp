@@ -53,6 +53,8 @@ Matrix & ConstraintBase::matrix()
 
 bool ConstraintBase::setMatrix(ConstRefMatrix A)
 {
+  assert(m_A.cols()==A.cols());
+  assert(m_A.rows()==A.rows());
   m_A = A;
   return true;
 }

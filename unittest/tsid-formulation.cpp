@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -21,6 +21,7 @@
 #include <boost/utility/binary.hpp>
 
 #include <tsid/contacts/contact-6d.hpp>
+#include <tsid/contacts/contact-point.hpp>
 #include <tsid/formulations/inverse-dynamics-formulation-acc-force.hpp>
 #include <tsid/tasks/task-com-equality.hpp>
 #include <tsid/tasks/task-se3-equality.hpp>
@@ -60,6 +61,7 @@ using namespace std;
                                         REQUIRE_FINITE(contact.getForceRegularizationTask().vector())
 
 const string romeo_model_path = TSID_SOURCE_DIR"/models/romeo";
+const string quadruped_model_path = TSID_SOURCE_DIR"/models/quadruped";
 
 #ifndef NDEBUG
 const int max_it = 10;
@@ -108,10 +110,10 @@ class StandardRomeoInvDynCtrl
     package_dirs.push_back(romeo_model_path);
     const string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
     robot = new RobotWrapper(urdfFileName, package_dirs, se3::JointModelFreeFlyer());
-    
+
     const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
     se3::srdf::getNeutralConfigurationFromSrdf(robot->model(),srdfFileName);
-    
+
     const unsigned int nv = robot->nv();
     q = robot->model().neutralConfiguration;
     std::cout << "q: " << q.transpose() << std::endl;
@@ -160,7 +162,6 @@ class StandardRomeoInvDynCtrl
     postureTask->Kd(2.0*postureTask->Kp().cwiseSqrt());
     tsid->addMotionTask(*postureTask, w_posture, 1);
   }
-
 };
 
 const double StandardRomeoInvDynCtrl::lxp = 0.14;
@@ -344,7 +345,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   // Create an HQP solver
   SolverHQPBase * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
                                                                "solver-eiquadprog");
-  
+
   solver->resize(tsid->nVar(), tsid->nEq(), tsid->nIn());
   cout<<"nVar "<<tsid->nVar()<<endl;
   cout<<"nEq "<<tsid->nEq()<<endl;
@@ -475,6 +476,164 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   cout<<"Desired CoM position: "<<com_ref.transpose()<<endl;
 }
 
+
+BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
+{
+  cout<<"\n*** test_contact_point_invdyn_formulation_acc_force ***\n";
+
+  const double mu = 0.3;
+  const double fMin = 0.0;
+  const double fMax = 10.0;
+  const std::string frameName = "base_link";
+  const double dt = 1e-3;
+
+  double t = 0.;
+
+  double w_com = 1.0;                     // weight of center of mass task
+  double w_forceRef = 1e-5;               // weight of force regularization task
+  double kp_contact = 100.0;              // proportional gain of contact constraint
+  double kp_com = 1.0;                    // proportional gain of center of mass task
+
+  vector<string> package_dirs;
+  package_dirs.push_back(quadruped_model_path);
+  string urdfFileName = package_dirs[0] + "/urdf/quadruped.urdf";
+  RobotWrapper robot(urdfFileName,
+                     package_dirs,
+                     se3::JointModelFreeFlyer(),
+                     false);
+
+  BOOST_REQUIRE(robot.model().existFrame(frameName));
+
+  Vector q = robot.model().neutralConfiguration;
+  Vector v = Vector::Zero(robot.nv());
+  const unsigned int nv = robot.nv();
+
+  // Create initial posture.
+  q(0) = 0.1;
+  q(2) = 0.5;
+  q(6) = 1.;
+  for (int i = 0; i < 4; i++) {
+    q(7 + 2 * i) = -0.4;
+    q(8 + 2 * i) = 0.8;
+  }
+
+  // Create the inverse-dynamics formulation
+  InverseDynamicsFormulationAccForce *tsid =
+      new InverseDynamicsFormulationAccForce("tsid", robot);
+  tsid->computeProblemData(t, q, v);
+  const se3::Data & data = tsid->data();
+
+  // Place the robot onto the ground.
+
+  se3::SE3 fl_contact = robot.framePosition(data, robot.model().getFrameId("FL_contact"));
+  q[2] -= fl_contact.translation()(2);
+
+  tsid->computeProblemData(t, q, v);
+
+  // Add task for the COM.
+  TaskComEquality *comTask = new TaskComEquality("task-com", robot);
+  comTask->Kp(kp_com * Vector::Ones(3));
+  comTask->Kd(2.0 * comTask->Kp().cwiseSqrt());
+  tsid->addMotionTask(*comTask, w_com, 1);
+
+  Vector3 com_ref = robot.com(data);
+  TrajectoryBase *trajCom = new TrajectoryEuclidianConstant("traj_com", com_ref);
+  TrajectorySample sampleCom(3);
+  sampleCom = trajCom->computeNext();
+  comTask->setReference(sampleCom);
+
+
+  // Add contact constraints.
+  std::string contactFrames[] = {
+    "BL_contact", "BR_contact", "FL_contact", "FR_contact"
+  };
+
+  Vector3 contactNormal = Vector3::UnitZ();
+  std::array<ContactPoint*, 4> contacts;
+
+  for (int i = 0; i < 4; i++) {
+    ContactPoint* cp = new ContactPoint("contact_" + contactFrames[i], robot,
+        contactFrames[i], contactNormal, mu, fMin, fMax, w_forceRef);
+    cp->Kp(kp_contact*Vector::Ones(6));
+    cp->Kd(2.0*cp->Kp().cwiseSqrt());
+    cp->setReference(robot.framePosition(data, robot.model().getFrameId(contactFrames[i])));
+    cp->useLocalFrame(false);
+    tsid->addRigidContact(*cp, 1);
+
+    contacts[i] = cp;
+  }
+
+  // Create an HQP solver
+  SolverHQPBase * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
+                                                               "solver-eiquadprog");
+  solver->resize(tsid->nVar(), tsid->nEq(), tsid->nIn());
+
+  Vector dv = Vector::Zero(nv);
+  const HQPOutput *sol;
+  for (int i = 0; i < max_it; i++) {
+    const HQPData & HQPData = tsid->computeProblemData(t, q, v);
+
+    REQUIRE_TASK_FINITE((*comTask));
+
+    for(const auto &cp : contacts) {
+      REQUIRE_CONTACT_FINITE((*cp));
+    }
+
+    sol = &(solver->solve(HQPData));
+
+
+    BOOST_CHECK_MESSAGE(sol->status==HQP_STATUS_OPTIMAL, "Status "+toString(sol->status));
+
+    for(ConstraintLevel::const_iterator it=HQPData[0].begin(); it!=HQPData[0].end(); it++)
+    {
+      const ConstraintBase* constr = it->second;
+      if(constr->checkConstraint(sol->x)==false)
+      {
+        if(constr->isEquality())
+        {
+          BOOST_CHECK_MESSAGE(false, "Equality "+constr->name()+" violated: "+
+                       toString((constr->matrix()*sol->x-constr->vector()).norm()));
+        }
+        else if(constr->isInequality())
+        {
+          BOOST_CHECK_MESSAGE(false, "Inequality "+constr->name()+" violated: "+
+                  toString((constr->matrix()*sol->x-constr->lowerBound()).minCoeff())+"\n"+
+                  toString((constr->upperBound()-constr->matrix()*sol->x).minCoeff()));
+        }
+        else if(constr->isBound())
+        {
+          BOOST_CHECK_MESSAGE(false, "Bound "+constr->name()+" violated: "+
+                  toString((sol->x-constr->lowerBound()).minCoeff())+"\n"+
+                  toString((constr->upperBound()-sol->x).minCoeff()));
+        }
+      }
+    }
+
+    dv = sol->x.head(nv);
+
+    v += dt*dv;
+    q = se3::integrate(robot.model(), q, dt*v);
+    t += dt;
+
+    REQUIRE_FINITE(dv.transpose());
+    REQUIRE_FINITE(v.transpose());
+    REQUIRE_FINITE(q.transpose());
+    CHECK_LESS_THAN(dv.norm(), 1e6);
+    CHECK_LESS_THAN(v.norm(), 1e6);
+  }
+
+  for (int i = 0; i < 4; i++) {
+    Eigen::Matrix<double, 3, 1> f;
+    tsid->getContactForces(contacts[i]->name(), *sol, f);
+    cout << contacts[i]->name() << " force:" << f.transpose() << endl;
+  }
+
+  cout<<"\n### TEST FINISHED ###\n";
+  PRINT_VECTOR(v);
+  cout<<"Final   CoM position: "<<robot.com(tsid->data()).transpose()<<endl;
+  cout<<"Desired CoM position: "<<com_ref.transpose()<<endl;
+}
+
 #define PROFILE_CONTROL_CYCLE "Control cycle"
 #define PROFILE_PROBLEM_FORMULATION "Problem formulation"
 #define PROFILE_HQP "HQP"
@@ -514,7 +673,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
   SolverHQPBase * solver_rt =
       SolverHQPFactory::createNewSolver<61,18,34>(SOLVER_HQP_EIQUADPROG_RT,
                                                   "eiquadprog-rt");
-  
+
   solver->resize(tsid->nVar(), tsid->nEq(), tsid->nIn());
   solver_fast->resize(tsid->nVar(), tsid->nEq(), tsid->nIn());
 

@@ -122,6 +122,7 @@ SET(${PROJECT_NAME}_CONTACTS_HEADERS
     include/tsid/contacts/fwd.hpp
     include/tsid/contacts/contact-base.hpp
     include/tsid/contacts/contact-6d.hpp
+    include/tsid/contacts/contact-point.hpp
   )
 
 SET(${PROJECT_NAME}_TRAJECTORIES_HEADERS
