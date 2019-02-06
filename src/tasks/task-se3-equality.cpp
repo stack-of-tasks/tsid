@@ -63,12 +63,12 @@ namespace tsid
     void TaskSE3Equality::setMask(math::ConstRefVector mask)
     {
       TaskMotion::setMask(mask);
-      m_constraint.resize(dim(), m_J.cols());
+      m_constraint.resize(dim(), (unsigned int)m_J.cols());
     }
 
     int TaskSE3Equality::dim() const
     {
-      return m_mask.sum();
+      return (int)m_mask.sum();
     }
 
     const Vector & TaskSE3Equality::Kp() const { return m_Kp; }
