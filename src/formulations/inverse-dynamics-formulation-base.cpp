@@ -29,5 +29,10 @@ namespace tsid
   , m_verbose(verbose)
   {}
   
+  bool InverseDynamicsFormulationBase::addRigidContact(ContactBase & contact)
+  {
+
+      addRigidContact(contact, 1e-5);
+  }
 }
 

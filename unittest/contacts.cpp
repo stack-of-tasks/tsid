@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_6d )
                     lz,  lz,  lz,  lz;
   Contact6d contact("contact6d", robot, frameName,
                     contactPoints, contactNormal,
-                    mu, fMin, fMax, 1e-3);
+                    mu, fMin, fMax);
 
   BOOST_CHECK(contact.n_motion()==6);
   BOOST_CHECK(contact.n_force()==12);

@@ -46,7 +46,8 @@ namespace tsid
       void visit(PyClass& cl) const
       {
         cl
-        .def(bp::init<std::string, robots::RobotWrapper &, std::string, Eigen::MatrixXd, Eigen::VectorXd, double, double, double, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("framename"), bp::arg("contactPoint"), bp::arg("contactNormal"), bp::arg("frictionCoeff"), bp::arg("minForce"), bp::arg("maxForce"), bp::arg("regWeight")), "Default Constructor"))
+        .def(bp::init<std::string, robots::RobotWrapper &, std::string, Eigen::MatrixXd, Eigen::VectorXd, double, double, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("framename"), bp::arg("contactPoint"), bp::arg("contactNormal"), bp::arg("frictionCoeff"), bp::arg("minForce"), bp::arg("maxForce")), "Default Constructor"))
+        .def(bp::init<std::string, robots::RobotWrapper &, std::string, Eigen::MatrixXd, Eigen::VectorXd, double, double, double, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("framename"), bp::arg("contactPoint"), bp::arg("contactNormal"), bp::arg("frictionCoeff"), bp::arg("minForce"), bp::arg("maxForce"), bp::arg("wForceReg")), "Deprecated Constructor"))
         .add_property("n_motion", &Contact6d::n_motion, "return number of motion")
         .add_property("n_force", &Contact6d::n_force, "return number of force")
         .add_property("name", &Contact6DPythonVisitor::name, "return name")
@@ -56,7 +57,6 @@ namespace tsid
         
         .add_property("getForceGeneratorMatrix", bp::make_function(&Contact6DPythonVisitor::getForceGeneratorMatrix, bp::return_value_policy<bp::copy_const_reference>()))
         
-        .add_property("getForceRegularizationWeight", &Contact6d::getForceRegularizationWeight, "return force reg weight")
         .def("getNormalForce", &Contact6DPythonVisitor::getNormalForce, bp::arg("vec"))
         .add_property("getMinNormalForce", &Contact6d::getMinNormalForce)
         .add_property("getMaxNormalForce", &Contact6d::getMaxNormalForce)
@@ -71,7 +71,6 @@ namespace tsid
         .def("setFrictionCoefficient", &Contact6DPythonVisitor::setFrictionCoefficient, bp::args("friction_coeff"))
         .def("setMinNormalForce", &Contact6DPythonVisitor::setMinNormalForce, bp::args("min_force"))
         .def("setMaxNormalForce", &Contact6DPythonVisitor::setMaxNormalForce, bp::args("max_force"))
-        .def("setRegularizationTaskWeight", &Contact6DPythonVisitor::setRegularizationTaskWeight, bp::args("double"))
         .def("setReference", &Contact6DPythonVisitor::setReference, bp::args("SE3"))
         .def("setForceReference", &Contact6DPythonVisitor::setForceReference, bp::args("f_vec"))
         .def("setRegularizationTaskWeightVector", &Contact6DPythonVisitor::setRegularizationTaskWeightVector, bp::args("w_vec"))
@@ -127,9 +126,6 @@ namespace tsid
       }
       static bool setMaxNormalForce (Contact6d & self, const double maxNormalForce){
         return self.setMaxNormalForce(maxNormalForce);
-      }
-      static bool setRegularizationTaskWeight (Contact6d & self, const double w){
-        return self.setRegularizationTaskWeight(w);
       }
       static void setReference(Contact6d & self, const se3::SE3 & ref){
         self.setReference(ref);

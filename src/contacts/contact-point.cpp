@@ -32,8 +32,7 @@ ContactPoint::ContactPoint(const std::string & name,
                      ConstRefVector contactNormal,
                      const double frictionCoefficient,
                      const double minNormalForce,
-                     const double maxNormalForce,
-                     const double regularizationTaskWeight):
+                     const double maxNormalForce):
   ContactBase(name, robot),
   m_motionTask(name, robot, frameName),
   m_forceInequality(name, 5, 3),
@@ -41,8 +40,7 @@ ContactPoint::ContactPoint(const std::string & name,
   m_contactNormal(contactNormal),
   m_mu(frictionCoefficient),
   m_fMin(minNormalForce),
-  m_fMax(maxNormalForce),
-  m_regularizationTaskWeight(regularizationTaskWeight)
+  m_fMax(maxNormalForce)
 {
   m_weightForceRegTask << 1, 1, 1e-3;
   m_forceGenMat.resize(3, 3);
@@ -166,15 +164,6 @@ bool ContactPoint::setMaxNormalForce(const double maxNormalForce)
   return true;
 }
 
-bool ContactPoint::setRegularizationTaskWeight(const double w)
-{
-  assert(w>=0.0);
-  if(w<0.0)
-    return false;
-  m_regularizationTaskWeight = w;
-  return true;
-}
-
 void ContactPoint::setForceReference(ConstRefVector & f_ref)
 {
   m_fRef = f_ref;
@@ -228,5 +217,3 @@ const ConstraintBase & ContactPoint::getMotionConstraint() const { return m_moti
 const ConstraintInequality & ContactPoint::getForceConstraint() const { return m_forceInequality; }
 
 const ConstraintEquality & ContactPoint::getForceRegularizationTask() const { return m_forceRegTask; }
-
-double ContactPoint::getForceRegularizationWeight() const { return m_regularizationTaskWeight; }

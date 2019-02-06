@@ -33,8 +33,7 @@ Contact6d::Contact6d(const std::string & name,
                      ConstRefVector contactNormal,
                      const double frictionCoefficient,
                      const double minNormalForce,
-                     const double maxNormalForce,
-                     const double regularizationTaskWeight):
+                     const double maxNormalForce):
   ContactBase(name, robot),
   m_motionTask(name, robot, frameName),
   m_forceInequality(name, 17, 12),
@@ -43,8 +42,7 @@ Contact6d::Contact6d(const std::string & name,
   m_contactNormal(contactNormal),
   m_mu(frictionCoefficient),
   m_fMin(minNormalForce),
-  m_fMax(maxNormalForce),
-  m_regularizationTaskWeight(regularizationTaskWeight)
+  m_fMax(maxNormalForce)
 {
   m_weightForceRegTask << 1, 1, 1e-3, 2, 2, 2;
   m_forceGenMat.resize(6,12);
@@ -52,6 +50,20 @@ Contact6d::Contact6d(const std::string & name,
   updateForceGeneratorMatrix();
   updateForceInequalityConstraints();
   updateForceRegularizationTask();
+}
+
+Contact6d::Contact6d(const std::string & name,
+                     RobotWrapper & robot,
+                     const std::string & frameName,
+                     ConstRefMatrix contactPoints,
+                     ConstRefVector contactNormal,
+                     const double frictionCoefficient,
+                     const double minNormalForce,
+                     const double maxNormalForce,
+                     const double forceRegWeight):
+    Contact6d(name, robot, frameName, contactPoints, contactNormal, frictionCoefficient, minNormalForce, maxNormalForce)
+{
+    std::cout<<"[Contact6d] The constructor with forceRegWeight is deprecated now. forceRegWeight should now be specified when calling addRigidContact()\n";
 }
 
 void Contact6d::updateForceInequalityConstraints()
@@ -187,15 +199,6 @@ bool Contact6d::setMaxNormalForce(const double maxNormalForce)
   return true;
 }
 
-bool Contact6d::setRegularizationTaskWeight(const double w)
-{
-  assert(w>=0.0);
-  if(w<0.0)
-    return false;
-  m_regularizationTaskWeight = w;
-  return true;
-}
-
 void Contact6d::setForceReference(ConstRefVector & f_ref)
 {
   m_fRef = f_ref;
@@ -249,5 +252,3 @@ const ConstraintBase & Contact6d::getMotionConstraint() const { return m_motionT
 const ConstraintInequality & Contact6d::getForceConstraint() const { return m_forceInequality; }
 
 const ConstraintEquality & Contact6d::getForceRegularizationTask() const { return m_forceRegTask; }
-
-double Contact6d::getForceRegularizationWeight() const { return m_regularizationTaskWeight; }

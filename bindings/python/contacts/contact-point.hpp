@@ -45,7 +45,7 @@ namespace tsid
       void visit(PyClass& cl) const
       {
         cl
-        .def(bp::init<std::string, robots::RobotWrapper &, std::string, Eigen::VectorXd, double, double, double, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("framename"), bp::arg("contactNormal"), bp::arg("frictionCoeff"), bp::arg("minForce"), bp::arg("maxForce"), bp::arg("regWeight")), "Default Constructor"))
+        .def(bp::init<std::string, robots::RobotWrapper &, std::string, Eigen::VectorXd, double, double, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("framename"), bp::arg("contactNormal"), bp::arg("frictionCoeff"), bp::arg("minForce"), bp::arg("maxForce")), "Default Constructor"))
         .add_property("n_motion", &ContactPoint::n_motion, "return number of motion")
         .add_property("n_force", &ContactPoint::n_force, "return number of force")
         .add_property("name", &ContactPointPythonVisitor::name, "return name")
@@ -55,7 +55,6 @@ namespace tsid
         
         .add_property("getForceGeneratorMatrix", bp::make_function(&ContactPointPythonVisitor::getForceGeneratorMatrix, bp::return_value_policy<bp::copy_const_reference>()))
         
-        .add_property("getForceRegularizationWeight", &ContactPoint::getForceRegularizationWeight, "return force reg weight")
         .def("getNormalForce", &ContactPointPythonVisitor::getNormalForce, bp::arg("vec"))
         .add_property("getMinNormalForce", &ContactPoint::getMinNormalForce)
         .add_property("getMaxNormalForce", &ContactPoint::getMaxNormalForce)
@@ -71,7 +70,6 @@ namespace tsid
         .def("setFrictionCoefficient", &ContactPointPythonVisitor::setFrictionCoefficient, bp::args("friction_coeff"))
         .def("setMinNormalForce", &ContactPointPythonVisitor::setMinNormalForce, bp::args("min_force"))
         .def("setMaxNormalForce", &ContactPointPythonVisitor::setMaxNormalForce, bp::args("max_force"))
-        .def("setRegularizationTaskWeight", &ContactPointPythonVisitor::setRegularizationTaskWeight, bp::args("double"))
         .def("setReference", &ContactPointPythonVisitor::setReference, bp::args("SE3"))
         .def("setForceReference", &ContactPointPythonVisitor::setForceReference, bp::args("f_vec"))
         .def("setRegularizationTaskWeightVector", &ContactPointPythonVisitor::setRegularizationTaskWeightVector, bp::args("w_vec"))
@@ -130,9 +128,6 @@ namespace tsid
       }
       static bool setMaxNormalForce (ContactPoint & self, const double maxNormalForce){
         return self.setMaxNormalForce(maxNormalForce);
-      }
-      static bool setRegularizationTaskWeight (ContactPoint & self, const double w){
-        return self.setRegularizationTaskWeight(w);
       }
       static void setReference(ContactPoint & self, const se3::SE3 & ref){
         self.setReference(ref);

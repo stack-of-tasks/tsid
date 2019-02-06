@@ -1,29 +1,39 @@
 import pinocchio as se3
 import tsid
 import numpy as np
+import numpy.matlib as matlib
+from numpy import nan
 from numpy.linalg import norm as norm
 import os
-
 import gepetto.corbaserver
 import time
-# import commands
+import commands
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
-print("".center(100,'#'))
-print(" Test Task Space Inverse Dynamics ".center(100, '#'))
-print("".center(100,'#'), '\n')
+LINE_WIDTH = 60
+print "".center(LINE_WIDTH,'#')
+print " Test TSID with Quadruped Robot ".center(LINE_WIDTH, '#')
+print "".center(LINE_WIDTH,'#'), '\n'
 
 mu = 0.3                            # friction coefficient
 fMin = 1.0                          # minimum normal force
-fMax = 30.0                       # maximum normal force
+fMax = 100.0                       # maximum normal force
+contact_frames = ['BL_contact', 'BR_contact', 'FL_contact', 'FR_contact']
 contactNormal = np.matrix([0., 0., 1.]).T   # direction of the normal to the contact surface
+
 w_com = 1.0                     # weight of center of mass task
+w_posture = 1e-3                # weight of joint posture task
 w_forceRef = 1e-5               # weight of force regularization task
-kp_contact = 100.0               # proportional gain of contact constraint
-kp_com = 100.0                   # proportional gain of center of mass task
+
+kp_contact = 10.0               # proportional gain of contact constraint
+kp_com = 10.0                   # proportional gain of center of mass task
+kp_posture = 10.0               # proportional gain of joint posture task
+
 dt = 0.001                      # controller time step
-N_SIMULATION = 1000             # number of time steps simulated
+PRINT_N = 500                   # print every PRINT_N time steps
+DISPLAY_N = 25                  # update robot configuration in viwewer every DISPLAY_N time steps
+N_SIMULATION = 6000             # number of time steps simulated
 
 filename = str(os.path.dirname(os.path.abspath(__file__)))
 path = filename + '/../models'
@@ -31,111 +41,133 @@ urdf = path + '/quadruped/urdf/quadruped.urdf'
 vector = se3.StdVec_StdString()
 vector.extend(item for item in path)
 robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
-srdf = path + '/srdf/romeo_collision.srdf'
 
-print("Creating RobotWrapper")
-# for gepetto viewer .. but Fix me!!
+# for gepetto viewer
 robot_display = se3.RobotWrapper(urdf, [path, ], se3.JointModelFreeFlyer())
-
-# l = commands.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
-# if int(l[1]) == 0:
-#     os.system('gepetto-gui &')
+l = commands.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+if int(l[1]) == 0:
+    os.system('gepetto-gui &')
 time.sleep(1)
-print("Connect to gepetto server.")
-
 cl = gepetto.corbaserver.Client()
 gui = cl.gui
-
 robot_display.initDisplay(loadModel=True)
 
-q = np.matrix(np.zeros(robot.nq)).T
-q[2] = 0.5
-q[0] = 0.1
-q[6] = 1.
+#q = se3.getNeutralConfigurationFromSrdf(robot.model(), srdf, False)
+q = robot_display.model.neutralConfiguration #matlib.zeros(robot.nq).T
+q[2] += 0.5
 for i in range(4):
   q[7 + 2*i] = -0.8
   q[8 + 2*i] = 1.6
-v = np.matrix(np.zeros(robot.nv)).transpose()
+v = matlib.zeros(robot.nv).T
 
-# Create the main invdyn formulation object.
-t = 0.0
-invdyn = tsid.InverseDynamicsFormulationAccForce("tsid", robot, True)
-invdyn.computeProblemData(t, q, v)
-data = invdyn.data()
-
-robot.computeAllTerms(data, q, v)
-
-# Place the robot onto the ground.
-id_fl_contact = robot_display.model.getFrameId('FL_contact')
-q[2] -= robot.framePosition(data, id_fl_contact).translation[2, 0]
-
-contact_frames = [
-  'BL_contact', 'BR_contact', 'FL_contact', 'FR_contact'
-]
 robot_display.displayCollisions(False)
 robot_display.displayVisuals(True)
 robot_display.display(q)
 
+assert [robot.model().existFrame(name) for name in contact_frames]
+
+t = 0.0                         # time
+invdyn = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
+invdyn.computeProblemData(t, q, v)
+data = invdyn.data()
+
+# Place the robot onto the ground.
+id_contact = robot_display.model.getFrameId(contact_frames[0])
+q[2] -= robot.framePosition(data, id_contact).translation[2, 0]
 robot.computeAllTerms(data, q, v)
 
-# Add task for the COM.
-com_ref = robot.com(data)
+contacts = 4*[None]
+for i, name in enumerate(contact_frames):
+    contacts[i] =tsid.ContactPoint(name, robot, name, contactNormal, mu, fMin, fMax)
+    contacts[i].setKp(kp_contact * matlib.ones(3).T)
+    contacts[i].setKd(2.0 * np.sqrt(kp_contact) * matlib.ones(3).T)
+    H_rf_ref = robot.framePosition(data, robot.model().getFrameId(name))
+    contacts[i].setReference(H_rf_ref)
+    contacts[i].useLocalFrame(False)
+    invdyn.addRigidContact(contacts[i], w_forceRef, 1.0, 1)
+
 comTask = tsid.TaskComEquality("task-com", robot)
-comTask.setKp(kp_com * np.matrix(np.ones(3)).transpose())
-comTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(3)).transpose())
+comTask.setKp(kp_com * matlib.ones(3).T)
+comTask.setKd(2.0 * np.sqrt(kp_com) * matlib.ones(3).T)
 invdyn.addMotionTask(comTask, w_com, 1, 0.0)
 
+postureTask = tsid.TaskJointPosture("task-posture", robot)
+postureTask.setKp(kp_posture * matlib.ones(robot.nv-6).T)
+postureTask.setKd(2.0 * np.sqrt(kp_posture) * matlib.ones(robot.nv-6).T)
+invdyn.addMotionTask(postureTask, w_posture, 1, 0.0)
+
+com_ref = robot.com(data)
 trajCom = tsid.TrajectoryEuclidianConstant("traj_com", com_ref)
-comTask.setReference(trajCom.computeNext())
+sampleCom = trajCom.computeNext()
 
-# Add contact constraint for the point feets.
-# HACK: Not taking the feet orientation into account for local frame right now.
+q_ref = q[7:]
+trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
 
-task_contacts = []
-
-for cframe in contact_frames:
-  contact = tsid.ContactPoint("contact_" + cframe, robot, cframe, contactNormal, mu, fMin, fMax, w_forceRef)
-  contact.setKp(kp_contact * np.matrix(np.ones(3)).transpose())
-  contact.setKd(2.0 * np.sqrt(kp_contact) * np.matrix(np.ones(3)).transpose())
-  contact.setReference(robot.framePosition(data, robot_display.model.getFrameId(cframe)))
-  contact.useLocalFrame(False)
-  invdyn.addRigidContact(contact, 1)
-
-  task_contacts.append(contact)
-
-# Add task to keep the robot at the current com position.
-
-
-solver = tsid.SolverHQuadProg("qp solver")
+solver = tsid.SolverHQuadProgFast("qp solver")
 solver.resize(invdyn.nVar, invdyn.nEq, invdyn.nIn)
 
-print('COM start:', com_ref)
+com_pos = matlib.empty((3, N_SIMULATION))*nan
+com_vel = matlib.empty((3, N_SIMULATION))*nan
+com_acc = matlib.empty((3, N_SIMULATION))*nan
 
-# for i in range(0, N_SIMULATION):
+com_pos_ref = matlib.empty((3, N_SIMULATION))*nan
+com_vel_ref = matlib.empty((3, N_SIMULATION))*nan
+com_acc_ref = matlib.empty((3, N_SIMULATION))*nan
+com_acc_des = matlib.empty((3, N_SIMULATION))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_err
+
+offset     = robot.com(data) + np.matrix([0.0, 0.0, 0.0]).T
+amp        = np.matrix([0.0, 0.03, 0.05]).T
+two_pi_f             = 2*np.pi*np.matrix([0.0, 0.5, 0.7]).T
+two_pi_f_amp         = np.multiply(two_pi_f,amp)
+two_pi_f_squared_amp = np.multiply(two_pi_f, two_pi_f_amp)
+
 for i in range(0, N_SIMULATION):
-  HQPData = invdyn.computeProblemData(t, q, v)
+    time_start = time.time()
+    
+    sampleCom.pos(offset + np.multiply(amp, matlib.sin(two_pi_f*t)))
+    sampleCom.vel(np.multiply(two_pi_f_amp, matlib.cos(two_pi_f*t)))
+    sampleCom.acc(np.multiply(two_pi_f_squared_amp, -matlib.sin(two_pi_f*t)))
+    
+    comTask.setReference(sampleCom)
+    samplePosture = trajPosture.computeNext()
+    postureTask.setReference(samplePosture)
 
-  sol = solver.solve(HQPData)
-  tau = invdyn.getActuatorForces(sol)
-  dv = invdyn.getAccelerations(sol)
-  lam = invdyn.getContactForces(sol)
+    HQPData = invdyn.computeProblemData(t, q, v)
+    if i == 0: HQPData.print_all()
 
-  # Minimal integrator.
-  v_mean = v + 0.5*dt*dv
-  v += dt*dv
-  q = se3.integrate(robot.model(), q, dt*v_mean)
-  t += dt
+    sol = solver.solve(HQPData)
+    if(sol.status!=0):
+        print "[%d] QP problem could not be solved! Error code:"%(i), sol.status
+        break
+    
+    tau = invdyn.getActuatorForces(sol)
+    dv = invdyn.getAccelerations(sol)
+    
+    com_pos[:,i] = robot.com(invdyn.data())
+    com_vel[:,i] = robot.com_vel(invdyn.data())
+    com_acc[:,i] = comTask.getAcceleration(dv)
+    com_pos_ref[:,i] = sampleCom.pos()
+    com_vel_ref[:,i] = sampleCom.vel()
+    com_acc_ref[:,i] = sampleCom.acc()
+    com_acc_des[:,i] = comTask.getDesiredAcceleration
 
-  com_ref[2] += 0.05 * dt
-  trajCom.setReference(com_ref)
-  comTask.setReference(trajCom.computeNext())
+    if i%PRINT_N == 0:
+        print "Time %.3f"%(t)
+        print "\tNormal forces: ",
+        for contact in contacts:
+            if invdyn.checkContact(contact.name, sol):
+                f = invdyn.getContactForce(contact.name, sol)
+                print "%4.1f"%(contact.getNormalForce(f)),
 
-  robot_display.display(q)
-  time.sleep(0.001)
+        print "\n\ttracking err %s: %.3f"%(comTask.name.ljust(20,'.'),       norm(comTask.position_error, 2))
+        print "\t||v||: %.3f\t ||dv||: %.3f"%(norm(v, 2), norm(dv))
 
-robot.computeAllTerms(data, q, v)
-com_final = robot.com(data)
+    v_mean = v + 0.5*dt*dv
+    v += dt*dv
+    q = se3.integrate(robot.model(), q, dt*v_mean)
+    t += dt
+    
+    if i%DISPLAY_N == 0: robot_display.display(q)
 
-print('COM ref:', com_ref)
-print('COM final:', com_final)
-print('COM error:', np.linalg.norm(com_final - com_ref))
+    time_spent = time.time() - time_start
+    if(time_spent < dt): time.sleep(dt-time_spent)

@@ -57,9 +57,10 @@ namespace tsid
         
         
         .def("updateTaskWeight", &InvDynPythonVisitor::updateTaskWeight, bp::args("task_name", "weight"))
-        .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6d, bp::args("contact"))
-        .def("addRigidContact", &InvDynPythonVisitor::addRigidContactPoint, bp::args("contact"))
-        .def("addRigidContact", &InvDynPythonVisitor::addRigidContactPointWithPriorityLevel, bp::args("contact", "priority_level"))
+        .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6dDeprecated, bp::args("contact"))
+        .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6d, bp::args("contact", "force_reg_weight"))
+        .def("addRigidContact", &InvDynPythonVisitor::addRigidContactPoint, bp::args("contact", "force_reg_weight"))
+        .def("addRigidContact", &InvDynPythonVisitor::addRigidContactPointWithPriorityLevel, bp::args("contact", "force_reg_weight", "motion_weight", "priority_level"))
         .def("removeTask", &InvDynPythonVisitor::removeTask, bp::args("task_name", "duration"))
         .def("removeRigidContact", &InvDynPythonVisitor::removeRigidContact, bp::args("contact_name", "duration"))
         .def("computeProblemData", &InvDynPythonVisitor::computeProblemData, bp::args("time", "q", "v"))
@@ -87,14 +88,20 @@ namespace tsid
       static bool updateTaskWeight(T& self, const std::string & task_name, double weight){
         return self.updateTaskWeight(task_name, weight);
       }
-      static bool addRigidContact6d(T& self, contacts::Contact6d & contact){
+      static bool addRigidContact6dDeprecated(T& self, contacts::Contact6d & contact){
         return self.addRigidContact(contact);
       }
-      static bool addRigidContactPoint(T& self, contacts::ContactPoint & contact){
-        return self.addRigidContact(contact);
+      static bool addRigidContact6d(T& self, contacts::Contact6d & contact, double force_regularization_weight){
+        return self.addRigidContact(contact, force_regularization_weight);
       }
-      static bool addRigidContactPointWithPriorityLevel(T& self, contacts::ContactPoint & contact, const bool priority_level){
-        return self.addRigidContact(contact, priority_level);
+      static bool addRigidContactPoint(T& self, contacts::ContactPoint & contact, double force_regularization_weight){
+        return self.addRigidContact(contact, force_regularization_weight);
+      }
+      static bool addRigidContactPointWithPriorityLevel(T& self, contacts::ContactPoint & contact,
+                                                        double force_regularization_weight,
+                                                        double motion_weight,
+                                                        const bool priority_level){
+        return self.addRigidContact(contact, force_regularization_weight, motion_weight, priority_level);
       }
       static bool removeTask(T& self, const std::string & task_name, double transition_duration){
         return self.removeTask(task_name, transition_duration);

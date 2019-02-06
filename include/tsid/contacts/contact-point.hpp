@@ -50,8 +50,7 @@ namespace tsid
                 ConstRefVector contactNormal,
                 const double frictionCoefficient,
                 const double minNormalForce,
-                const double maxNormalForce,
-                const double regularizationTaskWeight);
+                const double maxNormalForce);
 
       /// Return the number of motion constraints
       virtual unsigned int n_motion() const;
@@ -80,7 +79,7 @@ namespace tsid
       const ConstraintBase & getMotionConstraint() const;
       const ConstraintInequality & getForceConstraint() const;
       const ConstraintEquality & getForceRegularizationTask() const;
-      double getForceRegularizationWeight() const;
+      double getMotionTaskWeight() const;
 
       double getNormalForce(ConstRefVector f) const;
       double getMinNormalForce() const;
@@ -96,7 +95,7 @@ namespace tsid
       bool setFrictionCoefficient(const double frictionCoefficient);
       bool setMinNormalForce(const double minNormalForce);
       bool setMaxNormalForce(const double maxNormalForce);
-      bool setRegularizationTaskWeight(const double w);
+      bool setMotionTaskWeight(const double w);
       void setReference(const SE3 & ref);
       void setForceReference(ConstRefVector & f_ref);
       void setRegularizationTaskWeightVector(ConstRefVector & w);
@@ -128,6 +127,7 @@ namespace tsid
       double m_fMin;
       double m_fMax;
       double m_regularizationTaskWeight;
+      double m_motionTaskWeight;
       Matrix m_forceGenMat;
     };
   }

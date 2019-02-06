@@ -79,7 +79,6 @@ namespace tsid
       virtual const ConstraintBase & getMotionConstraint() const = 0;
       virtual const ConstraintInequality & getForceConstraint() const = 0;
       virtual const ConstraintEquality & getForceRegularizationTask() const = 0;
-      virtual double getForceRegularizationWeight() const = 0;
       
       virtual double getMinNormalForce() const = 0;
       virtual double getMaxNormalForce() const = 0;

@@ -134,21 +134,21 @@ class StandardRomeoInvDynCtrl
                       lz,  lz,  lz,  lz;
     contactRF = new Contact6d("contact_rfoot", *robot, rf_frame_name,
                               contactPoints, contactNormal,
-                              mu, fMin, fMax, w_forceReg);
+                              mu, fMin, fMax);
     contactRF->Kp(kp_contact*Vector::Ones(6));
     contactRF->Kd(2.0*contactRF->Kp().cwiseSqrt());
     H_rf_ref = robot->position(data, robot->model().getJointId(rf_frame_name));
     contactRF->setReference(H_rf_ref);
-    tsid->addRigidContact(*contactRF);
+    tsid->addRigidContact(*contactRF, w_forceReg);
 
     contactLF = new Contact6d ("contact_lfoot", *robot, lf_frame_name,
                                contactPoints, contactNormal,
-                               mu, fMin, fMax, w_forceReg);
+                               mu, fMin, fMax);
     contactLF->Kp(kp_contact*Vector::Ones(6));
     contactLF->Kd(2.0*contactLF->Kp().cwiseSqrt());
     H_lf_ref = robot->position(data, robot->model().getJointId(lf_frame_name));
     contactLF->setReference(H_lf_ref);
-    tsid->addRigidContact(*contactLF);
+    tsid->addRigidContact(*contactLF, w_forceReg);
 
     // Add the com task
     comTask = new TaskComEquality("task-com", *robot);
@@ -490,7 +490,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
   double t = 0.;
 
   double w_com = 1.0;                     // weight of center of mass task
-  double w_forceRef = 1e-5;               // weight of force regularization task
+  double w_forceReg = 1e-5;               // weight of force regularization task
   double kp_contact = 100.0;              // proportional gain of contact constraint
   double kp_com = 1.0;                    // proportional gain of center of mass task
 
@@ -553,12 +553,12 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
 
   for (int i = 0; i < 4; i++) {
     ContactPoint* cp = new ContactPoint("contact_" + contactFrames[i], robot,
-        contactFrames[i], contactNormal, mu, fMin, fMax, w_forceRef);
+        contactFrames[i], contactNormal, mu, fMin, fMax);
     cp->Kp(kp_contact*Vector::Ones(6));
     cp->Kd(2.0*cp->Kp().cwiseSqrt());
     cp->setReference(robot.framePosition(data, robot.model().getFrameId(contactFrames[i])));
     cp->useLocalFrame(false);
-    tsid->addRigidContact(*cp, 1);
+    tsid->addRigidContact(*cp, w_forceReg, 1.0, 1);
 
     contacts[i] = cp;
   }
