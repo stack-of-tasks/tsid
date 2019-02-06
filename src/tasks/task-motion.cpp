@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -26,5 +26,14 @@ namespace tsid
       TaskBase(name, robot)
     {}
     
+    void TaskMotion::setMask(math::ConstRefVector mask)
+    {
+      m_mask = mask;
+    }
+
+    bool TaskMotion::hasMask()
+    {
+      return m_mask.size() > 0;
+    }
   }
 }

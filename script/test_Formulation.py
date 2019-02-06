@@ -77,7 +77,7 @@ invdyn.addMotionTask(postureTask, w_posture, 1, 0.0)
 
 ########### Test 1 ##################3
 dt = 0.01
-PRINT_N = 10
+PRINT_N = 100
 REMOVE_CONTACT_N = 100
 CONTACT_TRANSITION_TIME = 1.0
 kp_RF = 100.0

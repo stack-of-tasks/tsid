@@ -80,19 +80,19 @@ contact_Point = np.matrix(np.ones((3,4)) * lz)
 contact_Point[0, :] = [-lxn, -lxn, lxp, lxp]
 contact_Point[1, :] = [-lyn, lyp, -lyn, lyp]
 
-contactRF =tsid.Contact6d("contact_rfoot", robot, rf_frame_name, contact_Point, contactNormal, mu, fMin, fMax, w_forceRef)
+contactRF =tsid.Contact6d("contact_rfoot", robot, rf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
 contactRF.setKp(kp_contact * matlib.ones(6).T)
 contactRF.setKd(2.0 * np.sqrt(kp_contact) * matlib.ones(6).T)
 H_rf_ref = robot.position(data, robot.model().getJointId(rf_frame_name))
 contactRF.setReference(H_rf_ref)
-invdyn.addRigidContact(contactRF)
+invdyn.addRigidContact(contactRF, w_forceRef)
 
-contactLF =tsid.Contact6d("contact_lfoot", robot, lf_frame_name, contact_Point, contactNormal, mu, fMin, fMax, w_forceRef)
+contactLF =tsid.Contact6d("contact_lfoot", robot, lf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
 contactLF.setKp(kp_contact * matlib.ones(6).T)
 contactLF.setKd(2.0 * np.sqrt(kp_contact) * matlib.ones(6).T)
 H_lf_ref = robot.position(data, robot.model().getJointId(lf_frame_name))
 contactLF.setReference(H_lf_ref)
-invdyn.addRigidContact(contactLF)
+invdyn.addRigidContact(contactLF, w_forceRef)
 
 comTask = tsid.TaskComEquality("task-com", robot)
 comTask.setKp(kp_com * matlib.ones(3).T)

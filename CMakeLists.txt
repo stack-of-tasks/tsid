@@ -123,6 +123,7 @@ SET(${PROJECT_NAME}_CONTACTS_HEADERS
     include/tsid/contacts/fwd.hpp
     include/tsid/contacts/contact-base.hpp
     include/tsid/contacts/contact-6d.hpp
+    include/tsid/contacts/contact-point.hpp
   )
 
 SET(${PROJECT_NAME}_TRAJECTORIES_HEADERS
@@ -162,6 +163,7 @@ SET(${PROJECT_NAME}_FORMULATIONS_HEADERS
 
 SET(HEADERS
     include/tsid/config.hpp
+    include/tsid/deprecation.hpp
     include/tsid/utils/statistics.hpp
     include/tsid/utils/stop-watch.hpp
     include/tsid/utils/Stdafx.hh

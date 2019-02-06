@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2019 University of Trento
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -15,24 +15,16 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "tsid/formulations/inverse-dynamics-formulation-base.hpp"
+#ifndef _tsid_lib_deprecation_hpp
+#define _tsid_lib_deprecation_hpp
 
+#if defined(__GNUC__) || defined(__clang__)
+#define DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#define DEPRECATED __declspec(deprecated)
+#else
+#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
+#define DEPRECATED
+#endif
 
-namespace tsid
-{
-
-  InverseDynamicsFormulationBase::InverseDynamicsFormulationBase(const std::string & name,
-                                                                 RobotWrapper & robot,
-                                                                 bool verbose)
-  : m_name(name)
-  , m_robot(robot)
-  , m_verbose(verbose)
-  {}
-  
-  bool InverseDynamicsFormulationBase::addRigidContact(ContactBase & contact)
-  {
-
-      addRigidContact(contact, 1e-5);
-  }
-}
-
+#endif //_tsid_lib_deprecation_hpp

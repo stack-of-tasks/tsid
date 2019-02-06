@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -49,6 +49,11 @@ namespace tsid
       virtual const Vector & position_ref() const = 0;
       virtual const Vector & velocity_ref() const = 0;
 
+      virtual void setMask(math::ConstRefVector mask);
+      virtual bool hasMask();
+
+    protected:
+      math::Vector m_mask;
     };
   }
 }

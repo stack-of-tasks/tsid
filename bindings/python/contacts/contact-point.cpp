@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2018 CNRS
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -15,24 +15,16 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "tsid/formulations/inverse-dynamics-formulation-base.hpp"
-
+#include "tsid/bindings/python/contacts/contact-point.hpp"
+#include "tsid/bindings/python/contacts/expose-contact.hpp"
 
 namespace tsid
 {
-
-  InverseDynamicsFormulationBase::InverseDynamicsFormulationBase(const std::string & name,
-                                                                 RobotWrapper & robot,
-                                                                 bool verbose)
-  : m_name(name)
-  , m_robot(robot)
-  , m_verbose(verbose)
-  {}
-  
-  bool InverseDynamicsFormulationBase::addRigidContact(ContactBase & contact)
+  namespace python
   {
-
-      addRigidContact(contact, 1e-5);
+    void exposeContactPoint()
+    {
+      ContactPointPythonVisitor<tsid::contacts::ContactPoint>::expose("ContactPoint");
+    }
   }
 }
-

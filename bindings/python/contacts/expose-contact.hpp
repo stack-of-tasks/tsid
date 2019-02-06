@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 CNRS
+// Copyright (c) 2018 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -18,19 +18,22 @@
 #ifndef __tsid_python_expose_contact_hpp__
 #define __tsid_python_expose_contact_hpp__
 
-#include "tsid/bindings/python/contacts/contact.hpp"
+#include "tsid/bindings/python/contacts/contact-6d.hpp"
+#include "tsid/bindings/python/contacts/contact-point.hpp"
 
 namespace tsid
 {
   namespace python
   {
     void exposeContact6d();
+    void exposeContactPoint();
+
     inline void exposeContact()
     {
       exposeContact6d();
-
+      exposeContactPoint();
     }
-    
+
   } // namespace python
 } // namespace tsid
 #endif // ifndef __tsid_python_expose_contact_hpp__

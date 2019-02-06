@@ -153,7 +153,6 @@ namespace tsid
                               const Model::FrameIndex index,
                               Data::Matrix6x & J) const;
       
-      
     protected:
       
       void updateMd();

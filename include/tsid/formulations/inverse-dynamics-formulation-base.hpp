@@ -18,6 +18,7 @@
 #ifndef __invdyn_inverse_dynamics_formulation_base_hpp__
 #define __invdyn_inverse_dynamics_formulation_base_hpp__
 
+#include "tsid/deprecation.hpp"
 #include "tsid/math/fwd.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
 #include "tsid/tasks/task-actuation.hpp"
@@ -81,7 +82,19 @@ namespace tsid
     virtual bool updateTaskWeight(const std::string & task_name,
                                   double weight) = 0;
 
-    virtual bool addRigidContact(ContactBase & contact) = 0;
+    /**
+     * @brief Add a rigid contact constraint to the model, introducing the associated reaction forces
+     *        as problem variables.
+     * @param contact The contact constraint to add
+     * @param force_regularization_weight The weight of the force regularization task
+     * @param motion_weight The weight of the motion task (e.g., zero acceleration of contact points)
+     * @param motion_priority_level Priority level of the motion task
+     * @return True if everything went fine, false otherwise
+     */
+    virtual bool addRigidContact(ContactBase & contact, double force_regularization_weight,
+                                 double motion_weight=1.0, unsigned int motion_priority_level=0) = 0;
+
+    DEPRECATED virtual bool addRigidContact(ContactBase & contact);
 
     virtual bool removeTask(const std::string & taskName,
                             double transition_duration=0.0) = 0;

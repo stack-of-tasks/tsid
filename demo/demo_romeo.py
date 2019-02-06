@@ -27,7 +27,7 @@ lf_frame_name = "LAnkleRoll"        # left foot frame name
 contactNormal = np.matrix([0., 0., 1.]).T   # direction of the normal to the contact surface
 w_com = 1.0                     # weight of center of mass task
 w_posture = 1e-3                # weight of joint posture task
-w_forceRef = 1e-5               # weight of force regularization task
+w_forceReg = 1e-5               # weight of force regularization task
 w_RF = 1.0                      # weight of right foot motion task
 kp_contact = 30.0               # proportional gain of contact constraint
 kp_com = 30.0                   # proportional gain of center of mass task
@@ -61,7 +61,7 @@ cl = gepetto.corbaserver.Client()
 gui = cl.gui
 robot_display.initDisplay(loadModel=True)
 
-q = se3.getNeutralConfigurationFromSrdf(robot.model(), srdf, False)
+q = se3.getNeutralConfiguration(robot.model(), srdf, False)
 q[2] += 0.84
 v = np.matrix(np.zeros(robot.nv)).transpose()
 
@@ -80,19 +80,19 @@ contact_Point = np.matrix(np.ones((3,4)) * lz)
 contact_Point[0, :] = [-lxn, -lxn, lxp, lxp]
 contact_Point[1, :] = [-lyn, lyp, -lyn, lyp]
 
-contactRF =tsid.Contact6d("contact_rfoot", robot, rf_frame_name, contact_Point, contactNormal, mu, fMin, fMax, w_forceRef)
+contactRF =tsid.Contact6d("contact_rfoot", robot, rf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
 contactRF.setKp(kp_contact * np.matrix(np.ones(6)).transpose())
 contactRF.setKd(2.0 * np.sqrt(kp_contact) * np.matrix(np.ones(6)).transpose())
 H_rf_ref = robot.position(data, robot.model().getJointId(rf_frame_name))
 contactRF.setReference(H_rf_ref)
-invdyn.addRigidContact(contactRF)
+invdyn.addRigidContact(contactRF, w_forceReg)
 
-contactLF =tsid.Contact6d("contact_lfoot", robot, lf_frame_name, contact_Point, contactNormal, mu, fMin, fMax, w_forceRef)
+contactLF =tsid.Contact6d("contact_lfoot", robot, lf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
 contactLF.setKp(kp_contact * np.matrix(np.ones(6)).transpose())
 contactLF.setKd(2.0 * np.sqrt(kp_contact) * np.matrix(np.ones(6)).transpose())
 H_lf_ref = robot.position(data, robot.model().getJointId(lf_frame_name))
 contactLF.setReference(H_lf_ref)
-invdyn.addRigidContact(contactLF)
+invdyn.addRigidContact(contactLF, w_forceReg)
 
 comTask = tsid.TaskComEquality("task-com", robot)
 comTask.setKp(kp_com * np.matrix(np.ones(3)).transpose())

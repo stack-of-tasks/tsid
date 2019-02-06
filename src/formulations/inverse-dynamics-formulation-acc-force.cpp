@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -225,7 +225,10 @@ bool InverseDynamicsFormulationAccForce::updateTaskWeight(const std::string & ta
 }
 
 
-bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact)
+bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact, 
+                                                         double force_regularization_weight,
+                                                         double motion_weight,
+                                                         unsigned int motionPriorityLevel)
 {
   ContactLevel *cl = new ContactLevel(contact);
   cl->index = m_k;
@@ -235,7 +238,7 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact)
 
   const ConstraintBase & motionConstr = contact.getMotionConstraint();
   cl->motionConstraint = new ConstraintEquality(contact.name(), motionConstr.rows(), m_v+m_k);
-  m_hqpData[0].push_back(make_pair<double, ConstraintBase*>(1.0, cl->motionConstraint));
+  m_hqpData[motionPriorityLevel].push_back(make_pair<double, ConstraintBase*>(motion_weight, cl->motionConstraint));
 
   const ConstraintInequality & forceConstr = contact.getForceConstraint();
   cl->forceConstraint = new ConstraintInequality(contact.name(), forceConstr.rows(), m_v+m_k);
@@ -243,13 +246,18 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact)
 
   const ConstraintEquality & forceRegConstr = contact.getForceRegularizationTask();
   cl->forceRegTask = new ConstraintEquality(contact.name(), forceRegConstr.rows(), m_v+m_k);
-  m_hqpData[1].push_back(make_pair<double, ConstraintBase*>(
-                           contact.getForceRegularizationWeight(), cl->forceRegTask));
+  m_hqpData[1].push_back(make_pair<double, ConstraintBase*>(force_regularization_weight, cl->forceRegTask));
 
   m_eq += motionConstr.rows();
   m_in += forceConstr.rows();
 
   return true;
+}
+
+bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact)
+{
+    std::cout<<"[InverseDynamicsFormulationAccForce] Method addRigidContact(ContactBase) is deprecated. You should use addRigidContact(ContactBase, double) instead.\n";
+    return addRigidContact(contact, 1e-5);
 }
 
 
@@ -293,7 +301,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     cl->motionConstraint->matrix().leftCols(m_v) = mc.matrix();
     cl->motionConstraint->vector() = mc.vector();
 
-    const Matrix & T = cl->contact.getForceGeneratorMatrix(); // 6x12
+    const Matrix & T = cl->contact.getForceGeneratorMatrix(); // e.g., 6x12 for a 6d contact
     m_Jc.middleRows(cl->index, m).noalias() = T.transpose()*mc.matrix();
 
     const ConstraintInequality & fc = cl->contact.computeForceTask(time, q, v, m_data);
@@ -306,18 +314,18 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     cl->forceRegTask->vector() = fr.vector();
 
     // update weight of force regularization task
-    ConstraintLevel::iterator itt;
-    for(unsigned int i=1; i<m_hqpData.size(); i++)
-    {
-      for(itt=m_hqpData[i].begin(); itt!=m_hqpData[i].end(); itt++)
-      {
-        if(itt->second->name() == cl->contact.name())
-        {
-          itt->first = cl->contact.getForceRegularizationWeight();
-          break;
-        }
-      }
-    }
+//    ConstraintLevel::iterator itt;
+//    for(unsigned int i=1; i<m_hqpData.size(); i++)
+//    {
+//      for(itt=m_hqpData[i].begin(); itt!=m_hqpData[i].end(); itt++)
+//      {
+//        if(itt->second->name() == cl->contact.name())
+//        {
+//          itt->first = cl->contact.getForceRegularizationWeight();
+//          break;
+//        }
+//      }
+//    }
   }
 
   const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-6);
