@@ -59,6 +59,7 @@ namespace tsid
         .def("updateTaskWeight", &InvDynPythonVisitor::updateTaskWeight, bp::args("task_name", "weight"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6d, bp::args("contact"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContactPoint, bp::args("contact"))
+        .def("addRigidContact", &InvDynPythonVisitor::addRigidContactPointWithPriorityLevel, bp::args("contact", "priority_level"))
         .def("removeTask", &InvDynPythonVisitor::removeTask, bp::args("task_name", "duration"))
         .def("removeRigidContact", &InvDynPythonVisitor::removeRigidContact, bp::args("contact_name", "duration"))
         .def("computeProblemData", &InvDynPythonVisitor::computeProblemData, bp::args("time", "q", "v"))
@@ -91,7 +92,10 @@ namespace tsid
       }
       static bool addRigidContactPoint(T& self, contacts::ContactPoint & contact){
         return self.addRigidContact(contact);
-      }  
+      }
+      static bool addRigidContactPointWithPriorityLevel(T& self, contacts::ContactPoint & contact, const bool priority_level){
+        return self.addRigidContact(contact, priority_level);
+      }
       static bool removeTask(T& self, const std::string & task_name, double transition_duration){
         return self.removeTask(task_name, transition_duration);
       }  
