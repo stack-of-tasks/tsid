@@ -18,7 +18,7 @@
 #ifndef __invdyn_solvers_fwd_hpp__
 #define __invdyn_solvers_fwd_hpp__
 
-#include "tsid/config.hh"
+#include "tsid/config.hpp"
 #include "tsid/math/fwd.hpp"
 #include <pinocchio/container/aligned-vector.hpp>
 
