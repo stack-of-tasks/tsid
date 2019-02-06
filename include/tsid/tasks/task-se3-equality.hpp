@@ -63,7 +63,7 @@ namespace tsid
       const Vector & getDesiredAcceleration() const;
       Vector getAcceleration(ConstRefVector dv) const;
 
-      virtual void setMask(math::ConstRefVector mask) override;
+      virtual void setMask(math::ConstRefVector mask);
 
       const Vector & position_error() const;
       const Vector & velocity_error() const;
