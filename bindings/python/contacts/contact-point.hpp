@@ -64,7 +64,9 @@ namespace tsid
         .add_property("Kd", bp::make_function(&ContactPointPythonVisitor::Kd, bp::return_value_policy<bp::copy_const_reference>()))
         .def("setKp", &ContactPointPythonVisitor::setKp, bp::arg("Kp"))
         .def("setKd", &ContactPointPythonVisitor::setKd, bp::arg("Kd"))
-        
+
+        .def("useLocalFrame", &ContactPointPythonVisitor::useLocalFrame, bp::arg("local_frame"))
+
         .def("setContactNormal", &ContactPointPythonVisitor::setContactNormal, bp::args("vec"))
         .def("setFrictionCoefficient", &ContactPointPythonVisitor::setFrictionCoefficient, bp::args("friction_coeff"))
         .def("setMinNormalForce", &ContactPointPythonVisitor::setMinNormalForce, bp::args("min_force"))
@@ -96,6 +98,9 @@ namespace tsid
         return cons;
       }
 
+      static void useLocalFrame (ContactPoint & self, const bool local_frame) {
+        self.useLocalFrame(local_frame);
+      }
       static const Eigen::MatrixXd & getForceGeneratorMatrix(ContactPoint & self){
         return self.getForceGeneratorMatrix();
       }
