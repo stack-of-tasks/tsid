@@ -290,6 +290,7 @@ bool InverseDynamicsFormulationAccForce::updateRigidContactWeights(const std::st
         }
       }
     }
+    return false;
 }
 
 

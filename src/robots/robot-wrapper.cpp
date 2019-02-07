@@ -72,7 +72,7 @@ namespace tsid
             = data.M.transpose().triangularView<Eigen::StrictlyLower>();
       // computeAllTerms does not compute the com acceleration, so we need to call centerOfMass
       pinocchio::centerOfMass(m_model, data, 2, false);
-      pinocchio::framesForwardKinematics(m_model, data);
+      pinocchio::updateFramePlacements(m_model, data);
       pinocchio::centerOfMass(m_model, data, q, v, Eigen::VectorXd::Zero(nv()));
     }
     
@@ -170,14 +170,14 @@ namespace tsid
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      return pinocchio::getJacobian<pinocchio::WORLD>(m_model, data, index, J);
+      return pinocchio::getJointJacobian(m_model, data, index, pinocchio::WORLD, J);
     }
     
     void RobotWrapper::jacobianLocal(const Data & data,
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      return pinocchio::getJacobian<pinocchio::LOCAL>(m_model, data, index, J);
+      return pinocchio::getJointJacobian(m_model, data, index, pinocchio::LOCAL, J);
     }
     
     SE3 RobotWrapper::framePosition(const Data & data,
@@ -249,14 +249,14 @@ namespace tsid
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      return pinocchio::getJacobian<pinocchio::WORLD>(m_model, data, m_model.frames[index].parent, J);
+      return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::WORLD, J);
     }
     
     void RobotWrapper::frameJacobianLocal(const Data & data,
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      return pinocchio::getFrameJacobian(m_model, data, index, J);
+      return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::LOCAL, J);
     }
     
     //    const Vector3 & com(Data & data,const Vector & q,

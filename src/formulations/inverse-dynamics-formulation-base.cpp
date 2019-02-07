@@ -31,8 +31,7 @@ namespace tsid
   
   bool InverseDynamicsFormulationBase::addRigidContact(ContactBase & contact)
   {
-
-      addRigidContact(contact, 1e-5);
+    return addRigidContact(contact, 1e-5);
   }
 }
 
