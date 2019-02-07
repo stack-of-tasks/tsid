@@ -72,7 +72,7 @@ namespace tsid
             = data.M.transpose().triangularView<Eigen::StrictlyLower>();
       // computeAllTerms does not compute the com acceleration, so we need to call centerOfMass
       se3::centerOfMass<true,true,true>(m_model, data, false);
-      se3::framesForwardKinematics(m_model, data);
+      se3::updateFramePlacements(m_model, data);
       se3::centerOfMass(m_model, data, q, v, Eigen::VectorXd::Zero(nv()));
     }
     
@@ -170,14 +170,14 @@ namespace tsid
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      return se3::getJacobian<se3::WORLD>(m_model, data, index, J);
+      return se3::getJointJacobian<se3::WORLD>(m_model, data, index, J);
     }
     
     void RobotWrapper::jacobianLocal(const Data & data,
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      return se3::getJacobian<se3::LOCAL>(m_model, data, index, J);
+      return se3::getJointJacobian<se3::LOCAL>(m_model, data, index, J);
     }
     
     SE3 RobotWrapper::framePosition(const Data & data,
@@ -249,14 +249,14 @@ namespace tsid
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      return se3::getJacobian<se3::WORLD>(m_model, data, m_model.frames[index].parent, J);
+      return se3::getJointJacobian<se3::WORLD>(m_model, data, m_model.frames[index].parent, J);
     }
     
     void RobotWrapper::frameJacobianLocal(const Data & data,
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      return se3::getFrameJacobian(m_model, data, index, J);
+      return se3::getFrameJacobian<se3::LOCAL>(m_model, data, index, J);
     }
     
     //    const Vector3 & com(Data & data,const Vector & q,
