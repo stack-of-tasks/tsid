@@ -96,6 +96,17 @@ namespace tsid
 
     DEPRECATED virtual bool addRigidContact(ContactBase & contact);
 
+    /**
+     * @brief Update the weights associated to the specified contact
+     * @param contact_name Name of the contact to update
+     * @param force_regularization_weight Weight of the force regularization task, if negative it is not updated
+     * @param motion_weight Weight of the motion task, if negative it is not update
+     * @return True if everything went fine, false otherwise
+     */
+    virtual bool updateRigidContactWeights(const std::string & contact_name,
+                                           double force_regularization_weight,
+                                           double motion_weight=-1.0) = 0;
+
     virtual bool removeTask(const std::string & taskName,
                             double transition_duration=0.0) = 0;
 

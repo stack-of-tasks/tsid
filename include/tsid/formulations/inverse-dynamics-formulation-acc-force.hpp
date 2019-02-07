@@ -116,6 +116,10 @@ namespace tsid
 
     DEPRECATED bool addRigidContact(ContactBase & contact);
 
+    bool updateRigidContactWeights(const std::string & contact_name,
+                                   double force_regularization_weight,
+                                   double motion_weight=-1.0);
+
     bool removeTask(const std::string & taskName,
                     double transition_duration=0.0);
 

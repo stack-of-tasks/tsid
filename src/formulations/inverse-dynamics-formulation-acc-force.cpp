@@ -237,15 +237,15 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact,
   resizeHqpData();
 
   const ConstraintBase & motionConstr = contact.getMotionConstraint();
-  cl->motionConstraint = new ConstraintEquality(contact.name(), motionConstr.rows(), m_v+m_k);
+  cl->motionConstraint = new ConstraintEquality(contact.name()+"_motion_task", motionConstr.rows(), m_v+m_k);
   m_hqpData[motionPriorityLevel].push_back(make_pair<double, ConstraintBase*>(motion_weight, cl->motionConstraint));
 
   const ConstraintInequality & forceConstr = contact.getForceConstraint();
-  cl->forceConstraint = new ConstraintInequality(contact.name(), forceConstr.rows(), m_v+m_k);
+  cl->forceConstraint = new ConstraintInequality(contact.name()+"_force_constraint", forceConstr.rows(), m_v+m_k);
   m_hqpData[0].push_back(make_pair<double, ConstraintBase*>(1.0, cl->forceConstraint));
 
   const ConstraintEquality & forceRegConstr = contact.getForceRegularizationTask();
-  cl->forceRegTask = new ConstraintEquality(contact.name(), forceRegConstr.rows(), m_v+m_k);
+  cl->forceRegTask = new ConstraintEquality(contact.name()+"_force_reg_task", forceRegConstr.rows(), m_v+m_k);
   m_hqpData[1].push_back(make_pair<double, ConstraintBase*>(force_regularization_weight, cl->forceRegTask));
 
   m_eq += motionConstr.rows();
@@ -258,6 +258,38 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact)
 {
     std::cout<<"[InverseDynamicsFormulationAccForce] Method addRigidContact(ContactBase) is deprecated. You should use addRigidContact(ContactBase, double) instead.\n";
     return addRigidContact(contact, 1e-5);
+}
+
+bool InverseDynamicsFormulationAccForce::updateRigidContactWeights(const std::string & contact_name,
+                                                                   double force_regularization_weight,
+                                                                   double motion_weight)
+{
+    // update weight of force regularization task
+    ConstraintLevel::iterator itt;
+    bool force_reg_task_found = false;
+    bool motion_task_found = false;
+    for(unsigned int i=1; i<m_hqpData.size(); i++)
+    {
+      for(itt=m_hqpData[i].begin(); itt!=m_hqpData[i].end(); itt++)
+      {
+        if(itt->second->name() == contact_name+"_force_reg_task")
+        {
+          if(force_regularization_weight>=0.0)
+            itt->first = force_regularization_weight;
+          if(motion_task_found)
+            return true;
+          force_reg_task_found = true;
+        }
+        else if(itt->second->name() == contact_name+"_motion_task")
+        {
+          if(motion_weight>=0.0)
+            itt->first = motion_weight;
+          if(force_reg_task_found)
+            return true;
+          motion_task_found = true;
+        }
+      }
+    }
 }
 
 
@@ -312,20 +344,6 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     const ConstraintEquality & fr = cl->contact.computeForceRegularizationTask(time, q, v, m_data);
     cl->forceRegTask->matrix().middleCols(m_v+cl->index, m) = fr.matrix();
     cl->forceRegTask->vector() = fr.vector();
-
-    // update weight of force regularization task
-//    ConstraintLevel::iterator itt;
-//    for(unsigned int i=1; i<m_hqpData.size(); i++)
-//    {
-//      for(itt=m_hqpData[i].begin(); itt!=m_hqpData[i].end(); itt++)
-//      {
-//        if(itt->second->name() == cl->contact.name())
-//        {
-//          itt->first = cl->contact.getForceRegularizationWeight();
-//          break;
-//        }
-//      }
-//    }
   }
 
   const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-6);
@@ -399,6 +417,8 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
 
   return m_hqpData;
 }
+
+
 
 bool InverseDynamicsFormulationAccForce::decodeSolution(const HQPOutput & sol)
 {
@@ -536,13 +556,13 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
     return false;
   }
 
-  bool first_constraint_found = removeFromHqpData(contactName);
+  bool first_constraint_found = removeFromHqpData(contactName+"_motion_task");
   assert(first_constraint_found);
 
-  bool second_constraint_found = removeFromHqpData(contactName);
+  bool second_constraint_found = removeFromHqpData(contactName+"_force_constraint");
   assert(second_constraint_found);
 
-  bool third_constraint_found = removeFromHqpData(contactName);
+  bool third_constraint_found = removeFromHqpData(contactName+"_force_reg_task");
   assert(third_constraint_found);
 
   bool contact_found = false;

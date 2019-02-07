@@ -8,6 +8,10 @@ import os
 import gepetto.corbaserver
 import time
 import commands
+import sys
+sys.path += [os.getcwd()+'/../exercizes']
+import plot_utils as plut
+import matplotlib.pyplot as plt
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
@@ -116,8 +120,8 @@ com_acc_ref = matlib.empty((3, N_SIMULATION))*nan
 com_acc_des = matlib.empty((3, N_SIMULATION))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_err
 
 offset     = robot.com(data) + np.matrix([0.0, 0.0, 0.0]).T
-amp        = np.matrix([0.0, 0.03, 0.05]).T
-two_pi_f             = 2*np.pi*np.matrix([0.0, 0.5, 0.7]).T
+amp        = np.matrix([0.0, 0.03, 0.0]).T
+two_pi_f             = 2*np.pi*np.matrix([0.0, 2.0, 0.7]).T
 two_pi_f_amp         = np.multiply(two_pi_f,amp)
 two_pi_f_squared_amp = np.multiply(two_pi_f, two_pi_f_amp)
 
@@ -171,3 +175,36 @@ for i in range(0, N_SIMULATION):
 
     time_spent = time.time() - time_start
     if(time_spent < dt): time.sleep(dt-time_spent)
+
+# PLOT STUFF
+time = np.arange(0.0, N_SIMULATION*dt, dt)
+
+(f, ax) = plut.create_empty_figure(3,1)
+for i in range(3):
+    ax[i].plot(time, com_pos[i,:].A1, label='CoM '+str(i))
+    ax[i].plot(time, com_pos_ref[i,:].A1, 'r:', label='CoM Ref '+str(i))
+    ax[i].set_xlabel('Time [s]')
+    ax[i].set_ylabel('CoM [m]')
+    leg = ax[i].legend()
+    leg.get_frame().set_alpha(0.5)
+
+(f, ax) = plut.create_empty_figure(3,1)
+for i in range(3):
+    ax[i].plot(time, com_vel[i,:].A1, label='CoM Vel '+str(i))
+    ax[i].plot(time, com_vel_ref[i,:].A1, 'r:', label='CoM Vel Ref '+str(i))
+    ax[i].set_xlabel('Time [s]')
+    ax[i].set_ylabel('CoM Vel [m/s]')
+    leg = ax[i].legend()
+    leg.get_frame().set_alpha(0.5)
+    
+(f, ax) = plut.create_empty_figure(3,1)
+for i in range(3):
+    ax[i].plot(time, com_acc[i,:].A1, label='CoM Acc '+str(i))
+    ax[i].plot(time, com_acc_ref[i,:].A1, 'r:', label='CoM Acc Ref '+str(i))
+    ax[i].plot(time, com_acc_des[i,:].A1, 'g--', label='CoM Acc Des '+str(i))
+    ax[i].set_xlabel('Time [s]')
+    ax[i].set_ylabel('CoM Acc [m/s^2]')
+    leg = ax[i].legend()
+    leg.get_frame().set_alpha(0.5)
+    
+plt.show()
