@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_6d )
   string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
   RobotWrapper robot(urdfFileName,
                      package_dirs,
-                     se3::JointModelFreeFlyer(),
+                     pinocchio::JointModelFreeFlyer(),
                      false);
 
   BOOST_REQUIRE(robot.model().existFrame(frameName));
@@ -77,12 +77,12 @@ BOOST_AUTO_TEST_CASE ( test_contact_6d )
   BOOST_CHECK(contact.Kp().isApprox(Kp));
   BOOST_CHECK(contact.Kd().isApprox(Kd));
 
-  Vector q = robot.model().neutralConfiguration;
+  Vector q = neutral(robot.model());
   Vector v = Vector::Zero(robot.nv());
-  se3::Data data(robot.model());
+  pinocchio::Data data(robot.model());
   robot.computeAllTerms(data, q, v);
 
-  se3::SE3 H_ref = robot.position(data, robot.model().getJointId(frameName));
+  pinocchio::SE3 H_ref = robot.position(data, robot.model().getJointId(frameName));
   contact.setReference(H_ref);
 
   double t = 0.0;

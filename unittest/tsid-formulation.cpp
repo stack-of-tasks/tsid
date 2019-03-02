@@ -101,21 +101,21 @@ class StandardRomeoInvDynCtrl
   TaskJointPosture * postureTask;
   Vector q;
   Vector v;
-  se3::SE3 H_rf_ref;
-  se3::SE3 H_lf_ref;
+  pinocchio::SE3 H_rf_ref;
+  pinocchio::SE3 H_lf_ref;
 
   StandardRomeoInvDynCtrl() : t(0.)
   {
     vector<string> package_dirs;
     package_dirs.push_back(romeo_model_path);
     const string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
-    robot = new RobotWrapper(urdfFileName, package_dirs, se3::JointModelFreeFlyer());
-
+    robot = new RobotWrapper(urdfFileName, package_dirs, pinocchio::JointModelFreeFlyer());
+    
     const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
-    se3::srdf::getNeutralConfigurationFromSrdf(robot->model(),srdfFileName);
-
+    pinocchio::srdf::loadReferenceConfigurations(robot->model(),srdfFileName,false);
+    
     const unsigned int nv = robot->nv();
-    q = robot->model().neutralConfiguration;
+    q = neutral(robot->model());
     std::cout << "q: " << q.transpose() << std::endl;
     q(2) += 0.84;
     v = Vector::Zero(nv);
@@ -125,7 +125,7 @@ class StandardRomeoInvDynCtrl
     // Create the inverse-dynamics formulation
     tsid = new InverseDynamicsFormulationAccForce("tsid", *robot);
     tsid->computeProblemData(t, q, v);
-    const se3::Data & data = tsid->data();
+    const pinocchio::Data & data = tsid->data();
 
     // Add the contact constraints
     Matrix3x contactPoints(3,4);
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
                                                        romeo_inv_dyn.rf_frame_name);
   rightFootTask->Kp(kp_RF*Vector::Ones(6));
   rightFootTask->Kd(2.0*rightFootTask->Kp().cwiseSqrt());
-  se3::SE3 H_rf_ref = robot.position(tsid->data(),
+  pinocchio::SE3 H_rf_ref = robot.position(tsid->data(),
                                      robot.model().getJointId(romeo_inv_dyn.rf_frame_name));
   tsid->addMotionTask(*rightFootTask, w_RF, 1);
 
@@ -298,7 +298,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
     }
 
     v += dt*dv;
-    q = se3::integrate(robot.model(), q, dt*v);
+    q = pinocchio::integrate(robot.model(), q, dt*v);
     t += dt;
 
     REQUIRE_FINITE(dv.transpose());
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
       PRINT_VECTOR(dv);
       Vector rf_pos = contactRF.getMotionTask().position();
       Vector rf_pos_ref = contactRF.getMotionTask().position_ref();
-      se3::SE3 M_rf, M_rf_ref;
+      pinocchio::SE3 M_rf, M_rf_ref;
       vectorToSE3(rf_pos, M_rf);
       vectorToSE3(rf_pos_ref, M_rf_ref);
       cout<<"RF pos:     "<<rf_pos.transpose()<<endl;
@@ -460,7 +460,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
 //    CHECK_LESS_THAN((M_u*dv + h_u - J_u.transpose()*f).norm(), 1e-6);
 
     v += dt*dv;
-    q = se3::integrate(robot.model(), q, dt*v);
+    q = pinocchio::integrate(robot.model(), q, dt*v);
     t += dt;
 
     REQUIRE_FINITE(dv.transpose());
@@ -711,7 +711,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
 
     dv = sol.x.head(nv);
     v += dt*dv;
-    q = se3::integrate(robot.model(), q, dt*v);
+    q = pinocchio::integrate(robot.model(), q, dt*v);
     t += dt;
 
     REQUIRE_FINITE(dv.transpose());
