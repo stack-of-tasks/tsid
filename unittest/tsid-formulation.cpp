@@ -499,12 +499,12 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
   string urdfFileName = package_dirs[0] + "/urdf/quadruped.urdf";
   RobotWrapper robot(urdfFileName,
                      package_dirs,
-                     se3::JointModelFreeFlyer(),
+                     pinocchio::JointModelFreeFlyer(),
                      false);
 
   BOOST_REQUIRE(robot.model().existFrame(frameName));
 
-  Vector q = robot.model().neutralConfiguration;
+  Vector q = neutral(robot.model());
   Vector v = Vector::Zero(robot.nv());
   const unsigned int nv = robot.nv();
 
@@ -521,11 +521,11 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
   InverseDynamicsFormulationAccForce *tsid =
       new InverseDynamicsFormulationAccForce("tsid", robot);
   tsid->computeProblemData(t, q, v);
-  const se3::Data & data = tsid->data();
+  const pinocchio::Data & data = tsid->data();
 
   // Place the robot onto the ground.
 
-  se3::SE3 fl_contact = robot.framePosition(data, robot.model().getFrameId("FL_contact"));
+  pinocchio::SE3 fl_contact = robot.framePosition(data, robot.model().getFrameId("FL_contact"));
   q[2] -= fl_contact.translation()(2);
 
   tsid->computeProblemData(t, q, v);
@@ -612,7 +612,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
     dv = sol->x.head(nv);
 
     v += dt*dv;
-    q = se3::integrate(robot.model(), q, dt*v);
+    q = pinocchio::integrate(robot.model(), q, dt*v);
     t += dt;
 
     REQUIRE_FINITE(dv.transpose());

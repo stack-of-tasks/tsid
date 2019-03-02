@@ -171,22 +171,14 @@ namespace tsid
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-<<<<<<< 7036c61c0ac04313b92b5f31544ab4986d80bba0
-      return se3::getJointJacobian<se3::WORLD>(m_model, data, index, J);
-=======
       return pinocchio::getFrameJacobian(m_model, data, index,pinocchio::WORLD,J);
->>>>>>> [pinocchio-v2.1] Apply pinocchio v2.1.0 API changes.
     }
     
     void RobotWrapper::jacobianLocal(const Data & data,
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-<<<<<<< 7036c61c0ac04313b92b5f31544ab4986d80bba0
-      return se3::getJointJacobian<se3::LOCAL>(m_model, data, index, J);
-=======
       return pinocchio::getFrameJacobian(m_model, data, index,pinocchio::LOCAL, J);
->>>>>>> [pinocchio-v2.1] Apply pinocchio v2.1.0 API changes.
     }
     
     SE3 RobotWrapper::framePosition(const Data & data,
@@ -258,22 +250,14 @@ namespace tsid
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-<<<<<<< 7036c61c0ac04313b92b5f31544ab4986d80bba0
-      return se3::getJointJacobian<se3::WORLD>(m_model, data, m_model.frames[index].parent, J);
-=======
       return pinocchio::getFrameJacobian(m_model, data, m_model.frames[index].parent,pinocchio::WORLD, J);
->>>>>>> [pinocchio-v2.1] Apply pinocchio v2.1.0 API changes.
     }
     
     void RobotWrapper::frameJacobianLocal(const Data & data,
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-<<<<<<< 7036c61c0ac04313b92b5f31544ab4986d80bba0
-      return se3::getFrameJacobian<se3::LOCAL>(m_model, data, index, J);
-=======
       return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::LOCAL,J);
->>>>>>> [pinocchio-v2.1] Apply pinocchio v2.1.0 API changes.
     }
     
     //    const Vector3 & com(Data & data,const Vector & q,
