@@ -81,17 +81,17 @@ namespace tsid
         return name;
       }
 
-      static math::ConstraintEquality computeMotionTask(Contact6d & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, const se3::Data & data){
+      static math::ConstraintEquality computeMotionTask(Contact6d & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, const pinocchio::Data & data){
         self.computeMotionTask(t, q, v, data);
         math::ConstraintEquality cons(self.getMotionConstraint().name(), self.getMotionConstraint().matrix(), self.getMotionConstraint().vector());
         return cons;
       }
-      static math::ConstraintInequality computeForceTask(Contact6d & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, const se3::Data & data){
+      static math::ConstraintInequality computeForceTask(Contact6d & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, const pinocchio::Data & data){
         self.computeForceTask(t, q, v, data);
         math::ConstraintInequality cons(self.getForceConstraint().name(), self.getForceConstraint().matrix(), self.getForceConstraint().lowerBound(), self.getForceConstraint().upperBound());
         return cons;
       }
-      static math::ConstraintEquality computeForceRegularizationTask(Contact6d & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, const se3::Data & data){
+      static math::ConstraintEquality computeForceRegularizationTask(Contact6d & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, const pinocchio::Data & data){
         self.computeForceRegularizationTask(t, q, v, data);
         math::ConstraintEquality cons(self.getForceRegularizationTask().name(), self.getForceRegularizationTask().matrix(), self.getForceRegularizationTask().vector());
         return cons;
@@ -127,7 +127,7 @@ namespace tsid
       static bool setMaxNormalForce (Contact6d & self, const double maxNormalForce){
         return self.setMaxNormalForce(maxNormalForce);
       }
-      static void setReference(Contact6d & self, const se3::SE3 & ref){
+      static void setReference(Contact6d & self, const pinocchio::SE3 & ref){
         self.setReference(ref);
       }
       static void setForceReference(Contact6d & self, const::Eigen::VectorXd f_ref){
