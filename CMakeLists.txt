@@ -79,7 +79,7 @@ ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.0") # Eigen::Ref appeared from 3.2.0
 #  - If it isn't, nothing happens and the subsequent pkg-config check takes care of everything.
 #find_package(catkin QUIET COMPONENTS pinocchio)
 
-ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.3.0")
+ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0.0")
 
 SET(BOOST_REQUIERED_COMPONENTS filesystem system)
 SET(BOOST_BUILD_COMPONENTS unit_test_framework)
