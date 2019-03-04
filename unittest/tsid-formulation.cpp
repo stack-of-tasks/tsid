@@ -112,6 +112,7 @@ class StandardRomeoInvDynCtrl
     robot = new RobotWrapper(urdfFileName, package_dirs, pinocchio::JointModelFreeFlyer());
     
     const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
+
     pinocchio::srdf::loadReferenceConfigurations(robot->model(),srdfFileName,false);
     
     const unsigned int nv = robot->nv();

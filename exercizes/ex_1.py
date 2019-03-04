@@ -52,7 +52,7 @@ robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
 srdf = path + '/srdf/romeo_collision.srdf'
 
 # for gepetto viewer
-robot_display = se3.RobotWrapper(urdf, [path, ], se3.JointModelFreeFlyer())
+robot_display = se3.RobotWrapper.BuildFromURDF(urdf, [path, ], se3.JointModelFreeFlyer())
 l = commands.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
 if int(l[1]) == 0:
     os.system('gepetto-gui &')
@@ -61,7 +61,7 @@ cl = gepetto.corbaserver.Client()
 gui = cl.gui
 robot_display.initDisplay(loadModel=True)
 
-q = se3.getNeutralConfigurationFromSrdf(robot.model(), srdf, False)
+q = se3.getNeutralConfiguration(robot.model(), srdf, False)
 q[2] += 0.84
 v = np.matrix(np.zeros(robot.nv)).T
 
@@ -80,19 +80,19 @@ contact_Point = np.matrix(np.ones((3,4)) * lz)
 contact_Point[0, :] = [-lxn, -lxn, lxp, lxp]
 contact_Point[1, :] = [-lyn, lyp, -lyn, lyp]
 
-contactRF =tsid.Contact6d("contact_rfoot", robot, rf_frame_name, contact_Point, contactNormal, mu, fMin, fMax, w_forceRef)
+contactRF =tsid.Contact6d("contact_rfoot", robot, rf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
 contactRF.setKp(kp_contact * matlib.ones(6).T)
 contactRF.setKd(2.0 * np.sqrt(kp_contact) * matlib.ones(6).T)
 H_rf_ref = robot.position(data, robot.model().getJointId(rf_frame_name))
 contactRF.setReference(H_rf_ref)
-invdyn.addRigidContact(contactRF)
+invdyn.addRigidContact(contactRF, w_forceRef)
 
-contactLF =tsid.Contact6d("contact_lfoot", robot, lf_frame_name, contact_Point, contactNormal, mu, fMin, fMax, w_forceRef)
+contactLF =tsid.Contact6d("contact_lfoot", robot, lf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
 contactLF.setKp(kp_contact * matlib.ones(6).T)
 contactLF.setKd(2.0 * np.sqrt(kp_contact) * matlib.ones(6).T)
 H_lf_ref = robot.position(data, robot.model().getJointId(lf_frame_name))
 contactLF.setReference(H_lf_ref)
-invdyn.addRigidContact(contactLF)
+invdyn.addRigidContact(contactLF, w_forceRef)
 
 comTask = tsid.TaskComEquality("task-com", robot)
 comTask.setKp(kp_com * matlib.ones(3).T)

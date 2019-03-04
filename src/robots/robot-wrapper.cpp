@@ -171,14 +171,14 @@ namespace tsid
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      return pinocchio::getFrameJacobian(m_model, data, index,pinocchio::WORLD,J);
+      return pinocchio::getJointJacobian(m_model, data, index, pinocchio::WORLD, J);
     }
     
     void RobotWrapper::jacobianLocal(const Data & data,
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      return pinocchio::getFrameJacobian(m_model, data, index,pinocchio::LOCAL, J);
+      return pinocchio::getJointJacobian(m_model, data, index, pinocchio::LOCAL, J);
     }
     
     SE3 RobotWrapper::framePosition(const Data & data,
@@ -250,14 +250,14 @@ namespace tsid
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      return pinocchio::getFrameJacobian(m_model, data, m_model.frames[index].parent,pinocchio::WORLD, J);
+      return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::WORLD, J);
     }
     
     void RobotWrapper::frameJacobianLocal(const Data & data,
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::LOCAL,J);
+      return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::LOCAL, J);
     }
     
     //    const Vector3 & com(Data & data,const Vector & q,

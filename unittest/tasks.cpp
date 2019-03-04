@@ -138,6 +138,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
   
   pinocchio::Data data(robot.model());
   const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
+
   pinocchio::srdf::loadReferenceConfigurations(robot.model(),srdfFileName,false);
   
   //  const unsigned int nv = robot.nv();
