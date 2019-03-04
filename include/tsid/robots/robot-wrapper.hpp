@@ -28,6 +28,7 @@
 #include <string>
 #include <vector>
 
+
 namespace tsid
 {
   namespace robots

@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
   const double dt = 0.001;
   MatrixXd Jpinv(robot.nv(), 6);
   double error, error_past=1e100;
-  VectorXd q = robot.model().neutralConfiguration;
+  VectorXd q = neutral(robot.model());
   VectorXd v = VectorXd::Zero(robot.nv());
   pinocchio::Data data(robot.model());
   for(int i=0; i<max_it; i++)
@@ -138,10 +138,11 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
   
   pinocchio::Data data(robot.model());
   const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
-  pinocchio::srdf::getNeutralConfigurationFromSrdf(robot.model(),srdfFileName);
+
+  pinocchio::srdf::loadReferenceConfigurations(robot.model(),srdfFileName,false);
   
   //  const unsigned int nv = robot.nv();
-  VectorXd q = robot.model().neutralConfiguration;
+  VectorXd q = neutral(robot.model());
   std::cout << "q: " << q.transpose() << std::endl;
   q(2) += 0.84;
   
@@ -234,7 +235,7 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
   const double dt = 0.001;
   MatrixXd Jpinv(robot.nv(), na);
   double error, error_past=1e100;
-  VectorXd q = robot.model().neutralConfiguration;
+  VectorXd q = neutral(robot.model());
   VectorXd v = VectorXd::Zero(robot.nv());
   pinocchio::Data data(robot.model());
   for(int i=0; i<max_it; i++)

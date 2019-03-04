@@ -112,10 +112,11 @@ class StandardRomeoInvDynCtrl
     robot = new RobotWrapper(urdfFileName, package_dirs, pinocchio::JointModelFreeFlyer());
     
     const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
-    pinocchio::srdf::getNeutralConfigurationFromSrdf(robot->model(),srdfFileName);
+
+    pinocchio::srdf::loadReferenceConfigurations(robot->model(),srdfFileName,false);
     
     const unsigned int nv = robot->nv();
-    q = robot->model().neutralConfiguration;
+    q = neutral(robot->model());
     std::cout << "q: " << q.transpose() << std::endl;
     q(2) += 0.84;
     v = Vector::Zero(nv);
@@ -504,7 +505,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
 
   BOOST_REQUIRE(robot.model().existFrame(frameName));
 
-  Vector q = robot.model().neutralConfiguration;
+  Vector q = neutral(robot.model());
   Vector v = Vector::Zero(robot.nv());
   const unsigned int nv = robot.nv();
 

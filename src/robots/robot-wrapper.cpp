@@ -71,8 +71,9 @@ namespace tsid
       data.M.triangularView<Eigen::StrictlyLower>()
             = data.M.transpose().triangularView<Eigen::StrictlyLower>();
       // computeAllTerms does not compute the com acceleration, so we need to call centerOfMass
-      pinocchio::centerOfMass(m_model, data, 2, false);
-      pinocchio::updateFramePlacements(m_model, data);
+      // Check this line, calling with zero acceleration at the last phase compute the CoM acceleration.
+      //      pinocchio::centerOfMass(m_model, data, q,v,false);
+      pinocchio::framesForwardKinematics(m_model, data);
       pinocchio::centerOfMass(m_model, data, q, v, Eigen::VectorXd::Zero(nv()));
     }
     

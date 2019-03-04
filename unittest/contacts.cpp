@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_6d )
   BOOST_CHECK(contact.Kp().isApprox(Kp));
   BOOST_CHECK(contact.Kd().isApprox(Kd));
 
-  Vector q = robot.model().neutralConfiguration;
+  Vector q = neutral(robot.model());
   Vector v = Vector::Zero(robot.nv());
   pinocchio::Data data(robot.model());
   robot.computeAllTerms(data, q, v);
