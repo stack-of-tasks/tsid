@@ -42,7 +42,7 @@ namespace tsid
       typedef tasks::TaskSE3Equality TaskSE3Equality;
       typedef math::ConstraintInequality ConstraintInequality;
       typedef math::ConstraintEquality ConstraintEquality;
-      typedef se3::SE3 SE3;
+      typedef pinocchio::SE3 SE3;
 
       ContactPoint(const std::string & name,
                 RobotWrapper & robot,

@@ -47,7 +47,7 @@ vector.extend(item for item in path)
 robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
 
 # for gepetto viewer
-robot_display = se3.RobotWrapper(urdf, [path, ], se3.JointModelFreeFlyer())
+robot_display = se3.RobotWrapper.BuildFromURDF(urdf, [path, ], se3.JointModelFreeFlyer())
 l = commands.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
 if int(l[1]) == 0:
     os.system('gepetto-gui &')

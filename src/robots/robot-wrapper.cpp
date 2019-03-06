@@ -24,7 +24,7 @@
 #include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/algorithm/frames.hpp>
 
-using namespace se3;
+using namespace pinocchio;
 using namespace tsid::math;
 
 namespace tsid
@@ -37,7 +37,7 @@ namespace tsid
                                bool verbose)
     : m_verbose(verbose)
     {
-      se3::urdf::buildModel(filename, m_model, m_verbose);
+      pinocchio::urdf::buildModel(filename, m_model, m_verbose);
       m_model_filename = filename;
       m_rotor_inertias.setZero(m_model.nv);
       m_gear_ratios.setZero(m_model.nv);
@@ -47,11 +47,11 @@ namespace tsid
     
     RobotWrapper::RobotWrapper(const std::string & filename,
                                const std::vector<std::string> & ,
-                               const se3::JointModelVariant & rootJoint,
+                               const pinocchio::JointModelVariant & rootJoint,
                                bool verbose)
     : m_verbose(verbose)
     {
-      se3::urdf::buildModel(filename, rootJoint, m_model, m_verbose);
+      pinocchio::urdf::buildModel(filename, rootJoint, m_model, m_verbose);
       m_model_filename = filename;
       m_rotor_inertias.setZero(m_model.nv-6);
       m_gear_ratios.setZero(m_model.nv-6);
@@ -67,13 +67,14 @@ namespace tsid
     
     void RobotWrapper::computeAllTerms(Data & data, const Vector & q, const Vector & v) const
     {
-      se3::computeAllTerms(m_model, data, q, v);
+      pinocchio::computeAllTerms(m_model, data, q, v);
       data.M.triangularView<Eigen::StrictlyLower>()
             = data.M.transpose().triangularView<Eigen::StrictlyLower>();
       // computeAllTerms does not compute the com acceleration, so we need to call centerOfMass
-      se3::centerOfMass<true,true,true>(m_model, data, false);
-      se3::updateFramePlacements(m_model, data);
-      se3::centerOfMass(m_model, data, q, v, Eigen::VectorXd::Zero(nv()));
+      // Check this line, calling with zero acceleration at the last phase compute the CoM acceleration.
+      //      pinocchio::centerOfMass(m_model, data, q,v,false);
+      pinocchio::framesForwardKinematics(m_model, data);
+      pinocchio::centerOfMass(m_model, data, q, v, Eigen::VectorXd::Zero(nv()));
     }
     
     const Vector & RobotWrapper::rotor_inertias() const
@@ -170,14 +171,14 @@ namespace tsid
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      return se3::getJointJacobian<se3::WORLD>(m_model, data, index, J);
+      return pinocchio::getJointJacobian(m_model, data, index, pinocchio::WORLD, J);
     }
     
     void RobotWrapper::jacobianLocal(const Data & data,
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      return se3::getJointJacobian<se3::LOCAL>(m_model, data, index, J);
+      return pinocchio::getJointJacobian(m_model, data, index, pinocchio::LOCAL, J);
     }
     
     SE3 RobotWrapper::framePosition(const Data & data,
@@ -249,27 +250,27 @@ namespace tsid
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      return se3::getJointJacobian<se3::WORLD>(m_model, data, m_model.frames[index].parent, J);
+      return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::WORLD, J);
     }
     
     void RobotWrapper::frameJacobianLocal(const Data & data,
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      return se3::getFrameJacobian<se3::LOCAL>(m_model, data, index, J);
+      return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::LOCAL, J);
     }
     
     //    const Vector3 & com(Data & data,const Vector & q,
     //                        const bool computeSubtreeComs = true,
     //                        const bool updateKinematics = true)
     //    {
-    //      return se3::centerOfMass(m_model, data, q, computeSubtreeComs, updateKinematics);
+    //      return pinocchio::centerOfMass(m_model, data, q, computeSubtreeComs, updateKinematics);
     //    }
     //    const Vector3 & com(Data & data, const Vector & q, const Vector & v,
     //                 const bool computeSubtreeComs = true,
     //                 const bool updateKinematics = true)
     //    {
-    //      return se3::centerOfMass(m_model, data, q, v, computeSubtreeComs, updateKinematics);
+    //      return pinocchio::centerOfMass(m_model, data, q, v, computeSubtreeComs, updateKinematics);
     //    }
     
   } // namespace robots

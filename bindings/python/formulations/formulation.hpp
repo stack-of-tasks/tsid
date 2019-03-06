@@ -72,8 +72,8 @@ namespace tsid
         .def("getContactForce", &InvDynPythonVisitor::getContactForce, bp::args("name", "HQPOutput"))
         ;
       }
-      static se3::Data data(const T & self){
-        se3::Data data = self.data();
+      static pinocchio::Data data(const T & self){
+        pinocchio::Data data = self.data();
         return data;
       }
       static bool addMotionTask_SE3(T & self, tasks::TaskSE3Equality & task, double weight, unsigned int priorityLevel, double transition_duration){

@@ -41,7 +41,7 @@ kp_posture = 10.0               # proportional gain of joint posture task
 dt = 0.001                      # controller time step
 PRINT_N = 500                   # print every PRINT_N time steps
 DISPLAY_N = 25                  # update robot configuration in viwewer every DISPLAY_N time steps
-N_SIMULATION = 40000             # number of time steps simulated
+N_SIMULATION = 4000             # number of time steps simulated
 
 filename = str(os.path.dirname(os.path.abspath(__file__)))
 path = filename + '/../models/romeo'
@@ -52,7 +52,7 @@ robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
 srdf = path + '/srdf/romeo_collision.srdf'
 
 # for gepetto viewer
-robot_display = se3.RobotWrapper(urdf, [path, ], se3.JointModelFreeFlyer())
+robot_display = se3.RobotWrapper.BuildFromURDF(urdf, [path, ], se3.JointModelFreeFlyer())
 l = commands.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
 if int(l[1]) == 0:
     os.system('gepetto-gui &')
@@ -61,7 +61,7 @@ cl = gepetto.corbaserver.Client()
 gui = cl.gui
 robot_display.initDisplay(loadModel=True)
 
-q = se3.getNeutralConfigurationFromSrdf(robot.model(), srdf, False)
+q = se3.getNeutralConfiguration(robot.model(), srdf, False)
 q[2] += 0.84
 v = np.matrix(np.zeros(robot.nv)).T
 
@@ -80,27 +80,19 @@ contact_Point = np.matrix(np.ones((3,4)) * lz)
 contact_Point[0, :] = [-lxn, -lxn, lxp, lxp]
 contact_Point[1, :] = [-lyn, lyp, -lyn, lyp]
 
-contactRF =tsid.Contact6d("contact_rfoot", robot, rf_frame_name, contact_Point, contactNormal, mu, fMin, fMax, w_forceRef)
+contactRF =tsid.Contact6d("contact_rfoot", robot, rf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
 contactRF.setKp(kp_contact * matlib.ones(6).T)
 contactRF.setKd(2.0 * np.sqrt(kp_contact) * matlib.ones(6).T)
 H_rf_ref = robot.position(data, robot.model().getJointId(rf_frame_name))
 contactRF.setReference(H_rf_ref)
-invdyn.addRigidContact(contactRF)
+invdyn.addRigidContact(contactRF, w_forceRef)
 
-contactLF =tsid.Contact6d("contact_lfoot", robot, lf_frame_name, contact_Point, contactNormal, mu, fMin, fMax, w_forceRef)
+contactLF =tsid.Contact6d("contact_lfoot", robot, lf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
 contactLF.setKp(kp_contact * matlib.ones(6).T)
 contactLF.setKd(2.0 * np.sqrt(kp_contact) * matlib.ones(6).T)
 H_lf_ref = robot.position(data, robot.model().getJointId(lf_frame_name))
 contactLF.setReference(H_lf_ref)
-invdyn.addRigidContact(contactLF)
-
-lh_frame_name = 'LWristPitch'
-contactLH =tsid.Contact6d("contact_lhand", robot, lh_frame_name, contact_Point, contactNormal, mu, fMin, fMax, w_forceRef)
-contactLH.setKp(kp_contact * matlib.ones(6).T)
-contactLH.setKd(2.0 * np.sqrt(kp_contact) * matlib.ones(6).T)
-H_lh_ref = robot.position(data, robot.model().getJointId(lh_frame_name))
-contactLH.setReference(H_lh_ref)
-invdyn.addRigidContact(contactLH)
+invdyn.addRigidContact(contactLF, w_forceRef)
 
 comTask = tsid.TaskComEquality("task-com", robot)
 comTask.setKp(kp_com * matlib.ones(3).T)
@@ -133,7 +125,7 @@ com_acc_des = matlib.empty((3, N_SIMULATION))*nan # acc_des = acc_ref - Kp*pos_e
 
 offset     = robot.com(data)
 amp        = np.matrix([0.0, 0.05, 0.0]).T
-two_pi_f             = 2*np.pi*np.matrix([0.0, 1.1, 0.0]).T
+two_pi_f             = 2*np.pi*np.matrix([0.0, 0.5, 0.0]).T
 two_pi_f_amp         = np.multiply(two_pi_f,amp)
 two_pi_f_squared_amp = np.multiply(two_pi_f, two_pi_f_amp)
 

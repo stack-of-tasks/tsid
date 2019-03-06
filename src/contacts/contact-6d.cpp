@@ -60,7 +60,7 @@ Contact6d::Contact6d(const std::string & name,
                      const double frictionCoefficient,
                      const double minNormalForce,
                      const double maxNormalForce,
-                     const double forceRegWeight):
+                     const double ):
     Contact6d(name, robot, frameName, contactPoints, contactNormal, frictionCoefficient, minNormalForce, maxNormalForce)
 {
     std::cout<<"[Contact6d] The constructor with forceRegWeight is deprecated now. forceRegWeight should now be specified when calling addRigidContact()\n";
@@ -134,7 +134,7 @@ void Contact6d:: updateForceGeneratorMatrix()
   for(int i=0; i<4; i++)
   {
     m_forceGenMat.block<3,3>(0, i*3).setIdentity();
-    m_forceGenMat.block<3,3>(3, i*3) = se3::skew(m_contactPoints.col(i));
+    m_forceGenMat.block<3,3>(3, i*3) = pinocchio::skew(m_contactPoints.col(i));
   }
 }
 

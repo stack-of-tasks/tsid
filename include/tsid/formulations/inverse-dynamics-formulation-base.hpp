@@ -40,7 +40,7 @@ namespace tsid
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    typedef se3::Data Data;
+    typedef pinocchio::Data Data;
     typedef math::Vector Vector;
     typedef math::RefVector RefVector;
     typedef math::ConstRefVector ConstRefVector;
