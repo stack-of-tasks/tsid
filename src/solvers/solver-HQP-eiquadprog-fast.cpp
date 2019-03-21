@@ -88,11 +88,6 @@ namespace tsid
     
     const HQPOutput & SolverHQuadProgFast::solve(const HQPData & problemData)
     {
-      
-//#ifndef EIGEN_RUNTIME_NO_MALLOC
-      EIGEN_MALLOC_NOT_ALLOWED
-//#endif
-      
       START_PROFILER_EIQUADPROG_FAST(PROFILE_EIQUADPROG_PREPARATION);
       
       if(problemData.size()>2)
@@ -151,6 +146,8 @@ namespace tsid
       else
         resize(m_n, neq, nin);
       
+      EIGEN_MALLOC_NOT_ALLOWED;
+
       if(problemData.size()>1)
       {
         const ConstraintLevel & cl1 = problemData[1];
