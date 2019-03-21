@@ -124,13 +124,13 @@ namespace tsid
         return self.getContactForces(sol);
       }
       static bool checkContact(T& self, const std::string & name,  const solvers::HQPOutput & sol){
-          Eigen::VectorXd f(12);
-          return self.getContactForces(name, sol, f);
+          tsid::math::Vector f = self.getContactForces(name, sol);
+          if(f.size()>0)
+              return true;
+          return false;
       }
       static Eigen::VectorXd getContactForce (T & self, const std::string & name, const solvers::HQPOutput & sol){
-          Eigen::VectorXd f(12);
-          self.getContactForces(name, sol, f);
-          return f;
+          return self.getContactForces(name, sol);
       }
 
 

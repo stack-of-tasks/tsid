@@ -133,6 +133,7 @@ namespace tsid
     const Vector & getActuatorForces(const HQPOutput & sol);
     const Vector & getAccelerations(const HQPOutput & sol);
     const Vector & getContactForces(const HQPOutput & sol);
+    Vector getContactForces(const std::string & name, const HQPOutput & sol);
     bool getContactForces(const std::string & name,
                           const HQPOutput & sol,
                           RefVector f);

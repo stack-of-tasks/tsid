@@ -455,6 +455,21 @@ const Vector & InverseDynamicsFormulationAccForce::getContactForces(const HQPOut
   return m_f;
 }
 
+Vector InverseDynamicsFormulationAccForce::getContactForces(const std::string & name,
+                                                            const HQPOutput & sol)
+{
+  decodeSolution(sol);
+  for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+  {
+    if((*it)->contact.name()==name)
+    {
+      const int k = (*it)->contact.n_force();
+      return m_f.segment((*it)->index, k);
+    }
+  }
+  return Vector::Zero(0);
+}
+
 bool InverseDynamicsFormulationAccForce::getContactForces(const std::string & name,
                                                           const HQPOutput & sol,
                                                           RefVector f)
