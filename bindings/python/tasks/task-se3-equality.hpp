@@ -31,16 +31,16 @@
 namespace tsid
 {
   namespace python
-  {    
+  {
     namespace bp = boost::python;
 
     template<typename TaskSE3>
     struct TaskSE3EqualityPythonVisitor
     : public boost::python::def_visitor< TaskSE3EqualityPythonVisitor<TaskSE3> >
     {
-      
-      template<class PyClass>     
-      
+
+      template<class PyClass>
+
 
       void visit(PyClass& cl) const
       {
@@ -60,6 +60,8 @@ namespace tsid
         .add_property("Kd", bp::make_function(&TaskSE3EqualityPythonVisitor::Kd, bp::return_value_policy<bp::copy_const_reference>()))
         .def("setKp", &TaskSE3EqualityPythonVisitor::setKp, bp::arg("Kp"))
         .def("setKd", &TaskSE3EqualityPythonVisitor::setKd, bp::arg("Kd"))
+        .def("useLocalFrame", &TaskSE3EqualityPythonVisitor::useLocalFrame, bp::arg("local_frame"))
+        .def("setMask", &TaskSE3EqualityPythonVisitor::setMask, bp::arg("mask"))
         .def("compute", &TaskSE3EqualityPythonVisitor::compute, bp::args("t", "q", "v", "data"))
         .def("getConstraint",  &TaskSE3EqualityPythonVisitor::getConstraint)
         .add_property("frame_id", &TaskSE3::frame_id, "frame id return")
@@ -105,18 +107,24 @@ namespace tsid
       }
       static const Eigen::VectorXd & velocity_ref (const TaskSE3 & self){
         return self.velocity_ref();
-      }     
+      }
       static const Eigen::VectorXd & Kp (TaskSE3 & self){
         return self.Kp();
-      }  
+      }
       static const Eigen::VectorXd & Kd (TaskSE3 & self){
         return self.Kd();
-      }    
+      }
       static void setKp (TaskSE3 & self, const::Eigen::VectorXd Kp){
         return self.Kp(Kp);
       }
       static void setKd (TaskSE3 & self, const::Eigen::VectorXd Kv){
         return self.Kd(Kv);
+      }
+      static void useLocalFrame (TaskSE3 & self, const bool local_frame) {
+        self.useLocalFrame(local_frame);
+      }
+      static void setMask (TaskSE3 & self, const::Eigen::VectorXd mask) {
+        self.setMask(mask);
       }
       static Eigen::VectorXd frame_id (TaskSE3 & self){
         return self.frame_id();
