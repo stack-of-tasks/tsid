@@ -60,6 +60,8 @@ namespace tsid
         .add_property("Kd", bp::make_function(&TaskSE3EqualityPythonVisitor::Kd, bp::return_value_policy<bp::copy_const_reference>()))
         .def("setKp", &TaskSE3EqualityPythonVisitor::setKp, bp::arg("Kp"))
         .def("setKd", &TaskSE3EqualityPythonVisitor::setKd, bp::arg("Kd"))
+        .def("useLocalFrame", &TaskSE3EqualityPythonVisitor::useLocalFrame, bp::arg("local_frame"))
+        .def("setMask", &TaskSE3EqualityPythonVisitor::setMask, bp::arg("mask"))
         .def("compute", &TaskSE3EqualityPythonVisitor::compute, bp::args("t", "q", "v", "data"))
         .def("getConstraint",  &TaskSE3EqualityPythonVisitor::getConstraint)
         .def("useLocalFrame", &TaskSE3EqualityPythonVisitor::useLocalFrame, bp::arg("local_frame"))
@@ -121,6 +123,12 @@ namespace tsid
       }
       static void setKd (TaskSE3 & self, const::Eigen::VectorXd Kv){
         return self.Kd(Kv);
+      }
+      static void useLocalFrame (TaskSE3 & self, const bool local_frame) {
+        self.useLocalFrame(local_frame);
+      }
+      static void setMask (TaskSE3 & self, const::Eigen::VectorXd mask) {
+        self.setMask(mask);
       }
       static Eigen::VectorXd frame_id (TaskSE3 & self){
         return self.frame_id();
