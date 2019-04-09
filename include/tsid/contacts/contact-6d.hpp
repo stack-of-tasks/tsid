@@ -111,6 +111,9 @@ namespace tsid
       void setForceReference(ConstRefVector & f_ref);
       void setRegularizationTaskWeightVector(ConstRefVector & w);
 
+    private:
+      void init();
+
     protected:
 
       void updateForceInequalityConstraints();
