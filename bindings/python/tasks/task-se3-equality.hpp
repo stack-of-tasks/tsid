@@ -64,7 +64,6 @@ namespace tsid
         .def("setMask", &TaskSE3EqualityPythonVisitor::setMask, bp::arg("mask"))
         .def("compute", &TaskSE3EqualityPythonVisitor::compute, bp::args("t", "q", "v", "data"))
         .def("getConstraint",  &TaskSE3EqualityPythonVisitor::getConstraint)
-        .def("useLocalFrame", &TaskSE3EqualityPythonVisitor::useLocalFrame, bp::arg("local_frame"))
         .add_property("frame_id", &TaskSE3::frame_id, "frame id return")
         .add_property("name", &TaskSE3EqualityPythonVisitor::name)
         ;
@@ -81,9 +80,6 @@ namespace tsid
       static math::ConstraintEquality getConstraint(const TaskSE3 & self){
         math::ConstraintEquality cons(self.getConstraint().name(), self.getConstraint().matrix(), self.getConstraint().vector());
         return cons;
-      }
-      static void useLocalFrame (TaskSE3 & self, const bool local_frame) {
-        self.useLocalFrame(local_frame);
       }
       static void setReference(TaskSE3 & self, trajectories::TrajectorySample & ref){
         self.setReference(ref);
