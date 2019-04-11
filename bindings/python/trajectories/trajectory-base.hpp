@@ -23,43 +23,50 @@
 #include <eigenpy/eigenpy.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
+#include <tsid/math/utils.hpp>
 #include "tsid/trajectories/trajectory-base.hpp"
 #include <assert.h>
 namespace tsid
 {
   namespace python
-  {    
+  {
     namespace bp = boost::python;
-    
+    typedef pinocchio::SE3 SE3;
+
     template<typename TrajSample>
     struct TrajectorySamplePythonVisitor
     : public boost::python::def_visitor< TrajectorySamplePythonVisitor<TrajSample> >
     {
-      
-      template<class PyClass>     
+
+      template<class PyClass>
 
       void visit(PyClass& cl) const
       {
         cl
         .def(bp::init<unsigned int>((bp::arg("size")), "Default Constructor with size"))
         .def(bp::init<unsigned int, unsigned int>((bp::arg("pos_size"), bp::arg("vel_size")), "Default Constructor with pos and vel size"))
-        
+
         .def("resize", &TrajectorySamplePythonVisitor::resize, bp::arg("size"))
         .def("resize", &TrajectorySamplePythonVisitor::resize2, bp::args("pos_size", "vel_size"))
-       
+
         .def("pos", &TrajectorySamplePythonVisitor::pos)
         .def("vel", &TrajectorySamplePythonVisitor::vel)
         .def("acc", &TrajectorySamplePythonVisitor::acc)
 
-        .def("pos", &TrajectorySamplePythonVisitor::setpos)
+        .def("pos", &TrajectorySamplePythonVisitor::setpos_vec)
+        .def("pos", &TrajectorySamplePythonVisitor::setpos_se3)
         .def("vel", &TrajectorySamplePythonVisitor::setvel)
         .def("acc", &TrajectorySamplePythonVisitor::setacc)
         ;
       }
-     
-      static void setpos(TrajSample & self, const Eigen::VectorXd pos){
+
+      static void setpos_vec(TrajSample & self, const Eigen::VectorXd pos){
         assert (self.pos.size() == pos.size());
         self.pos = pos;
+      }
+      static void setpos_se3(TrajSample & self, const pinocchio::SE3 & pos){
+        assert (self.pos.size() == 12);
+        tsid::math::SE3ToVector(pos, self.pos);
       }
       static void setvel(TrajSample & self, const Eigen::VectorXd vel){
         assert (self.vel.size() == vel.size());
@@ -84,7 +91,7 @@ namespace tsid
       static Eigen::VectorXd acc(const TrajSample & self){
           return self.acc;
       }
-      
+
       static void expose(const std::string & class_name)
       {
         std::string doc = "Trajectory Sample info.";

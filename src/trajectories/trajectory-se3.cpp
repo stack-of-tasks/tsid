@@ -27,7 +27,9 @@ namespace tsid
 
     TrajectorySE3Constant::TrajectorySE3Constant(const std::string & name)
       :TrajectoryBase(name)
-    {}
+    {
+      m_sample.resize(12, 6);
+    }
 
     TrajectorySE3Constant::TrajectorySE3Constant(const std::string & name,
                                                  const SE3 & M)
@@ -41,7 +43,7 @@ namespace tsid
     {
       return 6;
     }
-    
+
     void TrajectorySE3Constant::setReference(const pinocchio::SE3 & ref)
     {
       m_sample.resize(12, 6);
