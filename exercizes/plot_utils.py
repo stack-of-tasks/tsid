@@ -48,8 +48,8 @@ BOUNDS_COLOR = 'silver';
 #savefig.directory   : ~        # default directory in savefig dialog box,
                                 # leave empty to always use current working directory
 
-def create_empty_figure(nRows=1, nCols=1, spinesPos=None,sharex=True):
-    f, ax = plt.subplots(nRows,nCols,sharex=sharex);
+def create_empty_figure(nRows=1, nCols=1, figsize=(7, 7), spinesPos=None,sharex=True):
+    f, ax = plt.subplots(nRows,nCols, figsize=figsize, sharex=sharex);
     mngr = plt.get_current_fig_manager()
 #    mngr.window.setGeometry(50,50,1080,720);
 
