@@ -37,6 +37,7 @@ SET(${LIBRARY_NAME}_TASKS_SOURCES
     tasks/task-joint-posture.cpp
     tasks/task-motion.cpp
     tasks/task-se3-equality.cpp
+    tasks/task-angular-momentum-equality.cpp
   )
 
 SET(${LIBRARY_NAME}_CONTACTS_SOURCES
