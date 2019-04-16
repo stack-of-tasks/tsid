@@ -123,6 +123,7 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
     include/tsid/tasks/task-actuation-bounds.hpp
     include/tsid/tasks/task-joint-bounds.hpp
     include/tsid/tasks/task-joint-posture.hpp
+    include/tsid/tasks/task-angular-momentum-equality.hpp
   )
 
 SET(${PROJECT_NAME}_CONTACTS_HEADERS
