@@ -34,6 +34,7 @@ namespace tsid
     void exposeTaskJointPosture();
     void exposeTaskActuationBounds();
     void exposeTaskJointBounds();
+    void exposeTaskAMEquality();
 
     inline void exposeTasks()
     {
@@ -42,6 +43,7 @@ namespace tsid
       exposeTaskJointPosture();
       exposeTaskActuationBounds();
       exposeTaskJointBounds();
+      exposeTaskAMEquality();
     }
     
   } // namespace python
