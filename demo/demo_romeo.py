@@ -26,11 +26,13 @@ rf_frame_name = "RAnkleRoll"        # right foot frame name
 lf_frame_name = "LAnkleRoll"        # left foot frame name
 contactNormal = np.matrix([0., 0., 1.]).T   # direction of the normal to the contact surface
 w_com = 1.0                     # weight of center of mass task
+w_am = 1e-2			# weight of Angular momentum
 w_posture = 1e-3                # weight of joint posture task
 w_forceReg = 1e-5               # weight of force regularization task
 w_RF = 1.0                      # weight of right foot motion task
 kp_contact = 30.0               # proportional gain of contact constraint
 kp_com = 30.0                   # proportional gain of center of mass task
+kp_am =	30.0			# proportional gain of angular momentum task
 kp_posture = 30.0               # proportional gain of joint posture task
 kp_RF = 30.0                    # proportional gain of right foot motion task
 REMOVE_CONTACT_N = 100          # remove right foot contact constraint after REMOVE_CONTACT_N time steps
@@ -99,6 +101,11 @@ comTask.setKp(kp_com * np.matrix(np.ones(3)).transpose())
 comTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(3)).transpose())
 invdyn.addMotionTask(comTask, w_com, 1, 0.0)
 
+amTask = tsid.TaskAMEquality("task-am", robot)
+amTask.setKp(kp_am * np.matrix(np.ones(3)).transpose())
+amTask.setKd(2.0 * np.sqrt(kp_am) * np.matrix(np.ones(3)).transpose())
+invdyn.addMomentumTask(amTask, w_am, 1, 0.0)
+
 postureTask = tsid.TaskJointPosture("task-posture", robot)
 postureTask.setKp(kp_posture * np.matrix(np.ones(robot.nv-6)).transpose())
 postureTask.setKd(2.0 * np.sqrt(kp_posture) * np.matrix(np.ones(robot.nv-6)).transpose())
@@ -116,6 +123,9 @@ com_ref = robot.com(data)
 com_ref[1] += DELTA_COM_Y
 trajCom = tsid.TrajectoryEuclidianConstant("traj_com", com_ref)
 
+am_ref = np.matrix(np.zeros(3)).T
+trajAm = tsid.TrajectoryEuclidianConstant("traj_am", am_ref)
+
 q_ref = q[7:]
 trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
 
@@ -131,6 +141,8 @@ for i in range(0, N_SIMULATION):
 
     sampleCom = trajCom.computeNext()
     comTask.setReference(sampleCom)
+    sampleAm = trajAm.computeNext()
+    amTask.setReference(sampleAm)
     samplePosture = trajPosture.computeNext()
     postureTask.setReference(samplePosture)
     sampleRightFoot = rightFootTraj.computeNext()

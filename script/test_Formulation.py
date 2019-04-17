@@ -35,10 +35,12 @@ rf_frame_name = "RAnkleRoll"
 lf_frame_name = "LAnkleRoll"
 contactNormal = np.matrix([0.0, 0.0, 1.0]).transpose()
 w_com = 1.0
+w_am = 1e-2
 w_posture = 1e-2
 w_forceRef = 1e-5
 kp_contact = 100.0
 kp_com = 30.0
+kp_am = 30.0
 kp_posture = 30.0
 
 assert robot.model().existFrame(rf_frame_name)
@@ -69,6 +71,11 @@ comTask = tsid.TaskComEquality("task-com", robot)
 comTask.setKp(kp_com * np.matrix(np.ones(3)).transpose())
 comTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(3)).transpose())
 invdyn.addMotionTask(comTask, w_com, 1, 0.0)
+
+amTask = tsid.TaskAMEquality("task-am", robot)
+amTask.setKp(kp_am * np.matrix(np.ones(3)).transpose())
+amTask.setKd(2.0 * np.sqrt(kp_am) * np.matrix(np.ones(3)).transpose())
+invdyn.addMomentumTask(amTask, w_am, 1, 0.0)
 
 postureTask = tsid.TaskJointPosture("task-posture", robot)
 postureTask.setKp(kp_posture * np.matrix(np.ones(robot.nv-6)).transpose())
@@ -102,6 +109,10 @@ com_ref[1] += 0.1
 trajCom = tsid.TrajectoryEuclidianConstant("traj_com", com_ref)
 sampleCom = tsid.TrajectorySample(3)
 
+am_ref = np.matrix([0, 0, 0]).transpose()
+trajAm = tsid.TrajectoryEuclidianConstant("traj_am", am_ref)
+sampleAm = tsid.TrajectorySample(3)
+
 q_ref = q[7:]
 trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
 samplePosture = tsid.TrajectorySample(robot.nv-6)
@@ -118,6 +129,8 @@ for i in range(0, max_it):
 
     sampleCom = trajCom.computeNext()
     comTask.setReference(sampleCom)
+    sampleAm = trajAm.computeNext()
+    amTask.setReference(sampleAm)
     samplePosture = trajPosture.computeNext()
     postureTask.setReference(samplePosture)
 

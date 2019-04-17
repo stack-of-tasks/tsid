@@ -28,10 +28,12 @@ contactNormal = np.matrix([0., 0., 1.]).T   # direction of the normal to the con
 
 w_com = 1.0                     # weight of center of mass task
 w_posture = 1e-3                # weight of joint posture task
+w_am = 1e-2		 	# weight of Angular momentum task
 w_forceRef = 1e-5               # weight of force regularization task
 
 kp_contact = 10.0               # proportional gain of contact constraint
 kp_com = 10.0                   # proportional gain of center of mass task
+kp_am = 10.0                   # proportional gain of center of mass task
 kp_posture = 10.0               # proportional gain of joint posture task
 
 dt = 0.001                      # controller time step
@@ -95,6 +97,11 @@ comTask.setKp(kp_com * matlib.ones(3).T)
 comTask.setKd(2.0 * np.sqrt(kp_com) * matlib.ones(3).T)
 invdyn.addMotionTask(comTask, w_com, 1, 0.0)
 
+amTask = tsid.TaskAMEquality("task-am", robot)
+amTask.setKp(kp_am * matlib.ones(3).T)
+amTask.setKd(2.0 * np.sqrt(kp_am) * matlib.ones(3).T)
+invdyn.addMomentumTask(amTask, w_am, 1, 0.0)
+
 postureTask = tsid.TaskJointPosture("task-posture", robot)
 postureTask.setKp(kp_posture * matlib.ones(robot.nv-6).T)
 postureTask.setKd(2.0 * np.sqrt(kp_posture) * matlib.ones(robot.nv-6).T)
@@ -103,6 +110,10 @@ invdyn.addMotionTask(postureTask, w_posture, 1, 0.0)
 com_ref = robot.com(data)
 trajCom = tsid.TrajectoryEuclidianConstant("traj_com", com_ref)
 sampleCom = trajCom.computeNext()
+
+am_ref = np.matrix(np.zeros(3)).T
+trajAm = tsid.TrajectoryEuclidianConstant("traj_am", am_ref)
+sampleAm = trajAm.computeNext()
 
 q_ref = q[7:]
 trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
@@ -130,9 +141,12 @@ for i in range(0, N_SIMULATION):
     
     sampleCom.pos(offset + np.multiply(amp, matlib.sin(two_pi_f*t)))
     sampleCom.vel(np.multiply(two_pi_f_amp, matlib.cos(two_pi_f*t)))
-    sampleCom.acc(np.multiply(two_pi_f_squared_amp, -matlib.sin(two_pi_f*t)))
-    
+    sampleCom.acc(np.multiply(two_pi_f_squared_amp, -matlib.sin(two_pi_f*t)))    
     comTask.setReference(sampleCom)
+	
+    sampleAm = trajAm.computeNext()
+    amTask.setReference(sampleAm)
+
     samplePosture = trajPosture.computeNext()
     postureTask.setReference(samplePosture)
 
