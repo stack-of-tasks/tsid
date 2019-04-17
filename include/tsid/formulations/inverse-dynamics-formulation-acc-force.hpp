@@ -78,6 +78,7 @@ namespace tsid
     typedef math::ConstRefVector ConstRefVector;
     typedef tasks::TaskBase TaskBase;
     typedef tasks::TaskMotion TaskMotion;
+    typedef tasks::TaskAMEquality TaskAngularMomentum;
     typedef tasks::TaskContactForce TaskContactForce;
     typedef tasks::TaskActuation TaskActuation;
     typedef solvers::HQPOutput HQPOutput;
@@ -97,6 +98,11 @@ namespace tsid
                        double weight,
                        unsigned int priorityLevel,
                        double transition_duration=0.0);
+
+    bool addMomentumTask(TaskAngularMomentum & task,
+                        double weight,
+                        unsigned int priorityLevel,
+                        double transition_duration=0.0);
 
     bool addForceTask(TaskContactForce & task,
                       double weight,
@@ -153,6 +159,7 @@ namespace tsid
     Data m_data;
     HQPData m_hqpData;
     std::vector<TaskLevel*>     m_taskMotions;
+    std::vector<TaskLevel*>     m_taskMomentums;
     std::vector<TaskLevel*>     m_taskContactForces;
     std::vector<TaskLevel*>     m_taskActuations;
     std::vector<ContactLevel*>   m_contacts;

@@ -142,6 +142,29 @@ bool InverseDynamicsFormulationAccForce::addMotionTask(TaskMotion & task,
   return true;
 }
 
+bool InverseDynamicsFormulationAccForce::addMomentumTask(TaskAngularMomentum & task,
+                                                       double weight,
+                                                       unsigned int priorityLevel,
+                                                       double transition_duration)
+{
+  assert(weight>=0.0);
+  assert(transition_duration>=0.0);
+  
+  // This part is not used frequently so we can do some tests.
+  if (weight<0.0)
+    std::cerr << __FILE__ <<  " " << __LINE__ << " "
+      << "weight should be positive" << std::endl;
+
+  // This part is not used frequently so we can do some tests.
+  if (transition_duration<0.0)
+    std::cerr << "transition_duration should be positive" << std::endl;
+
+  TaskLevel *tl = new TaskLevel(task, priorityLevel);
+  m_taskMomentums.push_back(tl);
+  addTask(tl, weight, priorityLevel);
+
+  return true;
+}
 
 bool InverseDynamicsFormulationAccForce::addForceTask(TaskContactForce & task,
                                                       double weight,
@@ -360,6 +383,27 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
 
   std::vector<TaskLevel*>::iterator it;
   for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
+  {
+    const ConstraintBase & c = (*it)->task.compute(time, q, v, m_data);
+    if(c.isEquality())
+    {
+      (*it)->constraint->matrix().leftCols(m_v) = c.matrix();
+      (*it)->constraint->vector() = c.vector();
+    }
+    else if(c.isInequality())
+    {
+      (*it)->constraint->matrix().leftCols(m_v) = c.matrix();
+      (*it)->constraint->lowerBound() = c.lowerBound();
+      (*it)->constraint->upperBound() = c.upperBound();
+    }
+    else
+    {
+      (*it)->constraint->lowerBound().head(m_v) = c.lowerBound();
+      (*it)->constraint->upperBound().head(m_v) = c.upperBound();
+    }
+  }
+
+  for(it=m_taskMomentums.begin(); it!=m_taskMomentums.end(); it++)
   {
     const ConstraintBase & c = (*it)->task.compute(time, q, v, m_data);
     if(c.isEquality())

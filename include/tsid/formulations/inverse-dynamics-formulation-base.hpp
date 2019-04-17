@@ -24,6 +24,7 @@
 #include "tsid/tasks/task-actuation.hpp"
 #include "tsid/tasks/task-motion.hpp"
 #include "tsid/tasks/task-contact-force.hpp"
+#include "tsid/tasks/task-angular-momentum-equality.hpp"
 #include "tsid/contacts/contact-base.hpp"
 #include "tsid/solvers/solver-HQP-base.hpp"
 
@@ -45,6 +46,7 @@ namespace tsid
     typedef math::RefVector RefVector;
     typedef math::ConstRefVector ConstRefVector;
     typedef tasks::TaskMotion TaskMotion;
+    typedef tasks::TaskAMEquality TaskAngularMomentum;
     typedef tasks::TaskContactForce TaskContactForce;
     typedef tasks::TaskActuation TaskActuation;
     typedef tasks::TaskBase TaskBase;
@@ -65,6 +67,11 @@ namespace tsid
     virtual unsigned int nIn() const = 0;
 
     virtual bool addMotionTask(TaskMotion & task,
+                               double weight,
+                               unsigned int priorityLevel,
+                               double transition_duration=0.0) = 0;
+
+    virtual bool addMomentumTask(TaskAngularMomentum & task,
                                double weight,
                                unsigned int priorityLevel,
                                double transition_duration=0.0) = 0;

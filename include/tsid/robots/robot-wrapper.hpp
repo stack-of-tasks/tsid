@@ -153,7 +153,7 @@ namespace tsid
       void frameJacobianLocal(const Data & data,
                               const Model::FrameIndex index,
                               Data::Matrix6x & J) const;
-      
+
     protected:
       
       void updateMd();

@@ -259,7 +259,6 @@ namespace tsid
     {
       return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::LOCAL, J);
     }
-    
     //    const Vector3 & com(Data & data,const Vector & q,
     //                        const bool computeSubtreeComs = true,
     //                        const bool updateKinematics = true)

@@ -26,6 +26,7 @@
 #include <tsid/tasks/task-com-equality.hpp>
 #include <tsid/tasks/task-se3-equality.hpp>
 #include <tsid/tasks/task-joint-posture.hpp>
+#include <tsid/tasks/task-angular-momentum-equality.hpp>
 #include <tsid/trajectories/trajectory-euclidian.hpp>
 #include <tsid/solvers/solver-HQP-factory.hxx>
 #include <tsid/solvers/utils.hpp>
@@ -86,10 +87,12 @@ class StandardRomeoInvDynCtrl
   static const std::string lf_frame_name;
   static const Vector3 contactNormal;
   static const double w_com;
+  static const double w_am;
   static const double w_posture;
   static const double w_forceReg;
   static const double kp_contact;
   static const double kp_com;
+  static const double kp_am;
   static const double kp_posture;
   double t;
 
@@ -98,6 +101,7 @@ class StandardRomeoInvDynCtrl
   Contact6d * contactRF;
   Contact6d * contactLF;
   TaskComEquality * comTask;
+  TaskAMEquality * amTask;
   TaskJointPosture * postureTask;
   Vector q;
   Vector v;
@@ -157,6 +161,12 @@ class StandardRomeoInvDynCtrl
     comTask->Kd(2.0*comTask->Kp().cwiseSqrt());
     tsid->addMotionTask(*comTask, w_com, 1);
 
+   // Add the angular momentum task 
+    amTask = new TaskAMEquality("task-angular", *robot);
+    amTask->Kp(kp_am*Vector::Ones(3));
+    amTask->Kd(2.0*amTask->Kp().cwiseSqrt());
+    tsid->addMomentumTask(*amTask, w_am, 1);
+
     // Add the posture task
     postureTask = new TaskJointPosture("task-posture", *robot);
     postureTask->Kp(kp_posture*Vector::Ones(nv-6));
@@ -177,10 +187,12 @@ const std::string StandardRomeoInvDynCtrl::rf_frame_name = "RAnkleRoll";
 const std::string StandardRomeoInvDynCtrl::lf_frame_name = "LAnkleRoll";
 const Vector3 StandardRomeoInvDynCtrl::contactNormal = Vector3::UnitZ();
 const double StandardRomeoInvDynCtrl::w_com = 1.0;
+const double StandardRomeoInvDynCtrl::w_am = 1e-3;
 const double StandardRomeoInvDynCtrl::w_posture = 1e-2;
 const double StandardRomeoInvDynCtrl::w_forceReg = 1e-5;
 const double StandardRomeoInvDynCtrl::kp_contact = 100.0;
 const double StandardRomeoInvDynCtrl::kp_com = 30.0;
+const double StandardRomeoInvDynCtrl::kp_am = 30.0;
 const double StandardRomeoInvDynCtrl::kp_posture = 30.0;
 
 BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
@@ -201,6 +213,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   Contact6d & contactLF = *(romeo_inv_dyn.contactLF);
   TaskComEquality & comTask = *(romeo_inv_dyn.comTask);
   TaskJointPosture & postureTask = *(romeo_inv_dyn.postureTask);
+  TaskAMEquality & amTask = *(romeo_inv_dyn.amTask);
   Vector q = romeo_inv_dyn.q;
   Vector v = romeo_inv_dyn.v;
   const int nv = robot.model().nv;
@@ -224,6 +237,10 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   TrajectoryBase *trajCom = new TrajectoryEuclidianConstant("traj_com", com_ref);
   TrajectorySample sampleCom(3);
 
+  Vector3 am_ref = Vector3(0, 0, 0.0);
+  TrajectoryBase *trajAm = new TrajectoryEuclidianConstant("traj_am", am_ref);
+  TrajectorySample sampleAm(3);
+
   Vector q_ref = q.tail(nv-6);
   TrajectoryBase *trajPosture = new TrajectoryEuclidianConstant("traj_posture", q_ref);
   TrajectorySample samplePosture(nv-6);
@@ -244,6 +261,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
 
     sampleCom = trajCom->computeNext();
     comTask.setReference(sampleCom);
+    sampleAm = trajAm->computeNext();
+    amTask.setReference(sampleAm);
     samplePosture = trajPosture->computeNext();
     postureTask.setReference(samplePosture);
 
@@ -330,6 +349,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   Contact6d & contactLF = *(romeo_inv_dyn.contactLF);
   TaskComEquality & comTask = *(romeo_inv_dyn.comTask);
   TaskJointPosture & postureTask = *(romeo_inv_dyn.postureTask);
+  TaskAMEquality & amTask = *(romeo_inv_dyn.amTask);
+
   Vector q = romeo_inv_dyn.q;
   Vector v = romeo_inv_dyn.v;
   const int nv = robot.model().nv;
@@ -338,6 +359,10 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   com_ref(1) += 0.1;
   TrajectoryBase *trajCom = new TrajectoryEuclidianConstant("traj_com", com_ref);
   TrajectorySample sampleCom(3);
+
+  Vector3 am_ref = Vector3(0, 0, 0.0);
+  TrajectoryBase *trajAm = new TrajectoryEuclidianConstant("traj_am", am_ref);
+  TrajectorySample sampleAm(3);
 
   Vector q_ref = q.tail(nv-6);
   TrajectoryBase *trajPosture = new TrajectoryEuclidianConstant("traj_posture", q_ref);
@@ -365,6 +390,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
   {
     sampleCom = trajCom->computeNext();
     comTask.setReference(sampleCom);
+    sampleAm = trajAm->computeNext();
+    amTask.setReference(sampleAm);
     samplePosture = trajPosture->computeNext();
     postureTask.setReference(samplePosture);
 
@@ -652,6 +679,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
   RobotWrapper & robot = *(romeo_inv_dyn.robot);
   InverseDynamicsFormulationAccForce * tsid = romeo_inv_dyn.tsid;
   TaskComEquality & comTask = *(romeo_inv_dyn.comTask);
+  TaskAMEquality & amTask = *(romeo_inv_dyn.amTask);
   TaskJointPosture & postureTask = *(romeo_inv_dyn.postureTask);
   Vector q = romeo_inv_dyn.q;
   Vector v = romeo_inv_dyn.v;
@@ -662,6 +690,10 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
   TrajectoryBase *trajCom = new TrajectoryEuclidianConstant("traj_com", com_ref);
   TrajectorySample sampleCom(3);
 
+  Vector3 am_ref = Vector3(0, 0, 0.0);
+  TrajectoryBase *trajAm = new TrajectoryEuclidianConstant("traj_am", am_ref);
+  TrajectorySample sampleAm(3);
+  
   Vector q_ref = q.tail(nv-6);
   TrajectoryBase *trajPosture = new TrajectoryEuclidianConstant("traj_posture", q_ref);
   TrajectorySample samplePosture(nv-6);
@@ -685,6 +717,8 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
 
     sampleCom = trajCom->computeNext();
     comTask.setReference(sampleCom);
+    sampleAm = trajAm->computeNext();
+    amTask.setReference(sampleAm);
     samplePosture = trajPosture->computeNext();
     postureTask.setReference(samplePosture);
 
