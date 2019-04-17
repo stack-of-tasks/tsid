@@ -26,6 +26,7 @@
 #include <tsid/tasks/task-se3-equality.hpp>
 #include <tsid/tasks/task-com-equality.hpp>
 #include <tsid/tasks/task-joint-posture.hpp>
+#include <tsid/tasks/task-angular-momentum-equality.hpp> 
 
 #include <tsid/trajectories/trajectory-se3.hpp>
 #include <tsid/trajectories/trajectory-euclidian.hpp>
@@ -272,4 +273,73 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
   }
 }
 
+BOOST_AUTO_TEST_CASE ( test_task_angular_momentum )
+{
+  cout<<"\n\n*********** TEST TASK ANGULAR MOMENTUM ***********\n";
+  vector<string> package_dirs;
+  package_dirs.push_back(romeo_model_path);
+  string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
+  RobotWrapper robot(urdfFileName,
+                     package_dirs,
+                     pinocchio::JointModelFreeFlyer(),
+                     false);
+  const unsigned int na = robot.nv()-6;
+
+  cout<<"Gonna create task\n";
+  TaskAMEquality task("task-angular", robot);
+
+  cout<<"Gonna set gains\n"<< 3 <<endl;
+  Vector3d Kp = Vector3d::Ones();
+  Vector3d Kd = 2.0*Kp;
+  task.Kp(Kp);
+  task.Kd(Kd);
+  BOOST_CHECK(task.Kp().isApprox(Kp));
+  BOOST_CHECK(task.Kd().isApprox(Kd));
+
+  cout<<"Gonna create reference trajectory\n";
+  Vector3 am_ref = Vector3(0.0,0.0,0.02);
+  TrajectoryBase *traj = new TrajectoryEuclidianConstant("traj_am_ref", am_ref);
+  TrajectorySample sample;
+
+  cout<<"Gonna set up for simulation\n";
+  double t = 0.0;
+  const double dt = 0.001;
+  MatrixXd Jpinv(robot.nv(), 3);
+  double error, error_past=1e100;
+  VectorXd q = neutral(robot.model());
+  VectorXd v = VectorXd::Zero(robot.nv());
+  pinocchio::Data data(robot.model());
+  for(int i=0; i<max_it; i++)
+  {
+    robot.computeAllTerms(data, q, v);
+    sample = traj->computeNext();
+    task.setReference(sample);
+    const ConstraintBase & constraint = task.compute(t, q, v, data);
+    BOOST_CHECK(constraint.rows()== 3);
+    BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols())==static_cast<tsid::math::Index>(robot.nv()));
+    BOOST_REQUIRE(isFinite(constraint.matrix()));
+    BOOST_REQUIRE(isFinite(constraint.vector()));
+
+    pseudoInverse(constraint.matrix(), Jpinv, 1e-5);
+    Vector dv = Jpinv * constraint.vector();
+    BOOST_REQUIRE(isFinite(Jpinv));
+    BOOST_CHECK(MatrixXd::Identity(na,na).isApprox(constraint.matrix()*Jpinv));
+    BOOST_REQUIRE(isFinite(dv));
+
+    v += dt*dv;
+    q = pinocchio::integrate(robot.model(), q, dt*v);
+    BOOST_REQUIRE(isFinite(v));
+    BOOST_REQUIRE(isFinite(q));
+    t += dt;
+
+    error = task.momentum_error().norm();
+    BOOST_REQUIRE(isFinite(task.momentum_error()));
+    BOOST_CHECK(error <= error_past);
+    error_past = error;
+
+    if(i%100==0)
+      cout << "Time "<<t<<"\t angular momentum error "<<error << 
+      "\t current angular momentum" <<task.momentum().norm() << endl;
+  }
+}
 BOOST_AUTO_TEST_SUITE_END ()
