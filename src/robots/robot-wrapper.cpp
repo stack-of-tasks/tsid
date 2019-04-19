@@ -44,6 +44,16 @@ namespace tsid
       m_Md.setZero(m_model.nv);
       m_M.setZero(m_model.nv, m_model.nv);
     }
+    RobotWrapper::RobotWrapper(const pinocchio::Model& m, bool verbose)
+      : m_verbose(verbose)
+    {
+      m_model = m;
+      m_model_filename = "";
+      m_rotor_inertias.setZero(m_model.nv);
+      m_gear_ratios.setZero(m_model.nv);
+      m_Md.setZero(m_model.nv);
+      m_M.setZero(m_model.nv, m_model.nv);
+    }
     
     RobotWrapper::RobotWrapper(const std::string & filename,
                                const std::vector<std::string> & ,
