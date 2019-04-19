@@ -44,6 +44,7 @@ namespace tsid
       {
         cl
         .def(bp::init<std::string, std_vec, bool>((bp::arg("filename"), bp::arg("package_dir"), bp::arg("verbose")), "Default constructor without RootJoint."))
+        .def(bp::init<pinocchio::Model, bool>((bp::arg("Pinocchio Model"), bp::arg("verbose")), "Default constructor from pinocchio model"))
         .def(bp::init<std::string, std_vec, pinocchio::JointModelVariant, bool>((bp::arg("filename"), bp::arg("package_dir"), bp::arg("roottype"), bp::arg("verbose")), "Default constructor without RootJoint."))
         .add_property("nq", &Robot::nq)
         .add_property("nv", &Robot::nv)

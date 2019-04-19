@@ -59,7 +59,9 @@ namespace tsid
       RobotWrapper(const std::string & filename,
                    const std::vector<std::string> & package_dirs,
                    bool verbose=false);
-      
+
+      RobotWrapper(const Model & m, bool verbose=false);
+
       RobotWrapper(const std::string & filename,
                    const std::vector<std::string> & package_dirs,
                    const pinocchio::JointModelVariant & rootJoint,
