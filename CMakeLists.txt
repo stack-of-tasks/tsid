@@ -77,7 +77,7 @@ ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.0") # Eigen::Ref appeared from 3.2.0
 # Fail-safe support for catkin-ized pinocchio:
 #  - If catkin-based pinocchio is installed it runs the CFG_EXTRAS to set up the Pinocchio preprocessor directives
 #  - If it isn't, nothing happens and the subsequent pkg-config check takes care of everything.
-#find_package(catkin QUIET COMPONENTS pinocchio)
+find_package(catkin QUIET COMPONENTS pinocchio)
 
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0.0")
 
@@ -88,7 +88,7 @@ SET(BOOST_OPTIONAL_COMPONENTS "")
 IF(BUILD_PYTHON_INTERFACE)
   SET(BOOST_OPTIONAL_COMPONENTS ${BOOST_OPTIONAL_COMPONENTS} python)
   FINDPYTHON()
-  INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS})
+  INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS}) 
   ADD_REQUIRED_DEPENDENCY("eigenpy >= 1.4.0")
 ENDIF(BUILD_PYTHON_INTERFACE)
 
