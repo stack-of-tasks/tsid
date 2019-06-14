@@ -28,17 +28,17 @@ contactNormal = np.matrix([0., 0., 1.]).T   # direction of the normal to the con
 
 w_com = 1.0                     # weight of center of mass task
 w_foot = 1e-1                   # weight of the foot motion task
-w_posture = 1e-3                # weight of joint posture task
+w_posture = 1e-4                # weight of joint posture task
 w_forceRef = 1e-5               # weight of force regularization task
 
 kp_contact = 10.0               # proportional gain of contact constraint
 kp_foot = 10.0                  # proportional gain of contact constraint
 kp_com = 10.0                   # proportional gain of center of mass task
-kp_posture = 10.0               # proportional gain of joint posture task
+kp_posture = 1.0               # proportional gain of joint posture task
 
 PRINT_N = 500                   # print every PRINT_N time steps
-DISPLAY_N = 25                  # update robot configuration in viwewer every DISPLAY_N time steps
-CAMERA_TRANSFORM = [3.0, -0.2, 0.4, 0.5243823528289795, 0.518651008605957, 0.4620114266872406, 0.4925136864185333]
+DISPLAY_N = 20                  # update robot configuration in viwewer every DISPLAY_N time steps
+CAMERA_TRANSFORM = [4.0, -0.2, 0.4, 0.5243823528289795, 0.518651008605957, 0.4620114266872406, 0.4925136864185333]
 
 SPHERE_RADIUS = 0.03
 REF_SPHERE_RADIUS = 0.03
