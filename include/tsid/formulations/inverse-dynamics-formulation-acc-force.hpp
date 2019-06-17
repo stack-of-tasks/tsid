@@ -159,6 +159,7 @@ namespace tsid
     double m_t;         /// time
     unsigned int m_k;   /// number of contact-force variables
     unsigned int m_v;   /// number of acceleration variables
+    unsigned int m_u;   /// number of unactuated DoFs
     unsigned int m_eq;  /// number of equality constraints
     unsigned int m_in;  /// number of inequality constraints
     Matrix m_Jc;        /// contact force Jacobian
