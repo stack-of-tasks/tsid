@@ -42,12 +42,12 @@ CAMERA_TRANSFORM = [4.0, -0.2, 0.4, 0.5243823528289795, 0.518651008605957, 0.462
 
 SPHERE_RADIUS = 0.03
 REF_SPHERE_RADIUS = 0.03
-COM_SPHERE_COLOR  = (1, 0.5, 0, 1)
-COM_REF_SPHERE_COLOR  = (1, 0, 0, 1)
-RF_SPHERE_COLOR  = (0, 1, 0, 1)
-RF_REF_SPHERE_COLOR  = (0, 1, 0.5, 1)
-LF_SPHERE_COLOR  = (0, 0, 1, 1)
-LF_REF_SPHERE_COLOR  = (0.5, 0, 1, 1)
+COM_SPHERE_COLOR  = (1, 0.5, 0, 0.5)
+COM_REF_SPHERE_COLOR  = (1, 0, 0, 0.5)
+RF_SPHERE_COLOR  = (0, 1, 0, 0.5)
+RF_REF_SPHERE_COLOR  = (0, 1, 0.5, 0.5)
+LF_SPHERE_COLOR  = (0, 0, 1, 0.5)
+LF_REF_SPHERE_COLOR  = (0.5, 0, 1, 0.5)
 
 filename = str(os.path.dirname(os.path.abspath(__file__)))
 path = filename + '/../models/romeo'
