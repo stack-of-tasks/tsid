@@ -29,12 +29,12 @@ namespace tsid
     TaskJointPosture::TaskJointPosture(const std::string & name,
                                      RobotWrapper & robot):
       TaskMotion(name, robot),
-      m_ref(robot.nv()-6),
-      m_constraint(name, robot.nv()-6, robot.nv())
+      m_ref(robot.na()),
+      m_constraint(name, robot.na(), robot.nv())
     {
-      m_Kp.setZero(robot.nv()-6);
-      m_Kd.setZero(robot.nv()-6);
-      Vector m = Vector::Ones(robot.nv()-6);
+      m_Kp.setZero(robot.na());
+      m_Kd.setZero(robot.na());
+      Vector m = Vector::Ones(robot.na());
       mask(m);
     }
 
@@ -45,7 +45,7 @@ namespace tsid
 
     void TaskJointPosture::mask(const Vector & m)
     {
-      assert(m.size()==m_robot.nv()-6);
+      assert(m.size()==m_robot.na());
       m_mask = m;
       const Vector::Index dim = static_cast<Vector::Index>(m.sum());
       Matrix S = Matrix::Zero(dim, m_robot.nv());
@@ -55,7 +55,7 @@ namespace tsid
         if(m(i)!=0.0)
         {
           assert(m(i)==1.0);
-          S(j,6+i) = 1.0;
+          S(j,m_robot.nv()-m_robot.na()+i) = 1.0;
           m_activeAxes(j) = i;
           j++;
         }
@@ -74,21 +74,21 @@ namespace tsid
 
     void TaskJointPosture::Kp(ConstRefVector Kp)
     {
-      assert(Kp.size()==m_robot.nv()-6);
+      assert(Kp.size()==m_robot.na());
       m_Kp = Kp;
     }
 
     void TaskJointPosture::Kd(ConstRefVector Kd)
     {
-      assert(Kd.size()==m_robot.nv()-6);
+      assert(Kd.size()==m_robot.na());
       m_Kd = Kd;
     }
 
     void TaskJointPosture::setReference(const TrajectorySample & ref)
     {
-      assert(ref.pos.size()==m_robot.nv()-6);
-      assert(ref.vel.size()==m_robot.nv()-6);
-      assert(ref.acc.size()==m_robot.nv()-6);
+      assert(ref.pos.size()==m_robot.na());
+      assert(ref.vel.size()==m_robot.na());
+      assert(ref.acc.size()==m_robot.na());
       m_ref = ref;
     }
 
@@ -148,8 +148,8 @@ namespace tsid
                                                     const Data & )
     {
       // Compute errors
-      m_p = q.tail(m_robot.nv()-6);
-      m_v = v.tail(m_robot.nv()-6);
+      m_p = q.tail(m_robot.na());
+      m_v = v.tail(m_robot.na());
       m_p_error = m_p - m_ref.pos;
       m_v_error = m_v - m_ref.vel;
       m_a_des = - m_Kp.cwiseProduct(m_p_error)
