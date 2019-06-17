@@ -56,6 +56,7 @@ namespace tsid
 
       m_mask.resize(6);
       m_mask.fill(1.);
+      setMask(m_mask);
 
       m_local_frame = true;
     }
@@ -63,7 +64,12 @@ namespace tsid
     void TaskSE3Equality::setMask(math::ConstRefVector mask)
     {
       TaskMotion::setMask(mask);
-      m_constraint.resize(dim(), (unsigned int)m_J.cols());
+      int n = dim();
+      m_constraint.resize(n, (unsigned int)m_J.cols());
+      m_p_error_masked_vec.resize(n);
+      m_v_error_masked_vec.resize(n);
+      m_drift_masked.resize(n);
+      m_a_des_masked.resize(n);
     }
 
     int TaskSE3Equality::dim() const
@@ -102,12 +108,12 @@ namespace tsid
 
     const Vector & TaskSE3Equality::position_error() const
     {
-      return m_p_error_vec;
+      return m_p_error_masked_vec;
     }
 
     const Vector & TaskSE3Equality::velocity_error() const
     {
-      return m_v_error_vec;
+      return m_v_error_masked_vec;
     }
 
     const Vector & TaskSE3Equality::position() const
@@ -132,12 +138,12 @@ namespace tsid
 
     const Vector & TaskSE3Equality::getDesiredAcceleration() const
     {
-      return m_a_des;
+      return m_a_des_masked;
     }
 
     Vector TaskSE3Equality::getAcceleration(ConstRefVector dv) const
     {
-      return m_constraint.matrix()*dv + m_drift.toVector();
+      return m_constraint.matrix()*dv + m_drift_masked;
     }
 
     Index TaskSE3Equality::frame_id() const
@@ -192,7 +198,7 @@ namespace tsid
 
         m_drift = m_wMl.act(m_drift);
 
-        // desired acc in local oriented frame
+        // desired acc in local world-oriented frame
         m_a_des = - m_Kp.cwiseProduct(m_p_error_vec)
                   - m_Kd.cwiseProduct(m_v_error.toVector())
                   + m_a_ref.toVector();
@@ -212,6 +218,10 @@ namespace tsid
 
         m_constraint.matrix().row(idx) = m_J.row(i);
         m_constraint.vector().row(idx) = (m_a_des - m_drift.toVector()).row(i);
+        m_a_des_masked(idx)            = m_a_des(i);
+        m_drift_masked(idx)            = m_drift.toVector()(i);
+        m_p_error_masked_vec(idx)      = m_p_error_vec(i);
+        m_v_error_masked_vec(idx)      = m_v_error_vec(i);
 
         idx += 1;
       }
