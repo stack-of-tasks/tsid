@@ -15,15 +15,56 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_tasks_fwd_hpp__
-#define __invdyn_tasks_fwd_hpp__
+#ifndef __invdyn_task_actuation_bounds_hpp__
+#define __invdyn_task_actuation_bounds_hpp__
+
+#include <tsid/tasks/task-actuation.hpp>
+#include <tsid/trajectories/trajectory-base.hpp>
+#include <tsid/math/constraint-inequality.hpp>
 
 namespace tsid
 {
   namespace tasks
   {
-    
+
+    class TaskActuationBounds : public TaskActuation
+    {
+    public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+      typedef math::Index Index;
+      typedef trajectories::TrajectorySample TrajectorySample;
+      typedef math::Vector Vector;
+      typedef math::VectorXi VectorXi;
+      typedef math::ConstraintInequality ConstraintInequality;
+      typedef pinocchio::Data Data;
+
+      TaskActuationBounds(const std::string & name,
+                          RobotWrapper & robot);
+
+      int dim() const;
+
+      const ConstraintBase & compute(const double t,
+                                     ConstRefVector q,
+                                     ConstRefVector v,
+                                     const Data & data);
+
+      const ConstraintBase & getConstraint() const;
+
+      void setBounds(ConstRefVector lower, ConstRefVector upper);
+      const Vector & getLowerBounds() const;
+      const Vector & getUpperBounds() const;
+
+      const Vector & mask() const;
+      void mask(const Vector & mask);
+
+    protected:
+      Vector m_mask;
+      VectorXi m_activeAxes;
+      ConstraintInequality m_constraint;
+    };
+
   }
 }
 
-#endif // ifndef __invdyn_tasks_fwd_hpp__
+#endif // ifndef __invdyn_task_actuation_bounds_hpp__
