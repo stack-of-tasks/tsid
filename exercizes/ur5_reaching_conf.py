@@ -11,21 +11,21 @@ import os
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 LINE_WIDTH = 60
 
-N_SIMULATION = 10000             # number of time steps simulated
+N_SIMULATION = 3000             # number of time steps simulated
 dt = 0.002                      # controller time step
 q0 = np.matrix([[ 0. , -1.0,  0.7,  0. ,  0. ,  0. ]]).T  # initial configuration
 
 # REFERENCE SINUSOIDAL TRAJECTORY
-amp                  = np.matrix([0*0.02, 0.1, 0.10]).T           # amplitude
+amp                  = np.matrix([0.0, 0.0, 0.0]).T           # amplitude
 phi                  = np.matrix([0.0, 0.5*np.pi, 0.0]).T         # phase
-two_pi_f             = 1.4*2*np.pi*np.matrix([1.0, 0.5, 0.5]).T   # frequency (time 2 PI)
-offset               = np.matrix([0.0, 0.0, 0.0]).T
+two_pi_f             = 2*np.pi*np.matrix([1.0, 0.5, 0.5]).T   # frequency (time 2 PI)
+offset               = np.matrix([0.2, 0.0, 0.0]).T
 
 w_ee = 1.0                      # weight of end-effector task
 w_posture = 1e-3                # weight of joint posture task
-w_torque_bounds = 1.0           # weight of the torque bounds
+w_torque_bounds = 0.0           # weight of the torque bounds
 
-kp_ee = 5.0                   # proportional gain of end-effector constraint
+kp_ee = 100.0                   # proportional gain of end-effector constraint
 kp_posture = 1.0               # proportional gain of joint posture task
 
 tau_max_scaling = 0.4           # scaling factor of torque bounds

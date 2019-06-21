@@ -166,10 +166,10 @@ bool InverseDynamicsFormulationAccForce::addForceTask(TaskContactForce & task,
 }
 
 
-bool InverseDynamicsFormulationAccForce::addTorqueTask(TaskActuation & task,
-                                                       double weight,
-                                                       unsigned int priorityLevel,
-                                                       double transition_duration)
+bool InverseDynamicsFormulationAccForce::addActuationTask(TaskActuation & task,
+                                                          double weight,
+                                                          unsigned int priorityLevel,
+                                                          double transition_duration)
 {
   assert(weight>=0.0);
   assert(transition_duration>=0.0);

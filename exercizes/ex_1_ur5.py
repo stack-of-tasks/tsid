@@ -5,20 +5,27 @@ from numpy.linalg import norm as norm
 import matplotlib.pyplot as plt
 import plot_utils as plut
 import time
-import ur5_conf as conf
 from tsid_manipulator import TsidManipulator
+
+import ur5_conf as conf
+#import ur5_reaching_conf as conf
 
 print "".center(conf.LINE_WIDTH,'#')
 print " Task Space Inverse Dynamics - Manipulator ".center(conf.LINE_WIDTH, '#')
 print "".center(conf.LINE_WIDTH,'#'), '\n'
 
+PLOT_EE_POS = 1
+PLOT_EE_VEL = 0
+PLOT_EE_ACC = 0
+PLOT_TORQUES = 1
+
 tsid = TsidManipulator(conf)
 
 N = conf.N_SIMULATION
+tau    = matlib.empty((tsid.robot.na, N))*nan
 ee_pos = matlib.empty((3, N))*nan
 ee_vel = matlib.empty((3, N))*nan
 ee_acc = matlib.empty((3, N))*nan
-
 ee_pos_ref = matlib.empty((3, N))*nan
 ee_vel_ref = matlib.empty((3, N))*nan
 ee_acc_ref = matlib.empty((3, N))*nan
@@ -27,13 +34,10 @@ ee_acc_des = matlib.empty((3, N))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_
 sampleEE = tsid.trajEE.computeNext()
 samplePosture = tsid.trajPosture.computeNext()
 
-amp                  = np.matrix([0.02, 0.1, 0.10]).T           # amplitude
-phi                  = np.matrix([0.0, 0.5*np.pi, 0.0]).T             # phase
-two_pi_f             = 2*np.pi*np.matrix([1.0, 0.5, 0.5]).T     # frequency (time 2 PI)
-
 offset               = sampleEE.pos()
-two_pi_f_amp         = np.multiply(two_pi_f,amp)
-two_pi_f_squared_amp = np.multiply(two_pi_f, two_pi_f_amp)
+offset[:3,0]        += conf.offset
+two_pi_f_amp         = np.multiply(conf.two_pi_f, conf.amp)
+two_pi_f_squared_amp = np.multiply(conf.two_pi_f, two_pi_f_amp)
 
 pEE = offset.copy()
 vEE = matlib.zeros((6,1))
@@ -48,9 +52,9 @@ q, v = tsid.q, tsid.v
 for i in range(0, N):
     time_start = time.time()
     
-    pEE[:3,0] = offset[:3,0] +  np.multiply(amp, matlib.sin(two_pi_f*t + phi))
-    vEE[:3,0] = np.multiply(two_pi_f_amp, matlib.cos(two_pi_f*t + phi))
-    aEE[:3,0] = np.multiply(two_pi_f_squared_amp, -matlib.sin(two_pi_f*t + phi))
+    pEE[:3,0] = offset[:3,0] +  np.multiply(conf.amp, matlib.sin(conf.two_pi_f*t + conf.phi))
+    vEE[:3,0] = np.multiply(two_pi_f_amp, matlib.cos(conf.two_pi_f*t + conf.phi))
+    aEE[:3,0] = np.multiply(two_pi_f_squared_amp, -matlib.sin(conf.two_pi_f*t + conf.phi))
     sampleEE.pos(pEE)
     sampleEE.vel(vEE)
     sampleEE.acc(aEE)
@@ -61,10 +65,10 @@ for i in range(0, N):
 
     sol = tsid.solver.solve(HQPData)
     if(sol.status!=0):
-        print "QP problem could not be solved! Error code:", sol.status
+        print "Time %.3f QP problem could not be solved! Error code:"%t, sol.status
         break
     
-    tau = tsid.formulation.getActuatorForces(sol)
+    tau[:,i] = tsid.formulation.getActuatorForces(sol)
     dv = tsid.formulation.getAccelerations(sol)
     
     ee_pos[:,i] = tsid.robot.framePosition(tsid.formulation.data(), tsid.EE).translation
@@ -93,32 +97,47 @@ for i in range(0, N):
 # PLOT STUFF
 time = np.arange(0.0, N*conf.dt, conf.dt)
 
-(f, ax) = plut.create_empty_figure(3,1)
-for i in range(3):
-    ax[i].plot(time, ee_pos[i,:].A1, label='EE '+str(i))
-    ax[i].plot(time, ee_pos_ref[i,:].A1, 'r:', label='EE Ref '+str(i))
-    ax[i].set_xlabel('Time [s]')
-    ax[i].set_ylabel('EE [m]')
-    leg = ax[i].legend()
-    leg.get_frame().set_alpha(0.5)
+if(PLOT_EE_POS):
+    (f, ax) = plut.create_empty_figure(3,1)
+    for i in range(3):
+        ax[i].plot(time, ee_pos[i,:].A1, label='EE '+str(i))
+        ax[i].plot(time, ee_pos_ref[i,:].A1, 'r:', label='EE Ref '+str(i))
+        ax[i].set_xlabel('Time [s]')
+        ax[i].set_ylabel('EE [m]')
+        leg = ax[i].legend()
+        leg.get_frame().set_alpha(0.5)
 
-(f, ax) = plut.create_empty_figure(3,1)
-for i in range(3):
-    ax[i].plot(time, ee_vel[i,:].A1, label='EE Vel '+str(i))
-    ax[i].plot(time, ee_vel_ref[i,:].A1, 'r:', label='EE Vel Ref '+str(i))
-    ax[i].set_xlabel('Time [s]')
-    ax[i].set_ylabel('EE Vel [m/s]')
-    leg = ax[i].legend()
-    leg.get_frame().set_alpha(0.5)
-    
-(f, ax) = plut.create_empty_figure(3,1)
-for i in range(3):
-    ax[i].plot(time, ee_acc[i,:].A1, label='EE Acc '+str(i))
-    ax[i].plot(time, ee_acc_ref[i,:].A1, 'r:', label='EE Acc Ref '+str(i))
-    ax[i].plot(time, ee_acc_des[i,:].A1, 'g--', label='EE Acc Des '+str(i))
-    ax[i].set_xlabel('Time [s]')
-    ax[i].set_ylabel('EE Acc [m/s^2]')
-    leg = ax[i].legend()
-    leg.get_frame().set_alpha(0.5)
-    
+if(PLOT_EE_VEL):
+    (f, ax) = plut.create_empty_figure(3,1)
+    for i in range(3):
+        ax[i].plot(time, ee_vel[i,:].A1, label='EE Vel '+str(i))
+        ax[i].plot(time, ee_vel_ref[i,:].A1, 'r:', label='EE Vel Ref '+str(i))
+        ax[i].set_xlabel('Time [s]')
+        ax[i].set_ylabel('EE Vel [m/s]')
+        leg = ax[i].legend()
+        leg.get_frame().set_alpha(0.5)
+
+if(PLOT_EE_ACC):    
+    (f, ax) = plut.create_empty_figure(3,1)
+    for i in range(3):
+        ax[i].plot(time, ee_acc[i,:].A1, label='EE Acc '+str(i))
+        ax[i].plot(time, ee_acc_ref[i,:].A1, 'r:', label='EE Acc Ref '+str(i))
+        ax[i].plot(time, ee_acc_des[i,:].A1, 'g--', label='EE Acc Des '+str(i))
+        ax[i].set_xlabel('Time [s]')
+        ax[i].set_ylabel('EE Acc [m/s^2]')
+        leg = ax[i].legend()
+        leg.get_frame().set_alpha(0.5)
+
+if(PLOT_TORQUES):    
+    (f, ax) = plut.create_empty_figure(tsid.robot.nv/2,2)
+    ax = ax.reshape(tsid.robot.nv)
+    for i in range(tsid.robot.nv):
+        ax[i].plot(time, tau[i,:].A1, label='Torque '+str(i))
+        ax[i].plot([time[0], time[-1]], 2*[tsid.tau_min[i,0]], ':')
+        ax[i].plot([time[0], time[-1]], 2*[tsid.tau_max[i,0]], ':')
+        ax[i].set_xlabel('Time [s]')
+        ax[i].set_ylabel('Torque [Nm]')
+        leg = ax[i].legend()
+        leg.get_frame().set_alpha(0.5)
+
 plt.show()
