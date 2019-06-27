@@ -31,6 +31,7 @@
 #include "tsid/tasks/task-se3-equality.hpp"
 #include "tsid/tasks/task-com-equality.hpp"
 #include "tsid/tasks/task-actuation-bounds.hpp"
+#include "tsid/tasks/task-joint-bounds.hpp"
 
 namespace tsid
 {
@@ -56,6 +57,7 @@ namespace tsid
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_SE3, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_COM, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_Joint, bp::args("task", "weight", "priorityLevel", "transition duration"))
+        .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_JointBounds, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addActuationTask", &InvDynPythonVisitor::addActuationTask_Bounds, bp::args("task", "weight", "priorityLevel", "transition duration"))
         
         .def("updateTaskWeight", &InvDynPythonVisitor::updateTaskWeight, bp::args("task_name", "weight"))
@@ -86,6 +88,9 @@ namespace tsid
         return self.addMotionTask(task, weight, priorityLevel, transition_duration);
       }
       static bool addMotionTask_Joint(T & self, tasks::TaskJointPosture & task, double weight, unsigned int priorityLevel, double transition_duration){
+        return self.addMotionTask(task, weight, priorityLevel, transition_duration);
+      }
+      static bool addMotionTask_JointBounds(T & self, tasks::TaskJointBounds & task, double weight, unsigned int priorityLevel, double transition_duration){
         return self.addMotionTask(task, weight, priorityLevel, transition_duration);
       }
       static bool addActuationTask_Bounds(T & self, tasks::TaskActuationBounds & task, double weight, unsigned int priorityLevel, double transition_duration){

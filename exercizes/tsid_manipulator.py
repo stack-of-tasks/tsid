@@ -57,7 +57,14 @@ class TsidManipulator:
         actuationBoundsTask.setBounds(self.tau_min, self.tau_max)
         if(conf.w_torque_bounds>0.0):
             formulation.addActuationTask(actuationBoundsTask, conf.w_torque_bounds, 0, 0.0)
-                        
+        
+        jointBoundsTask = tsid.TaskJointBounds("task-joint-bounds", robot, conf.dt)
+        self.v_max = conf.v_max_scaling * model.velocityLimit
+        self.v_min = -self.v_max
+        jointBoundsTask.setVelocityBounds(self.v_min, self.v_max)
+        if(conf.w_joint_bounds>0.0):
+            formulation.addMotionTask(jointBoundsTask, conf.w_joint_bounds, 0, 0.0)
+        
         trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q)
         postureTask.setReference(trajPosture.computeNext())
         
@@ -67,6 +74,7 @@ class TsidManipulator:
         self.trajPosture = trajPosture
         self.postureTask  = postureTask
         self.actuationBoundsTask = actuationBoundsTask
+        self.jointBoundsTask = jointBoundsTask
         self.formulation = formulation
         self.solver = solver
         self.q = q

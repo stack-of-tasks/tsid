@@ -7,22 +7,25 @@ import plot_utils as plut
 import time
 from tsid_manipulator import TsidManipulator
 
-import ur5_conf as conf
-#import ur5_reaching_conf as conf
+#import ur5_conf as conf
+import ur5_reaching_conf as conf
 
 print "".center(conf.LINE_WIDTH,'#')
 print " Task Space Inverse Dynamics - Manipulator ".center(conf.LINE_WIDTH, '#')
 print "".center(conf.LINE_WIDTH,'#'), '\n'
 
 PLOT_EE_POS = 1
-PLOT_EE_VEL = 0
+PLOT_EE_VEL = 1
 PLOT_EE_ACC = 0
+PLOT_JOINT_VEL = 1
 PLOT_TORQUES = 1
 
 tsid = TsidManipulator(conf)
 
 N = conf.N_SIMULATION
 tau    = matlib.empty((tsid.robot.na, N))*nan
+q      = matlib.empty((tsid.robot.nq, N+1))*nan
+v      = matlib.empty((tsid.robot.nv, N+1))*nan
 ee_pos = matlib.empty((3, N))*nan
 ee_vel = matlib.empty((3, N))*nan
 ee_acc = matlib.empty((3, N))*nan
@@ -47,7 +50,7 @@ tsid.gui.addSphere('world/ee', conf.SPHERE_RADIUS, conf.EE_SPHERE_COLOR)
 tsid.gui.addSphere('world/ee_ref', conf.REF_SPHERE_RADIUS, conf.EE_REF_SPHERE_COLOR)
 
 t = 0.0
-q, v = tsid.q, tsid.v
+q[:,0], v[:,0] = tsid.q, tsid.v
 
 for i in range(0, N):
     time_start = time.time()
@@ -60,7 +63,7 @@ for i in range(0, N):
     sampleEE.acc(aEE)
     tsid.eeTask.setReference(sampleEE)
 
-    HQPData = tsid.formulation.computeProblemData(t, q, v)
+    HQPData = tsid.formulation.computeProblemData(t, q[:,i], v[:,i])
     # if i == 0: HQPData.print_all()
 
     sol = tsid.solver.solve(HQPData)
@@ -83,11 +86,11 @@ for i in range(0, N):
         print "Time %.3f"%(t)
         print "\ttracking err %s: %.3f"%(tsid.eeTask.name.ljust(20,'.'), norm(tsid.eeTask.position_error, 2))
 
-    q, v = tsid.integrate_dv(q, v, dv, conf.dt)
+    q[:,i+1], v[:,i+1] = tsid.integrate_dv(q[:,i], v[:,i], dv, conf.dt)
     t += conf.dt
     
     if i%conf.DISPLAY_N == 0: 
-        tsid.robot_display.display(q)
+        tsid.robot_display.display(q[:,i])
         tsid.gui.applyConfiguration('world/ee',     ee_pos[:,i].A1.tolist()+[0,0,0,1.])
         tsid.gui.applyConfiguration('world/ee_ref', ee_pos_ref[:,i].A1.tolist()+[0,0,0,1.])
 
@@ -140,4 +143,16 @@ if(PLOT_TORQUES):
         leg = ax[i].legend()
         leg.get_frame().set_alpha(0.5)
 
+if(PLOT_JOINT_VEL):    
+    (f, ax) = plut.create_empty_figure(tsid.robot.nv/2,2)
+    ax = ax.reshape(tsid.robot.nv)
+    for i in range(tsid.robot.nv):
+        ax[i].plot(time, v[i,:-1].A1, label='Joint vel '+str(i))
+        ax[i].plot([time[0], time[-1]], 2*[tsid.v_min[i,0]], ':')
+        ax[i].plot([time[0], time[-1]], 2*[tsid.v_max[i,0]], ':')
+        ax[i].set_xlabel('Time [s]')
+        ax[i].set_ylabel('Joint velocity [rad/s]')
+        leg = ax[i].legend()
+        leg.get_frame().set_alpha(0.5)
+        
 plt.show()
