@@ -26,6 +26,7 @@
 #include <tsid/tasks/task-se3-equality.hpp>
 #include <tsid/tasks/task-com-equality.hpp>
 #include <tsid/tasks/task-joint-posture.hpp>
+#include <tsid/tasks/task-joint-bounds.hpp>
 
 #include <tsid/trajectories/trajectory-se3.hpp>
 #include <tsid/trajectories/trajectory-euclidian.hpp>
@@ -269,6 +270,52 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
     if(i%100==0)
       cout << "Time "<<t<<"\t pos error "<<error<<
               "\t vel error "<<task.velocity_error().norm()<<endl;
+  }
+}
+
+
+BOOST_AUTO_TEST_CASE ( test_task_joint_bounds )
+{
+  cout<<"\n\n*********** TEST TASK JOINT BOUNDS ***********\n";
+  vector<string> package_dirs;
+  package_dirs.push_back(romeo_model_path);
+  string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
+  RobotWrapper robot(urdfFileName,
+                     package_dirs,
+                     pinocchio::JointModelFreeFlyer(),
+                     false);
+  const unsigned int na = robot.nv()-6;
+  const double dt = 0.001;
+
+  cout<<"Gonna create task\n";
+  TaskJointBounds task("task-joint-bounds", robot, dt);
+
+  cout<<"Gonna set limits\n"<<na<<endl;
+  VectorXd dq_max = VectorXd::Ones(na);
+  VectorXd dq_min = -dq_max;
+  task.setVelocityBounds(dq_min, dq_max);
+
+  BOOST_CHECK(task.getVelocityLowerBounds().isApprox(dq_min));
+  BOOST_CHECK(task.getVelocityUpperBounds().isApprox(dq_max));
+
+  cout<<"Gonna set up for simulation\n";
+  double t = 0.0;
+
+  VectorXd q = neutral(robot.model());
+  VectorXd v = VectorXd::Zero(robot.nv());
+  pinocchio::Data data(robot.model());
+  for(int i=0; i<max_it; i++)
+  {
+    robot.computeAllTerms(data, q, v);
+    const ConstraintBase & constraint = task.compute(t, q, v, data);
+    BOOST_CHECK(constraint.rows()==robot.nv());
+    BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols())==static_cast<tsid::math::Index>(robot.nv()));
+    BOOST_REQUIRE(isFinite(constraint.lowerBound()));
+    BOOST_REQUIRE(isFinite(constraint.upperBound()));
+
+    BOOST_REQUIRE(isFinite(v));
+    BOOST_REQUIRE(isFinite(q));
+    t += dt;
   }
 }
 
