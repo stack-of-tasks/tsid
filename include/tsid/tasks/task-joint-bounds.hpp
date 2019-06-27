@@ -15,15 +15,61 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_tasks_fwd_hpp__
-#define __invdyn_tasks_fwd_hpp__
+#ifndef __invdyn_task_joint_bounds_hpp__
+#define __invdyn_task_joint_bounds_hpp__
+
+#include <tsid/tasks/task-motion.hpp>
+#include <tsid/math/constraint-bound.hpp>
 
 namespace tsid
 {
   namespace tasks
   {
-    
+
+    class TaskJointBounds : public TaskMotion
+    {
+    public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+      typedef math::Vector Vector;
+      typedef math::ConstraintBound ConstraintBound;
+      typedef pinocchio::Data Data;
+
+      TaskJointBounds(const std::string & name,
+                      RobotWrapper & robot,
+                      double dt);
+
+      int dim() const;
+
+      const ConstraintBase & compute(const double t,
+                                     ConstRefVector q,
+                                     ConstRefVector v,
+                                     const Data & data);
+
+      const ConstraintBase & getConstraint() const;
+
+      void setTimeStep(double dt);
+      void setVelocityBounds(ConstRefVector lower, ConstRefVector upper);
+      void setAccelerationBounds(ConstRefVector lower, ConstRefVector upper);
+      const Vector & getAccelerationLowerBounds() const;
+      const Vector & getAccelerationUpperBounds() const;
+      const Vector & getVelocityLowerBounds() const;
+      const Vector & getVelocityUpperBounds() const;
+
+//      const Vector & mask() const;
+//      void mask(const Vector & mask);
+
+    protected:
+      double m_dt;
+      int m_na, m_nv;
+      Vector m_v_lb, m_v_ub;
+      Vector m_a_lb, m_a_ub;
+      Vector m_ddq_max_due_to_vel, m_ddq_min_due_to_vel;
+//      Vector m_mask;
+      ConstraintBound m_constraint;
+    };
+
   }
 }
 
-#endif // ifndef __invdyn_tasks_fwd_hpp__
+#endif // ifndef __invdyn_task_joint_bounds_hpp__

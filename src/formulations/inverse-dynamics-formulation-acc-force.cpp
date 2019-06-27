@@ -107,14 +107,15 @@ void InverseDynamicsFormulationAccForce::addTask(TaskLevel* tl,
     if(priorityLevel==0)
       m_eq += c.rows();
   }
-  else if(c.isInequality())
+  else //if(c.isInequality())
   {
     tl->constraint = new ConstraintInequality(c.name(), c.rows(), m_v+m_k);
     if(priorityLevel==0)
       m_in += c.rows();
   }
-  else
-    tl->constraint = new ConstraintBound(c.name(), m_v+m_k);
+  // don't use bounds for now because EiQuadProg doesn't exploit them anyway
+//  else
+//    tl->constraint = new ConstraintBound(c.name(), m_v+m_k);
   m_hqpData[priorityLevel].push_back(make_pair<double, ConstraintBase*>(weight, tl->constraint));
 }
 
@@ -376,8 +377,9 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     }
     else
     {
-      (*it)->constraint->lowerBound().head(m_v) = c.lowerBound();
-      (*it)->constraint->upperBound().head(m_v) = c.upperBound();
+      (*it)->constraint->matrix().leftCols(m_v) = Matrix::Identity(m_v, m_v);
+      (*it)->constraint->lowerBound() = c.lowerBound();
+      (*it)->constraint->upperBound() = c.upperBound();
     }
   }
 
