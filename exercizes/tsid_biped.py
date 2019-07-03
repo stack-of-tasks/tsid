@@ -1,4 +1,5 @@
 import pinocchio as se3
+from pinocchio import libpinocchio_pywrap as pin 
 import tsid
 import numpy as np
 import numpy.matlib as matlib
@@ -23,8 +24,8 @@ class TsidBiped:
         self.robot = tsid.RobotWrapper(conf.urdf, vector, se3.JointModelFreeFlyer(), False)
         robot = self.robot
         self.model = robot.model()
-        q = se3.getNeutralConfiguration(robot.model(), conf.srdf, False)
-#        q = robot.model().referenceConfigurations["half_sitting"]
+        pin.loadReferenceConfigurations(self.model, conf.srdf, False)
+        self.q0 = q = self.model.referenceConfigurations["half_sitting"]
         v = np.matrix(np.zeros(robot.nv)).T
         
         assert self.model.existFrame(conf.rf_frame_name)
@@ -45,7 +46,7 @@ class TsidBiped:
         H_rf_ref = robot.position(data, self.RF)
         
         # modify initial robot configuration so that foot is on the ground (z=0)
-        q[2] -= H_rf_ref.translation[2,0] # 0.84    # fix this
+        q[2] -= H_rf_ref.translation[2,0]
         formulation.computeProblemData(0.0, q, v)
         data = formulation.data()
         H_rf_ref = robot.position(data, self.RF)
@@ -75,17 +76,20 @@ class TsidBiped:
         self.leftFootTask.setKp(self.conf.kp_foot * np.matrix(np.ones(6)).T)
         self.leftFootTask.setKd(2.0 * np.sqrt(self.conf.kp_foot) * np.matrix(np.ones(6)).T)
         self.trajLF = tsid.TrajectorySE3Constant("traj-left-foot", H_lf_ref)
+        formulation.addMotionTask(self.leftFootTask, self.conf.w_foot, 1, 0.0)
         
         self.rightFootTask = tsid.TaskSE3Equality("task-right-foot", self.robot, self.conf.rf_frame_name)
         self.rightFootTask.setKp(self.conf.kp_foot * np.matrix(np.ones(6)).T)
         self.rightFootTask.setKd(2.0 * np.sqrt(self.conf.kp_foot) * np.matrix(np.ones(6)).T)
         self.trajRF = tsid.TrajectorySE3Constant("traj-right-foot", H_rf_ref)
+        formulation.addMotionTask(self.rightFootTask, self.conf.w_foot, 1, 0.0)
         
         com_ref = robot.com(data)
         trajCom = tsid.TrajectoryEuclidianConstant("traj_com", com_ref)
         
         q_ref = q[7:]
         trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
+        postureTask.setReference(trajPosture.computeNext())
         
         solver = tsid.SolverHQuadProgFast("qp solver")
         solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
@@ -125,19 +129,21 @@ class TsidBiped:
         q = se3.integrate(self.model, q, dt*v_mean)
         return q,v
         
-    def remove_contact_RF(self, transition_time=0.0):
-        self.formulation.addMotionTask(self.rightFootTask, self.conf.w_foot, 1, 0.0)
+    def get_placement_LF(self):
+        return self.robot.position(self.formulation.data(), self.LF)
         
-        H_rf_ref = self.robot.position(self.formulation.data(), self.LF)
+    def get_placement_RF(self):
+        return self.robot.position(self.formulation.data(), self.RF)
+        
+    def remove_contact_RF(self, transition_time=0.0):
+        H_rf_ref = self.robot.position(self.formulation.data(), self.RF)
         self.trajRF.setReference(H_rf_ref)
         self.rightFootTask.setReference(self.trajRF.computeNext())
     
         self.formulation.removeRigidContact(self.contactRF.name, transition_time)
         self.contact_RF_active = False
         
-    def remove_contact_LF(self, transition_time=0.0):
-        self.formulation.addMotionTask(self.leftFootTask, self.conf.w_foot, 1, 0.0)
-        
+    def remove_contact_LF(self, transition_time=0.0):        
         H_lf_ref = self.robot.position(self.formulation.data(), self.LF)
         self.trajLF.setReference(H_lf_ref)
         self.leftFootTask.setReference(self.trajLF.computeNext())
@@ -146,7 +152,7 @@ class TsidBiped:
         self.contact_LF_active = False
         
     def add_contact_RF(self, transition_time=0.0):
-        self.formulation.removeTask(self.rightFootTask.name, 0.0)
+#        self.formulation.removeTask(self.rightFootTask.name, 0.0)
         
         H_rf_ref = self.robot.position(self.formulation.data(), self.RF)
         self.contactRF.setReference(H_rf_ref)
@@ -155,7 +161,7 @@ class TsidBiped:
         self.contact_RF_active = True
         
     def add_contact_LF(self, transition_time=0.0):
-        self.formulation.removeTask(self.leftFootTask.name, 0.0)
+#        self.formulation.removeTask(self.leftFootTask.name, 0.0)
         
         H_lf_ref = self.robot.position(self.formulation.data(), self.LF)
         self.contactLF.setReference(H_lf_ref)
