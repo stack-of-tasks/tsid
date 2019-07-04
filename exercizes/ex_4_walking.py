@@ -12,7 +12,7 @@ print "".center(conf.LINE_WIDTH,'#')
 print " Test Walking ".center(conf.LINE_WIDTH, '#')
 print "".center(conf.LINE_WIDTH,'#'), '\n'
 
-data = np.load(conf.DATA_FILE)
+data = np.load(conf.DATA_FILE_TSID)
 
 tsid = TsidBiped(conf)
 
@@ -25,21 +25,24 @@ f_LF = matlib.zeros((6, N))
 cop_RF = matlib.zeros((2, N))
 cop_LF = matlib.zeros((2, N))
 
-foot_steps = np.asmatrix(data['foot_steps'])
 contact_phase = data['contact_phase']
 com_pos_ref = np.asmatrix(data['com'])
 com_vel_ref = np.asmatrix(data['dcom'])
-com_acc_ref = np.asmatrix(data['ddcom'])*1.0
+com_acc_ref = np.asmatrix(data['ddcom'])
+x_RF_ref    = np.asmatrix(data['x_RF'])
+dx_RF_ref   = np.asmatrix(data['dx_RF'])
+ddx_RF_ref  = np.asmatrix(data['ddx_RF'])
+x_LF_ref    = np.asmatrix(data['x_LF'])
+dx_LF_ref   = np.asmatrix(data['dx_LF'])
+ddx_LF_ref  = np.asmatrix(data['ddx_LF'])
 com_acc_des = matlib.empty((3, N))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_err
 
 x_rf   = tsid.get_placement_RF().translation
-offset = matlib.zeros((3,1))
-offset[:2,0] = x_rf[:2,0] - foot_steps[0,:].T #tsid.robot.com(tsid.formulation.data())
+offset = x_rf - x_RF_ref[:,0]
 for i in range(N):
     com_pos_ref[:,i] += offset
-#    foot_steps[:,i] += offset[:2,0]
-
-sampleCom = tsid.trajCom.computeNext()
+    x_RF_ref[:,i] += offset
+    x_LF_ref[:,i] += offset
 
 t = 0.0
 q, v = tsid.q, tsid.v
@@ -52,7 +55,7 @@ for i in range(-2000, N):
         tsid.remove_contact_LF()
     elif i>0:
         if contact_phase[i] != contact_phase[i-1]:
-            print "Changing contact phase from %s to %s"%(contact_phase[i-1], contact_phase[i])
+            print "Time %.3f Changing contact phase from %s to %s"%(t, contact_phase[i-1], contact_phase[i])
             if contact_phase[i] == 'left':
                 tsid.add_contact_LF()
                 tsid.remove_contact_RF()
@@ -61,15 +64,11 @@ for i in range(-2000, N):
                 tsid.remove_contact_LF()
     
     if i<0:
-        sampleCom.pos(com_pos_ref[:,0])
+        tsid.set_com_ref(com_pos_ref[:,0], 0*com_vel_ref[:,0], 0*com_acc_ref[:,0])
     else:
-        sampleCom.pos(com_pos_ref[:,i])
-        sampleCom.vel(com_vel_ref[:,i])
-        sampleCom.acc(com_acc_ref[:,i])
-
-    tsid.comTask.setReference(sampleCom)
-    tsid.rightFootTask.setReference(tsid.trajRF.computeNext())
-    tsid.leftFootTask.setReference(tsid.trajLF.computeNext())
+        tsid.set_com_ref(com_pos_ref[:,i], com_vel_ref[:,i], com_acc_ref[:,i])
+        tsid.set_LF_3d_ref(x_LF_ref[:,i], dx_LF_ref[:,i], ddx_LF_ref[:,i])
+        tsid.set_RF_3d_ref(x_RF_ref[:,i], dx_RF_ref[:,i], ddx_RF_ref[:,i])
     
     HQPData = tsid.formulation.computeProblemData(t, q, v)
 
@@ -133,24 +132,24 @@ for i in range(3):
     leg = ax[i].legend()
     leg.get_frame().set_alpha(0.5)
 
-(f, ax) = plut.create_empty_figure(3,1)
-for i in range(3):
-    ax[i].plot(time, com_vel[i,:].A1, label='CoM Vel '+str(i))
-    ax[i].plot(time, com_vel_ref[i,:].A1, 'r:', label='CoM Vel Ref '+str(i))
-    ax[i].set_xlabel('Time [s]')
-    ax[i].set_ylabel('CoM Vel [m/s]')
-    leg = ax[i].legend()
-    leg.get_frame().set_alpha(0.5)
-    
-(f, ax) = plut.create_empty_figure(3,1)
-for i in range(3):
-    ax[i].plot(time, com_acc[i,:].A1, label='CoM Acc '+str(i))
-    ax[i].plot(time, com_acc_ref[i,:].A1, 'r:', label='CoM Acc Ref '+str(i))
-    ax[i].plot(time, com_acc_des[i,:].A1, 'g--', label='CoM Acc Des '+str(i))
-    ax[i].set_xlabel('Time [s]')
-    ax[i].set_ylabel('CoM Acc [m/s^2]')
-    leg = ax[i].legend()
-    leg.get_frame().set_alpha(0.5)
+#(f, ax) = plut.create_empty_figure(3,1)
+#for i in range(3):
+#    ax[i].plot(time, com_vel[i,:].A1, label='CoM Vel '+str(i))
+#    ax[i].plot(time, com_vel_ref[i,:].A1, 'r:', label='CoM Vel Ref '+str(i))
+#    ax[i].set_xlabel('Time [s]')
+#    ax[i].set_ylabel('CoM Vel [m/s]')
+#    leg = ax[i].legend()
+#    leg.get_frame().set_alpha(0.5)
+#    
+#(f, ax) = plut.create_empty_figure(3,1)
+#for i in range(3):
+#    ax[i].plot(time, com_acc[i,:].A1, label='CoM Acc '+str(i))
+#    ax[i].plot(time, com_acc_ref[i,:].A1, 'r:', label='CoM Acc Ref '+str(i))
+#    ax[i].plot(time, com_acc_des[i,:].A1, 'g--', label='CoM Acc Des '+str(i))
+#    ax[i].set_xlabel('Time [s]')
+#    ax[i].set_ylabel('CoM Acc [m/s^2]')
+#    leg = ax[i].legend()
+#    leg.get_frame().set_alpha(0.5)
 
 (f, ax) = plut.create_empty_figure(2,1)
 for i in range(2):
@@ -161,14 +160,14 @@ for i in range(2):
     leg = ax[i].legend()
     leg.get_frame().set_alpha(0.5)
     
-(f, ax) = plut.create_empty_figure(3,2)
-ax = ax.reshape((6))
-for i in range(6):
-    ax[i].plot(time, f_LF[i,:].A1, label='Force LF '+str(i))
-    ax[i].plot(time, f_RF[i,:].A1, label='Force RF '+str(i))
-    ax[i].set_xlabel('Time [s]')
-    ax[i].set_ylabel('Force [N/Nm]')
-    leg = ax[i].legend()
-    leg.get_frame().set_alpha(0.5)
+#(f, ax) = plut.create_empty_figure(3,2)
+#ax = ax.reshape((6))
+#for i in range(6):
+#    ax[i].plot(time, f_LF[i,:].A1, label='Force LF '+str(i))
+#    ax[i].plot(time, f_RF[i,:].A1, label='Force RF '+str(i))
+#    ax[i].set_xlabel('Time [s]')
+#    ax[i].set_ylabel('Force [N/Nm]')
+#    leg = ax[i].legend()
+#    leg.get_frame().set_alpha(0.5)
     
 plt.show()

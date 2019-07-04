@@ -46,7 +46,7 @@ class TsidBiped:
         H_rf_ref = robot.position(data, self.RF)
         
         # modify initial robot configuration so that foot is on the ground (z=0)
-        q[2] -= H_rf_ref.translation[2,0]
+        q[2] -= H_rf_ref.translation[2,0] - conf.lz
         formulation.computeProblemData(0.0, q, v)
         data = formulation.data()
         H_rf_ref = robot.position(data, self.RF)
@@ -85,23 +85,31 @@ class TsidBiped:
         formulation.addMotionTask(self.rightFootTask, self.conf.w_foot, 1, 0.0)
         
         com_ref = robot.com(data)
-        trajCom = tsid.TrajectoryEuclidianConstant("traj_com", com_ref)
+        self.trajCom = tsid.TrajectoryEuclidianConstant("traj_com", com_ref)
+        self.sample_com = self.trajCom.computeNext()
         
         q_ref = q[7:]
-        trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
-        postureTask.setReference(trajPosture.computeNext())
+        self.trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
+        postureTask.setReference(self.trajPosture.computeNext())
         
-        solver = tsid.SolverHQuadProgFast("qp solver")
-        solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
+        self.sampleLF  = self.trajLF.computeNext()
+        self.sample_LF_pos = self.sampleLF.pos()
+        self.sample_LF_vel = self.sampleLF.vel()
+        self.sample_LF_acc = self.sampleLF.acc()
         
-        self.trajCom = trajCom
-        self.trajPosture = trajPosture
+        self.sampleRF  = self.trajRF.computeNext()
+        self.sample_RF_pos = self.sampleRF.pos()
+        self.sample_RF_vel = self.sampleRF.vel()
+        self.sample_RF_acc = self.sampleRF.acc()
+        
+        self.solver = tsid.SolverHQuadProgFast("qp solver")
+        self.solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
+        
         self.comTask = comTask
         self.postureTask = postureTask
         self.contactRF = contactRF
         self.contactLF = contactLF
         self.formulation = formulation
-        self.solver = solver
         self.q = q
         self.v = v
         
@@ -120,8 +128,11 @@ class TsidBiped:
             self.robot_display.displayCollisions(False)
             self.robot_display.displayVisuals(True)
             self.robot_display.display(q)
+            
             self.gui = self.robot_display.viewer.gui
             self.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
+            self.gui.addFloor('world/floor')
+            self.gui.setLightingMode('world/floor', 'OFF');
         
     def integrate_dv(self, q, v, dv, dt):
         v_mean = v + 0.5*dt*dv
@@ -134,6 +145,30 @@ class TsidBiped:
         
     def get_placement_RF(self):
         return self.robot.position(self.formulation.data(), self.RF)
+        
+    def set_com_ref(self, pos, vel, acc):
+        self.sample_com.pos(pos)
+        self.sample_com.vel(vel)
+        self.sample_com.acc(acc)
+        self.comTask.setReference(self.sample_com)
+        
+    def set_RF_3d_ref(self, pos, vel, acc):
+        self.sample_RF_pos[:3,0] = pos
+        self.sample_RF_vel[:3,0] = vel
+        self.sample_RF_acc[:3,0] = acc
+        self.sampleRF.pos(self.sample_RF_pos)
+        self.sampleRF.vel(self.sample_RF_vel)
+        self.sampleRF.acc(self.sample_RF_acc)        
+        self.rightFootTask.setReference(self.sampleRF)
+        
+    def set_LF_3d_ref(self, pos, vel, acc):
+        self.sample_LF_pos[:3,0] = pos
+        self.sample_LF_vel[:3,0] = vel
+        self.sample_LF_acc[:3,0] = acc
+        self.sampleLF.pos(self.sample_LF_pos)
+        self.sampleLF.vel(self.sample_LF_vel)
+        self.sampleLF.acc(self.sample_LF_acc)        
+        self.leftFootTask.setReference(self.sampleLF)
         
     def remove_contact_RF(self, transition_time=0.0):
         H_rf_ref = self.robot.position(self.formulation.data(), self.RF)
@@ -151,18 +186,14 @@ class TsidBiped:
         self.formulation.removeRigidContact(self.contactLF.name, transition_time)
         self.contact_LF_active = False
         
-    def add_contact_RF(self, transition_time=0.0):
-#        self.formulation.removeTask(self.rightFootTask.name, 0.0)
-        
+    def add_contact_RF(self, transition_time=0.0):       
         H_rf_ref = self.robot.position(self.formulation.data(), self.RF)
         self.contactRF.setReference(H_rf_ref)
         self.formulation.addRigidContact(self.contactRF, self.conf.w_forceRef)
         
         self.contact_RF_active = True
         
-    def add_contact_LF(self, transition_time=0.0):
-#        self.formulation.removeTask(self.leftFootTask.name, 0.0)
-        
+    def add_contact_LF(self, transition_time=0.0):        
         H_lf_ref = self.robot.position(self.formulation.data(), self.LF)
         self.contactLF.setReference(H_lf_ref)
         self.formulation.addRigidContact(self.contactLF, self.conf.w_forceRef)
