@@ -11,7 +11,7 @@ import os
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 LINE_WIDTH = 60
 
-N_SIMULATION = 10000             # number of time steps simulated
+N_SIMULATION = 4000             # number of time steps simulated
 dt = 0.002                      # controller time step
 q0 = np.matrix([[ 0. , -1.0,  0.7,  0. ,  0. ,  0. ]]).T  # initial configuration
 
@@ -24,11 +24,13 @@ offset               = np.matrix([0.0, 0.0, 0.0]).T
 w_ee = 1.0                      # weight of end-effector task
 w_posture = 1e-3                # weight of joint posture task
 w_torque_bounds = 1.0           # weight of the torque bounds
+w_joint_bounds = 1.0
 
 kp_ee = 5.0                   # proportional gain of end-effector constraint
 kp_posture = 1.0               # proportional gain of joint posture task
 
 tau_max_scaling = 0.4           # scaling factor of torque bounds
+v_max_scaling = 0.4
 
 ee_frame_name = "ee_fixed_joint"        # end-effector frame name
 ee_task_mask = np.matrix([1., 1, 1, 0, 0, 0]).T
