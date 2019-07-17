@@ -24,6 +24,14 @@ N_post = int(conf.T_post/conf.dt)
 com_pos = matlib.empty((3, N+N_post))*nan
 com_vel = matlib.empty((3, N+N_post))*nan
 com_acc = matlib.empty((3, N+N_post))*nan
+x_LF   = matlib.empty((3, N+N_post))*nan
+dx_LF  = matlib.empty((3, N+N_post))*nan
+ddx_LF = matlib.empty((3, N+N_post))*nan
+ddx_LF_des = matlib.empty((3, N+N_post))*nan
+x_RF   = matlib.empty((3, N+N_post))*nan
+dx_RF  = matlib.empty((3, N+N_post))*nan
+ddx_RF = matlib.empty((3, N+N_post))*nan
+ddx_RF_des = matlib.empty((3, N+N_post))*nan
 f_RF = matlib.zeros((6, N+N_post))
 f_LF = matlib.zeros((6, N+N_post))
 cop_RF = matlib.zeros((2, N+N_post))
@@ -92,6 +100,13 @@ for i in range(-N_pre, N+N_post):
         com_vel[:,i] = tsid.robot.com_vel(tsid.formulation.data())
         com_acc[:,i] = tsid.comTask.getAcceleration(dv)
         com_acc_des[:,i] = tsid.comTask.getDesiredAcceleration
+        x_LF[:,i], dx_LF[:,i], ddx_LF[:,i] = tsid.get_LF_3d_pos_vel_acc(dv)
+        if not tsid.contact_LF_active:
+            ddx_LF_des[:,i] = tsid.leftFootTask.getDesiredAcceleration[:3]
+        x_RF[:,i], dx_RF[:,i], ddx_RF[:,i] = tsid.get_RF_3d_pos_vel_acc(dv)
+        if not tsid.contact_RF_active:
+            ddx_RF_des[:,i] = tsid.rightFootTask.getDesiredAcceleration[:3]
+        
         if tsid.formulation.checkContact(tsid.contactRF.name, sol):
             T_RF = tsid.contactRF.getForceGeneratorMatrix
             f_RF[:,i] = T_RF * tsid.formulation.getContactForce(tsid.contactRF.name, sol)
@@ -159,6 +174,12 @@ for i in range(3):
 for i in range(2):
     ax[i].plot(time, cop_LF[i,:].A1, label='CoP LF '+str(i))
     ax[i].plot(time, cop_RF[i,:].A1, label='CoP RF '+str(i))
+    if i==0:   
+        ax[i].plot([time[0], time[-1]], [-conf.lxn, -conf.lxn], ':', label='CoP Lim '+str(i))
+        ax[i].plot([time[0], time[-1]], [conf.lxp, conf.lxp], ':', label='CoP Lim '+str(i))
+    elif i==1: 
+        ax[i].plot([time[0], time[-1]], [-conf.lyn, -conf.lyn], ':', label='CoP Lim '+str(i))
+        ax[i].plot([time[0], time[-1]], [conf.lyp, conf.lyp], ':', label='CoP Lim '+str(i))
     ax[i].set_xlabel('Time [s]')
     ax[i].set_ylabel('CoP [m]')
     leg = ax[i].legend()
@@ -173,5 +194,31 @@ for i in range(2):
 #    ax[i].set_ylabel('Force [N/Nm]')
 #    leg = ax[i].legend()
 #    leg.get_frame().set_alpha(0.5)
+    
+for i in range(3):
+    plt.figure()
+    plt.plot(time, x_RF[i,:].A1, label='x RF '+str(i))
+    plt.plot(time[:N], x_RF_ref[i,:].A1, ':', label='x RF ref '+str(i))
+    plt.plot(time, x_LF[i,:].A1, label='x LF '+str(i))
+    plt.plot(time[:N], x_LF_ref[i,:].A1, ':', label='x LF ref '+str(i))
+    plt.legend()
+    
+#for i in range(3):
+#    plt.figure()
+#    plt.plot(time, dx_RF[i,:].A1, label='dx RF '+str(i))
+#    plt.plot(time[:N], dx_RF_ref[i,:].A1, ':', label='dx RF ref '+str(i))
+#    plt.plot(time, dx_LF[i,:].A1, label='dx LF '+str(i))
+#    plt.plot(time[:N], dx_LF_ref[i,:].A1, ':', label='dx LF ref '+str(i))
+#    plt.legend()
+#    
+#for i in range(3):
+#    plt.figure()
+#    plt.plot(time, ddx_RF[i,:].A1, label='ddx RF '+str(i))
+#    plt.plot(time[:N], ddx_RF_ref[i,:].A1, ':', label='ddx RF ref '+str(i))
+#    plt.plot(time, ddx_RF_des[i,:].A1, '--', label='ddx RF des '+str(i))
+#    plt.plot(time, ddx_LF[i,:].A1, label='ddx LF '+str(i))
+#    plt.plot(time[:N], ddx_LF_ref[i,:].A1, ':', label='ddx LF ref '+str(i))
+#    plt.plot(time, ddx_LF_des[i,:].A1, '--', label='ddx LF des '+str(i))
+#    plt.legend()
     
 plt.show()

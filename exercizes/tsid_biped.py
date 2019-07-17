@@ -170,6 +170,20 @@ class TsidBiped:
         self.sampleLF.acc(self.sample_LF_acc)        
         self.leftFootTask.setReference(self.sampleLF)
         
+    def get_LF_3d_pos_vel_acc(self, dv):
+        data = self.formulation.data()
+        H  = self.robot.position(data, self.LF)
+        v  = self.robot.velocity(data, self.LF)
+        a = self.leftFootTask.getAcceleration(dv)
+        return H.translation, v.linear, a[:3]
+        
+    def get_RF_3d_pos_vel_acc(self, dv):
+        data = self.formulation.data()
+        H  = self.robot.position(data, self.RF)
+        v  = self.robot.velocity(data, self.RF)
+        a = self.rightFootTask.getAcceleration(dv)
+        return H.translation, v.linear, a[:3]
+        
     def remove_contact_RF(self, transition_time=0.0):
         H_rf_ref = self.robot.position(self.formulation.data(), self.RF)
         self.trajRF.setReference(H_rf_ref)
