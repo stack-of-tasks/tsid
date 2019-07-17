@@ -25,6 +25,8 @@ import LMPC_walking.second_order.motion_model as motion_model
 import LMPC_walking.second_order.cost_function as cost_function
 import LMPC_walking.second_order.constraints as constraints
 import LMPC_walking.second_order.plot_utils as plot_utils
+import matplotlib.pyplot as plt
+from plot_utils import *
 import ex_4_conf as conf
 #import ex_4_long_conf as conf
 
