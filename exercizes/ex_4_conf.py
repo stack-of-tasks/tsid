@@ -49,6 +49,8 @@ nb_steps              = 4                 # number of desired walking steps
 # configuration for TSID
 # ----------------------------------------------
 dt = 0.002                      # controller time step
+T_pre  = 1.0                    # simulation time before starting to walk
+T_post = 1.0                    # simulation time after walking
 
 w_com = 1.0                     # weight of center of mass task
 w_foot = 1e-1                   # weight of the foot motion task
