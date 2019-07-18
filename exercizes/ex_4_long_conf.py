@@ -49,11 +49,18 @@ nb_steps              = 6                 # number of desired walking steps
 # configuration for TSID
 # ----------------------------------------------
 dt = 0.002                      # controller time step
+T_pre  = 1.0                    # simulation time before starting to walk
+T_post = 2.0                    # simulation time after walking
 
 w_com = 1.0                     # weight of center of mass task
 w_foot = 1e-1                   # weight of the foot motion task
 w_posture = 1e-4                # weight of joint posture task
 w_forceRef = 1e-5               # weight of force regularization task
+w_torque_bounds = 0.0           # weight of the torque bounds
+w_joint_bounds = 0.0
+
+tau_max_scaling = 1.55           # scaling factor of torque bounds
+v_max_scaling = 0.8
 
 kp_contact = 10.0               # proportional gain of contact constraint
 kp_foot = 10.0                  # proportional gain of contact constraint

@@ -13,6 +13,12 @@ print "".center(conf.LINE_WIDTH,'#')
 print " Test Walking ".center(conf.LINE_WIDTH, '#')
 print "".center(conf.LINE_WIDTH,'#'), '\n'
 
+PLOT_COM = 1
+PLOT_COP = 1
+PLOT_FOOT_TRAJ = 0
+PLOT_TORQUES = 1
+PLOT_JOINT_VEL = 1
+
 data = np.load(conf.DATA_FILE_TSID)
 
 tsid = TsidBiped(conf)
@@ -36,6 +42,9 @@ f_RF = matlib.zeros((6, N+N_post))
 f_LF = matlib.zeros((6, N+N_post))
 cop_RF = matlib.zeros((2, N+N_post))
 cop_LF = matlib.zeros((2, N+N_post))
+tau    = matlib.zeros((tsid.robot.na, N+N_post))
+q_log  = matlib.zeros((tsid.robot.nq, N+N_post))
+v_log  = matlib.zeros((tsid.robot.nv, N+N_post))
 
 contact_phase = data['contact_phase']
 com_pos_ref = np.asmatrix(data['com'])
@@ -92,7 +101,10 @@ for i in range(-N_pre, N+N_post):
         print "Time %.3f Velocities are too high, stop everything!"%(t), norm(v)
         break
     
-    tau = tsid.formulation.getActuatorForces(sol)
+    if i>0:
+        q_log[:,i] = q
+        v_log[:,i] = v
+        tau[:,i] = tsid.formulation.getActuatorForces(sol)
     dv = tsid.formulation.getAccelerations(sol)
     
     if i>=0:
@@ -142,48 +154,50 @@ for i in range(-N_pre, N+N_post):
 # PLOT STUFF
 time = np.arange(0.0, (N+N_post)*conf.dt, conf.dt)
 
-(f, ax) = plut.create_empty_figure(3,1)
-for i in range(3):
-    ax[i].plot(time, com_pos[i,:].A1, label='CoM '+str(i))
-    ax[i].plot(time[:N], com_pos_ref[i,:].A1, 'r:', label='CoM Ref '+str(i))
-    ax[i].set_xlabel('Time [s]')
-    ax[i].set_ylabel('CoM [m]')
-    leg = ax[i].legend()
-    leg.get_frame().set_alpha(0.5)
-
-(f, ax) = plut.create_empty_figure(3,1)
-for i in range(3):
-    ax[i].plot(time, com_vel[i,:].A1, label='CoM Vel '+str(i))
-    ax[i].plot(time[:N], com_vel_ref[i,:].A1, 'r:', label='CoM Vel Ref '+str(i))
-    ax[i].set_xlabel('Time [s]')
-    ax[i].set_ylabel('CoM Vel [m/s]')
-    leg = ax[i].legend()
-    leg.get_frame().set_alpha(0.5)
+if PLOT_COM:
+    (f, ax) = plut.create_empty_figure(3,1)
+    for i in range(3):
+        ax[i].plot(time, com_pos[i,:].A1, label='CoM '+str(i))
+        ax[i].plot(time[:N], com_pos_ref[i,:].A1, 'r:', label='CoM Ref '+str(i))
+        ax[i].set_xlabel('Time [s]')
+        ax[i].set_ylabel('CoM [m]')
+        leg = ax[i].legend()
+        leg.get_frame().set_alpha(0.5)
     
-(f, ax) = plut.create_empty_figure(3,1)
-for i in range(3):
-    ax[i].plot(time, com_acc[i,:].A1, label='CoM Acc '+str(i))
-    ax[i].plot(time[:N], com_acc_ref[i,:].A1, 'r:', label='CoM Acc Ref '+str(i))
-    ax[i].plot(time, com_acc_des[i,:].A1, 'g--', label='CoM Acc Des '+str(i))
-    ax[i].set_xlabel('Time [s]')
-    ax[i].set_ylabel('CoM Acc [m/s^2]')
-    leg = ax[i].legend()
-    leg.get_frame().set_alpha(0.5)
+    (f, ax) = plut.create_empty_figure(3,1)
+    for i in range(3):
+        ax[i].plot(time, com_vel[i,:].A1, label='CoM Vel '+str(i))
+        ax[i].plot(time[:N], com_vel_ref[i,:].A1, 'r:', label='CoM Vel Ref '+str(i))
+        ax[i].set_xlabel('Time [s]')
+        ax[i].set_ylabel('CoM Vel [m/s]')
+        leg = ax[i].legend()
+        leg.get_frame().set_alpha(0.5)
+        
+    (f, ax) = plut.create_empty_figure(3,1)
+    for i in range(3):
+        ax[i].plot(time, com_acc[i,:].A1, label='CoM Acc '+str(i))
+        ax[i].plot(time[:N], com_acc_ref[i,:].A1, 'r:', label='CoM Acc Ref '+str(i))
+        ax[i].plot(time, com_acc_des[i,:].A1, 'g--', label='CoM Acc Des '+str(i))
+        ax[i].set_xlabel('Time [s]')
+        ax[i].set_ylabel('CoM Acc [m/s^2]')
+        leg = ax[i].legend()
+        leg.get_frame().set_alpha(0.5)
 
-(f, ax) = plut.create_empty_figure(2,1)
-for i in range(2):
-    ax[i].plot(time, cop_LF[i,:].A1, label='CoP LF '+str(i))
-    ax[i].plot(time, cop_RF[i,:].A1, label='CoP RF '+str(i))
-    if i==0:   
-        ax[i].plot([time[0], time[-1]], [-conf.lxn, -conf.lxn], ':', label='CoP Lim '+str(i))
-        ax[i].plot([time[0], time[-1]], [conf.lxp, conf.lxp], ':', label='CoP Lim '+str(i))
-    elif i==1: 
-        ax[i].plot([time[0], time[-1]], [-conf.lyn, -conf.lyn], ':', label='CoP Lim '+str(i))
-        ax[i].plot([time[0], time[-1]], [conf.lyp, conf.lyp], ':', label='CoP Lim '+str(i))
-    ax[i].set_xlabel('Time [s]')
-    ax[i].set_ylabel('CoP [m]')
-    leg = ax[i].legend()
-    leg.get_frame().set_alpha(0.5)
+if PLOT_COP:
+    (f, ax) = plut.create_empty_figure(2,1)
+    for i in range(2):
+        ax[i].plot(time, cop_LF[i,:].A1, label='CoP LF '+str(i))
+        ax[i].plot(time, cop_RF[i,:].A1, label='CoP RF '+str(i))
+        if i==0:   
+            ax[i].plot([time[0], time[-1]], [-conf.lxn, -conf.lxn], ':', label='CoP Lim '+str(i))
+            ax[i].plot([time[0], time[-1]], [conf.lxp, conf.lxp], ':', label='CoP Lim '+str(i))
+        elif i==1: 
+            ax[i].plot([time[0], time[-1]], [-conf.lyn, -conf.lyn], ':', label='CoP Lim '+str(i))
+            ax[i].plot([time[0], time[-1]], [conf.lyp, conf.lyp], ':', label='CoP Lim '+str(i))
+        ax[i].set_xlabel('Time [s]')
+        ax[i].set_ylabel('CoP [m]')
+        leg = ax[i].legend()
+        leg.get_frame().set_alpha(0.5)
     
 #(f, ax) = plut.create_empty_figure(3,2)
 #ax = ax.reshape((6))
@@ -195,30 +209,59 @@ for i in range(2):
 #    leg = ax[i].legend()
 #    leg.get_frame().set_alpha(0.5)
     
-for i in range(3):
-    plt.figure()
-    plt.plot(time, x_RF[i,:].A1, label='x RF '+str(i))
-    plt.plot(time[:N], x_RF_ref[i,:].A1, ':', label='x RF ref '+str(i))
-    plt.plot(time, x_LF[i,:].A1, label='x LF '+str(i))
-    plt.plot(time[:N], x_LF_ref[i,:].A1, ':', label='x LF ref '+str(i))
-    plt.legend()
+if PLOT_FOOT_TRAJ:
+    for i in range(3):
+        plt.figure()
+        plt.plot(time, x_RF[i,:].A1, label='x RF '+str(i))
+        plt.plot(time[:N], x_RF_ref[i,:].A1, ':', label='x RF ref '+str(i))
+        plt.plot(time, x_LF[i,:].A1, label='x LF '+str(i))
+        plt.plot(time[:N], x_LF_ref[i,:].A1, ':', label='x LF ref '+str(i))
+        plt.legend()
+        
+    #for i in range(3):
+    #    plt.figure()
+    #    plt.plot(time, dx_RF[i,:].A1, label='dx RF '+str(i))
+    #    plt.plot(time[:N], dx_RF_ref[i,:].A1, ':', label='dx RF ref '+str(i))
+    #    plt.plot(time, dx_LF[i,:].A1, label='dx LF '+str(i))
+    #    plt.plot(time[:N], dx_LF_ref[i,:].A1, ':', label='dx LF ref '+str(i))
+    #    plt.legend()
+    #    
+    #for i in range(3):
+    #    plt.figure()
+    #    plt.plot(time, ddx_RF[i,:].A1, label='ddx RF '+str(i))
+    #    plt.plot(time[:N], ddx_RF_ref[i,:].A1, ':', label='ddx RF ref '+str(i))
+    #    plt.plot(time, ddx_RF_des[i,:].A1, '--', label='ddx RF des '+str(i))
+    #    plt.plot(time, ddx_LF[i,:].A1, label='ddx LF '+str(i))
+    #    plt.plot(time[:N], ddx_LF_ref[i,:].A1, ':', label='ddx LF ref '+str(i))
+    #    plt.plot(time, ddx_LF_des[i,:].A1, '--', label='ddx LF des '+str(i))
+    #    plt.legend()
     
-#for i in range(3):
-#    plt.figure()
-#    plt.plot(time, dx_RF[i,:].A1, label='dx RF '+str(i))
-#    plt.plot(time[:N], dx_RF_ref[i,:].A1, ':', label='dx RF ref '+str(i))
-#    plt.plot(time, dx_LF[i,:].A1, label='dx LF '+str(i))
-#    plt.plot(time[:N], dx_LF_ref[i,:].A1, ':', label='dx LF ref '+str(i))
-#    plt.legend()
-#    
-#for i in range(3):
-#    plt.figure()
-#    plt.plot(time, ddx_RF[i,:].A1, label='ddx RF '+str(i))
-#    plt.plot(time[:N], ddx_RF_ref[i,:].A1, ':', label='ddx RF ref '+str(i))
-#    plt.plot(time, ddx_RF_des[i,:].A1, '--', label='ddx RF des '+str(i))
-#    plt.plot(time, ddx_LF[i,:].A1, label='ddx LF '+str(i))
-#    plt.plot(time[:N], ddx_LF_ref[i,:].A1, ':', label='ddx LF ref '+str(i))
-#    plt.plot(time, ddx_LF_des[i,:].A1, '--', label='ddx LF des '+str(i))
-#    plt.legend()
+if(PLOT_TORQUES):        
+    plt.figure()
+    for i in range(tsid.robot.na):
+        tau_normalized = 2*(tau[i,:].A1-tsid.tau_min[i,0]) / (tsid.tau_max[i,0]-tsid.tau_min[i,0]) - 1
+        # plot torques only for joints that reached 50% of max torque
+        if np.max(np.abs(tau_normalized))>0.5:
+            plt.plot(time, tau_normalized, alpha=0.5, label=tsid.model.names[i+2])
+    plt.plot([time[0], time[-1]], 2*[-1.0], ':')
+    plt.plot([time[0], time[-1]], 2*[1.0], ':')
+    plt.gca().set_xlabel('Time [s]')
+    plt.gca().set_ylabel('Normalized Torque')
+    leg = plt.legend()
+    leg.get_frame().set_alpha(0.5)
+    
+if(PLOT_JOINT_VEL):
+    plt.figure()
+    for i in range(tsid.robot.na):
+        v_normalized = 2*(v_log[6+i,:].A1-tsid.v_min[i,0]) / (tsid.v_max[i,0]-tsid.v_min[i,0]) - 1
+        # plot v only for joints that reached 50% of max v
+        if np.max(np.abs(v_normalized))>0.5:
+            plt.plot(time, v_normalized, alpha=0.5, label=tsid.model.names[i+2])
+    plt.plot([time[0], time[-1]], 2*[-1.0], ':')
+    plt.plot([time[0], time[-1]], 2*[1.0], ':')
+    plt.gca().set_xlabel('Time [s]')
+    plt.gca().set_ylabel('Normalized Joint Vel')
+    leg = plt.legend()
+    leg.get_frame().set_alpha(0.5)
     
 plt.show()
