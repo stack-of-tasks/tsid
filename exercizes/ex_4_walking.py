@@ -56,6 +56,7 @@ ddx_RF_ref  = np.asmatrix(data['ddx_RF'])
 x_LF_ref    = np.asmatrix(data['x_LF'])
 dx_LF_ref   = np.asmatrix(data['dx_LF'])
 ddx_LF_ref  = np.asmatrix(data['ddx_LF'])
+cop_ref     = np.asmatrix(data['cop'])
 com_acc_des = matlib.empty((3, N+N_post))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_err
 
 x_rf   = tsid.get_placement_RF().translation
@@ -188,6 +189,7 @@ if PLOT_COP:
     for i in range(2):
         ax[i].plot(time, cop_LF[i,:].A1, label='CoP LF '+str(i))
         ax[i].plot(time, cop_RF[i,:].A1, label='CoP RF '+str(i))
+#        ax[i].plot(time[:N], cop_ref[i,:].A1, label='CoP ref '+str(i))
         if i==0:   
             ax[i].plot([time[0], time[-1]], [-conf.lxn, -conf.lxn], ':', label='CoP Lim '+str(i))
             ax[i].plot([time[0], time[-1]], [conf.lxp, conf.lxp], ':', label='CoP Lim '+str(i))

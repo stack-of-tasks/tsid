@@ -33,7 +33,7 @@ x_LF, dx_LF, ddx_LF = compute_foot_traj(foot_steps_LF, N_ctrl, dt_ctrl, conf.T_s
 np.savez(conf.DATA_FILE_TSID, com=com, dcom=dcom, ddcom=ddcom, 
          x_RF=x_RF, dx_RF=dx_RF, ddx_RF=ddx_RF,
          x_LF=x_LF, dx_LF=dx_LF, ddx_LF=ddx_LF,
-         contact_phase=contact_phase)
+         contact_phase=contact_phase, cop=cop)
 
 # PLOT STUFF
 time_ctrl = np.arange(0, round(N_ctrl*dt_ctrl, 2), dt_ctrl)
