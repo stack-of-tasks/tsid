@@ -119,6 +119,7 @@ def run_simu():
     global push_robot_active
     i, t = 0, 0.0
     q, v = tsid.q, tsid.v
+    time_avg = 0.0
     while True:
         time_start = time.time()
         
@@ -170,9 +171,14 @@ def run_simu():
             tsid.gui.applyConfiguration('world/lf', pin.se3ToXYZQUATtuple(H_lf))
             tsid.gui.applyConfiguration('world/rf_ref', x_rf_ref.tolist()+[0,0,0,1.])
             tsid.gui.applyConfiguration('world/lf_ref', x_lf_ref.tolist()+[0,0,0,1.])
+            
+        if i%1000==0:
+            print "Average loop time: %.1f (expected is %.1f)"%(1e3*time_avg, 1e3*conf.dt)
     
         time_spent = time.time() - time_start
-        if(time_spent < conf.dt): time.sleep(conf.dt-time_spent)
+        time_avg = (i*time_avg + time_spent) / (i+1)
+        
+        if(time_avg < 0.9*conf.dt): time.sleep(conf.dt-time_avg)
 
 
 print "".center(conf.LINE_WIDTH,'#')

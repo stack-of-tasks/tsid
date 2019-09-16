@@ -39,20 +39,17 @@ namespace tsid
     {
       pinocchio::urdf::buildModel(filename, m_model, m_verbose);
       m_model_filename = filename;
-      m_rotor_inertias.setZero(m_model.nv);
-      m_gear_ratios.setZero(m_model.nv);
-      m_Md.setZero(m_model.nv);
-      m_M.setZero(m_model.nv, m_model.nv);
+      m_na = m_model.nv;
+      init();
     }
+
     RobotWrapper::RobotWrapper(const pinocchio::Model& m, bool verbose)
       : m_verbose(verbose)
     {
       m_model = m;
       m_model_filename = "";
-      m_rotor_inertias.setZero(m_model.nv);
-      m_gear_ratios.setZero(m_model.nv);
-      m_Md.setZero(m_model.nv);
-      m_M.setZero(m_model.nv, m_model.nv);
+      m_na = m_model.nv-6;  // for backward compatibility assume the robot has a floating base
+      init();
     }
     
     RobotWrapper::RobotWrapper(const std::string & filename,
@@ -63,14 +60,21 @@ namespace tsid
     {
       pinocchio::urdf::buildModel(filename, rootJoint, m_model, m_verbose);
       m_model_filename = filename;
-      m_rotor_inertias.setZero(m_model.nv-6);
-      m_gear_ratios.setZero(m_model.nv-6);
-      m_Md.setZero(m_model.nv-6);
+      m_na = m_model.nv-6;
+      init();
+    }
+
+    void RobotWrapper::init()
+    {
+      m_rotor_inertias.setZero(m_na);
+      m_gear_ratios.setZero(m_na);
+      m_Md.setZero(m_na);
       m_M.setZero(m_model.nv, m_model.nv);
     }
     
     int RobotWrapper::nq() const { return m_model.nq; }
     int RobotWrapper::nv() const { return m_model.nv; }
+    int RobotWrapper::na() const { return m_na; }
     
     const Model & RobotWrapper::model() const { return m_model; }
     Model & RobotWrapper::model() { return m_model; }
@@ -150,7 +154,7 @@ namespace tsid
     const Matrix & RobotWrapper::mass(const Data & data)
     {
       m_M = data.M;
-      m_M.diagonal().tail(m_model.nv-6) += m_Md;
+      m_M.diagonal().tail(m_na) += m_Md;
       return m_M;
     }
     
@@ -220,6 +224,18 @@ namespace tsid
       const Frame & f = m_model.frames[index];
       frameVelocity = f.placement.actInv(data.v[f.parent]);
     }
+
+    Motion RobotWrapper::frameVelocityWorldOriented(const Data & data,
+                                                    const Model::FrameIndex index) const
+    {
+      Motion v_local, v_world;
+      SE3 oMi, oMi_rotation_only;
+      framePosition(data, index, oMi);
+      frameVelocity(data, index, v_local);
+      oMi_rotation_only.rotation(oMi.rotation());
+      v_world = oMi_rotation_only.act(v_local);
+      return v_world;
+    }
     
     Motion RobotWrapper::frameAcceleration(const Data & data,
                                            const Model::FrameIndex index) const
@@ -234,6 +250,18 @@ namespace tsid
     {
       const Frame & f = m_model.frames[index];
       frameAcceleration = f.placement.actInv(data.a[f.parent]);
+    }
+
+    Motion RobotWrapper::frameAccelerationWorldOriented(const Data & data,
+                                                        const Model::FrameIndex index) const
+    {
+      Motion a_local, a_world;
+      SE3 oMi, oMi_rotation_only;
+      framePosition(data, index, oMi);
+      frameAcceleration(data, index, a_local);
+      oMi_rotation_only.rotation(oMi.rotation());
+      a_world = oMi_rotation_only.act(a_local);
+      return a_world;
     }
     
     Motion RobotWrapper::frameClassicAcceleration(const Data & data,
@@ -254,6 +282,18 @@ namespace tsid
       frameAcceleration = f.placement.actInv(data.a[f.parent]);
       Motion v = f.placement.actInv(data.v[f.parent]);
       frameAcceleration.linear() += v.angular().cross(v.linear());
+    }
+
+    Motion RobotWrapper::frameClassicAccelerationWorldOriented(const Data & data,
+                                                               const Model::FrameIndex index) const
+    {
+      Motion a_local, a_world;
+      SE3 oMi, oMi_rotation_only;
+      framePosition(data, index, oMi);
+      frameClassicAcceleration(data, index, a_local);
+      oMi_rotation_only.rotation(oMi.rotation());
+      a_world = oMi_rotation_only.act(a_local);
+      return a_world;
     }
     
     void RobotWrapper::frameJacobianWorld(const Data & data,

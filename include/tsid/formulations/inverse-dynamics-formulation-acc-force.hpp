@@ -103,10 +103,10 @@ namespace tsid
                       unsigned int priorityLevel,
                       double transition_duration=0.0);
 
-    bool addTorqueTask(TaskActuation & task,
-                       double weight,
-                       unsigned int priorityLevel,
-                       double transition_duration=0.0);
+    bool addActuationTask(TaskActuation & task,
+                          double weight,
+                          unsigned int priorityLevel,
+                          double transition_duration=0.0);
 
     bool updateTaskWeight(const std::string & task_name,
                           double weight);
@@ -159,6 +159,7 @@ namespace tsid
     double m_t;         /// time
     unsigned int m_k;   /// number of contact-force variables
     unsigned int m_v;   /// number of acceleration variables
+    unsigned int m_u;   /// number of unactuated DoFs
     unsigned int m_eq;  /// number of equality constraints
     unsigned int m_in;  /// number of inequality constraints
     Matrix m_Jc;        /// contact force Jacobian

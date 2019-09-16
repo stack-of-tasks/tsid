@@ -44,13 +44,14 @@ InverseDynamicsFormulationAccForce::InverseDynamicsFormulationAccForce(const std
                                                                        bool verbose):
   InverseDynamicsFormulationBase(name, robot, verbose),
   m_data(robot.model()),
-  m_baseDynamics("base-dynamics", 6, robot.nv()),
+  m_baseDynamics("base-dynamics", robot.nv()-robot.na(), robot.nv()),
   m_solutionDecoded(false)
 {
   m_t = 0.0;
   m_v = robot.nv();
+  m_u = robot.nv() - robot.na();
   m_k = 0;
-  m_eq = 6;
+  m_eq = m_u;
   m_in = 0;
   m_hqpData.resize(2);
   m_Jc.setZero(m_k, m_v);
@@ -82,7 +83,7 @@ unsigned int InverseDynamicsFormulationAccForce::nIn() const
 void InverseDynamicsFormulationAccForce::resizeHqpData()
 {
   m_Jc.setZero(m_k, m_v);
-  m_baseDynamics.resize(6, m_v+m_k);
+  m_baseDynamics.resize(m_u, m_v+m_k);
   for(HQPData::iterator it=m_hqpData.begin(); it!=m_hqpData.end(); it++)
   {
     for(ConstraintLevel::iterator itt=it->begin(); itt!=it->end(); itt++)
@@ -106,14 +107,15 @@ void InverseDynamicsFormulationAccForce::addTask(TaskLevel* tl,
     if(priorityLevel==0)
       m_eq += c.rows();
   }
-  else if(c.isInequality())
+  else //if(c.isInequality())
   {
     tl->constraint = new ConstraintInequality(c.name(), c.rows(), m_v+m_k);
     if(priorityLevel==0)
       m_in += c.rows();
   }
-  else
-    tl->constraint = new ConstraintBound(c.name(), m_v+m_k);
+  // don't use bounds for now because EiQuadProg doesn't exploit them anyway
+//  else
+//    tl->constraint = new ConstraintBound(c.name(), m_v+m_k);
   m_hqpData[priorityLevel].push_back(make_pair<double, ConstraintBase*>(weight, tl->constraint));
 }
 
@@ -165,10 +167,10 @@ bool InverseDynamicsFormulationAccForce::addForceTask(TaskContactForce & task,
 }
 
 
-bool InverseDynamicsFormulationAccForce::addTorqueTask(TaskActuation & task,
-                                                       double weight,
-                                                       unsigned int priorityLevel,
-                                                       double transition_duration)
+bool InverseDynamicsFormulationAccForce::addActuationTask(TaskActuation & task,
+                                                          double weight,
+                                                          unsigned int priorityLevel,
+                                                          double transition_duration)
 {
   assert(weight>=0.0);
   assert(transition_duration>=0.0);
@@ -347,12 +349,12 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     cl->forceRegTask->vector() = fr.vector();
   }
 
-  const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-6);
-  const Vector & h_a = m_robot.nonLinearEffects(m_data).tail(m_v-6);
-  const Matrix & J_a = m_Jc.rightCols(m_v-6);
-  const Matrix & M_u = m_robot.mass(m_data).topRows<6>();
-  const Vector & h_u = m_robot.nonLinearEffects(m_data).head<6>();
-  const Matrix & J_u = m_Jc.leftCols<6>();
+  const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-m_u);
+  const Vector & h_a = m_robot.nonLinearEffects(m_data).tail(m_v-m_u);
+  const Matrix & J_a = m_Jc.rightCols(m_v-m_u);
+  const Matrix & M_u = m_robot.mass(m_data).topRows(m_u);
+  const Vector & h_u = m_robot.nonLinearEffects(m_data).head(m_u);
+  const Matrix & J_u = m_Jc.leftCols(m_u);
 
   m_baseDynamics.matrix().leftCols(m_v) = M_u;
   m_baseDynamics.matrix().rightCols(m_k) = -J_u.transpose();
@@ -375,8 +377,9 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     }
     else
     {
-      (*it)->constraint->lowerBound().head(m_v) = c.lowerBound();
-      (*it)->constraint->upperBound().head(m_v) = c.upperBound();
+      (*it)->constraint->matrix().leftCols(m_v) = Matrix::Identity(m_v, m_v);
+      (*it)->constraint->lowerBound() = c.lowerBound();
+      (*it)->constraint->upperBound() = c.upperBound();
     }
   }
 
@@ -425,9 +428,9 @@ bool InverseDynamicsFormulationAccForce::decodeSolution(const HQPOutput & sol)
 {
   if(m_solutionDecoded)
     return true;
-  const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-6);
-  const Vector & h_a = m_robot.nonLinearEffects(m_data).tail(m_v-6);
-  const Matrix & J_a = m_Jc.rightCols(m_v-6);
+  const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-m_u);
+  const Vector & h_a = m_robot.nonLinearEffects(m_data).tail(m_v-m_u);
+  const Matrix & J_a = m_Jc.rightCols(m_v-m_u);
   m_dv = sol.x.head(m_v);
   m_f = sol.x.tail(m_k);
   m_tau = h_a;

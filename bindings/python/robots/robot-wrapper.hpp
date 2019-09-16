@@ -48,6 +48,7 @@ namespace tsid
         .def(bp::init<std::string, std_vec, pinocchio::JointModelVariant, bool>((bp::arg("filename"), bp::arg("package_dir"), bp::arg("roottype"), bp::arg("verbose")), "Default constructor without RootJoint."))
         .add_property("nq", &Robot::nq)
         .add_property("nv", &Robot::nv)
+        .add_property("na", &Robot::na)
         
         .def("model", &RobotPythonVisitor::model)
         .def("data", &RobotPythonVisitor::data)
@@ -72,6 +73,9 @@ namespace tsid
         .def("frameVelocity", &RobotPythonVisitor::frameVelocity, bp::args("data", "index"))
         .def("frameAcceleration", &RobotPythonVisitor::frameAcceleration, bp::args("data", "index"))
         .def("frameClassicAcceleration", &RobotPythonVisitor::frameClassicAcceleration, bp::args("data", "index"))
+        .def("frameVelocityWorldOriented", &RobotPythonVisitor::frameVelocityWorldOriented, bp::args("data", "index"))
+        .def("frameAccelerationWorldOriented", &RobotPythonVisitor::frameAccelerationWorldOriented, bp::args("data", "index"))
+        .def("frameClassicAccelerationWorldOriented", &RobotPythonVisitor::frameClassicAccelerationWorldOriented, bp::args("data", "index"))
    
         ;
       }
@@ -137,7 +141,15 @@ namespace tsid
       static pinocchio::Motion frameClassicAcceleration(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::FrameIndex & index){
         return self.frameClassicAcceleration(data, index);
       }
-      
+      static pinocchio::Motion frameVelocityWorldOriented(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::FrameIndex & index){
+        return self.frameVelocityWorldOriented(data, index);
+      }
+      static pinocchio::Motion frameAccelerationWorldOriented(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::FrameIndex & index){
+        return self.frameAccelerationWorldOriented(data, index);
+      }
+      static pinocchio::Motion frameClassicAccelerationWorldOriented(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::FrameIndex & index){
+        return self.frameClassicAccelerationWorldOriented(data, index);
+      }
       static void expose(const std::string & class_name)
       {
         std::string doc = "Robot Wrapper info.";

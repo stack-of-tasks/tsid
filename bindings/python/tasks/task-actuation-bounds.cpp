@@ -15,35 +15,16 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __tsid_python_expose_tasks_hpp__
-#define __tsid_python_expose_tasks_hpp__
-
-#include "tsid/bindings/python/tasks/task-com-equality.hpp"
-#include "tsid/bindings/python/tasks/task-se3-equality.hpp"
-#include "tsid/bindings/python/tasks/task-joint-posture.hpp"
 #include "tsid/bindings/python/tasks/task-actuation-bounds.hpp"
-#include "tsid/bindings/python/tasks/task-joint-bounds.hpp"
-
+#include "tsid/bindings/python/tasks/expose-tasks.hpp"
 
 namespace tsid
 {
   namespace python
   {
-    void exposeTaskComEquality();
-    void exposeTaskSE3Equality();
-    void exposeTaskJointPosture();
-    void exposeTaskActuationBounds();
-    void exposeTaskJointBounds();
-
-    inline void exposeTasks()
+    void exposeTaskActuationBounds()
     {
-      exposeTaskComEquality();
-      exposeTaskSE3Equality();
-      exposeTaskJointPosture();
-      exposeTaskActuationBounds();
-      exposeTaskJointBounds();
+      TaskActuationBoundsPythonVisitor<tsid::tasks::TaskActuationBounds>::expose("TaskActuationBounds");
     }
-    
-  } // namespace python
-} // namespace tsid
-#endif // ifndef __tsid_python_expose_tasks_hpp__
+  }
+}

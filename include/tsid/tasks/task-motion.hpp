@@ -36,24 +36,25 @@ namespace tsid
       TaskMotion(const std::string & name,
                  RobotWrapper & robot);
 
-      virtual const TrajectorySample & getReference() const = 0;
+      virtual const TrajectorySample & getReference() const;
 
-      virtual const Vector & getDesiredAcceleration() const = 0;
+      virtual const Vector & getDesiredAcceleration() const;
 
-      virtual Vector getAcceleration(ConstRefVector dv) const = 0;
+      virtual Vector getAcceleration(ConstRefVector dv) const;
 
-      virtual const Vector & position_error() const = 0;
-      virtual const Vector & velocity_error() const = 0;
-      virtual const Vector & position() const = 0;
-      virtual const Vector & velocity() const = 0;
-      virtual const Vector & position_ref() const = 0;
-      virtual const Vector & velocity_ref() const = 0;
+      virtual const Vector & position_error() const;
+      virtual const Vector & velocity_error() const;
+      virtual const Vector & position() const;
+      virtual const Vector & velocity() const;
+      virtual const Vector & position_ref() const;
+      virtual const Vector & velocity_ref() const;
 
       virtual void setMask(math::ConstRefVector mask);
       virtual bool hasMask();
 
     protected:
       math::Vector m_mask;
+      math::Vector m_dummy;
     };
   }
 }

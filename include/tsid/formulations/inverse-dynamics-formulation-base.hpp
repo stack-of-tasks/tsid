@@ -74,10 +74,10 @@ namespace tsid
                               unsigned int priorityLevel,
                               double transition_duration=0.0) = 0;
 
-    virtual bool addTorqueTask(TaskActuation & task,
-                               double weight,
-                               unsigned int priorityLevel,
-                               double transition_duration=0.0) = 0;
+    virtual bool addActuationTask(TaskActuation & task,
+                                  double weight,
+                                  unsigned int priorityLevel,
+                                  double transition_duration=0.0) = 0;
 
     virtual bool updateTaskWeight(const std::string & task_name,
                                   double weight) = 0;
