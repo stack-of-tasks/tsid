@@ -18,6 +18,7 @@
 #ifndef __tsid_python_task_com_hpp__
 #define __tsid_python_task_com_hpp__
 
+#include <pinocchio/fwd.hpp>
 #include <boost/python.hpp>
 #include <string>
 #include <eigenpy/eigenpy.hpp>

@@ -15,6 +15,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
+#include <pinocchio/fwd.hpp>
 #include <eigenpy/eigenpy.hpp>
 #include <eigenpy/geometry.hpp>
 
