@@ -22,6 +22,8 @@
 #include "tsid/tasks/task-base.hpp"
 #include "tsid/trajectories/trajectory-base.hpp"
 #include "tsid/math/constraint-equality.hpp"
+
+#include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/data.hpp>
 
 namespace tsid
@@ -40,7 +42,7 @@ namespace tsid
       typedef math::Vector3 Vector3;
       typedef math::ConstraintEquality ConstraintEquality;
       typedef pinocchio::Data::Matrix6x Matrix6x;
-      typedef pinocchio::Data Data;
+
 
       TaskAMEquality(const std::string & name, 
                       RobotWrapper & robot);
