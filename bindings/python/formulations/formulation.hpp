@@ -98,7 +98,7 @@ namespace tsid
       }
       static bool addActuationTask_Bounds(T & self, tasks::TaskActuationBounds & task, double weight, unsigned int priorityLevel, double transition_duration){
         return self.addActuationTask(task, weight, priorityLevel, transition_duration);
-
+      }
 
       static bool addTask_AM(T & self, tasks::TaskAMEquality & task, double weight, unsigned int priorityLevel){
         TaskLevel *tl = new TaskLevel(task, priorityLevel);
