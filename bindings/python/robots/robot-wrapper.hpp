@@ -90,10 +90,8 @@ namespace tsid
                                                 bp::object & bpObject,
                                                 bool verbose)
       {
-        std::cout << "Before extraction " << std::endl;
         pinocchio::JointModelFreeFlyer root_joint =
             bp::extract<pinocchio::JointModelFreeFlyer>(bpObject)();
-        std::cout << "After extraction " << std::endl;
         boost::shared_ptr<Robot> p(new tsid::robots::RobotWrapper(filename,
                                                                   stdvec,
                                                                   root_joint,
