@@ -84,6 +84,20 @@ class TsidBiped:
         self.trajRF = tsid.TrajectorySE3Constant("traj-right-foot", H_rf_ref)
         formulation.addMotionTask(self.rightFootTask, self.conf.w_foot, 1, 0.0)
         
+        self.tau_max = conf.tau_max_scaling*robot.model().effortLimit[-robot.na:]
+        self.tau_min = -self.tau_max
+        actuationBoundsTask = tsid.TaskActuationBounds("task-actuation-bounds", robot)
+        actuationBoundsTask.setBounds(self.tau_min, self.tau_max)
+        if(conf.w_torque_bounds>0.0):
+            formulation.addActuationTask(actuationBoundsTask, conf.w_torque_bounds, 0, 0.0)
+            
+        jointBoundsTask = tsid.TaskJointBounds("task-joint-bounds", robot, conf.dt)
+        self.v_max = conf.v_max_scaling * robot.model().velocityLimit[-robot.na:]
+        self.v_min = -self.v_max
+        jointBoundsTask.setVelocityBounds(self.v_min, self.v_max)
+        if(conf.w_joint_bounds>0.0):
+            formulation.addMotionTask(jointBoundsTask, conf.w_joint_bounds, 0, 0.0)
+        
         com_ref = robot.com(data)
         self.trajCom = tsid.TrajectoryEuclidianConstant("traj_com", com_ref)
         self.sample_com = self.trajCom.computeNext()
@@ -109,6 +123,8 @@ class TsidBiped:
         self.postureTask = postureTask
         self.contactRF = contactRF
         self.contactLF = contactLF
+        self.actuationBoundsTask = actuationBoundsTask
+        self.jointBoundsTask = jointBoundsTask
         self.formulation = formulation
         self.q = q
         self.v = v
@@ -169,6 +185,20 @@ class TsidBiped:
         self.sampleLF.vel(self.sample_LF_vel)
         self.sampleLF.acc(self.sample_LF_acc)        
         self.leftFootTask.setReference(self.sampleLF)
+        
+    def get_LF_3d_pos_vel_acc(self, dv):
+        data = self.formulation.data()
+        H  = self.robot.position(data, self.LF)
+        v  = self.robot.velocity(data, self.LF)
+        a = self.leftFootTask.getAcceleration(dv)
+        return H.translation, v.linear, a[:3]
+        
+    def get_RF_3d_pos_vel_acc(self, dv):
+        data = self.formulation.data()
+        H  = self.robot.position(data, self.RF)
+        v  = self.robot.velocity(data, self.RF)
+        a = self.rightFootTask.getAcceleration(dv)
+        return H.translation, v.linear, a[:3]
         
     def remove_contact_RF(self, transition_time=0.0):
         H_rf_ref = self.robot.position(self.formulation.data(), self.RF)

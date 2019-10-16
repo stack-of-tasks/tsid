@@ -25,7 +25,10 @@ import LMPC_walking.second_order.motion_model as motion_model
 import LMPC_walking.second_order.cost_function as cost_function
 import LMPC_walking.second_order.constraints as constraints
 import LMPC_walking.second_order.plot_utils as plot_utils
+import matplotlib.pyplot as plt
+from plot_utils import *
 import ex_4_conf as conf
+#import ex_4_long_conf as conf
 
 # Inverted pendulum parameters:
 # ----------------------------
@@ -108,6 +111,9 @@ plot_utils.plot_y(time, N, min_admissible_CoP,
 # -----------------------------------
 plot_utils.plot_xy(time, N, foot_length, foot_width,
                    cop_ref, cop_x, cop_y, com_state_x, com_state_y)
+import matplotlib.pyplot as plt
+plt.gca().set_xlim([cop_ref[0,0]-0.2, cop_ref[-1,0]+0.2])
+plt.gca().set_ylim([cop_ref[0,1]-0.2, cop_ref[-1,1]+0.2])
 
 com_state_x = np.vstack((x_0, com_state_x))
 com_state_y = np.vstack((y_0, com_state_y))
