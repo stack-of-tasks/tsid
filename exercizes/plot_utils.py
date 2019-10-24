@@ -4,6 +4,7 @@ Created on Fri Jan 16 09:16:56 2015
 
 @author: adelpret
 """
+from __future__ import print_function
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -219,7 +220,7 @@ def plotQuantityVsQuantityPerSolver(quantity, quantityPerSolver, legend, solver_
         r=2;
         c=3;
     else:
-        print "ERROR in plotQuantityVsQuantityPerSolver, number of solvers not managed";
+        print ("ERROR in plotQuantityVsQuantityPerSolver, number of solvers not managed")
         return;
     f, ax = plt.subplots(r, c, sharex=True, sharey=True);
     for i in range(len(solver_names)):
