@@ -24,7 +24,9 @@ class TsidManipulator:
         robot = self.robot
         self.model = model = robot.model()
         try:
-            q = se3.getNeutralConfiguration(model, conf.srdf, False)
+#            q = se3.getNeutralConfiguration(model, conf.srdf, False)
+            se3.loadReferenceConfigurations(model, conf.srdf, False)
+            q = model.referenceConfigurations['default']
 #        q = model.referenceConfigurations["half_sitting"]
         except:
             q = conf.q0
@@ -88,7 +90,7 @@ class TsidManipulator:
                 os.system('gepetto-gui &')
             time.sleep(1)
             gepetto.corbaserver.Client()
-            self.robot_display.initDisplay(loadModel=True)
+            self.robot_display.initViewer(loadModel=True)
             self.robot_display.displayCollisions(False)
             self.robot_display.displayVisuals(True)
             self.robot_display.display(q)
