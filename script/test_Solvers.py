@@ -4,9 +4,9 @@ import tsid
 import numpy as np
 import copy
 
-print ""
-print "Test Solvers"
-print ""
+print("")
+print("Test Solvers")
+print("")
 
 EPS = 1e-3
 nTest = 100
@@ -20,7 +20,7 @@ GRADIENT_PERTURBATION_VARIANCE = 1e-2
 HESSIAN_PERTURBATION_VARIANCE = 1e-1
 MARGIN_PERC = 1e-3
 
-print "Gonna perform", nTest, "tests with", n, "variables, ", neq, "equalities", nin, "inequalities"
+print("Gonna perform", nTest, "tests with", n, "variables, ", neq, "equalities", nin, "inequalities")
 
 solver = tsid.SolverHQuadProg("qp solver")
 solver.resize(n, neq, nin)
@@ -54,17 +54,17 @@ eq_const = tsid.ConstraintEquality("eq1", A_eq, b_eq)
 const1 = tsid.ConstraintLevel()
 const1.append(1.0, eq_const)
 const1.append(1.0, in_const)
-print "check constraint level #0"
+print("check constraint level #0")
 const1.print_all()
 
 const2= tsid.ConstraintLevel()
 const2.append(1.0, cost)
-print "check constraint level #1"
+print("check constraint level #1")
 const2.print_all()
 
 HQPData.append(const1)
 HQPData.append(const2)
-print "Check HQP DATA"
+print("Check HQP DATA")
 HQPData.print_all()
 
 gradientPerturbations = []

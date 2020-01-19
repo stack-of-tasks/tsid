@@ -4,7 +4,7 @@ Created on Fri Jan 16 09:16:56 2015
 
 @author: adelpret
 """
-from __future__ import print_function
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -111,7 +111,7 @@ def plotNdQuantityPerSolver(nRows, nCols, quantity, title, solver_names, line_st
     ax = ax.reshape(nRows, nCols);
     k = 0;
     if(x==None):
-        x = range(quantity.shape[0]);
+        x = list(range(quantity.shape[0]));
     for j in range(nCols):
         for i in range(nRows):
             if(k<quantity.shape[2]):
@@ -189,7 +189,7 @@ def plotQuantityPerSolver(quantity, title, solver_names, line_styles, yscale='li
     f, ax = plt.subplots();
     lw = DEFAULT_LINE_WIDTH;
     if(x==None):
-        x = range(quantity.shape[0]);
+        x = list(range(quantity.shape[0]));
         
     for i in range(len(solver_names)):
         ax.plot(x, quantity[:,i], line_styles[i], alpha=LINE_ALPHA, linewidth=lw);

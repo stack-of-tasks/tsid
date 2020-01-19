@@ -3,9 +3,9 @@ import tsid
 import numpy as np
 import copy
 
-print ""
-print "Test Task COM"
-print ""
+print("")
+print("Test Task COM")
+print("")
 
 tol = 1e-5
 import os
@@ -20,7 +20,7 @@ data = robot.data()
 
 q = robot.model().neutralConfiguration
 q[2] += 0.84
-print "q:", q.transpose()
+print("q:", q.transpose())
 
 se3.centerOfMass(model, data, q)
 
@@ -63,14 +63,14 @@ for i in range(0, max_it):
     assert error - error_past < 1e-4
     error_past = error
     if error < 1e-8:
-        print "Success Convergence"
+        print("Success Convergence")
         break
     if i%100 == 0:
-        print "Time :", t, "COM pos error :", error, "COM vel error :", np.linalg.norm(taskCOM.velocity_error, 2)
+        print("Time :", t, "COM pos error :", error, "COM vel error :", np.linalg.norm(taskCOM.velocity_error, 2))
 
-print ""
-print "Test Task Joint Posture"
-print ""
+print("")
+print("Test Task Joint Posture")
+print("")
 
 q = robot.model().neutralConfiguration
 q[2] += 0.84
@@ -112,14 +112,14 @@ for i in range(0, max_it):
     assert error - error_past < 1e-4
     error_past = error
     if error < 1e-8:
-        print "Success Convergence"
+        print("Success Convergence")
         break
     if i%100 == 0:
-        print "Time :", t, "Joint pos error :", error, "Joint vel error :", np.linalg.norm(task_joint.velocity_error, 2)
+        print("Time :", t, "Joint pos error :", error, "Joint vel error :", np.linalg.norm(task_joint.velocity_error, 2))
 
-print ""
-print "Test Task SE3"
-print ""
+print("")
+print("Test Task SE3")
+print("")
 
 
 q = robot.model().neutralConfiguration
@@ -166,10 +166,10 @@ for i in range(0, max_it):
     assert error - error_past < 1e-4
     error_past = error
     if error < 1e-8:
-        print "Success Convergence"
+        print("Success Convergence")
         break
     if i%100 == 0:
-        print "Time :", t, "EE pos error :", error, "EE vel error :", np.linalg.norm(task_se3.velocity_error, 2)
+        print("Time :", t, "EE pos error :", error, "EE vel error :", np.linalg.norm(task_se3.velocity_error, 2))
 
-print "All test is done"
+print("All test is done")
 

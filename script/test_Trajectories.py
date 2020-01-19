@@ -2,9 +2,9 @@ import pinocchio as se3
 import tsid
 import numpy as np
 
-print ""
-print "Test Trajectory Euclidian"
-print ""
+print("")
+print("Test Trajectory Euclidian")
+print("")
 
 tol = 1e-5
 n =5
@@ -22,9 +22,9 @@ assert np.linalg.norm(traj_sample.pos() - q_ref, 2) < tol
 assert np.linalg.norm(traj_sample.vel() - zero, 2) < tol
 assert np.linalg.norm(traj_sample.acc() - zero, 2) < tol
 
-print ""
-print "Test Trajectory SE3"
-print ""
+print("")
+print("Test Trajectory SE3")
+print("")
 
 M_ref = se3.SE3.Identity()
 M_vec = np.matrix(np.zeros(12)).transpose()
@@ -47,4 +47,4 @@ assert np.linalg.norm(traj_sample.pos() - M_vec, 2) < tol
 assert np.linalg.norm(traj_sample.vel() - zero, 2) < tol
 assert np.linalg.norm(traj_sample.acc() - zero, 2) < tol
 
-print "All test is done"
+print("All test is done")

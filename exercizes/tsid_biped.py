@@ -6,7 +6,7 @@ import numpy.matlib as matlib
 import os
 import gepetto.corbaserver
 import time
-import commands
+import subprocess
 
 
 class TsidBiped:
@@ -24,6 +24,7 @@ class TsidBiped:
         self.robot = tsid.RobotWrapper(conf.urdf, vector, se3.JointModelFreeFlyer(), False)
         robot = self.robot
         self.model = robot.model()
+        print("srdf", conf.srdf)
         pin.loadReferenceConfigurations(self.model, conf.srdf, False)
         self.q0 = q = self.model.referenceConfigurations["half_sitting"]
         v = np.matrix(np.zeros(robot.nv)).T
@@ -135,12 +136,12 @@ class TsidBiped:
         # for gepetto viewer
         if(viewer):
             self.robot_display = se3.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path, ], se3.JointModelFreeFlyer())
-            l = commands.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+            l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
             if int(l[1]) == 0:
                 os.system('gepetto-gui &')
             time.sleep(1)
             gepetto.corbaserver.Client()
-            self.robot_display.initDisplay(loadModel=True)
+            self.robot_display.initViewer(loadModel=True)
             self.robot_display.displayCollisions(False)
             self.robot_display.displayVisuals(True)
             self.robot_display.display(q)

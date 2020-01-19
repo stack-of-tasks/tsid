@@ -8,8 +8,8 @@ Created on Wed Apr 17 22:31:22 2019
 import numpy as np
 import numpy.matlib as matlib
 import pinocchio as pin
-import Tkinter as tk
-from Tkinter import Scale, Button, Frame, Entry, Label, Tk, mainloop, HORIZONTAL
+import tkinter as tk
+from tkinter import Scale, Button, Frame, Entry, Label, Tk, mainloop, HORIZONTAL
 import threading
 
 class Scale3d:
@@ -41,7 +41,7 @@ class Entry3d:
         try:
             return [float(self.s[i].get()) for i in range(3)]
         except:
-            print "could not convert string to float", [self.s[i].get() for i in range(3)]
+            print("could not convert string to float", [self.s[i].get() for i in range(3)])
             return 3*[0.0]
 
 scale_com, scale_RF, scale_LF = None, None, None
@@ -132,7 +132,7 @@ def run_simu():
     
         sol = tsid.solver.solve(HQPData)
         if(sol.status!=0):
-            print "QP problem could not be solved! Error code:", sol.status
+            print("QP problem could not be solved! Error code:", sol.status)
             break
         
     #    tau = tsid.formulation.getActuatorForces(sol)
@@ -173,7 +173,7 @@ def run_simu():
             tsid.gui.applyConfiguration('world/lf_ref', x_lf_ref.tolist()+[0,0,0,1.])
             
         if i%1000==0:
-            print "Average loop time: %.1f (expected is %.1f)"%(1e3*time_avg, 1e3*conf.dt)
+            print("Average loop time: %.1f (expected is %.1f)"%(1e3*time_avg, 1e3*conf.dt))
     
         time_spent = time.time() - time_start
         time_avg = (i*time_avg + time_spent) / (i+1)
@@ -181,9 +181,9 @@ def run_simu():
         if(time_avg < 0.9*conf.dt): time.sleep(conf.dt-time_avg)
 
 
-print "".center(conf.LINE_WIDTH,'#')
-print " Test Task Space Inverse Dynamics ".center(conf.LINE_WIDTH, '#')
-print "".center(conf.LINE_WIDTH,'#'), '\n'
+print("".center(conf.LINE_WIDTH,'#'))
+print(" Test Task Space Inverse Dynamics ".center(conf.LINE_WIDTH, '#'))
+print("".center(conf.LINE_WIDTH,'#'), '\n')
 
 tsid = TsidBiped(conf)
 com_0 = tsid.robot.com(tsid.formulation.data())

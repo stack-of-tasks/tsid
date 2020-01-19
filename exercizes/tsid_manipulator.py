@@ -5,7 +5,7 @@ import numpy.matlib as matlib
 import os
 import gepetto.corbaserver
 import time
-import commands
+import subprocess
 
 
 class TsidManipulator:
@@ -85,7 +85,7 @@ class TsidManipulator:
         # for gepetto viewer
         if(viewer):
             self.robot_display = se3.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path, ])
-            l = commands.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+            l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
             if int(l[1]) == 0:
                 os.system('gepetto-gui &')
             time.sleep(1)

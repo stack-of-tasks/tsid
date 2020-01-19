@@ -1,12 +1,13 @@
 import pinocchio as se3
+from pinocchio import libpinocchio_pywrap as pin 
 import tsid
 
 import numpy as np
 import copy
 
-print ""
-print "Test InvDyn"
-print ""
+print("")
+print("Test InvDyn")
+print("")
 
 import os
 filename = str(os.path.dirname(os.path.abspath(__file__)))
@@ -18,7 +19,11 @@ robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
 
 srdf = path + '/srdf/romeo_collision.srdf'
 
-q = se3.getNeutralConfigurationFromSrdf(robot.model(), srdf, False)
+model = robot.model()
+pin.loadReferenceConfigurations(model, srdf, False)
+q = model.referenceConfigurations["half_sitting"]
+
+
 q[2] += 0.84
 v = np.matrix(np.zeros(robot.nv)).transpose()
 
@@ -113,7 +118,7 @@ tau_old = np.matrix(np.zeros(robot.nv-6)).transpose()
 
 for i in range(0, max_it):
     if i == REMOVE_CONTACT_N:
-        print "Start breaking contact right foot"
+        print("Start breaking contact right foot")
         invdyn.removeRigidContact(contactRF.name, CONTACT_TRANSITION_TIME)
 
     sampleCom = trajCom.computeNext()
@@ -135,17 +140,17 @@ for i in range(0, max_it):
         #assert norm(tau-tau_old) < 2e1
         tau_old = tau
         if i%PRINT_N == 0:
-            print "Time ", i
+            print("Time ", i)
             if invdyn.checkContact(contactRF.name, sol):
                 f = invdyn.getContactForce(contactRF.name, sol)
-                print "   ", contactRF.name, "force: ", contactRF.getNormalForce(f)
+                print("   ", contactRF.name, "force: ", contactRF.getNormalForce(f))
 
             if invdyn.checkContact(contactLF.name, sol):
                 f = invdyn.getContactForce(contactLF.name, sol)
-                print "   ", contactLF.name, "force: ", contactLF.getNormalForce(f)
+                print("   ", contactLF.name, "force: ", contactLF.getNormalForce(f))
 
-            print "   ", comTask.name, " err:", norm(comTask.position_error, 2)
-            print "   ", "v: ", norm(v, 2), "dv: ", norm(dv)
+            print("   ", comTask.name, " err:", norm(comTask.position_error, 2))
+            print("   ", "v: ", norm(v, 2), "dv: ", norm(dv))
 
     v += dt*dv
     q = se3.integrate(robot.model(), q, dt * v)
@@ -154,5 +159,5 @@ for i in range(0, max_it):
     assert norm(dv) < 1e6
     assert norm(v) < 1e6
 
-print "Final COM Position", robot.com(invdyn.data()).transpose()
-print "Desired COM Position", com_ref.transpose()
+print("Final COM Position", robot.com(invdyn.data()).transpose())
+print("Desired COM Position", com_ref.transpose())
