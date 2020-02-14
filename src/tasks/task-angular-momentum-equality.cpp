@@ -123,8 +123,8 @@ namespace tsid
                 + m_ref.acc;
 
 #ifndef NDEBUG
-      std::cout<<m_name<<" errors: "<<m_L_error.norm()<<" "
-        <<m_dL_error.norm()<<std::endl;
+//      std::cout<<m_name<<" errors: "<<m_L_error.norm()<<" "
+//        <<m_dL_error.norm()<<std::endl;
 #endif
       // Del Prete's quick and dirty way to compute drift
       // compute momentum Jacobian at next time step assuming zero acc
