@@ -30,7 +30,7 @@ namespace tsid
 
     TaskAMEquality::TaskAMEquality(const std::string & name,
                                      RobotWrapper & robot):
-      TaskBase(name, robot),
+      TaskMotion(name, robot),
       m_constraint(name, 3, robot.nv())
     {
       m_Kp.setZero(3);

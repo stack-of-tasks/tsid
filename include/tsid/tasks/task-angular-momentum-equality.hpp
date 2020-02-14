@@ -19,7 +19,7 @@
 #define __invdyn_task_am_equality_hpp__
 
 #include "tsid/math/fwd.hpp"
-#include "tsid/tasks/task-base.hpp"
+#include "tsid/tasks/task-motion.hpp"
 #include "tsid/trajectories/trajectory-base.hpp"
 #include "tsid/math/constraint-equality.hpp"
 
@@ -31,7 +31,7 @@ namespace tsid
   namespace tasks
   {
 
-    class TaskAMEquality : public TaskBase
+    class TaskAMEquality : public TaskMotion
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
