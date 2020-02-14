@@ -189,7 +189,7 @@ data = robot.data()
 
 q = robot.model().neutralConfiguration
 q[2] += 0.84
-print "q:", q.transpose()
+print ("q:", q.transpose())
 
 taskAM = tsid.TaskAMEquality("task-AM", robot)
 
@@ -230,10 +230,10 @@ for i in range(0, max_it):
     assert error - error_past < 1e-4
     error_past = error
     if error < 1e-8:
-        print "Success Convergence"
+        print ("Success Convergence")
         break
     if i%100 == 0:
-        print "Time :", t, "Momentum error :", error
+        print ("Time :", t, "Momentum error :", error)
 
 
 print("All test is done")
