@@ -59,7 +59,7 @@ namespace tsid
       void setReference(const TrajectorySample & ref);
       const TrajectorySample & getReference() const;
 
-      const Vector3 & getDesireddMomentum() const;
+      const Vector3 & getDesiredMomentumDerivative() const;
       Vector3 getdMomentum(ConstRefVector dv) const;
 
       const Vector3 & momentum_error() const;

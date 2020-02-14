@@ -74,7 +74,7 @@ namespace tsid
       return m_ref;
     }
 
-    const Vector3 & TaskAMEquality::getDesireddMomentum() const
+    const Vector3 & TaskAMEquality::getDesiredMomentumDerivative() const
     {
       return m_dL_des;
     }
