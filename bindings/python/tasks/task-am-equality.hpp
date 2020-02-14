@@ -48,7 +48,7 @@ namespace tsid
         .def(bp::init<std::string, robots::RobotWrapper &> ((bp::arg("name"), bp::arg("robot")), "Default Constructor"))
         .add_property("dim", &TaskAM::dim, "return dimension size")
         .def("setReference", &TaskAMEqualityPythonVisitor::setReference, bp::arg("ref"))
-        .add_property("getDesireddMomentum", bp::make_function(&TaskAMEqualityPythonVisitor::getDesireddMomentum, bp::return_value_policy<bp::copy_const_reference>()), "Return Acc_desired")
+        .add_property("getDesiredMomentumDerivative", bp::make_function(&TaskAMEqualityPythonVisitor::getDesiredMomentumDerivative, bp::return_value_policy<bp::copy_const_reference>()), "Return dL_desired")
         .def("getdMomentum", &TaskAMEqualityPythonVisitor::getdMomentum, bp::arg("dv"))
         .add_property("momentum_error", bp::make_function(&TaskAMEqualityPythonVisitor::momentum_error, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("momentum", bp::make_function(&TaskAMEqualityPythonVisitor::momentum, bp::return_value_policy<bp::copy_const_reference>()))
@@ -79,8 +79,8 @@ namespace tsid
       static void setReference(TaskAM & self, const trajectories::TrajectorySample & ref){
         self.setReference(ref);
       }
-      static const Eigen::Vector3d & getDesireddMomentum(const TaskAM & self){
-        return self.getDesireddMomentum();
+      static const Eigen::Vector3d & getDesiredMomentumDerivative(const TaskAM & self){
+        return self.getDesiredMomentumDerivative();
       }
       static Eigen::Vector3d getdMomentum (TaskAM & self, const Eigen::VectorXd dv){
         return self.getdMomentum(dv);
