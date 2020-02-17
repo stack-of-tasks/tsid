@@ -18,7 +18,10 @@ robot = tsid.RobotWrapper(urdf, vector, pin.JointModelFreeFlyer(), False)
 model = robot.model()
 data = robot.data()
 
-q = robot.model().neutralConfiguration
+srdf = path + '/srdf/romeo_collision.srdf'
+pin.loadReferenceConfigurations(model, srdf, False)
+q = model.referenceConfigurations["half_sitting"]
+
 q[2] += 0.84
 print("q:", q.transpose())
 
@@ -72,7 +75,8 @@ print("")
 print("Test Task Joint Posture")
 print("")
 
-q = robot.model().neutralConfiguration
+
+q = model.referenceConfigurations["half_sitting"]
 q[2] += 0.84
 
 task_joint = tsid.TaskJointPosture("task-posture", robot)
@@ -122,7 +126,8 @@ print("Test Task SE3")
 print("")
 
 
-q = robot.model().neutralConfiguration
+
+q = model.referenceConfigurations["half_sitting"]
 q[2] += 0.84
 
 task_se3 = tsid.TaskSE3Equality("task-se3", robot, "RWristPitch")
@@ -187,7 +192,10 @@ robot = tsid.RobotWrapper(urdf, vector, pin.JointModelFreeFlyer(), False)
 model = robot.model()
 data = robot.data()
 
-q = robot.model().neutralConfiguration
+srdf = path + '/srdf/romeo_collision.srdf'
+pin.loadReferenceConfigurations(model, srdf, False)
+q = model.referenceConfigurations["half_sitting"]
+
 q[2] += 0.84
 print ("q:", q.transpose())
 
