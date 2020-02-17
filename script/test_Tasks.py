@@ -1,4 +1,4 @@
-import pinocchio as se3
+import pinocchio as pin
 import tsid
 import numpy as np
 import copy
@@ -12,9 +12,9 @@ import os
 filename = str(os.path.dirname(os.path.abspath(__file__)))
 path = filename + '/../models/romeo'
 urdf = path + '/urdf/romeo.urdf'
-vector = se3.StdVec_StdString()
+vector = pin.StdVec_StdString()
 vector.extend(item for item in path)
-robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
+robot = tsid.RobotWrapper(urdf, vector, pin.JointModelFreeFlyer(), False)
 model = robot.model()
 data = robot.data()
 
@@ -22,7 +22,7 @@ q = robot.model().neutralConfiguration
 q[2] += 0.84
 print("q:", q.transpose())
 
-se3.centerOfMass(model, data, q)
+pin.centerOfMass(model, data, q)
 
 taskCOM = tsid.TaskComEquality("task-com", robot)
 
@@ -56,7 +56,7 @@ for i in range(0, max_it):
 
     assert np.linalg.norm(Jpinv*const.matrix, 2) - 1.0 < tol
     v += dt*dv
-    q = se3.integrate(model, q, dt * v)
+    q = pin.integrate(model, q, dt * v)
     t += dt
 
     error = np.linalg.norm(taskCOM.position_error, 2)
@@ -105,7 +105,7 @@ for i in range(0, max_it):
 
     assert np.linalg.norm(Jpinv*const.matrix, 2) - 1.0 < tol
     v += dt*dv
-    q = se3.integrate(model, q, dt * v)
+    q = pin.integrate(model, q, dt * v)
     t += dt
 
     error = np.linalg.norm(task_joint.position_error, 2)
@@ -136,7 +136,7 @@ task_se3.setKd(Kd)
 assert np.linalg.norm(Kp - task_se3.Kp ,2) < tol
 assert np.linalg.norm(Kd - task_se3.Kd ,2) < tol
 
-M_ref =se3.SE3.Random()
+M_ref =pin.SE3.Random()
 
 traj = tsid.TrajectorySE3Constant("traj_se3", M_ref)
 sample = tsid.TrajectorySample(0)
@@ -159,7 +159,7 @@ for i in range(0, max_it):
     assert np.linalg.norm(Jpinv*const.matrix, 2) - 1.0 < tol
 
     v += dt*dv
-    q = se3.integrate(model, q, dt * v)
+    q = pin.integrate(model, q, dt * v)
     t += dt
 
     error = np.linalg.norm(task_se3.position_error, 2)
@@ -181,9 +181,9 @@ import os
 filename = str(os.path.dirname(os.path.abspath(__file__)))
 path = filename + '/../models/romeo'
 urdf = path + '/urdf/romeo.urdf'
-vector = se3.StdVec_StdString()
+vector = pin.StdVec_StdString()
 vector.extend(item for item in path)
-robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
+robot = tsid.RobotWrapper(urdf, vector, pin.JointModelFreeFlyer(), False)
 model = robot.model()
 data = robot.data()
 
@@ -223,7 +223,7 @@ for i in range(0, max_it):
 
     assert np.linalg.norm(Jpinv*const.matrix, 2) - 1.0 < tol
     v += dt*dv
-    q = se3.integrate(model, q, dt * v)
+    q = pin.integrate(model, q, dt * v)
     t += dt
 
     error = np.linalg.norm(taskAM.momentum_error, 2)
