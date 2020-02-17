@@ -109,7 +109,7 @@ namespace tsid
     }
 
     const ConstraintBase & TaskAMEquality::compute(const double ,
-                                                    ConstRefVector q,
+                                                    ConstRefVector ,
                                                     ConstRefVector v,
                                                     const Data & data)
     {
@@ -126,15 +126,8 @@ namespace tsid
 //      std::cout<<m_name<<" errors: "<<m_L_error.norm()<<" "
 //        <<m_dL_error.norm()<<std::endl;
 #endif
-      // Del Prete's quick and dirty way to compute drift
-      // compute momentum Jacobian at next time step assuming zero acc
-      double dt = 1e-3;
-      const Vector & q_next = pinocchio::integrate(m_robot.model(), q, dt*v);
-      Data data_next = data;
-      m_robot.computeAllTerms(data_next, q_next, v);
-      const Matrix6x & J_am_next = m_robot.momentumJacobian(data_next);
-      m_drift = (J_am_next.bottomRows(3) - J_am.bottomRows(3))* v / dt;
 
+      m_drift = pinocchio::computeCentroidalMomentumTimeVariation(m_robot.model(), const_cast<Data&>(data)).angular();
       m_constraint.setMatrix(J_am.bottomRows(3));
       m_constraint.setVector(m_dL_des - m_drift);
 
