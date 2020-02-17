@@ -1,6 +1,7 @@
 import pinocchio as pin
 import tsid
 import numpy as np
+from numpy.linalg import norm
 import copy
 
 print("")
@@ -225,6 +226,21 @@ for i in range(0, max_it):
     sample = traj.computeNext()
     taskAM.setReference(sample)
     const = taskAM.compute(t, q, v, data)
+
+    # compare the pinocchio method to
+    # Del Prete's quick and dirty way to compute drift
+    # compute momentum Jacobian at next time step assuming zero acc
+    dt = 1e-3
+    q_next = pin.integrate(model, q, dt*v)
+    data_next = robot.data().copy()
+    robot.computeAllTerms(data_next, q_next, v)
+    J_am = data.Ag
+    J_am_next = data_next.Ag
+    drift = (J_am_next[-3:, :] - J_am[-3:, :])* v / dt
+    drift_pin = pin.computeCentroidalMomentumTimeVariation(model, data).angular
+    diff_drift = norm(drift_pin - drift)
+    print("Difference between drift computations: ",diff_drift)
+
 
     Jpinv = np.linalg.pinv(const.matrix, 1e-5)
     dv = Jpinv * const.vector
