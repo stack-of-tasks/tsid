@@ -165,7 +165,12 @@ namespace tsid
       void frameJacobianLocal(const Data & data,
                               const Model::FrameIndex index,
                               Data::Matrix6x & J) const;
-      
+
+      const Data::Matrix6x & momentumJacobian(const Data & data) const;
+
+      Vector3 angularMomentumTimeVariation(const Data & data) const;
+
+
     protected:
       
       void init();
