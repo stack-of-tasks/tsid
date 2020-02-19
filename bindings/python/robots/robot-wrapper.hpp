@@ -77,6 +77,7 @@ namespace tsid
         .def("frameVelocityWorldOriented", &RobotPythonVisitor::frameVelocityWorldOriented, bp::args("data", "index"))
         .def("frameAccelerationWorldOriented", &RobotPythonVisitor::frameAccelerationWorldOriented, bp::args("data", "index"))
         .def("frameClassicAccelerationWorldOriented", &RobotPythonVisitor::frameClassicAccelerationWorldOriented, bp::args("data", "index"))
+        .def("angularMomentumTimeVariation", &RobotPythonVisitor::angularMomentumTimeVariation, bp::arg("data"))
    
         ;
       }
@@ -150,6 +151,9 @@ namespace tsid
       }
       static pinocchio::Motion frameClassicAccelerationWorldOriented(const Robot & self, const pinocchio::Data & data, const pinocchio::Model::FrameIndex & index){
         return self.frameClassicAccelerationWorldOriented(data, index);
+      }
+      static Eigen::Vector3d angularMomentumTimeVariation(const Robot & self, const pinocchio::Data & data){
+        return self.angularMomentumTimeVariation(data);
       }
       static void expose(const std::string & class_name)
       {
