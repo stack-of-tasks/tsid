@@ -316,6 +316,10 @@ namespace tsid
     {
       return data.Ag;
     }
+
+    Vector3 RobotWrapper::angularMomentumTimeVariation(const Data & data) const{
+      return pinocchio::computeCentroidalMomentumTimeVariation(m_model, const_cast<Data&>(data)).angular();
+    }
     
     //    const Vector3 & com(Data & data,const Vector & q,
     //                        const bool computeSubtreeComs = true,

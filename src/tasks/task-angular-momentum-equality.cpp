@@ -127,7 +127,7 @@ namespace tsid
 //        <<m_dL_error.norm()<<std::endl;
 #endif
 
-      m_drift = pinocchio::computeCentroidalMomentumTimeVariation(m_robot.model(), const_cast<Data&>(data)).angular();
+      m_drift = m_robot.angularMomentumTimeVariation(data);
       m_constraint.setMatrix(J_am.bottomRows(3));
       m_constraint.setVector(m_dL_des - m_drift);
 

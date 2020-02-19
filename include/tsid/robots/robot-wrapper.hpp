@@ -168,6 +168,8 @@ namespace tsid
 
       const Data::Matrix6x & momentumJacobian(const Data & data) const;
 
+      Vector3 angularMomentumTimeVariation(const Data & data) const;
+
 
     protected:
       
