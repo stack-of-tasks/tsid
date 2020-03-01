@@ -2,9 +2,9 @@ import pinocchio as se3
 import tsid
 import numpy as np
 
-print ""
-print "Test RobotWrapper"
-print ""
+print("")
+print("Test RobotWrapper")
+print("")
 
 
 import os
@@ -25,11 +25,11 @@ ub[0:3] = 10.0*np.matrix(np.ones(3)).transpose()
 ub[3:7] = 1.0*np.matrix(np.ones(4)).transpose()
 
 q = se3.randomConfiguration(robot.model(), lb, ub)
-print q.transpose()
+print(q.transpose())
 
 data = robot.data()
 v = np.matrix(np.ones(robot.nv)).transpose()
 robot.computeAllTerms(data, q, v)
-print robot.com(data)
+print(robot.com(data))
 
-print "All test is done"
+print("All test is done")

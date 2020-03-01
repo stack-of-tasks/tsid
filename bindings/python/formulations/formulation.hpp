@@ -33,6 +33,8 @@
 #include "tsid/tasks/task-com-equality.hpp"
 #include "tsid/tasks/task-actuation-bounds.hpp"
 #include "tsid/tasks/task-joint-bounds.hpp"
+#include "tsid/tasks/task-angular-momentum-equality.hpp"
+
 
 namespace tsid
 {
@@ -59,8 +61,8 @@ namespace tsid
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_COM, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_Joint, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_JointBounds, bp::args("task", "weight", "priorityLevel", "transition duration"))
+        .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_AM, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addActuationTask", &InvDynPythonVisitor::addActuationTask_Bounds, bp::args("task", "weight", "priorityLevel", "transition duration"))
-        
         .def("updateTaskWeight", &InvDynPythonVisitor::updateTaskWeight, bp::args("task_name", "weight"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6dDeprecated, bp::args("contact"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6d, bp::args("contact", "force_reg_weight"))
@@ -92,6 +94,9 @@ namespace tsid
         return self.addMotionTask(task, weight, priorityLevel, transition_duration);
       }
       static bool addMotionTask_JointBounds(T & self, tasks::TaskJointBounds & task, double weight, unsigned int priorityLevel, double transition_duration){
+        return self.addMotionTask(task, weight, priorityLevel, transition_duration);
+      }
+      static bool addMotionTask_AM(T & self, tasks::TaskAMEquality & task, double weight, unsigned int priorityLevel, double transition_duration){
         return self.addMotionTask(task, weight, priorityLevel, transition_duration);
       }
       static bool addActuationTask_Bounds(T & self, tasks::TaskActuationBounds & task, double weight, unsigned int priorityLevel, double transition_duration){

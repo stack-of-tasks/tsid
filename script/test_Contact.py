@@ -3,9 +3,9 @@ import tsid
 import numpy as np
 import copy
 
-print ""
-print "Test Contact"
-print ""
+print("")
+print("Test Contact")
+print("")
 
 tol = 1e-5
 import os
@@ -68,4 +68,4 @@ forceGenMat = contact.getForceGeneratorMatrix
 assert forceGenMat.shape[0] == 6 and forceGenMat.shape[1] == 12
 contact.computeForceRegularizationTask(t, q, v, data)
 
-print "All test is done"
+print("All test is done")

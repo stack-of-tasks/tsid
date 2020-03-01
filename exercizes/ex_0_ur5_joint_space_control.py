@@ -8,14 +8,14 @@ import time
 import pinocchio as se3
 import tsid
 import gepetto.corbaserver
-import commands
+import subprocess
 import os
 
 import ur5_conf as conf
 
-print "".center(conf.LINE_WIDTH,'#')
-print " Joint Space Inverse Dynamics - Manipulator ".center(conf.LINE_WIDTH, '#')
-print "".center(conf.LINE_WIDTH,'#'), '\n'
+print("".center(conf.LINE_WIDTH,'#'))
+print(" Joint Space Inverse Dynamics - Manipulator ".center(conf.LINE_WIDTH, '#'))
+print("".center(conf.LINE_WIDTH,'#'), '\n')
 
 PLOT_JOINT_POS = 1
 PLOT_JOINT_VEL = 1
@@ -52,12 +52,12 @@ solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
 
 if(USE_VIEWER):
     robot_display = se3.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path, ])
-    l = commands.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+    l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
     if int(l[1]) == 0:
         os.system('gepetto-gui &')
     time.sleep(1)
     gepetto.corbaserver.Client()
-    robot_display.initDisplay(loadModel=True)
+    robot_display.initViewer(loadModel=True)
     robot_display.displayCollisions(False)
     robot_display.displayVisuals(True)
     robot_display.display(q0)
@@ -99,7 +99,7 @@ for i in range(0, N):
     HQPData = formulation.computeProblemData(t, q[:,i], v[:,i])
     sol = solver.solve(HQPData)
     if(sol.status!=0):
-        print "Time %.3f QP problem could not be solved! Error code:"%t, sol.status
+        print("Time %.3f QP problem could not be solved! Error code:"%t, sol.status)
         break
     
     tau[:,i] = formulation.getActuatorForces(sol)
@@ -107,8 +107,8 @@ for i in range(0, N):
     dv_des[:,i] = postureTask.getDesiredAcceleration
 
     if i%conf.PRINT_N == 0:
-        print "Time %.3f"%(t)
-        print "\ttracking err %s: %.3f"%(postureTask.name.ljust(20,'.'), norm(postureTask.position_error, 2))
+        print("Time %.3f"%(t))
+        print("\ttracking err %s: %.3f"%(postureTask.name.ljust(20,'.'), norm(postureTask.position_error, 2)))
 
     # numerical integration
     v_mean = v[:,i] + 0.5*dt*dv[:,i]
@@ -126,7 +126,7 @@ for i in range(0, N):
 time = np.arange(0.0, N*conf.dt, conf.dt)
 
 if(PLOT_JOINT_POS):    
-    (f, ax) = plut.create_empty_figure(robot.nv/2,2)
+    (f, ax) = plut.create_empty_figure(int(robot.nv/2),2)
     ax = ax.reshape(robot.nv)
     for i in range(robot.nv):
         ax[i].plot(time, q[i,:-1].A1, label='Joint pos '+str(i))
@@ -137,7 +137,7 @@ if(PLOT_JOINT_POS):
         leg.get_frame().set_alpha(0.5)
         
 if(PLOT_JOINT_VEL):    
-    (f, ax) = plut.create_empty_figure(robot.nv/2,2)
+    (f, ax) = plut.create_empty_figure(int(robot.nv/2),2)
     ax = ax.reshape(robot.nv)
     for i in range(robot.nv):
         ax[i].plot(time, v[i,:-1].A1, label='Joint vel '+str(i))
@@ -150,7 +150,7 @@ if(PLOT_JOINT_VEL):
         leg.get_frame().set_alpha(0.5)
         
 if(PLOT_JOINT_ACC):    
-    (f, ax) = plut.create_empty_figure(robot.nv/2,2)
+    (f, ax) = plut.create_empty_figure(int(robot.nv/2),2)
     ax = ax.reshape(robot.nv)
     for i in range(robot.nv):
         ax[i].plot(time, dv[i,:-1].A1, label='Joint acc '+str(i))
@@ -162,7 +162,7 @@ if(PLOT_JOINT_ACC):
         leg.get_frame().set_alpha(0.5)
    
 if(PLOT_TORQUES):    
-    (f, ax) = plut.create_empty_figure(robot.nv/2,2)
+    (f, ax) = plut.create_empty_figure(int(robot.nv/2),2)
     ax = ax.reshape(robot.nv)
     for i in range(robot.nv):
         ax[i].plot(time, tau[i,:].A1, label='Torque '+str(i))

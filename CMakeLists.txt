@@ -79,7 +79,7 @@ ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.0") # Eigen::Ref appeared from 3.2.0
 #  - If it isn't, nothing happens and the subsequent pkg-config check takes care of everything.
 find_package(catkin QUIET COMPONENTS pinocchio)
 
-ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0.0")
+ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.2.0")
 
 SET(BOOST_REQUIERED_COMPONENTS filesystem system)
 SET(BOOST_BUILD_COMPONENTS unit_test_framework)
@@ -123,6 +123,7 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
     include/tsid/tasks/task-actuation-bounds.hpp
     include/tsid/tasks/task-joint-bounds.hpp
     include/tsid/tasks/task-joint-posture.hpp
+    include/tsid/tasks/task-angular-momentum-equality.hpp
   )
 
 SET(${PROJECT_NAME}_CONTACTS_HEADERS

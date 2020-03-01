@@ -9,9 +9,9 @@ import ex_4_conf as conf
 #import ex_4_long_conf as conf
 from tsid_biped import TsidBiped
 
-print "".center(conf.LINE_WIDTH,'#')
-print " Test Walking ".center(conf.LINE_WIDTH, '#')
-print "".center(conf.LINE_WIDTH,'#'), '\n'
+print("".center(conf.LINE_WIDTH,'#'))
+print(" Test Walking ".center(conf.LINE_WIDTH, '#'))
+print("".center(conf.LINE_WIDTH,'#'), '\n')
 
 PLOT_COM = 1
 PLOT_COP = 1
@@ -73,11 +73,11 @@ for i in range(-N_pre, N+N_post):
     time_start = time.time()
     
     if i==0:
-        print "Starting to walk (remove contact left foot)"
+        print("Starting to walk (remove contact left foot)")
         tsid.remove_contact_LF()
     elif i>0 and i<N-1:
         if contact_phase[i] != contact_phase[i-1]:
-            print "Time %.3f Changing contact phase from %s to %s"%(t, contact_phase[i-1], contact_phase[i])
+            print("Time %.3f Changing contact phase from %s to %s"%(t, contact_phase[i-1], contact_phase[i]))
             if contact_phase[i] == 'left':
                 tsid.add_contact_LF()
                 tsid.remove_contact_RF()
@@ -96,10 +96,10 @@ for i in range(-N_pre, N+N_post):
 
     sol = tsid.solver.solve(HQPData)
     if(sol.status!=0):
-        print "QP problem could not be solved! Error code:", sol.status
+        print("QP problem could not be solved! Error code:", sol.status)
         break
     if norm(v,2)>40.0:
-        print "Time %.3f Velocities are too high, stop everything!"%(t), norm(v)
+        print("Time %.3f Velocities are too high, stop everything!"%(t), norm(v))
         break
     
     if i>0:
@@ -134,15 +134,15 @@ for i in range(-N_pre, N+N_post):
                 cop_LF[1,i] = -f_LF[3,i] / f_LF[2,i]
 
     if i%conf.PRINT_N == 0:
-        print "Time %.3f"%(t)
+        print("Time %.3f"%(t))
         if tsid.formulation.checkContact(tsid.contactRF.name, sol) and i>=0:
-            print "\tnormal force %s: %.1f"%(tsid.contactRF.name.ljust(20,'.'), f_RF[2,i])
+            print("\tnormal force %s: %.1f"%(tsid.contactRF.name.ljust(20,'.'), f_RF[2,i]))
 
         if tsid.formulation.checkContact(tsid.contactLF.name, sol) and i>=0:
-            print "\tnormal force %s: %.1f"%(tsid.contactLF.name.ljust(20,'.'), f_LF[2,i])
+            print("\tnormal force %s: %.1f"%(tsid.contactLF.name.ljust(20,'.'), f_LF[2,i]))
 
-        print "\ttracking err %s: %.3f"%(tsid.comTask.name.ljust(20,'.'), norm(tsid.comTask.position_error, 2))
-        print "\t||v||: %.3f\t ||dv||: %.3f"%(norm(v, 2), norm(dv))
+        print("\ttracking err %s: %.3f"%(tsid.comTask.name.ljust(20,'.'), norm(tsid.comTask.position_error, 2)))
+        print("\t||v||: %.3f\t ||dv||: %.3f"%(norm(v, 2), norm(dv)))
 
     q, v = tsid.integrate_dv(q, v, dv, conf.dt)
     t += conf.dt

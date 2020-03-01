@@ -10,9 +10,9 @@ from tsid_manipulator import TsidManipulator
 #import ur5_conf as conf
 import ur5_reaching_conf as conf
 
-print "".center(conf.LINE_WIDTH,'#')
-print " Task Space Inverse Dynamics - Manipulator ".center(conf.LINE_WIDTH, '#')
-print "".center(conf.LINE_WIDTH,'#'), '\n'
+print(("".center(conf.LINE_WIDTH,'#')))
+print((" Task Space Inverse Dynamics - Manipulator ".center(conf.LINE_WIDTH, '#')))
+print(("".center(conf.LINE_WIDTH,'#'), '\n'))
 
 PLOT_EE_POS = 1
 PLOT_EE_VEL = 1
@@ -68,7 +68,7 @@ for i in range(0, N):
 
     sol = tsid.solver.solve(HQPData)
     if(sol.status!=0):
-        print "Time %.3f QP problem could not be solved! Error code:"%t, sol.status
+        print(("Time %.3f QP problem could not be solved! Error code:"%t, sol.status))
         break
     
     tau[:,i] = tsid.formulation.getActuatorForces(sol)
@@ -83,8 +83,8 @@ for i in range(0, N):
     ee_acc_des[:,i] = tsid.eeTask.getDesiredAcceleration[:3,0]
 
     if i%conf.PRINT_N == 0:
-        print "Time %.3f"%(t)
-        print "\ttracking err %s: %.3f"%(tsid.eeTask.name.ljust(20,'.'), norm(tsid.eeTask.position_error, 2))
+        print(("Time %.3f"%(t)))
+        print(("\ttracking err %s: %.3f"%(tsid.eeTask.name.ljust(20,'.'), norm(tsid.eeTask.position_error, 2))))
 
     q[:,i+1], v[:,i+1] = tsid.integrate_dv(q[:,i], v[:,i], dv, conf.dt)
     t += conf.dt
@@ -132,7 +132,7 @@ if(PLOT_EE_ACC):
         leg.get_frame().set_alpha(0.5)
 
 if(PLOT_TORQUES):    
-    (f, ax) = plut.create_empty_figure(tsid.robot.nv/2,2)
+    (f, ax) = plut.create_empty_figure(int(tsid.robot.nv/2),2)
     ax = ax.reshape(tsid.robot.nv)
     for i in range(tsid.robot.nv):
         ax[i].plot(time, tau[i,:].A1, label='Torque '+str(i))
@@ -144,7 +144,7 @@ if(PLOT_TORQUES):
         leg.get_frame().set_alpha(0.5)
 
 if(PLOT_JOINT_VEL):    
-    (f, ax) = plut.create_empty_figure(tsid.robot.nv/2,2)
+    (f, ax) = plut.create_empty_figure(int(tsid.robot.nv/2),2)
     ax = ax.reshape(tsid.robot.nv)
     for i in range(tsid.robot.nv):
         ax[i].plot(time, v[i,:-1].A1, label='Joint vel '+str(i))

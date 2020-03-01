@@ -23,6 +23,7 @@
 #include "tsid/bindings/python/tasks/task-joint-posture.hpp"
 #include "tsid/bindings/python/tasks/task-actuation-bounds.hpp"
 #include "tsid/bindings/python/tasks/task-joint-bounds.hpp"
+#include "tsid/bindings/python/tasks/task-am-equality.hpp"
 
 
 namespace tsid
@@ -34,6 +35,7 @@ namespace tsid
     void exposeTaskJointPosture();
     void exposeTaskActuationBounds();
     void exposeTaskJointBounds();
+    void exposeTaskAMEquality();
 
     inline void exposeTasks()
     {
@@ -42,6 +44,7 @@ namespace tsid
       exposeTaskJointPosture();
       exposeTaskActuationBounds();
       exposeTaskJointBounds();
+      exposeTaskAMEquality();
     }
     
   } // namespace python
