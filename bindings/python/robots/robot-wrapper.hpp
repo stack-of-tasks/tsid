@@ -25,7 +25,6 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/make_constructor.hpp>
 
-#include <pinocchio/bindings/python/parsers/parsers.hpp>
 #include "tsid/robots/robot-wrapper.hpp"
 
 namespace tsid
