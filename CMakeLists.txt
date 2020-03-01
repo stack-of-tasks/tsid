@@ -80,7 +80,7 @@ ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.0") # Eigen::Ref appeared from 3.2.0
 #  - If catkin-based pinocchio is installed it runs the CFG_EXTRAS to set up the Pinocchio preprocessor directives
 #  - If it isn't, nothing happens and the subsequent pkg-config check takes care of everything.
 #  - If catkin is installed but it's python components are not in PYTHONPATH, this will fail, please remove this line
-find_package(catkin QUIET COMPONENTS pinocchio)
+#find_package(catkin QUIET COMPONENTS pinocchio)
 
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.2.0")
 
