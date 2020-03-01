@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017-2018 CNRS
+# Copyright (c) 2017-2020 CNRS
 #
 # This file is part of tsid
 # tsid is free software: you can redistribute it
@@ -14,18 +14,19 @@
 # tsid If not, see
 # <http://www.gnu.org/licenses/>.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
+
+SET(PROJECT_NAMESPACE stack-of-tasks)
+SET(PROJECT_NAME tsid)
+SET(PROJECT_DESCRIPTION "Efficient Task Space Inverse Dynamics for Multi-body Systems based on Pinocchio")
+SET(PROJECT_URL "http://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
 
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
-INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/python.cmake)
 INCLUDE(cmake/ide.cmake)
 INCLUDE(cmake/apple.cmake)
 
-SET(PROJECT_NAME tsid)
-SET(PROJECT_DESCRIPTION "Efficient Task Space Inverse Dynamics for Multi-body Systems based on Pinocchio")
-SET(PROJECT_URL "http://github.com/stack-of-tasks/tsid")
 OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" OFF)
 
 SET(DOXYGEN_USE_MATHJAX YES)
@@ -39,7 +40,8 @@ ENDIF(APPLE)
 SET(CXX_DISABLE_WERROR True)
 SET(CMAKE_VERBOSE_MAKEFILE True)
 
-SETUP_PROJECT()
+COMPUTE_PROJECT_ARGS(PROJECT_ARGS LANGUAGES CXX)
+PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 
 IF(WIN32)
   SET(LINK copy_if_different)
@@ -77,6 +79,7 @@ ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.0") # Eigen::Ref appeared from 3.2.0
 # Fail-safe support for catkin-ized pinocchio:
 #  - If catkin-based pinocchio is installed it runs the CFG_EXTRAS to set up the Pinocchio preprocessor directives
 #  - If it isn't, nothing happens and the subsequent pkg-config check takes care of everything.
+#  - If catkin is installed but it's python components are not in PYTHONPATH, this will fail, please remove this line
 find_package(catkin QUIET COMPONENTS pinocchio)
 
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.2.0")
@@ -88,7 +91,7 @@ SET(BOOST_OPTIONAL_COMPONENTS "")
 IF(BUILD_PYTHON_INTERFACE)
   SET(BOOST_OPTIONAL_COMPONENTS ${BOOST_OPTIONAL_COMPONENTS} python)
   FINDPYTHON()
-  INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS}) 
+  INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS})
   ADD_REQUIRED_DEPENDENCY("eigenpy >= 1.4.0")
 ENDIF(BUILD_PYTHON_INTERFACE)
 
@@ -208,5 +211,3 @@ ADD_SUBDIRECTORY(unittest)
 
 # --- PACKAGING ----------------------------------------------------------------
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
-
-SETUP_PROJECT_FINALIZE()
