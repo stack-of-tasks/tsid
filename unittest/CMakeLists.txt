@@ -18,13 +18,6 @@
 # --- MACROS ------------------------------------------------------------------
 # --- MACROS ------------------------------------------------------------------
 
-IF(BUILD_UNIT_TESTS)
-  SET(DISABLE_TESTS OFF)
-ELSE(BUILD_UNIT_TESTS)
-  SET(DISABLE_TESTS ON)
-ENDIF(BUILD_UNIT_TESTS)
-include(../cmake/test.cmake)
-
 MACRO(ADD_TEST_CFLAGS target flag)
   SET_PROPERTY(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS " ${flag}")
 ENDMACRO(ADD_TEST_CFLAGS)
