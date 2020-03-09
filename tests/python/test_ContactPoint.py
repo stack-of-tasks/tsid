@@ -1,16 +1,20 @@
-import pinocchio as se3
-import tsid
-import numpy as np
 import copy
+import os
+
+import numpy as np
+import pinocchio as se3
+
+import tsid
+
+se3.switchToNumpyMatrix()
 
 print("")
 print("Test Contact")
 print("")
 
 tol = 1e-5
-import os
 filename = str(os.path.dirname(os.path.abspath(__file__)))
-path = filename + '/../models/romeo'
+path = filename + '/../../models/romeo'
 urdf = path + '/urdf/romeo.urdf'
 vector = se3.StdVec_StdString()
 vector.extend(item for item in path)
@@ -31,7 +35,7 @@ assert contact.n_motion == 3
 assert contact.n_force == 3
 
 Kp = np.matrix(np.ones(3)).transpose()
-Kd = 2*Kp
+Kd = 2 * Kp
 contact.setKp(Kp)
 contact.setKd(Kd)
 

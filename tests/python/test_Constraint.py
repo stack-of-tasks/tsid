@@ -1,12 +1,13 @@
-
-
-import pinocchio as se3
-import tsid
 import numpy as np
+import pinocchio as se3
+
+import tsid
 
 print("")
 print("Test Constraint Bound")
 print("")
+
+se3.switchToNumpyMatrix()
 
 tol = 1e-5
 n = 5
@@ -55,12 +56,12 @@ assert np.linalg.norm(A - equality.matrix, 2) < tol
 assert np.linalg.norm(b - equality.vector, 2) < tol
 
 b *= 2.0
-assert np.linalg.norm(b - equality.vector, 2)is not 0
+assert np.linalg.norm(b - equality.vector, 2) is not 0
 equality.setVector(b)
 assert np.linalg.norm(b - equality.vector, 2) < tol
 
 A *= 2.0
-assert np.linalg.norm(A - equality.matrix, 2)is not 0
+assert np.linalg.norm(A - equality.matrix, 2) is not 0
 equality.setMatrix(A)
 assert np.linalg.norm(A - equality.matrix, 2) < tol
 
@@ -83,12 +84,12 @@ assert inequality.rows == m
 assert inequality.cols == n
 
 lb *= 2.0
-assert np.linalg.norm(lb - inequality.lowerBound, 2)is not 0
+assert np.linalg.norm(lb - inequality.lowerBound, 2) is not 0
 inequality.setLowerBound(lb)
 assert np.linalg.norm(lb - inequality.lowerBound, 2) < tol
 
 A *= 2.0
-assert np.linalg.norm(A - inequality.matrix, 2)is not 0
+assert np.linalg.norm(A - inequality.matrix, 2) is not 0
 inequality.setMatrix(A)
 assert np.linalg.norm(A - inequality.matrix, 2) < tol
 

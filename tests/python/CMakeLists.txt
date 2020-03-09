@@ -1,10 +1,10 @@
 SET(${PYWRAP}_TESTS
-  Constraint
-  ContactPoint
-  Contact
+  #Constraint
+  #ContactPoint
+  #Contact
   Formulation
   RobotWrapper
-  Solvers
+  #Solvers
   Tasks
   Trajectories
   )

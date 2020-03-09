@@ -1,17 +1,21 @@
-import pinocchio as pin
-import tsid
-import numpy as np
-from numpy.linalg import norm
 import copy
+import os
+
+import numpy as np
+import pinocchio as pin
+from numpy.linalg import norm
+
+import tsid
 
 print("")
 print("Test Task COM")
 print("")
 
+pin.switchToNumpyMatrix()
+
 tol = 1e-5
-import os
 filename = str(os.path.dirname(os.path.abspath(__file__)))
-path = filename + '/../models/romeo'
+path = filename + '/../../models/romeo'
 urdf = path + '/urdf/romeo.urdf'
 vector = pin.StdVec_StdString()
 vector.extend(item for item in path)
@@ -35,10 +39,10 @@ Kd = 20.0 * np.matrix(np.ones(3)).transpose()
 taskCOM.setKp(Kp)
 taskCOM.setKd(Kd)
 
-assert np.linalg.norm(Kp - taskCOM.Kp ,2) < tol
-assert np.linalg.norm(Kd - taskCOM.Kd ,2) < tol
+assert np.linalg.norm(Kp - taskCOM.Kp, 2) < tol
+assert np.linalg.norm(Kd - taskCOM.Kd, 2) < tol
 
-com_ref  = data.com[0] + np.matrix(np.ones(3)*0.02).transpose()
+com_ref = data.com[0] + np.matrix(np.ones(3) * 0.02).transpose()
 traj = tsid.TrajectoryEuclidianConstant("traj_se3", com_ref)
 sample = tsid.TrajectorySample(0)
 
@@ -58,8 +62,8 @@ for i in range(0, max_it):
     Jpinv = np.linalg.pinv(const.matrix, 1e-5)
     dv = Jpinv * const.vector
 
-    assert np.linalg.norm(Jpinv*const.matrix, 2) - 1.0 < tol
-    v += dt*dv
+    assert np.linalg.norm(Jpinv * const.matrix, 2) - 1.0 < tol
+    v += dt * dv
     q = pin.integrate(model, q, dt * v)
     t += dt
 
@@ -69,27 +73,26 @@ for i in range(0, max_it):
     if error < 1e-8:
         print("Success Convergence")
         break
-    if i%100 == 0:
+    if i % 100 == 0:
         print("Time :", t, "COM pos error :", error, "COM vel error :", np.linalg.norm(taskCOM.velocity_error, 2))
 
 print("")
 print("Test Task Joint Posture")
 print("")
 
-
 q = model.referenceConfigurations["half_sitting"]
 q[2] += 0.84
 
 task_joint = tsid.TaskJointPosture("task-posture", robot)
 
-na = robot.nv -6
+na = robot.nv - 6
 Kp = 100 * np.matrix(np.ones(na)).transpose()
 Kd = 20.0 * np.matrix(np.ones(na)).transpose()
 task_joint.setKp(Kp)
 task_joint.setKd(Kd)
 
-assert np.linalg.norm(Kp - task_joint.Kp ,2) < tol
-assert np.linalg.norm(Kd - task_joint.Kd ,2) < tol
+assert np.linalg.norm(Kp - task_joint.Kp, 2) < tol
+assert np.linalg.norm(Kd - task_joint.Kd, 2) < tol
 
 q_ref = np.matrix(np.random.randn(na)).transpose()
 traj = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
@@ -108,8 +111,8 @@ for i in range(0, max_it):
     Jpinv = np.linalg.pinv(const.matrix, 1e-5)
     dv = Jpinv * const.vector
 
-    assert np.linalg.norm(Jpinv*const.matrix, 2) - 1.0 < tol
-    v += dt*dv
+    assert np.linalg.norm(Jpinv * const.matrix, 2) - 1.0 < tol
+    v += dt * dv
     q = pin.integrate(model, q, dt * v)
     t += dt
 
@@ -119,14 +122,13 @@ for i in range(0, max_it):
     if error < 1e-8:
         print("Success Convergence")
         break
-    if i%100 == 0:
-        print("Time :", t, "Joint pos error :", error, "Joint vel error :", np.linalg.norm(task_joint.velocity_error, 2))
+    if i % 100 == 0:
+        print("Time :", t, "Joint pos error :", error, "Joint vel error :",
+              np.linalg.norm(task_joint.velocity_error, 2))
 
 print("")
 print("Test Task SE3")
 print("")
-
-
 
 q = model.referenceConfigurations["half_sitting"]
 q[2] += 0.84
@@ -139,10 +141,10 @@ Kd = 20.0 * np.matrix(np.ones(na)).transpose()
 task_se3.setKp(Kp)
 task_se3.setKd(Kd)
 
-assert np.linalg.norm(Kp - task_se3.Kp ,2) < tol
-assert np.linalg.norm(Kd - task_se3.Kd ,2) < tol
+assert np.linalg.norm(Kp - task_se3.Kp, 2) < tol
+assert np.linalg.norm(Kd - task_se3.Kd, 2) < tol
 
-M_ref =pin.SE3.Random()
+M_ref = pin.SE3.Random()
 
 traj = tsid.TrajectorySE3Constant("traj_se3", M_ref)
 sample = tsid.TrajectorySample(0)
@@ -161,10 +163,9 @@ for i in range(0, max_it):
     Jpinv = np.linalg.pinv(const.matrix, 1e-5)
     dv = Jpinv * const.vector
 
+    assert np.linalg.norm(Jpinv * const.matrix, 2) - 1.0 < tol
 
-    assert np.linalg.norm(Jpinv*const.matrix, 2) - 1.0 < tol
-
-    v += dt*dv
+    v += dt * dv
     q = pin.integrate(model, q, dt * v)
     t += dt
 
@@ -174,18 +175,16 @@ for i in range(0, max_it):
     if error < 1e-8:
         print("Success Convergence")
         break
-    if i%100 == 0:
+    if i % 100 == 0:
         print("Time :", t, "EE pos error :", error, "EE vel error :", np.linalg.norm(task_se3.velocity_error, 2))
 
-
-print ("")
-print ("Test Task Angular Momentum")
-print ("")
+print("")
+print("Test Task Angular Momentum")
+print("")
 
 tol = 1e-5
-import os
 filename = str(os.path.dirname(os.path.abspath(__file__)))
-path = filename + '/../models/romeo'
+path = filename + '/../../models/romeo'
 urdf = path + '/urdf/romeo.urdf'
 vector = pin.StdVec_StdString()
 vector.extend(item for item in path)
@@ -198,7 +197,7 @@ pin.loadReferenceConfigurations(model, srdf, False)
 q = model.referenceConfigurations["half_sitting"]
 
 q[2] += 0.84
-print ("q:", q.transpose())
+print("q:", q.transpose())
 
 taskAM = tsid.TaskAMEquality("task-AM", robot)
 
@@ -207,10 +206,10 @@ Kd = 20.0 * np.matrix(np.ones(3)).transpose()
 taskAM.setKp(Kp)
 taskAM.setKd(Kd)
 
-assert np.linalg.norm(Kp - taskAM.Kp ,2) < tol
-assert np.linalg.norm(Kd - taskAM.Kd ,2) < tol
+assert np.linalg.norm(Kp - taskAM.Kp, 2) < tol
+assert np.linalg.norm(Kd - taskAM.Kd, 2) < tol
 
-am_ref  =np.matrix(np.zeros(3)).transpose()
+am_ref = np.matrix(np.zeros(3)).transpose()
 traj = tsid.TrajectoryEuclidianConstant("traj_se3", am_ref)
 sample = tsid.TrajectorySample(0)
 
@@ -231,22 +230,21 @@ for i in range(0, max_it):
     # Del Prete's quick and dirty way to compute drift
     # compute momentum Jacobian at next time step assuming zero acc
     dt = 1e-3
-    q_next = pin.integrate(model, q, dt*v)
+    q_next = pin.integrate(model, q, dt * v)
     data_next = robot.data().copy()
     robot.computeAllTerms(data_next, q_next, v)
     J_am = data.Ag
     J_am_next = data_next.Ag
-    drift = (J_am_next[-3:, :] - J_am[-3:, :])* v / dt
+    drift = (J_am_next[-3:, :] - J_am[-3:, :]) * v / dt
     drift_pin = pin.computeCentroidalMomentumTimeVariation(model, data).angular
     diff_drift = norm(drift_pin - drift)
-    print("Difference between drift computations: ",diff_drift)
-
+    print("Difference between drift computations: ", diff_drift)
 
     Jpinv = np.linalg.pinv(const.matrix, 1e-5)
     dv = Jpinv * const.vector
 
-    assert np.linalg.norm(Jpinv*const.matrix, 2) - 1.0 < tol
-    v += dt*dv
+    assert np.linalg.norm(Jpinv * const.matrix, 2) - 1.0 < tol
+    v += dt * dv
     q = pin.integrate(model, q, dt * v)
     t += dt
 
@@ -254,12 +252,9 @@ for i in range(0, max_it):
     assert error - error_past < 1e-4
     error_past = error
     if error < 1e-8:
-        print ("Success Convergence")
+        print("Success Convergence")
         break
-    if i%100 == 0:
-        print ("Time :", t, "Momentum error :", error)
-
+    if i % 100 == 0:
+        print("Time :", t, "Momentum error :", error)
 
 print("All test is done")
-
-

@@ -1,15 +1,18 @@
-import pinocchio as se3
-import tsid
+import os
+
 import numpy as np
+import pinocchio as se3
+
+import tsid
 
 print("")
 print("Test RobotWrapper")
 print("")
 
+se3.switchToNumpyMatrix()
 
-import os
 filename = str(os.path.dirname(os.path.abspath(__file__)))
-path = filename + '/../models/romeo'
+path = filename + '/../../models/romeo'
 urdf = path + '/urdf/romeo.urdf'
 vector = se3.StdVec_StdString()
 vector.extend(item for item in path)
@@ -17,12 +20,12 @@ vector.extend(item for item in path)
 robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
 model = robot.model()
 lb = model.lowerPositionLimit
-lb[0:3] = -10.0*np.matrix(np.ones(3)).transpose()
-lb[3:7] = -1.0*np.matrix(np.ones(4)).transpose()
+lb[0:3] = -10.0 * np.matrix(np.ones(3)).transpose()
+lb[3:7] = -1.0 * np.matrix(np.ones(4)).transpose()
 
 ub = model.upperPositionLimit
-ub[0:3] = 10.0*np.matrix(np.ones(3)).transpose()
-ub[3:7] = 1.0*np.matrix(np.ones(4)).transpose()
+ub[0:3] = 10.0 * np.matrix(np.ones(3)).transpose()
+ub[3:7] = 1.0 * np.matrix(np.ones(4)).transpose()
 
 q = se3.randomConfiguration(robot.model(), lb, ub)
 print(q.transpose())

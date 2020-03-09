@@ -1,12 +1,15 @@
-import pinocchio as se3
-import tsid
+import copy
 
 import numpy as np
-import copy
+import pinocchio as se3
+
+import tsid
 
 print("")
 print("Test Solvers")
 print("")
+
+se3.switchToNumpyMatrix()
 
 EPS = 1e-3
 nTest = 100
@@ -36,19 +39,19 @@ A_lb = np.matrix(np.random.rand(nin)).transpose() * NORMAL_DISTR_VAR
 A_ub = np.matrix(np.random.rand(nin)).transpose() * NORMAL_DISTR_VAR
 constrVal = A_in * x
 
-for i in range(0, nin):	
+for i in range(0, nin):
     if A_ub[i] <= A_lb[i]:
-	A_ub[i] = A_lb[i] + MARGIN_PERC * np.abs(A_lb[i])
-        A_lb[i] = A_lb[i] - MARGIN_PERC * np.abs(A_lb[i]) 
+        A_ub[i] = A_lb[i] + MARGIN_PERC * np.abs(A_lb[i])
+        A_lb[i] = A_lb[i] - MARGIN_PERC * np.abs(A_lb[i])
 
-    if constrVal[i]> A_ub[i]:
+    if constrVal[i] > A_ub[i]:
         A_ub[i] = constrVal[i] + MARGIN_PERC * np.abs(constrVal[i])
     elif constrVal[i] < A_lb[i]:
         A_lb[i] = constrVal[i] - MARGIN_PERC * np.abs(constrVal[i])
 
 in_const = tsid.ConstraintInequality("ini1", A_in, A_lb, A_ub)
 A_eq = np.matrix(np.random.rand(neq, n))
-b_eq = A_eq*x
+b_eq = A_eq * x
 eq_const = tsid.ConstraintEquality("eq1", A_eq, b_eq)
 
 const1 = tsid.ConstraintLevel()
@@ -57,7 +60,7 @@ const1.append(1.0, in_const)
 print("check constraint level #0")
 const1.print_all()
 
-const2= tsid.ConstraintLevel()
+const2 = tsid.ConstraintLevel()
 const2.append(1.0, cost)
 print("check constraint level #1")
 const2.print_all()
@@ -69,17 +72,16 @@ HQPData.print_all()
 
 gradientPerturbations = []
 hessianPerturbations = []
-for i in range (0, nTest):
+for i in range(0, nTest):
     gradientPerturbations.append(np.matrix(np.random.rand(n) * GRADIENT_PERTURBATION_VARIANCE).transpose())
-    hessianPerturbations.append(np.matrix(np.random.rand(n,n) * HESSIAN_PERTURBATION_VARIANCE))
+    hessianPerturbations.append(np.matrix(np.random.rand(n, n) * HESSIAN_PERTURBATION_VARIANCE))
 
-for i in range (0, nTest):
+for i in range(0, nTest):
     cost.setMatrix(cost.matrix + hessianPerturbations[i])
     cost.setVector(cost.vector + gradientPerturbations[i])
 
     HQPoutput = solver.solve(HQPData)
 
     assert np.linalg.norm(A_eq * HQPoutput.x - b_eq, 2) < EPS
-    #assert (A_in * HQPoutput.x <= A_ub + EPS).all()
-    #assert (A_in * HQPoutput.x > A_lb - EPS).all()
-   
+    # assert (A_in * HQPoutput.x <= A_ub + EPS).all()
+    # assert (A_in * HQPoutput.x > A_lb - EPS).all()

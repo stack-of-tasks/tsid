@@ -1,13 +1,16 @@
-import pinocchio as se3
-import tsid
 import numpy as np
+import pinocchio as se3
+
+import tsid
 
 print("")
 print("Test Trajectory Euclidian")
 print("")
 
+se3.switchToNumpyMatrix()
+
 tol = 1e-5
-n =5
+n = 5
 q_ref = np.matrix(np.ones(n)).transpose()
 zero = np.matrix(np.zeros(n)).transpose()
 
@@ -32,7 +35,7 @@ M_vec[0:3] = M_ref.translation
 zero = np.matrix(np.zeros(6)).transpose()
 
 for i in range(1, 4):
-    M_vec[3*i: 3*i+3] = M_ref.rotation[:, i-1]
+    M_vec[3 * i:3 * i + 3] = M_ref.rotation[:, i - 1]
 
 traj_se3 = tsid.TrajectorySE3Constant("traj_se3")
 traj_se3.setReference(M_ref)
