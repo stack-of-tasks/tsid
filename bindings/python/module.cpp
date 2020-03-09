@@ -35,8 +35,7 @@
 namespace bp = boost::python;
 using namespace tsid::python;
 
-BOOST_PYTHON_MODULE(libtsid_pywrap)
-{
+BOOST_PYTHON_MODULE(tsid) {
   eigenpy::enableEigenPy();
   eigenpy::exposeAngleAxis();
   eigenpy::exposeQuaternion();

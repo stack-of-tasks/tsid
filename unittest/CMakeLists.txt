@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017-2018 CNRS
+# Copyright (c) 2017-2020 CNRS
 #
 # This file is part of tsid
 # tsid is free software: you can redistribute it
@@ -22,41 +22,39 @@ MACRO(ADD_TEST_CFLAGS target flag)
   SET_PROPERTY(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS " ${flag}")
 ENDMACRO(ADD_TEST_CFLAGS)
 
-MACRO(ADD_TESTCASE NAME PKGS)
-  ADD_UNIT_TEST(${NAME} ${NAME})
+MACRO(ADD_TESTCASE NAME)
+  ADD_UNIT_TEST(${NAME} ${NAME}.cpp)
 
-  SET_TARGET_PROPERTIES(${NAME} PROPERTIES LINKER_LANGUAGE CXX)
   ADD_TEST_CFLAGS(${NAME} "-DBOOST_TEST_DYN_LINK")
   SET(MODULE_NAME "${NAME}Test")
   STRING(REGEX REPLACE "-" "_" MODULE_NAME ${MODULE_NAME})
   ADD_TEST_CFLAGS(${NAME} "-DBOOST_TEST_MODULE=${MODULE_NAME}")
 
-  FOREACH(PKG ${PKGS})
-    PKG_CONFIG_USE_DEPENDENCY(${NAME} ${PKG})
-  ENDFOREACH(PKG)
-
-  TARGET_LINK_LIBRARIES(${NAME} ${PROJECT_NAME})
-  TARGET_LINK_LIBRARIES(${NAME} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+  TARGET_LINK_LIBRARIES(${NAME} ${PROJECT_NAME} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} pinocchio::pinocchio)
 ENDMACRO(ADD_TESTCASE)
 
 # --- RULES -------------------------------------------------------------------
 # --- RULES -------------------------------------------------------------------
 # --- RULES -------------------------------------------------------------------
 
-ADD_TESTCASE(constraints "eigen3;pinocchio")
-ADD_TESTCASE(trajectories "eigen3;pinocchio")
+ADD_TESTCASE(constraints)
+ADD_TESTCASE(trajectories)
 
-ADD_TESTCASE(robot-wrapper "eigen3;pinocchio")
+ADD_TESTCASE(robot-wrapper)
 ADD_TEST_CFLAGS(robot-wrapper '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-ADD_TESTCASE(tasks "eigen3;pinocchio")
+ADD_TESTCASE(tasks)
 ADD_TEST_CFLAGS(tasks '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-ADD_TESTCASE(contacts "eigen3;pinocchio")
+ADD_TESTCASE(contacts)
 ADD_TEST_CFLAGS(contacts '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-#ADD_TESTCASE(tsid-formulation "eigen3;pinocchio")
+#ADD_TESTCASE(tsid-formulation)
 #ADD_TEST_CFLAGS(tsid-formulation '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-ADD_TESTCASE(math_utils "eigen3;pinocchio")
-ADD_TESTCASE(hqp_solvers "eigen3;pinocchio")
+ADD_TESTCASE(math_utils)
+ADD_TESTCASE(hqp_solvers)
+
+IF(BUILD_PYTHON_INTERFACE)
+  ADD_SUBDIRECTORY(python)
+ENDIF(BUILD_PYTHON_INTERFACE)

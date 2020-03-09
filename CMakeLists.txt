@@ -16,45 +16,43 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
-SET(PROJECT_NAMESPACE stack-of-tasks)
+# Project properties
+SET(PROJECT_ORG stack-of-tasks)
 SET(PROJECT_NAME tsid)
 SET(PROJECT_DESCRIPTION "Efficient Task Space Inverse Dynamics for Multi-body Systems based on Pinocchio")
-SET(PROJECT_URL "http://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
+SET(PROJECT_URL "https://github.com/${PROJECT_ORG}/${PROJECT_NAME}")
 
+# Project options
+OPTION(BUILD_PYTHON_INTERFACE "Build the python bindings" ON)
+OPTION(INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
+OPTION(SUFFIX_SO_VERSION "Suffix library name with its version" ON)
+OPTION(INITIALIZE_WITH_NAN "Initialize Eigen entries with NaN" OFF)
+OPTION(EIGEN_RUNTIME_NO_MALLOC "If ON, it can assert in case of runtime allocation" ON)
+OPTION(EIGEN_NO_AUTOMATIC_RESIZING "If ON, it forbids automatic resizing of dynamics arrays and matrices" OFF)
+
+# Project configuration
+IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+  SET(PROJECT_USE_CMAKE_EXPORT TRUE)
+ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+SET(CXX_DISABLE_WERROR TRUE)
+SET(DOXYGEN_USE_MATHJAX YES)
+SET(CMAKE_VERBOSE_MAKEFILE TRUE)
+
+# JRL-cmakemodule setup
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/python.cmake)
 INCLUDE(cmake/ide.cmake)
 INCLUDE(cmake/apple.cmake)
-include(cmake/test.cmake)
-
-OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" OFF)
-
-SET(DOXYGEN_USE_MATHJAX YES)
 
 # Handle APPLE Cmake policy
 IF(APPLE)
   APPLY_DEFAULT_APPLE_CONFIGURATION()
 ENDIF(APPLE)
 
-# Disable -Werror on Unix for now.
-SET(CXX_DISABLE_WERROR True)
-SET(CMAKE_VERBOSE_MAKEFILE True)
-
+# Project definition
 COMPUTE_PROJECT_ARGS(PROJECT_ARGS LANGUAGES CXX)
 PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
-
-IF(WIN32)
-  SET(LINK copy_if_different)
-ELSE(WIN32)
-  SET(LINK create_symlink)
-ENDIF(WIN32)
-
-# --- OPTIONS ----------------------------------------
-OPTION (BUILD_PYTHON_INTERFACE "Build the python binding" ON)
-OPTION (INITIALIZE_WITH_NAN "Initialize Eigen entries with NaN" OFF)
-OPTION (EIGEN_RUNTIME_NO_MALLOC "If ON, it can assert in case of runtime allocation" ON)
-OPTION (EIGEN_NO_AUTOMATIC_RESIZING "If ON, it forbids automatic resizing of dynamics arrays and matrices" OFF)
 
 IF(INITIALIZE_WITH_NAN)
   MESSAGE(STATUS "Initialize with NaN all the Eigen entries.")
@@ -71,142 +69,200 @@ IF(EIGEN_NO_AUTOMATIC_RESIZING)
   ADD_DEFINITIONS(-DEIGEN_NO_AUTOMATIC_RESIZING)
 ENDIF(EIGEN_NO_AUTOMATIC_RESIZING)
 
-# ----------------------------------------------------
-# --- DEPENDENCIES -----------------------------------
-# ----------------------------------------------------
-ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.0") # Eigen::Ref appeared from 3.2.0
+# Project dependencies
+ADD_PROJECT_DEPENDENCY(pinocchio 2.3.1 REQUIRED PKG_CONFIG_REQUIRES "pinocchio >= 2.3.1")
 
-# Fail-safe support for catkin-ized pinocchio:
-#  - If catkin-based pinocchio is installed it runs the CFG_EXTRAS to set up the Pinocchio preprocessor directives
-#  - If it isn't, nothing happens and the subsequent pkg-config check takes care of everything.
-#  - If catkin is installed but it's python components are not in PYTHONPATH, this will fail, please remove this line
-find_package(catkin QUIET COMPONENTS pinocchio)
-
-ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.2.0")
-
-SET(BOOST_REQUIERED_COMPONENTS filesystem system)
-SET(BOOST_BUILD_COMPONENTS unit_test_framework)
-SET(BOOST_OPTIONAL_COMPONENTS "")
+SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 
 IF(BUILD_PYTHON_INTERFACE)
-  SET(BOOST_OPTIONAL_COMPONENTS ${BOOST_OPTIONAL_COMPONENTS} python)
   FINDPYTHON()
-  INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS})
-  ADD_REQUIRED_DEPENDENCY("eigenpy >= 1.4.0")
+  SET(PYWRAP ${PROJECT_NAME}_pywrap)
+  ADD_PROJECT_DEPENDENCY(eigenpy REQUIRED PKG_CONFIG_REQUIRES eigenpy)
+  SET(BOOST_COMPONENTS ${BOOST_COMPONENTS} python)
 ENDIF(BUILD_PYTHON_INTERFACE)
 
-SET(BOOST_COMPONENTS ${BOOST_REQUIERED_COMPONENTS} ${BOOST_OPTIONAL_COMPONENTS} ${BOOST_BUILD_COMPONENTS})
 SEARCH_FOR_BOOST()
 
-# Path to boost headers
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-# ----------------------------------------------------
-# --- INCLUDE ----------------------------------------
-# ----------------------------------------------------
-
+# Main Library
 SET(${PROJECT_NAME}_MATH_HEADERS
-    include/tsid/math/fwd.hpp
-    include/tsid/math/utils.hpp
-    include/tsid/math/constraint-base.hpp
-    include/tsid/math/constraint-equality.hpp
-    include/tsid/math/constraint-inequality.hpp
-    include/tsid/math/constraint-bound.hpp
+  include/tsid/math/fwd.hpp
+  include/tsid/math/utils.hpp
+  include/tsid/math/constraint-base.hpp
+  include/tsid/math/constraint-equality.hpp
+  include/tsid/math/constraint-inequality.hpp
+  include/tsid/math/constraint-bound.hpp
   )
 
 SET(${PROJECT_NAME}_TASKS_HEADERS
-    include/tsid/tasks/fwd.hpp
-    include/tsid/tasks/task-base.hpp
-    include/tsid/tasks/task-motion.hpp
-    include/tsid/tasks/task-actuation.hpp
-    include/tsid/tasks/task-contact-force.hpp
-    include/tsid/tasks/task-com-equality.hpp
-    include/tsid/tasks/task-se3-equality.hpp
-    include/tsid/tasks/task-contact-force-equality.hpp
-    include/tsid/tasks/task-actuation-equality.hpp
-    include/tsid/tasks/task-actuation-bounds.hpp
-    include/tsid/tasks/task-joint-bounds.hpp
-    include/tsid/tasks/task-joint-posture.hpp
-    include/tsid/tasks/task-angular-momentum-equality.hpp
+  include/tsid/tasks/fwd.hpp
+  include/tsid/tasks/task-base.hpp
+  include/tsid/tasks/task-motion.hpp
+  include/tsid/tasks/task-actuation.hpp
+  include/tsid/tasks/task-contact-force.hpp
+  include/tsid/tasks/task-com-equality.hpp
+  include/tsid/tasks/task-se3-equality.hpp
+  include/tsid/tasks/task-contact-force-equality.hpp
+  include/tsid/tasks/task-actuation-equality.hpp
+  include/tsid/tasks/task-actuation-bounds.hpp
+  include/tsid/tasks/task-joint-bounds.hpp
+  include/tsid/tasks/task-joint-posture.hpp
+  include/tsid/tasks/task-angular-momentum-equality.hpp
   )
 
 SET(${PROJECT_NAME}_CONTACTS_HEADERS
-    include/tsid/contacts/fwd.hpp
-    include/tsid/contacts/contact-base.hpp
-    include/tsid/contacts/contact-6d.hpp
-    include/tsid/contacts/contact-point.hpp
+  include/tsid/contacts/fwd.hpp
+  include/tsid/contacts/contact-base.hpp
+  include/tsid/contacts/contact-6d.hpp
+  include/tsid/contacts/contact-point.hpp
   )
 
 SET(${PROJECT_NAME}_TRAJECTORIES_HEADERS
-    include/tsid/trajectories/fwd.hpp
-    include/tsid/trajectories/trajectory-base.hpp
-    include/tsid/trajectories/trajectory-se3.hpp
-    include/tsid/trajectories/trajectory-euclidian.hpp
+  include/tsid/trajectories/fwd.hpp
+  include/tsid/trajectories/trajectory-base.hpp
+  include/tsid/trajectories/trajectory-se3.hpp
+  include/tsid/trajectories/trajectory-euclidian.hpp
   )
 
 SET(${PROJECT_NAME}_SOLVERS_HEADERS
-    include/tsid/solvers/eiquadprog_2011.hpp
-    include/tsid/solvers/eiquadprog-rt.hpp
-    include/tsid/solvers/eiquadprog-rt.hxx
-    include/tsid/solvers/eiquadprog-fast.hpp
-    include/tsid/solvers/fwd.hpp
-    include/tsid/solvers/utils.hpp
-    include/tsid/solvers/solver-HQP-output.hpp
-    include/tsid/solvers/solver-HQP-base.hpp
-    include/tsid/solvers/solver-HQP-factory.hpp
-    include/tsid/solvers/solver-HQP-factory.hxx
-    include/tsid/solvers/solver-HQP-qpoases.hpp
-    include/tsid/solvers/solver-HQP-eiquadprog.hpp
-    include/tsid/solvers/solver-HQP-eiquadprog-rt.hpp
-    include/tsid/solvers/solver-HQP-eiquadprog-rt.hxx
-    include/tsid/solvers/solver-HQP-eiquadprog-fast.hpp
+  include/tsid/solvers/eiquadprog_2011.hpp
+  include/tsid/solvers/eiquadprog-rt.hpp
+  include/tsid/solvers/eiquadprog-rt.hxx
+  include/tsid/solvers/eiquadprog-fast.hpp
+  include/tsid/solvers/fwd.hpp
+  include/tsid/solvers/utils.hpp
+  include/tsid/solvers/solver-HQP-output.hpp
+  include/tsid/solvers/solver-HQP-base.hpp
+  include/tsid/solvers/solver-HQP-factory.hpp
+  include/tsid/solvers/solver-HQP-factory.hxx
+  include/tsid/solvers/solver-HQP-qpoases.hpp
+  include/tsid/solvers/solver-HQP-eiquadprog.hpp
+  include/tsid/solvers/solver-HQP-eiquadprog-rt.hpp
+  include/tsid/solvers/solver-HQP-eiquadprog-rt.hxx
+  include/tsid/solvers/solver-HQP-eiquadprog-fast.hpp
   )
 
 SET(${PROJECT_NAME}_ROBOTS_HEADERS
-    include/tsid/robots/fwd.hpp
-    include/tsid/robots/robot-wrapper.hpp
+  include/tsid/robots/fwd.hpp
+  include/tsid/robots/robot-wrapper.hpp
   )
 
 SET(${PROJECT_NAME}_FORMULATIONS_HEADERS
-    include/tsid/formulations/inverse-dynamics-formulation-base.hpp
-    include/tsid/formulations/inverse-dynamics-formulation-acc-force.hpp
+  include/tsid/formulations/inverse-dynamics-formulation-base.hpp
+  include/tsid/formulations/inverse-dynamics-formulation-acc-force.hpp
   )
 
-SET(HEADERS
-    include/tsid/config.hpp
-    include/tsid/deprecation.hpp
-    include/tsid/utils/statistics.hpp
-    include/tsid/utils/stop-watch.hpp
-    include/tsid/utils/Stdafx.hh
-    ${${PROJECT_NAME}_MATH_HEADERS}
-    ${${PROJECT_NAME}_TASKS_HEADERS}
-    ${${PROJECT_NAME}_CONTACTS_HEADERS}
-    ${${PROJECT_NAME}_TRAJECTORIES_HEADERS}
-    ${${PROJECT_NAME}_SOLVERS_HEADERS}
-    ${${PROJECT_NAME}_ROBOTS_HEADERS}
-    ${${PROJECT_NAME}_FORMULATIONS_HEADERS}
- )
+FILE(GLOB ${PYWRAP}_HEADERS
+  include/tsid/bindings/python/constraint/*.hpp
+  include/tsid/bindings/python/contacts/*.hpp
+  include/tsid/bindings/python/formulations/*.hpp
+  include/tsid/bindings/python/robots/*.hpp
+  include/tsid/bindings/python/solvers/*.hpp
+  include/tsid/bindings/python/tasks/*.hpp
+  include/tsid/bindings/python/trajectories/*.hpp
+  include/tsid/bindings/python/utils/*.hpp
+  )
 
-LIST(REMOVE_DUPLICATES HEADERS)
+SET(${PROJECT_NAME}_HEADERS
+  include/tsid/config.hpp
+  include/tsid/deprecation.hpp
+  include/tsid/utils/statistics.hpp
+  include/tsid/utils/stop-watch.hpp
+  include/tsid/utils/Stdafx.hh
+  ${${PROJECT_NAME}_MATH_HEADERS}
+  ${${PROJECT_NAME}_TASKS_HEADERS}
+  ${${PROJECT_NAME}_CONTACTS_HEADERS}
+  ${${PROJECT_NAME}_TRAJECTORIES_HEADERS}
+  ${${PROJECT_NAME}_SOLVERS_HEADERS}
+  ${${PROJECT_NAME}_ROBOTS_HEADERS}
+  ${${PROJECT_NAME}_FORMULATIONS_HEADERS}
+  )
 
-SET(HEADERS_FULL_PATH "")
-FOREACH(header ${HEADERS})
-  LIST(APPEND HEADERS_FULL_PATH "${CMAKE_SOURCE_DIR}/${header}")
-  GET_FILENAME_COMPONENT(headerName ${header} NAME)
-  GET_FILENAME_COMPONENT(headerPath ${header} PATH)
-  INSTALL(FILES ${${PROJECT_NAME}_SOURCE_DIR}/${header}
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/${headerPath}
-          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE)
-ENDFOREACH(header ${HEADERS})
+LIST(REMOVE_DUPLICATES ${PROJECT_NAME}_HEADERS)
 
-# --- MAIN LIBRARY -------------------------------------------------------------
-ADD_SUBDIRECTORY(src)
+SET(${PROJECT_NAME}_MATH_SOURCES
+  src/math/constraint-base.cpp
+  src/math/constraint-equality.cpp
+  src/math/constraint-inequality.cpp
+  src/math/constraint-bound.cpp
+  src/math/utils.cpp
+  )
 
-# --- BINDINGS ----------------------------------------------------------------
-IF(BUILD_PYTHON_INTERFACE)
-  SET(PYWRAP ${PROJECT_NAME}_pywrap)
-  ADD_SUBDIRECTORY(bindings)
-ENDIF(BUILD_PYTHON_INTERFACE)
-# --- UNIT TESTS ---------------------------------------------------------------
+SET(${PROJECT_NAME}_TASKS_SOURCES
+  src/tasks/task-base.cpp
+  src/tasks/task-actuation-bounds.cpp
+  src/tasks/task-actuation-equality.cpp
+  src/tasks/task-actuation.cpp
+  src/tasks/task-com-equality.cpp
+  src/tasks/task-contact-force-equality.cpp
+  src/tasks/task-contact-force.cpp
+  src/tasks/task-joint-bounds.cpp
+  src/tasks/task-joint-posture.cpp
+  src/tasks/task-motion.cpp
+  src/tasks/task-se3-equality.cpp
+  src/tasks/task-angular-momentum-equality.cpp
+  )
+
+SET(${PROJECT_NAME}_CONTACTS_SOURCES
+  src/contacts/contact-base.cpp
+  src/contacts/contact-6d.cpp
+  src/contacts/contact-point.cpp
+  )
+
+SET(${PROJECT_NAME}_TRAJECTORIES_SOURCES
+  src/trajectories/trajectory-se3.cpp
+  src/trajectories/trajectory-euclidian.cpp
+  )
+
+SET(${PROJECT_NAME}_SOLVERS_SOURCES
+  src/solvers/eiquadprog-fast.cpp
+  src/solvers/solver-HQP-base.cpp
+  src/solvers/solver-HQP-factory.cpp
+  src/solvers/solver-HQP-eiquadprog.cpp
+  src/solvers/solver-HQP-eiquadprog-fast.cpp
+  src/solvers/solver-HQP-qpoases.cpp
+  src/solvers/utils.cpp
+  )
+
+SET(${PROJECT_NAME}_ROBOTS_SOURCES
+  src/robots/robot-wrapper.cpp
+  )
+
+SET(${PROJECT_NAME}_FORMULATIONS_SOURCES
+  src/formulations/inverse-dynamics-formulation-base.cpp
+  src/formulations/inverse-dynamics-formulation-acc-force.cpp
+  )
+
+SET(${PROJECT_NAME}_SOURCES
+  src/utils/statistics.cpp
+  src/utils/stop-watch.cpp
+  ${${PROJECT_NAME}_MATH_SOURCES}
+  ${${PROJECT_NAME}_TASKS_SOURCES}
+  ${${PROJECT_NAME}_CONTACTS_SOURCES}
+  ${${PROJECT_NAME}_TRAJECTORIES_SOURCES}
+  ${${PROJECT_NAME}_SOLVERS_SOURCES}
+  ${${PROJECT_NAME}_ROBOTS_SOURCES}
+  ${${PROJECT_NAME}_FORMULATIONS_SOURCES}
+  )
+
+ADD_HEADER_GROUP(${PROJECT_NAME}_HEADERS)
+ADD_SOURCE_GROUP(${PROJECT_NAME}_SOURCES)
+
+ADD_LIBRARY(${PROJECT_NAME} SHARED
+  ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})
+TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${Boost_LIBRARIES}
+  pinocchio::pinocchio)
+
+
+IF(SUFFIX_SO_VERSION)
+  SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})
+ENDIF(SUFFIX_SO_VERSION)
+
+IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+  INSTALL(TARGETS ${PROJECT_NAME} EXPORT ${TARGETS_EXPORT_NAME} DESTINATION lib)
+ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+
+ADD_SUBDIRECTORY(bindings)
 ADD_SUBDIRECTORY(unittest)
 
 # --- PACKAGING ----------------------------------------------------------------
