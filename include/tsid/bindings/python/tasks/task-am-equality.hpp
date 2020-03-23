@@ -116,8 +116,6 @@ namespace tsid
                           doc.c_str(),
                           bp::no_init)
         .def(TaskAMEqualityPythonVisitor<TaskAM>());
-
-        bp::register_ptr_to_python< boost::shared_ptr<math::ConstraintBase> >();
       }
     };
   }
