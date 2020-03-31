@@ -22,6 +22,13 @@
 #include <tsid/math/constraint-bound.hpp>
 #include <tsid/math/constraint-inequality.hpp>
 
+/** This class has been implemented following :
+* Andrea del Prete. Joint Position and Velocity Bounds in Discrete-Time 
+* Acceleration/Torque Control of Robot Manipulators. IEEE Robotics and Automation
+* Letters, IEEE 2018, 3 (1), pp.281-288.￿10.1109/LRA.2017.2738321￿. hal-01356989v3
+* And
+* https://github.com/andreadelprete/pinocchio_inv_dyn/blob/master/python/pinocchio_inv_dyn/acc_bounds_util.py
+*/
 namespace tsid
 {
   namespace tasks
@@ -66,15 +73,44 @@ namespace tsid
                            bool impose_viability_bounds,
                            bool impose_acceleration_bounds);
 
+      /** Check if the state is viable, otherwise it returns a measure of the
+       * violation of the violated inequality. Fills in m_viabViol , if the
+       * state of joint i is viable m_viabViol[i] = 0*/
       void isStateViable(const Vector& q,const Vector& dq ,bool verbose=true);
-      void computeVelLimits(const Vector& q, bool verbose=false);// velocity Limits From viability
+
+      /** Compute acceleration limits imposed by position bounds. 
+       * Fills in  m_ddqLBPos and m_ddqUBPos */
       void computeAccLimitsFromPosLimits(const Vector&q,const Vector& dq, bool verbose=true);
+
+
+      /** Compute acceleration limits imposed by viability.
+       * ddqMax is the maximum acceleration that will be necessary to stop the
+       * joint before hitting the position limits.
+       * 
+       * -sqrt( 2*ddqMax*(q-qMin) ) < dq[t+1] < sqrt( 2*ddqMax*(qMax-q) )
+       * ddqMin[2] = (-sqrt(max(0.0, 2*MAX_ACC*(q[i]+DT*dq[i]-qMin))) - dq[i])/DT;
+       * ddqMax[2] = (sqrt(max(0.0, 2*MAX_ACC*(qMax-q[i]-DT*dq[i]))) - dq[i])/DT;
+       * 
+       * Fills in  m_ddqLBVia and m_ddqUBVia 
+       */
       void computeAccLimitsFromViability(const Vector& q,const Vector& dq, bool verbose=true);
+
+     /** Given the current position and velocity, the bounds of position,
+      * velocity and acceleration and the control time step, compute the
+      * bounds of the acceleration such that all the bounds are respected
+      * at the next time step and can be respected in the future.
+      * ddqMax is the absolute maximum acceleration.
+      */
       void computeAccLimits(const Vector& q,const Vector& dq,bool verbose=true);
+
+
       void resetVectors();
 
       const Vector & mask() const;
       void mask(const Vector & mask);
+
+      //not used velocity Limits From viability
+      void computeVelLimits(const Vector& q, bool verbose=false);
 
     protected:
       ConstraintInequality m_constraint;
@@ -85,7 +121,6 @@ namespace tsid
       VectorXi m_activeAxes;
 
       double eps; // tolerance used to check violations
-
 
       Vector m_qMin;//joints position limits
       Vector m_qMax;//joints position limits
@@ -114,7 +149,7 @@ namespace tsid
       bool m_verbose;
 
 
-      Vector m_viabViol;
+      Vector m_viabViol;// 0 if the state is viable, error otherwise
 
     };
 
