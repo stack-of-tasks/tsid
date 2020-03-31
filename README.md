@@ -46,3 +46,18 @@ To run the demo using gepetto-viewer:
 
     ipython demo/demo_romeo.py
 
+## Credits
+
+This package is authored by:
+
+- [Andread Del Prete](https://andreadelprete.github.io) (University of Trento)
+- [Justin Carpentier](https://jcarpent.github.io) (INRIA)
+
+It includes key contributions from:
+
+- [Julian Viereck](https://github.com/jviereck) (Max Planck Institute, New  York  University)
+- [Sanghyun Kim](https://github.com/ggory15) (Seoul National University)
+
+And is maintained by:
+
+- [Guilhem Saurel](https://github.com/nim65s) (LAAS-CNRS)
