@@ -198,7 +198,7 @@ SET(${PROJECT_NAME}_TASKS_SOURCES
   src/tasks/task-contact-force.cpp
   src/tasks/task-joint-bounds.cpp
   src/tasks/task-joint-posture.cpp
-  tasks/task-joint-posVelAcc-bounds.cpp
+  src/tasks/task-joint-posVelAcc-bounds.cpp
   src/tasks/task-motion.cpp
   src/tasks/task-se3-equality.cpp
   src/tasks/task-angular-momentum-equality.cpp

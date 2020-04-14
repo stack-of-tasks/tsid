@@ -55,10 +55,40 @@ namespace tsid
       m_impose_acceleration_bounds = false;
       m_verbose = true;
 
+      //Used in computeAccLimitsFromPosLimits
+      m_two_dt_sq = 2.0/(m_dt*m_dt);
+      m_ddqMax_q3 = Vector::Zero(m_na);
+      m_ddqMin_q3 = Vector::Zero(m_na);
+      m_ddqMax_q2 = Vector::Zero(m_na);
+      m_ddqMin_q2 = Vector::Zero(m_na);
+      m_minus_dq_over_dt = Vector::Zero(m_na);
+
+
+      //Used in computeAccLimitsFromViability
+      m_dt_square = m_dt*m_dt;
+      m_two_a = 2*m_dt_square;
+      m_dt_dq = Vector::Zero(m_na);
+      m_dt_two_dq  = Vector::Zero(m_na);
+      m_two_ddqMax = Vector::Zero(m_na);
+      m_dt_ddqMax_dt = Vector::Zero(m_na);
+      m_dq_square = 0.0;
+      m_q_plus_dt_dq = Vector::Zero(m_na);
+      m_b_1 = Vector::Zero(m_na);
+      m_b_2 = Vector::Zero(m_na);
+      m_ddq_1 = Vector::Zero(m_na);
+      m_ddq_2 = Vector::Zero(m_na);
+      m_c_1 = Vector::Zero(m_na);
+      m_delta_1 = Vector::Zero(m_na);
+      m_c_2 = Vector::Zero(m_na);
+      m_delta_2 = Vector::Zero(m_na);
+
+      //Used in computeAccLimits
+      m_ub = Vector::Constant(4,1,1e10);
+      m_lb =  Vector::Constant(4,1,-1e10);
+
       Vector m = Vector::Ones(robot.na());
       mask(m);
 
-      int offset = m_nv-m_na;
       for(int i=0; i<m_na; i++)
       {
         m_constraint.upperBound()(i) = 1e10;
@@ -89,17 +119,10 @@ namespace tsid
         }
       m_constraint.resize((unsigned int)dim, m_robot.nv());
       m_constraint.setMatrix(S);
-      // std::cout << S << std::endl;
-      // std::cout << "rows dim " << dim <<std::endl;
-      // std::cout << "cols dim " <<  m_robot.nv() <<std::endl;
-      // std::cout << m_constraint.vector() << std::endl;
-      // std::cout << m_constraint.vector().size() << std::endl;
-      // std::cout << m_constraint.matrix() << std::endl;
-
     }
 
     int TaskJointPosVelAccBounds::dim() const
-    { return m_nv; }
+    { return m_na; }
 
     const Vector & TaskJointPosVelAccBounds::getAccelerationBounds() const
     { return m_ddqMax; }
@@ -127,8 +150,8 @@ namespace tsid
       m_qMax = upper;
       m_impose_position_bounds=true;
       m_impose_viability_bounds=true;
-
     }
+
     void TaskJointPosVelAccBounds::setVelocityBounds(ConstRefVector upper)
     {
       assert(upper.size()==m_na);
@@ -154,12 +177,8 @@ namespace tsid
                                                     const Data & )
     {
       computeAccLimits(q,v,m_verbose);
-
-      for(int i=0; i<m_na; i++)
-      {
-        m_constraint.upperBound()(i) = m_ddqUB[i];
-        m_constraint.lowerBound()(i) = m_ddqLB[i];
-      }
+      m_constraint.upperBound()= m_ddqUB;
+      m_constraint.lowerBound()= m_ddqLB;
       resetVectors();
       return m_constraint;
     }
@@ -176,226 +195,182 @@ namespace tsid
     }
 
 
-     void TaskJointPosVelAccBounds::isStateViable(const Vector& q,
-                                                            const Vector& dq ,
+    void TaskJointPosVelAccBounds::isStateViable(const Vector& qa,
+                                                            const Vector& dqa ,
                                                             bool verbose)
     {
-      Vector qa = q.tail(m_na);
-      Vector dqa = dq.tail(m_na);
-
-
       for(int i = 0; i<m_na; i++)
       {
         if(qa[i] < (m_qMin[i] - eps))
         {
-            if(verbose)
-            {
-              std::cout << "State of joint "<< i <<" is not viable because q[i]< qMin[i] : "
-              <<qa[i] <<"<"<< m_qMin[i] <<std::endl;
-            }
-            m_viabViol[i] = m_qMin[i] - qa[i];
-
+          if(verbose)
+          {
+            std::cout << "State of joint "<< i <<" is not viable because q[i]< qMin[i] : "
+            <<qa[i] <<"<"<< m_qMin[i] <<std::endl;
+          }
+          m_viabViol[i] = m_qMin[i] - qa[i];
         }
         if(qa[i] > (m_qMax[i] + eps))
         {
-            if(verbose){
-              std::cout << "State of joint "<< i <<" is not viable because qa[i]>m_qMax[i] : "
-              << qa[i] <<">"<< m_qMax[i] <<std::endl;
-            }
-            m_viabViol[i] =qa[i]-m_qMax[i];
-
+          if(verbose){
+            std::cout << "State of joint "<< i <<" is not viable because qa[i]>m_qMax[i] : "
+            << qa[i] <<">"<< m_qMax[i] <<std::endl;
+          }
+          m_viabViol[i] =qa[i]-m_qMax[i];
         }
         if(std::abs(dqa[i]) > (m_dqMax[i] + eps))
         {
-            if(verbose)
-            {
-              std::cout << "State (q,dq) :("<<qa[i]<<","<<dqa[i]<<") of joint "
-              << i <<" is not viable because |dq|>dqMax : "<< std::abs(dqa[i]) <<
-              ">"<< m_dqMax[i]<<std::endl;
-            }
-            m_viabViol[i] =std::abs(dqa[i])-m_dqMax[i];
-
+          if(verbose)
+          {
+            std::cout << "State (q,dq) :("<<qa[i]<<","<<dqa[i]<<") of joint "
+            << i <<" is not viable because |dq|>dqMax : "<< std::abs(dqa[i]) <<
+            ">"<< m_dqMax[i]<<std::endl;
+          }
+          m_viabViol[i] =std::abs(dqa[i])-m_dqMax[i];
         }
         double dqMaxViab =   std::sqrt(std::max(0.0, 2*m_ddqMax[i]*(m_qMax[i]-qa[i])));
         if(dqa[i]>(dqMaxViab+eps))
         {
-            if(verbose)
-            {
-              std::cout << "State (q,dq,dqMaxViab) :("<<qa[i]<<","<<dqa[i]<<","<<
-              dqMaxViab<<") of joint "<< i <<" is not viable because dq>dqMaxViab : "
-              << dqa[i] <<">"<< dqMaxViab<<std::endl;
-            }
-            m_viabViol[i] =dqa[i]-dqMaxViab;
-
+          if(verbose)
+          {
+            std::cout << "State (q,dq,dqMaxViab) :("<<qa[i]<<","<<dqa[i]<<","<<
+            dqMaxViab<<") of joint "<< i <<" is not viable because dq>dqMaxViab : "
+            << dqa[i] <<">"<< dqMaxViab<<std::endl;
+          }
+          m_viabViol[i] =dqa[i]-dqMaxViab;
         }
         double dqMinViab =  -std::sqrt(std::max(0.0,2*m_ddqMax[i]*(qa[i]-m_qMin[i])));
         if(dqa[i]<(dqMinViab+eps))
         {
-            if(verbose)
-            {
-              std::cout << "State (q,dq,dqMinViab) :("<<qa[i]<<","<<dqa[i]<<","<<
-              dqMinViab<<") of joint "<< i <<" is not viable because dq<dqMinViab : "
-              << dqa[i] <<"<"<< dqMinViab<<std::endl;
-            }
-            m_viabViol[i]=dqMinViab-dqa[i];
+          if(verbose)
+          {
+            std::cout << "State (q,dq,dqMinViab) :("<<qa[i]<<","<<dqa[i]<<","<<
+            dqMinViab<<") of joint "<< i <<" is not viable because dq<dqMinViab : "
+            << dqa[i] <<"<"<< dqMinViab<<std::endl;
+          }
+          m_viabViol[i]=dqMinViab-dqa[i];
         }
       }
-
-      // if((m_viabViol == Vector::Zero(m_na))&&verbose==true)
-      // {
-      //   // std::cout << "State (q,dq) :("<<qa.transpose()<<","<<dqa.transpose()<<"is viable"<<std::endl;
-      //   std::cout << "State is viable"<<std::endl;
-      // }
     }
 
-    void TaskJointPosVelAccBounds::computeVelLimits(const Vector& q, bool verbose)
-     {
-        Vector qa = q.tail(m_na);
-        for(int i = 0; i<m_na; i++)
+    void TaskJointPosVelAccBounds::computeAccLimitsFromPosLimits(const Vector&qa,
+                                                                  const Vector& dqa,
+                                                                  bool verbose)
+    {
+      m_ddqMax_q3 = m_two_dt_sq*(m_qMax-qa-m_dt*dqa);
+      m_ddqMin_q3 = m_two_dt_sq*(m_qMin-qa-m_dt*dqa);
+      m_ddqMax_q2 = Vector::Zero(m_na);
+      m_ddqMin_q2 = Vector::Zero(m_na);
+      m_minus_dq_over_dt = -dqa/m_dt;
+      for(int i = 0; i < m_na; i ++)
+      {
+        if(dqa[i]<=0.0)
         {
-        if(verbose)
-        {
-          if(qa[i] < (m_qMin[i] - eps))
+          m_ddqUBPos[i]  = m_ddqMax_q3[i];
+          if(m_ddqMin_q3[i] < m_minus_dq_over_dt[i])
           {
-            std::cerr << "State of joint "<< i <<" is not viable because q[i]<qMin[i] : "
-            << qa[i] <<"<"<< m_qMin[i] <<std::endl;
+            m_ddqLBPos[i]  = m_ddqMin_q3[i];
           }
-          if(qa[i] < (m_qMax[i] + eps))
+          else if(qa[i]!=m_qMin[i])
           {
-            std::cerr << "State of joint "<< i <<" is not viable because qa[i]>m_qMax[i] : "
-            << qa[i] <<">"<< m_qMax[i] <<std::endl;
-          }
-          m_dqMaxViab[i] = std::min( m_dqMax[i],  std::sqrt(std::max(0.0,2*m_ddqMax[i]*(m_qMax[i]-qa[i]))));
-          m_dqMinViab[i] = std::max(-m_dqMax[i], -std::sqrt(std::max(0.0,2*m_ddqMax[i]*(qa[i]-m_qMin[i]))));
-        }
-    }
-  }
-
-
-    void TaskJointPosVelAccBounds::computeAccLimitsFromPosLimits(const Vector&q,
-                                                                const Vector& dq,
-                                                                bool verbose)
-  {
-        Vector qa = q.tail(m_na);
-        Vector dqa = dq.tail(m_na);
-        double two_dt_sq   = 2.0/(std::pow(m_dt,2));
-        Vector ddqMax_q3 = two_dt_sq*(m_qMax-qa-m_dt*dqa);
-        Vector ddqMin_q3 = two_dt_sq*(m_qMin-qa-m_dt*dqa);
-        Vector ddqMax_q2 = Vector::Zero(m_na);
-        Vector ddqMin_q2 = Vector::Zero(m_na);
-        Vector minus_dq_over_dt = -dqa/m_dt;
-        for(int i = 0; i < m_na; i ++)
-        {
-          if(dqa[i]<=0.0)
-          {
-              m_ddqUBPos[i]  = ddqMax_q3[i];
-              if(ddqMin_q3[i] < minus_dq_over_dt[i])
-              {
-                  m_ddqLBPos[i]  = ddqMin_q3[i];
-              }
-              else if(qa[i]!=m_qMin[i])
-              {
-                  ddqMin_q2[i] = std::pow(dqa[i],2)/(2.0*(qa[i]-m_qMin[i]));
-                  m_ddqLBPos[i]  = std::max(ddqMin_q2[i],minus_dq_over_dt[i]);
-              }
-              else
-              {
-                  if(verbose == true){
-                    std::cout << "WARNING  qa[i]==m_qMin[i] for joint" << i << std::endl;
-                    std::cout << "You are goting to violate the position bound " << i << std::endl;
-                  }
-                  m_ddqLBPos[i] = 0.0;
-              }
+            m_ddqMin_q2[i] = (dqa[i]*dqa[i])/(2.0*(qa[i]-m_qMin[i]));
+            m_ddqLBPos[i]  = std::max(m_ddqMin_q2[i],m_minus_dq_over_dt[i]);
           }
           else
           {
-              m_ddqLBPos[i]  = ddqMin_q3[i];
-              if(ddqMax_q3[i] > minus_dq_over_dt[i])
-              {
-                  m_ddqUBPos[i]  = ddqMax_q3[i];
-              }
-              else if(qa[i]!=m_qMax[i])
-              {
-                  ddqMax_q2[i] = -std::pow(dqa[i],2)/(2*(m_qMax[i]-qa[i]));
-                  m_ddqUBPos[i]  = std::min(ddqMax_q2[i],minus_dq_over_dt[i]);
-              }
-              else
-              {
-                  if(verbose == true){
-                    std::cout << "WARNING  qa[i]==m_qMax[i] for joint" << i << std::endl;
-                    std::cout << "You are goting to violate the position bound " << i << std::endl;
-                  }
-                  m_ddqUBPos[i] = 0.0;
-              }
+            if(verbose == true)
+            {
+              std::cout << "WARNING  qa[i]==m_qMin[i] for joint" << i << std::endl;
+              std::cout << "You are goting to violate the position bound " << i << std::endl;
+            }
+            m_ddqLBPos[i] = 0.0;
           }
-       }
+        }
+        else
+        {
+          m_ddqLBPos[i]  = m_ddqMin_q3[i];
+          if(m_ddqMax_q3[i] > m_minus_dq_over_dt[i])
+          {
+            m_ddqUBPos[i]  = m_ddqMax_q3[i];
+          }
+          else if(qa[i]!=m_qMax[i])
+          {
+            m_ddqMax_q2[i] = -(dqa[i]*dqa[i])/(2*(m_qMax[i]-qa[i]));
+            m_ddqUBPos[i]  = std::min(m_ddqMax_q2[i],m_minus_dq_over_dt[i]);
+          }
+          else
+          {
+            if(verbose == true)
+            {
+              std::cout << "WARNING  qa[i]==m_qMax[i] for joint" << i << std::endl;
+              std::cout << "You are goting to violate the position bound " << i << std::endl;
+            }
+            m_ddqUBPos[i] = 0.0;
+          }
+        }
+      }
     }
-    void TaskJointPosVelAccBounds::computeAccLimitsFromViability(const Vector& q,
-                                                                const Vector& dq,
+    void TaskJointPosVelAccBounds::computeAccLimitsFromViability(const Vector& qa,
+                                                                const Vector& dqa,
                                                                 bool verbose)
     {
-        Vector qa = q.tail(m_na);
-        Vector dqa = dq.tail(m_na);
-        double dt_square = std::pow(m_dt,2);
-        Vector dt_dq = m_dt*dqa;
-        Vector minus_dq_over_dt = -dqa/m_dt;
-        Vector dt_two_dq = 2*dt_dq;
-        Vector two_ddqMax = 2*m_ddqMax;
-        Vector dt_ddqMax_dt = m_ddqMax*dt_square;
-        double dq_square = dqa.dot(dqa);
-        Vector q_plus_dt_dq = qa + dt_dq;
-        double two_a = 2*dt_square;
-        Vector b = dt_two_dq + dt_ddqMax_dt;
-        Vector bl = dt_two_dq - dt_ddqMax_dt;
-        for(int i=0; i<m_na; i++)
+      m_dt_dq = m_dt*dqa;
+      m_minus_dq_over_dt = -dqa/m_dt;
+      m_dt_two_dq = 2*m_dt_dq;
+      m_two_ddqMax = 2*m_ddqMax;
+      m_dt_ddqMax_dt = m_ddqMax*m_dt_square;
+      m_dq_square = dqa.dot(dqa);
+      m_q_plus_dt_dq = qa + m_dt_dq;
+      m_b_1 = m_dt_two_dq + m_dt_ddqMax_dt;
+      m_b_2 = m_dt_two_dq - m_dt_ddqMax_dt;
+      m_ddq_1 = Vector::Zero(m_na);
+      m_ddq_2 = Vector::Zero(m_na);
+      m_c_1 = m_dq_square - m_two_ddqMax.cwiseProduct(m_qMax - m_q_plus_dt_dq).array();
+      m_delta_1 = m_b_1.cwiseProduct(m_b_1) - 2*m_two_a*m_c_1;
+      m_c_2 = m_dq_square - m_two_ddqMax.cwiseProduct(m_q_plus_dt_dq - m_qMin).array();
+      m_delta_2 = m_b_2.cwiseProduct(m_b_2) - 2*m_two_a*m_c_2;
+      for(int i=0; i<m_na; i++)
+      {
+        if(m_delta_1[i]>=0.0)
         {
-          double ddq_1 = 0;
-          double ddq_2 = 0;
-          double c = dq_square - two_ddqMax[i]*(m_qMax[i] - q_plus_dt_dq[i]);
-          double delta = std::pow(b[i],2) - 2*two_a*c;
-          if(delta>=0.0)
-          {
-              ddq_1 = (-b[i] + std::sqrt(delta))/(two_a);
-          }
-          else{
-              ddq_1 = minus_dq_over_dt[i];
-              if(verbose==true){
-                  std::cout << "Error: state (" << qa[i] <<"," << dqa[i] <<") of joint "<< 
-                  i <<  "not viable because delta is negative: "<< delta << std::endl;
-              }
-          }
-          c = dq_square - two_ddqMax[i]*(q_plus_dt_dq[i] - m_qMin[i]);
-          delta = std::pow(bl[i],2) - 2*two_a*c;
-          if(delta >= 0.0)
-          {
-              ddq_2 = (-bl[i] - std::sqrt(delta))/(two_a);
-          }
-          else
-          {
-              ddq_2 = minus_dq_over_dt[i];
-              if(verbose==true)
-              {
-                std::cout << "Error: state (" << qa[i] <<"," << dqa[i] <<") of joint "<< 
-                  i <<  "not viable because delta is negative: "<< delta << std::endl;
-              }
-          }
-          m_ddqUBVia[i] = std::max(ddq_1, minus_dq_over_dt[i]);
-          m_ddqLBVia[i] = std::min(ddq_2, minus_dq_over_dt[i]);
+          m_ddq_1[i] = (-m_b_1[i] + std::sqrt(m_delta_1[i]))/(m_two_a);
         }
+        else{
+          m_ddq_1[i] = m_minus_dq_over_dt[i];
+          if(verbose==true)
+          {
+            std::cout << "Error: state (" << qa[i] <<"," << dqa[i] <<") of joint "<< 
+            i <<  "not viable because delta is negative: "<< m_delta_1 << std::endl;
+          }
+        }
+        if(m_delta_2[i] >= 0.0)
+        {
+          m_ddq_2[i] = (-m_b_2[i] - std::sqrt(m_delta_2[i]))/(m_two_a);
+        }
+        else
+        {
+          m_ddq_2[i] = m_minus_dq_over_dt[i];
+          if(verbose==true)
+          {
+            std::cout << "Error: state (" << qa[i] <<"," << dqa[i] <<") of joint "<< 
+              i <<  "not viable because delta is negative: "<< m_delta_2 << std::endl;
+          }
+        }
+      }
+      m_ddqUBVia = m_ddq_1.cwiseMax(m_minus_dq_over_dt);
+      m_ddqLBVia = m_ddq_2.cwiseMin(m_minus_dq_over_dt);
     }
+
     void TaskJointPosVelAccBounds::computeAccLimits(const Vector& q,const Vector& dq, bool verbose)
     {
-      Vector qa = q.tail(m_na);
-      Vector dqa = dq.tail(m_na);
-      isStateViable(q, dq, m_verbose);
-
+      isStateViable(q.tail(m_na), dq.tail(m_na), m_verbose);
       if(verbose==true)
       {
         for(int i = 0; i<m_na; i++)
         {
           if(m_viabViol[i]>eps)
           {
-            std::cout << "WARNING: specified state ( < " <<qa[i]<< " , " << dqa[i]
+            std::cout << "WARNING: specified state ( < " <<q.tail(m_na)[i]<< " , " << dq.tail(m_na)[i]
             <<") is not viable violation : "<< m_viabViol[i] << std::endl;
           }
         }
@@ -404,7 +379,7 @@ namespace tsid
       //Acceleration limits imposed by position bounds
       if(m_impose_position_bounds==true)
       {
-          computeAccLimitsFromPosLimits(q, dq, verbose);
+          computeAccLimitsFromPosLimits(q.tail(m_na), dq.tail(m_na), verbose);
       }
       // Acceleration limits imposed by velocity bounds
       // dq[t+1] = dq + dt*ddq < dqMax
@@ -412,38 +387,38 @@ namespace tsid
       // ddqMin = (dqMin-dq)/dt = (-dqMax-dq)/dt
       if(m_impose_velocity_bounds==true)
       {
-          m_ddqLBVel=(-m_dqMax-dqa)/m_dt;
-          m_ddqUBVel= (m_dqMax-dqa)/m_dt;
+        m_ddqLBVel=(-m_dqMax-dq.tail(m_na))/m_dt;
+        m_ddqUBVel= (m_dqMax-dq.tail(m_na))/m_dt;
       }
       //Acceleration limits imposed by viability
       if(m_impose_viability_bounds==true)
       {
-          computeAccLimitsFromViability(q, dq, verbose);
+        computeAccLimitsFromViability(q.tail(m_na), dq.tail(m_na), verbose);
       }
       //Acceleration limits
       if(m_impose_acceleration_bounds==true)
       {
-          m_ddqLBAcc = -m_ddqMax;
-          m_ddqUBAcc = m_ddqMax;
+        m_ddqLBAcc = -m_ddqMax;
+        m_ddqUBAcc = m_ddqMax;
       }
       //Take the most conservative limit for each joint
-      Vector ub = Vector::Constant(4,1,1e10);
-      Vector lb =  Vector::Constant(4,1,-1e10);
+      m_ub = Vector::Constant(4,1,1e10);
+      m_lb =  Vector::Constant(4,1,-1e10);
 
       for(int i = 0; i<m_na; i++)
       {
-        ub[0] = m_ddqUBPos[i];
-        ub[1] = m_ddqUBVia[i];
-        ub[2] = m_ddqUBVel[i];
-        ub[3] = m_ddqUBAcc[i];
+        m_ub[0] = m_ddqUBPos[i];
+        m_ub[1] = m_ddqUBVia[i];
+        m_ub[2] = m_ddqUBVel[i];
+        m_ub[3] = m_ddqUBAcc[i];
 
-        lb[0] = m_ddqLBPos[i];
-        lb[1] = m_ddqLBVia[i];
-        lb[2] = m_ddqLBVel[i];
-        lb[3] = m_ddqLBAcc[i];
+        m_lb[0] = m_ddqLBPos[i];
+        m_lb[1] = m_ddqLBVia[i];
+        m_lb[2] = m_ddqLBVel[i];
+        m_lb[3] = m_ddqLBAcc[i];
 
-        m_ddqLB[i]=lb.maxCoeff();
-        m_ddqUB[i]=ub.minCoeff();
+        m_ddqLB[i]=m_lb.maxCoeff();
+        m_ddqUB[i]=m_ub.minCoeff();
         
         if(m_ddqUB[i] < m_ddqLB[i])
         {
@@ -451,11 +426,10 @@ namespace tsid
           {
             std::cout << "Conflict between pos/vel/acc bound ddqMin " <<m_ddqLB[i]
             << " ddqMax " << m_ddqUB[i] << std::endl;
-            std::cout << "ub " << ub.transpose() << std::endl;
-            std::cout << "lb " << lb.transpose() << std::endl;
-
+            std::cout << "ub " << m_ub.transpose() << std::endl;
+            std::cout << "lb " << m_lb.transpose() << std::endl;
           }
-          if(m_ddqUB[i] == ub[0])
+          if(m_ddqUB[i] == m_ub[0])
           {
             m_ddqLB[i] = m_ddqUB[i];
           }

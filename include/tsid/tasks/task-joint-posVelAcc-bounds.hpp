@@ -75,13 +75,14 @@ namespace tsid
 
       /** Check if the state is viable, otherwise it returns a measure of the
        * violation of the violated inequality. Fills in m_viabViol , if the
-       * state of joint i is viable m_viabViol[i] = 0*/
+       * state of joint i is viable m_viabViol[i] = 0
+       */
       void isStateViable(const Vector& q,const Vector& dq ,bool verbose=true);
 
       /** Compute acceleration limits imposed by position bounds. 
-       * Fills in  m_ddqLBPos and m_ddqUBPos */
+       * Fills in  m_ddqLBPos and m_ddqUBPos
+       */
       void computeAccLimitsFromPosLimits(const Vector&q,const Vector& dq, bool verbose=true);
-
 
       /** Compute acceleration limits imposed by viability.
        * ddqMax is the maximum acceleration that will be necessary to stop the
@@ -109,8 +110,6 @@ namespace tsid
       const Vector & mask() const;
       void mask(const Vector & mask);
 
-      //not used velocity Limits From viability
-      void computeVelLimits(const Vector& q, bool verbose=false);
 
     protected:
       ConstraintInequality m_constraint;
@@ -148,9 +147,37 @@ namespace tsid
       bool m_impose_acceleration_bounds;
       bool m_verbose;
 
-
       Vector m_viabViol;// 0 if the state is viable, error otherwise
 
+      //Used in computeAccLimitsFromPosLimits
+      double m_two_dt_sq;
+      Vector m_ddqMax_q3;
+      Vector m_ddqMin_q3;
+      Vector m_ddqMax_q2;
+      Vector m_ddqMin_q2;
+      Vector m_minus_dq_over_dt;
+      
+      //Used in computeAccLimitsFromViability
+      double m_dt_square;
+      Vector m_dt_dq;
+      Vector m_dt_two_dq;
+      Vector m_two_ddqMax;
+      Vector m_dt_ddqMax_dt;
+      double m_dq_square;
+      Vector m_q_plus_dt_dq;
+      double m_two_a;
+      Vector m_b_1;
+      Vector m_b_2;
+      Vector m_ddq_1;
+      Vector m_ddq_2;
+      Vector m_c_1;
+      Vector m_delta_1;
+      Vector m_c_2;
+      Vector m_delta_2;
+
+      //Used in computeAccLimits
+      Vector m_ub;
+      Vector m_lb;
     };
 
   }
