@@ -17,6 +17,7 @@
 
 #include <tsid/tasks/task-joint-posVelAcc-bounds.hpp>
 #include "tsid/robots/robot-wrapper.hpp"
+// #include <tsid/utils/stop-watch.hpp>
 
 /** This class has been implemented following :
 * Andrea del Prete. Joint Position and Velocity Bounds in Discrete-Time 
@@ -35,16 +36,17 @@ namespace tsid
 
     TaskJointPosVelAccBounds::TaskJointPosVelAccBounds(const std::string & name,
                                      RobotWrapper & robot,
-                                     double dt):
+                                     double dt,
+                                     bool verbose):
       TaskMotion(name, robot),
       m_constraint(name, robot.na(), robot.nv()),
       m_dt(2*dt),
+      m_verbose(verbose),
       m_nv(robot.nv()),
       m_na(robot.na())
     {
       assert(dt>0.0);
-      eps = 1e-10;
-      resetVectors();
+      m_eps = 1e-10;
       m_qMin=Vector::Constant(m_na,1,1e10);
       m_qMax=Vector::Constant(m_na,1,-1e10);
       m_dqMax=Vector::Constant(m_na,1,1e10);
@@ -53,7 +55,6 @@ namespace tsid
       m_impose_velocity_bounds=false;
       m_impose_viability_bounds = false;
       m_impose_acceleration_bounds = false;
-      m_verbose = true;
 
       //Used in computeAccLimitsFromPosLimits
       m_two_dt_sq = 2.0/(m_dt*m_dt);
@@ -71,7 +72,7 @@ namespace tsid
       m_dt_two_dq  = Vector::Zero(m_na);
       m_two_ddqMax = Vector::Zero(m_na);
       m_dt_ddqMax_dt = Vector::Zero(m_na);
-      m_dq_square = 0.0;
+      m_dq_square = Vector::Zero(m_na);
       m_q_plus_dt_dq = Vector::Zero(m_na);
       m_b_1 = Vector::Zero(m_na);
       m_b_2 = Vector::Zero(m_na);
@@ -85,6 +86,21 @@ namespace tsid
       //Used in computeAccLimits
       m_ub = Vector::Constant(4,1,1e10);
       m_lb =  Vector::Constant(4,1,-1e10);
+
+      m_ddqLBPos=Vector::Constant(m_na,1,-1e10);
+      m_ddqUBPos=Vector::Constant(m_na,1,1e10);
+      m_ddqLBVia=Vector::Constant(m_na,1,-1e10);
+      m_ddqUBVia=Vector::Constant(m_na,1,1e10);
+      m_ddqLBVel=Vector::Constant(m_na,1,-1e10);
+      m_ddqUBVel=Vector::Constant(m_na,1,1e10);
+      m_ddqLBAcc=Vector::Constant(m_na,1,-1e10);
+      m_ddqUBAcc=Vector::Constant(m_na,1,1e10);
+      m_ddqLB=Vector::Constant(m_na,1,-1e10);
+      m_ddqUB=Vector::Constant(m_na,1,1e10);
+      m_viabViol = Vector::Zero(m_na);
+
+      m_qa = Vector::Zero(m_na);
+      m_dqa = Vector::Zero(m_na);
 
       Vector m = Vector::Ones(robot.na());
       mask(m);
@@ -142,6 +158,10 @@ namespace tsid
       m_dt = dt;
     }
 
+    void TaskJointPosVelAccBounds::setVerbose(bool verbose){
+      m_verbose = verbose;
+    }
+
     void TaskJointPosVelAccBounds::setPositionBounds(ConstRefVector lower, ConstRefVector upper)
     {
       assert(lower.size()==m_na);
@@ -176,10 +196,14 @@ namespace tsid
                                                     ConstRefVector v,
                                                     const Data & )
     {
+      // getProfiler().start("TaskJointPosVelAccBounds");
+      // Eigen::internal::set_is_malloc_allowed(false);
       computeAccLimits(q,v,m_verbose);
       m_constraint.upperBound()= m_ddqUB;
       m_constraint.lowerBound()= m_ddqLB;
-      resetVectors();
+      // Eigen::internal::set_is_malloc_allowed(true); 
+      // getProfiler().stop("TaskJointPosVelAccBounds");
+      // getProfiler().report_all(9, std::cout);
       return m_constraint;
     }
 
@@ -195,13 +219,14 @@ namespace tsid
     }
 
 
-    void TaskJointPosVelAccBounds::isStateViable(const Vector& qa,
-                                                            const Vector& dqa ,
+    void TaskJointPosVelAccBounds::isStateViable(ConstRefVector qa,
+                                                            ConstRefVector dqa ,
                                                             bool verbose)
     {
+      m_viabViol.setZero(m_na);
       for(int i = 0; i<m_na; i++)
       {
-        if(qa[i] < (m_qMin[i] - eps))
+        if(qa[i] < (m_qMin[i] - m_eps))
         {
           if(verbose)
           {
@@ -210,7 +235,7 @@ namespace tsid
           }
           m_viabViol[i] = m_qMin[i] - qa[i];
         }
-        if(qa[i] > (m_qMax[i] + eps))
+        if(qa[i] > (m_qMax[i] + m_eps))
         {
           if(verbose){
             std::cout << "State of joint "<< i <<" is not viable because qa[i]>m_qMax[i] : "
@@ -218,7 +243,7 @@ namespace tsid
           }
           m_viabViol[i] =qa[i]-m_qMax[i];
         }
-        if(std::abs(dqa[i]) > (m_dqMax[i] + eps))
+        if(std::abs(dqa[i]) > (m_dqMax[i] + m_eps))
         {
           if(verbose)
           {
@@ -229,7 +254,7 @@ namespace tsid
           m_viabViol[i] =std::abs(dqa[i])-m_dqMax[i];
         }
         double dqMaxViab =   std::sqrt(std::max(0.0, 2*m_ddqMax[i]*(m_qMax[i]-qa[i])));
-        if(dqa[i]>(dqMaxViab+eps))
+        if(dqa[i]>(dqMaxViab+m_eps))
         {
           if(verbose)
           {
@@ -240,7 +265,7 @@ namespace tsid
           m_viabViol[i] =dqa[i]-dqMaxViab;
         }
         double dqMinViab =  -std::sqrt(std::max(0.0,2*m_ddqMax[i]*(qa[i]-m_qMin[i])));
-        if(dqa[i]<(dqMinViab+eps))
+        if(dqa[i]<(dqMinViab+m_eps))
         {
           if(verbose)
           {
@@ -253,14 +278,16 @@ namespace tsid
       }
     }
 
-    void TaskJointPosVelAccBounds::computeAccLimitsFromPosLimits(const Vector&qa,
-                                                                  const Vector& dqa,
+    void TaskJointPosVelAccBounds::computeAccLimitsFromPosLimits(ConstRefVector qa,
+                                                                  ConstRefVector dqa,
                                                                   bool verbose)
     {
       m_ddqMax_q3 = m_two_dt_sq*(m_qMax-qa-m_dt*dqa);
       m_ddqMin_q3 = m_two_dt_sq*(m_qMin-qa-m_dt*dqa);
-      m_ddqMax_q2 = Vector::Zero(m_na);
-      m_ddqMin_q2 = Vector::Zero(m_na);
+      m_ddqMax_q2.setZero(m_na);
+      m_ddqMin_q2.setZero(m_na);
+      m_ddqLBPos.setConstant(m_na,1,-1e10);
+      m_ddqUBPos.setConstant(m_na,1,1e10);
       m_minus_dq_over_dt = -dqa/m_dt;
       for(int i = 0; i < m_na; i ++)
       {
@@ -281,7 +308,7 @@ namespace tsid
             if(verbose == true)
             {
               std::cout << "WARNING  qa[i]==m_qMin[i] for joint" << i << std::endl;
-              std::cout << "You are goting to violate the position bound " << i << std::endl;
+              std::cout << "You are going to violate the position bound " << i << std::endl;
             }
             m_ddqLBPos[i] = 0.0;
           }
@@ -303,31 +330,33 @@ namespace tsid
             if(verbose == true)
             {
               std::cout << "WARNING  qa[i]==m_qMax[i] for joint" << i << std::endl;
-              std::cout << "You are goting to violate the position bound " << i << std::endl;
+              std::cout << "You are going to violate the position bound " << i << std::endl;
             }
             m_ddqUBPos[i] = 0.0;
           }
         }
       }
     }
-    void TaskJointPosVelAccBounds::computeAccLimitsFromViability(const Vector& qa,
-                                                                const Vector& dqa,
+    void TaskJointPosVelAccBounds::computeAccLimitsFromViability(ConstRefVector qa,
+                                                                ConstRefVector dqa,
                                                                 bool verbose)
     {
+      m_ddqLBVia.setConstant(m_na,1,-1e10);
+      m_ddqUBVia.setConstant(m_na,1,1e10);
       m_dt_dq = m_dt*dqa;
       m_minus_dq_over_dt = -dqa/m_dt;
       m_dt_two_dq = 2*m_dt_dq;
       m_two_ddqMax = 2*m_ddqMax;
       m_dt_ddqMax_dt = m_ddqMax*m_dt_square;
-      m_dq_square = dqa.dot(dqa);
+      m_dq_square = dqa.cwiseProduct(dqa);
       m_q_plus_dt_dq = qa + m_dt_dq;
       m_b_1 = m_dt_two_dq + m_dt_ddqMax_dt;
       m_b_2 = m_dt_two_dq - m_dt_ddqMax_dt;
-      m_ddq_1 = Vector::Zero(m_na);
-      m_ddq_2 = Vector::Zero(m_na);
-      m_c_1 = m_dq_square - m_two_ddqMax.cwiseProduct(m_qMax - m_q_plus_dt_dq).array();
+      m_ddq_1.setZero(m_na);
+      m_ddq_2.setZero(m_na);
+      m_c_1 = m_dq_square - m_two_ddqMax.cwiseProduct(m_qMax - m_q_plus_dt_dq);
       m_delta_1 = m_b_1.cwiseProduct(m_b_1) - 2*m_two_a*m_c_1;
-      m_c_2 = m_dq_square - m_two_ddqMax.cwiseProduct(m_q_plus_dt_dq - m_qMin).array();
+      m_c_2 = m_dq_square - m_two_ddqMax.cwiseProduct(m_q_plus_dt_dq - m_qMin);
       m_delta_2 = m_b_2.cwiseProduct(m_b_2) - 2*m_two_a*m_c_2;
       for(int i=0; i<m_na; i++)
       {
@@ -361,16 +390,18 @@ namespace tsid
       m_ddqLBVia = m_ddq_2.cwiseMin(m_minus_dq_over_dt);
     }
 
-    void TaskJointPosVelAccBounds::computeAccLimits(const Vector& q,const Vector& dq, bool verbose)
+    void TaskJointPosVelAccBounds::computeAccLimits(ConstRefVector q,ConstRefVector dq, bool verbose)
     {
-      isStateViable(q.tail(m_na), dq.tail(m_na), m_verbose);
+      m_qa = q.tail(m_na);
+      m_dqa = dq.tail(m_na);
+      isStateViable(m_qa, m_dqa, m_verbose);
       if(verbose==true)
       {
         for(int i = 0; i<m_na; i++)
         {
-          if(m_viabViol[i]>eps)
+          if(m_viabViol[i]>m_eps)
           {
-            std::cout << "WARNING: specified state ( < " <<q.tail(m_na)[i]<< " , " << dq.tail(m_na)[i]
+            std::cout << "WARNING: specified state ( < " <<m_qa[i]<< " , " << m_dqa[i]
             <<") is not viable violation : "<< m_viabViol[i] << std::endl;
           }
         }
@@ -379,32 +410,37 @@ namespace tsid
       //Acceleration limits imposed by position bounds
       if(m_impose_position_bounds==true)
       {
-          computeAccLimitsFromPosLimits(q.tail(m_na), dq.tail(m_na), verbose);
+          computeAccLimitsFromPosLimits(m_qa, m_dqa, verbose);
       }
       // Acceleration limits imposed by velocity bounds
       // dq[t+1] = dq + dt*ddq < dqMax
       // ddqMax = (dqMax-dq)/dt
       // ddqMin = (dqMin-dq)/dt = (-dqMax-dq)/dt
+      m_ddqLBVel.setConstant(m_na,1,-1e10);
+      m_ddqUBVel.setConstant(m_na,1,1e10);
       if(m_impose_velocity_bounds==true)
       {
-        m_ddqLBVel=(-m_dqMax-dq.tail(m_na))/m_dt;
-        m_ddqUBVel= (m_dqMax-dq.tail(m_na))/m_dt;
+        m_ddqLBVel=(-m_dqMax-m_dqa)/m_dt;
+        m_ddqUBVel= (m_dqMax-m_dqa)/m_dt;
       }
       //Acceleration limits imposed by viability
       if(m_impose_viability_bounds==true)
       {
-        computeAccLimitsFromViability(q.tail(m_na), dq.tail(m_na), verbose);
+        computeAccLimitsFromViability(m_qa, m_dqa, verbose);
       }
       //Acceleration limits
+      m_ddqLBAcc.setConstant(m_na,1,-1e10);
+      m_ddqUBAcc.setConstant(m_na,1,1e10);
       if(m_impose_acceleration_bounds==true)
       {
         m_ddqLBAcc = -m_ddqMax;
         m_ddqUBAcc = m_ddqMax;
       }
       //Take the most conservative limit for each joint
-      m_ub = Vector::Constant(4,1,1e10);
-      m_lb =  Vector::Constant(4,1,-1e10);
-
+      m_ub.setConstant(4,1,1e10);
+      m_lb.setConstant(4,1,-1e10);
+      m_ddqLB.setConstant(m_na,1,-1e10);
+      m_ddqUB.setConstant(m_na,1,1e10);
       for(int i = 0; i<m_na; i++)
       {
         m_ub[0] = m_ddqUBPos[i];
@@ -444,22 +480,6 @@ namespace tsid
           }
         }
       }
-
-    }
-
-    void TaskJointPosVelAccBounds::resetVectors()
-    {
-      m_ddqLBPos=Vector::Constant(m_na,1,-1e10);
-      m_ddqUBPos=Vector::Constant(m_na,1,1e10);
-      m_ddqLBVia=Vector::Constant(m_na,1,-1e10);
-      m_ddqUBVia=Vector::Constant(m_na,1,1e10);
-      m_ddqLBVel=Vector::Constant(m_na,1,-1e10);
-      m_ddqUBVel=Vector::Constant(m_na,1,1e10);
-      m_ddqLBAcc=Vector::Constant(m_na,1,-1e10);
-      m_ddqUBAcc=Vector::Constant(m_na,1,1e10);
-      m_ddqLB=Vector::Constant(m_na,1,-1e10);
-      m_ddqUB=Vector::Constant(m_na,1,1e10);
-      m_viabViol = Vector::Zero(m_na);
     }
   }
 }
