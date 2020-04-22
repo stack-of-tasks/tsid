@@ -28,7 +28,7 @@ OPTION(INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
 OPTION(SUFFIX_SO_VERSION "Suffix library name with its version" ON)
 OPTION(INITIALIZE_WITH_NAN "Initialize Eigen entries with NaN" OFF)
 OPTION(EIGEN_RUNTIME_NO_MALLOC "If ON, it can assert in case of runtime allocation" ON)
-OPTION(EIGEN_NO_AUTOMATIC_RESIZING "If ON, it forbids automatic resizing of dynamics arrays and matrices" OFF)
+OPTION(EIGEN_NO_AUTOMATIC_RESIZING "If ON, it forbids automatic resizing of dynamics arrays and matrices" ON)
 
 # Project configuration
 IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
@@ -76,6 +76,7 @@ SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 
 IF(BUILD_PYTHON_INTERFACE)
   FINDPYTHON()
+  INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS})
   SET(PYWRAP ${PROJECT_NAME}_pywrap)
   ADD_PROJECT_DEPENDENCY(eigenpy REQUIRED PKG_CONFIG_REQUIRES eigenpy)
   SET(BOOST_COMPONENTS ${BOOST_COMPONENTS} python)
@@ -107,6 +108,7 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
   include/tsid/tasks/task-joint-bounds.hpp
   include/tsid/tasks/task-joint-posture.hpp
   include/tsid/tasks/task-joint-posVelAcc-bounds.hpp
+  include/tsid/tasks/task-convex-hull-inequality.hpp
   include/tsid/tasks/task-angular-momentum-equality.hpp
   )
 
@@ -199,6 +201,7 @@ SET(${PROJECT_NAME}_TASKS_SOURCES
   src/tasks/task-joint-bounds.cpp
   src/tasks/task-joint-posture.cpp
   src/tasks/task-joint-posVelAcc-bounds.cpp
+  src/tasks/task-convex-hull-inequality.cpp
   src/tasks/task-motion.cpp
   src/tasks/task-se3-equality.cpp
   src/tasks/task-angular-momentum-equality.cpp
@@ -252,6 +255,7 @@ ADD_SOURCE_GROUP(${PROJECT_NAME}_SOURCES)
 ADD_LIBRARY(${PROJECT_NAME} SHARED
   ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
+TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC "/home/user/rf_ws/devel/include")
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${Boost_LIBRARIES}
   pinocchio::pinocchio)
 
