@@ -6,7 +6,6 @@ Created on Wed Apr 17 22:31:22 2019
 """
 
 import numpy as np
-import numpy.matlib as matlib
 import pinocchio as pin
 import tkinter as tk
 from tkinter import Scale, Button, Frame, Entry, Label, Tk, mainloop, HORIZONTAL
@@ -50,18 +49,18 @@ push_robot_active, push_robot_com_vel, com_vel_entry = False, 3*[0.0], None
 
 def update_com_ref_scale(value):
     x, y, z = scale_com.get()
-    tsid.trajCom.setReference(com_0 + np.matrix([1e-2*x, 1e-2*y, 1e-2*z]).T)
+    tsid.trajCom.setReference(com_0 + np.array([1e-2*x, 1e-2*y, 1e-2*z]).T)
 
 def update_RF_ref_scale(value):
     x, y, z = scale_RF.get()
     H_rf_ref = H_rf_0.copy()
-    H_rf_ref.translation += + np.matrix([1e-2*x, 1e-2*y, 1e-2*z]).T
+    H_rf_ref.translation += + np.array([1e-2*x, 1e-2*y, 1e-2*z]).T
     tsid.trajRF.setReference(H_rf_ref)
     
 def update_LF_ref_scale(value):
     x, y, z = scale_LF.get()
     H_lf_ref = H_lf_0.copy()
-    H_lf_ref.translation += + np.matrix([1e-2*x, 1e-2*y, 1e-2*z]).T
+    H_lf_ref.translation += + np.array([1e-2*x, 1e-2*y, 1e-2*z]).T
     tsid.trajLF.setReference(H_lf_ref)
     
 def switch_contact_RF():
@@ -146,25 +145,25 @@ def run_simu():
             if(tsid.contact_LF_active):
                 J_LF = tsid.contactLF.computeMotionTask(0.0, q, v, data).matrix
             else:
-                J_LF = matlib.zeros((0,tsid.model.nv))
+                J_LF = np.zeros((0,tsid.model.nv))
             if(tsid.contact_RF_active):
                 J_RF = tsid.contactRF.computeMotionTask(0.0, q, v, data).matrix
             else:
-                J_RF = matlib.zeros((0,tsid.model.nv))
-            J = matlib.vstack((J_LF, J_RF))
+                J_RF = np.zeros((0,tsid.model.nv))
+            J = np.vstack((J_LF, J_RF))
             J_com = tsid.comTask.compute(t, q, v, data).matrix
-            A = matlib.vstack((J_com, J))
-            b = matlib.vstack((np.matrix(push_robot_com_vel).T, matlib.zeros((J.shape[0],1))))
+            A = np.vstack((J_com, J))
+            b = np.vstack((np.array(push_robot_com_vel).T, np.zeros((J.shape[0],1))))
             v = np.linalg.lstsq(A, b, rcond=-1)[0]
         
         if i%conf.DISPLAY_N == 0: 
             tsid.robot_display.display(q)
-            x_com = tsid.robot.com(tsid.formulation.data()).A1
-            x_com_ref = tsid.trajCom.getSample(t).pos().A1
+            x_com = tsid.robot.com(tsid.formulation.data())
+            x_com_ref = tsid.trajCom.getSample(t).pos()
             H_lf = tsid.robot.position(tsid.formulation.data(), tsid.LF)
             H_rf = tsid.robot.position(tsid.formulation.data(), tsid.RF)
-            x_lf_ref = tsid.trajLF.getSample(t).pos().A1[:3]
-            x_rf_ref = tsid.trajRF.getSample(t).pos().A1[:3]
+            x_lf_ref = tsid.trajLF.getSample(t).pos()[:3]
+            x_rf_ref = tsid.trajRF.getSample(t).pos()[:3]
             tsid.gui.applyConfiguration('world/com', x_com.tolist()+[0,0,0,1.])
             tsid.gui.applyConfiguration('world/com_ref', x_com_ref.tolist()+[0,0,0,1.])
             tsid.gui.applyConfiguration('world/rf', pin.se3ToXYZQUATtuple(H_rf))

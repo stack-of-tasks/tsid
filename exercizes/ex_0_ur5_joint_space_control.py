@@ -30,12 +30,12 @@ model = robot.model()
 
 formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
 q0 = conf.q0
-v0 = np.matrix(np.zeros(robot.nv)).T
+v0 = np.zeros(robot.nv)
 formulation.computeProblemData(0.0, q0, v0)
         
 postureTask = tsid.TaskJointPosture("task-posture", robot)
-postureTask.setKp(conf.kp_posture * matlib.ones(robot.nv).T)
-postureTask.setKd(2.0 * np.sqrt(conf.kp_posture) * matlib.ones(robot.nv).T)
+postureTask.setKp(conf.kp_posture * np.ones(robot.nv))
+postureTask.setKd(2.0 * np.sqrt(conf.kp_posture) * np.ones(robot.nv))
 formulation.addMotionTask(postureTask, conf.w_posture, 1, 0.0)
 
 trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q0)
@@ -61,22 +61,22 @@ if(USE_VIEWER):
     robot_display.displayCollisions(False)
     robot_display.displayVisuals(True)
     robot_display.display(q0)
-    robot_display.viewer.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
+#    robot_display.viewer.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
 
 N = conf.N_SIMULATION
-tau    = matlib.empty((robot.na, N))*nan
-q      = matlib.empty((robot.nq, N+1))*nan
-v      = matlib.empty((robot.nv, N+1))*nan
-dv     = matlib.empty((robot.nv, N+1))*nan
-q_ref  = matlib.empty((robot.nq, N))*nan
-v_ref  = matlib.empty((robot.nv, N))*nan
-dv_ref = matlib.empty((robot.nv, N))*nan
-dv_des = matlib.empty((robot.nv, N))*nan
+tau    = np.empty((robot.na, N))*nan
+q      = np.empty((robot.nq, N+1))*nan
+v      = np.empty((robot.nv, N+1))*nan
+dv     = np.empty((robot.nv, N+1))*nan
+q_ref  = np.empty((robot.nq, N))*nan
+v_ref  = np.empty((robot.nv, N))*nan
+dv_ref = np.empty((robot.nv, N))*nan
+dv_des = np.empty((robot.nv, N))*nan
 samplePosture = trajPosture.computeNext()
 
-amp                  = np.matrix([0.2, 0.3, 0.4, 0.0, 0.0, 0.0]).T           # amplitude
-phi                  = np.matrix([0.0, 0.5*np.pi, 0.0, 0.0, 0.0, 0.0]).T     # phase
-two_pi_f             = 2*np.pi*np.matrix([1.0, 0.5, 0.3, 0.0, 0.0, 0.0]).T   # frequency (time 2 PI)
+amp                  = np.array([0.2, 0.3, 0.4, 0.0, 0.0, 0.0])           # amplitude
+phi                  = np.array([0.0, 0.5*np.pi, 0.0, 0.0, 0.0, 0.0])     # phase
+two_pi_f             = 2*np.pi*np.array([1.0, 0.5, 0.3, 0.0, 0.0, 0.0])   # frequency (time 2 PI)
 two_pi_f_amp         = np.multiply(two_pi_f, amp)
 two_pi_f_squared_amp = np.multiply(two_pi_f, two_pi_f_amp)
 
@@ -88,9 +88,9 @@ for i in range(0, N):
     time_start = time.time()
     
     # set reference trajectory
-    q_ref[:,i]  = q0 +  np.multiply(amp, matlib.sin(two_pi_f*t + phi))
-    v_ref[:,i]  = np.multiply(two_pi_f_amp, matlib.cos(two_pi_f*t + phi))
-    dv_ref[:,i] = np.multiply(two_pi_f_squared_amp, -matlib.sin(two_pi_f*t + phi))
+    q_ref[:,i]  = q0 +  np.multiply(amp, np.sin(two_pi_f*t + phi))
+    v_ref[:,i]  = np.multiply(two_pi_f_amp, np.cos(two_pi_f*t + phi))
+    dv_ref[:,i] = np.multiply(two_pi_f_squared_amp, -np.sin(two_pi_f*t + phi))
     samplePosture.pos(q_ref[:,i])
     samplePosture.vel(v_ref[:,i])
     samplePosture.acc(dv_ref[:,i])
@@ -129,8 +129,8 @@ if(PLOT_JOINT_POS):
     (f, ax) = plut.create_empty_figure(int(robot.nv/2),2)
     ax = ax.reshape(robot.nv)
     for i in range(robot.nv):
-        ax[i].plot(time, q[i,:-1].A1, label='Joint pos '+str(i))
-        ax[i].plot(time, q_ref[i,:].A1, '--', label='Joint ref pos '+str(i))
+        ax[i].plot(time, q[i,:-1], label='Joint pos '+str(i))
+        ax[i].plot(time, q_ref[i,:], '--', label='Joint ref pos '+str(i))
         ax[i].set_xlabel('Time [s]')
         ax[i].set_ylabel('Joint angles [rad]')
         leg = ax[i].legend()
@@ -140,10 +140,10 @@ if(PLOT_JOINT_VEL):
     (f, ax) = plut.create_empty_figure(int(robot.nv/2),2)
     ax = ax.reshape(robot.nv)
     for i in range(robot.nv):
-        ax[i].plot(time, v[i,:-1].A1, label='Joint vel '+str(i))
-        ax[i].plot(time, v_ref[i,:].A1, '--', label='Joint ref vel '+str(i))
-        ax[i].plot([time[0], time[-1]], 2*[v_min[i,0]], ':')
-        ax[i].plot([time[0], time[-1]], 2*[v_max[i,0]], ':')
+        ax[i].plot(time, v[i,:-1], label='Joint vel '+str(i))
+        ax[i].plot(time, v_ref[i,:], '--', label='Joint ref vel '+str(i))
+        ax[i].plot([time[0], time[-1]], 2*[v_min[i]], ':')
+        ax[i].plot([time[0], time[-1]], 2*[v_max[i]], ':')
         ax[i].set_xlabel('Time [s]')
         ax[i].set_ylabel('Joint velocity [rad/s]')
         leg = ax[i].legend()
@@ -153,9 +153,9 @@ if(PLOT_JOINT_ACC):
     (f, ax) = plut.create_empty_figure(int(robot.nv/2),2)
     ax = ax.reshape(robot.nv)
     for i in range(robot.nv):
-        ax[i].plot(time, dv[i,:-1].A1, label='Joint acc '+str(i))
-        ax[i].plot(time, dv_ref[i,:].A1, '--', label='Joint ref acc '+str(i))
-        ax[i].plot(time, dv_des[i,:].A1, ':', label='Joint des acc '+str(i))
+        ax[i].plot(time, dv[i,:-1], label='Joint acc '+str(i))
+        ax[i].plot(time, dv_ref[i,:], '--', label='Joint ref acc '+str(i))
+        ax[i].plot(time, dv_des[i,:], ':', label='Joint des acc '+str(i))
         ax[i].set_xlabel('Time [s]')
         ax[i].set_ylabel('Joint acceleration [rad/s^2]')
         leg = ax[i].legend()
@@ -165,7 +165,7 @@ if(PLOT_TORQUES):
     (f, ax) = plut.create_empty_figure(int(robot.nv/2),2)
     ax = ax.reshape(robot.nv)
     for i in range(robot.nv):
-        ax[i].plot(time, tau[i,:].A1, label='Torque '+str(i))
+        ax[i].plot(time, tau[i,:], label='Torque '+str(i))
         ax[i].set_xlabel('Time [s]')
         ax[i].set_ylabel('Torque [Nm]')
         leg = ax[i].legend()
