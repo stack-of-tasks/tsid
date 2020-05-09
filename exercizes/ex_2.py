@@ -26,8 +26,8 @@ com_acc_des = np.empty((3, N))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_err
 offset     = tsid.robot.com(tsid.formulation.data())
 amp        = np.array([0.0, 0.05, 0.0])
 two_pi_f             = 2*np.pi*np.array([0.0, 0.5, 0.0])
-two_pi_f_amp         = np.multiply(two_pi_f,amp)
-two_pi_f_squared_amp = np.multiply(two_pi_f, two_pi_f_amp)
+two_pi_f_amp         = two_pi_f * amp
+two_pi_f_squared_amp = two_pi_f * two_pi_f_amp
 
 sampleCom = tsid.trajCom.computeNext()
 samplePosture = tsid.trajPosture.computeNext()
@@ -38,9 +38,9 @@ q, v = tsid.q, tsid.v
 for i in range(0, N):
     time_start = time.time()
     
-    sampleCom.pos(offset + np.multiply(amp, np.sin(two_pi_f*t)))
-    sampleCom.vel(np.multiply(two_pi_f_amp, np.cos(two_pi_f*t)))
-    sampleCom.acc(np.multiply(two_pi_f_squared_amp, -np.sin(two_pi_f*t)))
+    sampleCom.pos(offset + amp * np.sin(two_pi_f*t))
+    sampleCom.vel( two_pi_f_amp * np.cos(two_pi_f*t))
+    sampleCom.acc(-two_pi_f_squared_amp * np.sin(two_pi_f*t))
     
     tsid.comTask.setReference(sampleCom)
     tsid.postureTask.setReference(samplePosture)

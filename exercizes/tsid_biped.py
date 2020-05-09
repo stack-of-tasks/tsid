@@ -45,7 +45,7 @@ class TsidBiped:
         H_rf_ref = robot.position(data, self.RF)
         
         # modify initial robot configuration so that foot is on the ground (z=0)
-        q[2] -= H_rf_ref.translation[2,0] - conf.lz
+        q[2] -= H_rf_ref.translation[2] - conf.lz
         formulation.computeProblemData(0.0, q, v)
         data = formulation.data()
         H_rf_ref = robot.position(data, self.RF)
@@ -168,18 +168,18 @@ class TsidBiped:
         self.comTask.setReference(self.sample_com)
         
     def set_RF_3d_ref(self, pos, vel, acc):
-        self.sample_RF_pos[:3,0] = pos
-        self.sample_RF_vel[:3,0] = vel
-        self.sample_RF_acc[:3,0] = acc
+        self.sample_RF_pos[:3] = pos
+        self.sample_RF_vel[:3] = vel
+        self.sample_RF_acc[:3] = acc
         self.sampleRF.pos(self.sample_RF_pos)
         self.sampleRF.vel(self.sample_RF_vel)
         self.sampleRF.acc(self.sample_RF_acc)        
         self.rightFootTask.setReference(self.sampleRF)
         
     def set_LF_3d_ref(self, pos, vel, acc):
-        self.sample_LF_pos[:3,0] = pos
-        self.sample_LF_vel[:3,0] = vel
-        self.sample_LF_acc[:3,0] = acc
+        self.sample_LF_pos[:3] = pos
+        self.sample_LF_vel[:3] = vel
+        self.sample_LF_acc[:3] = acc
         self.sampleLF.pos(self.sample_LF_pos)
         self.sampleLF.vel(self.sample_LF_vel)
         self.sampleLF.acc(self.sample_LF_acc)        

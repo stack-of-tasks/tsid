@@ -166,8 +166,8 @@ def run_simu():
             x_rf_ref = tsid.trajRF.getSample(t).pos()[:3]
             tsid.gui.applyConfiguration('world/com', x_com.tolist()+[0,0,0,1.])
             tsid.gui.applyConfiguration('world/com_ref', x_com_ref.tolist()+[0,0,0,1.])
-            tsid.gui.applyConfiguration('world/rf', pin.se3ToXYZQUATtuple(H_rf))
-            tsid.gui.applyConfiguration('world/lf', pin.se3ToXYZQUATtuple(H_lf))
+            tsid.gui.applyConfiguration('world/rf', pin.SE3ToXYZQUATtuple(H_rf))
+            tsid.gui.applyConfiguration('world/lf', pin.SE3ToXYZQUATtuple(H_lf))
             tsid.gui.applyConfiguration('world/rf_ref', x_rf_ref.tolist()+[0,0,0,1.])
             tsid.gui.applyConfiguration('world/lf_ref', x_lf_ref.tolist()+[0,0,0,1.])
             

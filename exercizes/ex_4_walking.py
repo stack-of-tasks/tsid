@@ -121,13 +121,13 @@ for i in range(-N_pre, N+N_post):
         
         if tsid.formulation.checkContact(tsid.contactRF.name, sol):
             T_RF = tsid.contactRF.getForceGeneratorMatrix
-            f_RF[:,i] = T_RF * tsid.formulation.getContactForce(tsid.contactRF.name, sol)
+            f_RF[:,i] = T_RF @ tsid.formulation.getContactForce(tsid.contactRF.name, sol)
             if(f_RF[2,i]>1e-3): 
                 cop_RF[0,i] = f_RF[4,i] / f_RF[2,i]
                 cop_RF[1,i] = -f_RF[3,i] / f_RF[2,i]
         if tsid.formulation.checkContact(tsid.contactLF.name, sol):
             T_LF = tsid.contactRF.getForceGeneratorMatrix
-            f_LF[:,i] = T_LF * tsid.formulation.getContactForce(tsid.contactLF.name, sol)
+            f_LF[:,i] = T_LF @ tsid.formulation.getContactForce(tsid.contactLF.name, sol)
             if(f_LF[2,i]>1e-3): 
                 cop_LF[0,i] = f_LF[4,i] / f_LF[2,i]
                 cop_LF[1,i] = -f_LF[3,i] / f_LF[2,i]
@@ -240,7 +240,7 @@ if PLOT_FOOT_TRAJ:
 if(PLOT_TORQUES):        
     plt.figure()
     for i in range(tsid.robot.na):
-        tau_normalized = 2*(tau[i,:]-tsid.tau_min[i,0]) / (tsid.tau_max[i,0]-tsid.tau_min[i,0]) - 1
+        tau_normalized = 2*(tau[i,:]-tsid.tau_min[i]) / (tsid.tau_max[i]-tsid.tau_min[i]) - 1
         # plot torques only for joints that reached 50% of max torque
         if np.max(np.abs(tau_normalized))>0.5:
             plt.plot(time, tau_normalized, alpha=0.5, label=tsid.model.names[i+2])
@@ -254,7 +254,7 @@ if(PLOT_TORQUES):
 if(PLOT_JOINT_VEL):
     plt.figure()
     for i in range(tsid.robot.na):
-        v_normalized = 2*(v_log[6+i,:]-tsid.v_min[i,0]) / (tsid.v_max[i,0]-tsid.v_min[i,0]) - 1
+        v_normalized = 2*(v_log[6+i,:]-tsid.v_min[i]) / (tsid.v_max[i]-tsid.v_min[i]) - 1
         # plot v only for joints that reached 50% of max v
         if np.max(np.abs(v_normalized))>0.5:
             plt.plot(time, v_normalized, alpha=0.5, label=tsid.model.names[i+2])
@@ -263,6 +263,6 @@ if(PLOT_JOINT_VEL):
     plt.gca().set_xlabel('Time [s]')
     plt.gca().set_ylabel('Normalized Joint Vel')
     leg = plt.legend()
-    leg.get_frame().set_alpha(0.5)
+#    leg.get_frame().set_alpha(0.5)
     
 plt.show()
