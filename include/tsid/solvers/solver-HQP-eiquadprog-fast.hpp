@@ -19,7 +19,7 @@
 #define __invdyn_solvers_hqp_eiquadprog_fast_hpp__
 
 #include "tsid/solvers/solver-HQP-base.hpp"
-#include "tsid/solvers/eiquadprog-fast.hpp"
+#include "eiquadprog/eiquadprog-fast.hpp"
 
 namespace tsid
 {
@@ -57,7 +57,8 @@ namespace tsid
 
       void sendMsg(const std::string & s);
 
-      EiquadprogFast m_solver; // <nVars, nEqCon, 2*nIneqCon>
+      // <nVars, nEqCon, 2*nIneqCon>
+      eiquadprog::solvers::EiquadprogFast m_solver; 
 
       Matrix m_H;
       Vector m_g;
