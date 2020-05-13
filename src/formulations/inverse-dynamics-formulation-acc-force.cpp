@@ -278,7 +278,7 @@ bool InverseDynamicsFormulationAccForce::updateRigidContactWeights(const std::st
         {
           if(force_regularization_weight>=0.0)
             itt->first = force_regularization_weight;
-          if(motion_task_found)
+          if(motion_task_found || motion_weight < 0.0)
             return true;
           force_reg_task_found = true;
         }
