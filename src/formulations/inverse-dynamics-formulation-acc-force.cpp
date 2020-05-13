@@ -270,7 +270,7 @@ bool InverseDynamicsFormulationAccForce::updateRigidContactWeights(const std::st
     ConstraintLevel::iterator itt;
     bool force_reg_task_found = false;
     bool motion_task_found = false;
-    for(unsigned int i=1; i<m_hqpData.size(); i++)
+    for(unsigned int i=0; i<m_hqpData.size(); i++)
     {
       for(itt=m_hqpData[i].begin(); itt!=m_hqpData[i].end(); itt++)
       {
