@@ -18,7 +18,11 @@
 #include "tsid/math/utils.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
 
-
+/** This class has been implemented following :
+* Ramos, O. E., Mansard, N., & Soueres, P.
+* (2014). Whole-body Motion Integrating the Capture Point in the Operational Space Inverse Dynamics Control.
+* In IEEE-RAS International Conference on Humanoid Robots (Humanoids).
+*/
 namespace tsid
 {
   namespace tasks
