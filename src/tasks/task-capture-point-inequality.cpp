@@ -37,7 +37,7 @@ namespace tsid
                                                        const double safety_margin,
                                                        const double timeStep):
       TaskMotion(name, robot),
-      m_constraint(name, 4, robot.nv()),
+      m_constraint(name, 2, robot.nv()),
       m_nv(robot.nv()),
       m_links_in_contact(links_in_contact),
       m_safety_margin(safety_margin),
@@ -175,7 +175,6 @@ namespace tsid
     void TaskCapturePointInequality::setLinksInContact(const std::vector<std::string> & links_in_contact)
     {
       m_links_in_contact = links_in_contact;
-      m_constraint.resize(links_in_contact.size(),m_nv);
     }
     void TaskCapturePointInequality::getConstraints(const std::vector<Vector> & convex_hull, Matrix & A,
                                                   Vector & b, const double boundScaling, const double timeStep)
@@ -188,11 +187,11 @@ namespace tsid
     double Ka = (2*w)/((w*m_delta_t+2)*m_delta_t);
   //  std::cout << "Ka = " << Ka << std::endl;
 
-    m_rp_min(0) = -0.127 +0.04; // x min support polygon
-    m_rp_min(1) = -0.135 +0.04; // y min support polygon
+    m_rp_min(0) = -0.127 +0.01; // x min support polygon
+    m_rp_min(1) = -0.135 +0.03; // y min support polygon
 
-    m_rp_max(0) = 0.07 -0.04;  // x max support polygon
-    m_rp_max(1) = 0.135 -0.04; // y max support polygon
+    m_rp_max(0) = 0.07 -0.01;  // x max support polygon
+    m_rp_max(1) = 0.135 -0.03; // y max support polygon
 
     b_min(0) = Ka*(m_rp_min(0) - m_p_com(0) - m_v_com(0)*(m_delta_t+ 1/w)); // x axe
     b_min(1) = Ka*(m_rp_min(1) - m_p_com(1) - m_v_com(1)*(m_delta_t+ 1/w)); // y axe
@@ -220,18 +219,22 @@ namespace tsid
       const Matrix3x & Jcom = m_robot.Jcom(data);
       
       std::string frame = "COM";
-      if(getCapturePoint(m_ch, data, frame))
+    //  if(getCapturePoint(m_ch, data, frame))
         getConstraints(m_ch, A, b, m_safety_margin, m_delta_t);
  
        
       m_drift_vec=m_drift.head(2);
 
-
-      m_constraint.upperBound() =  b_max - m_drift_vec;
+      Vector b_zero;
+      b_zero.setZero(2);
+      b_zero(0) = 0.1;
+      b_zero(1) = 0.1 ;
+      m_constraint.upperBound() =  b_max ; //- m_drift_vec;
      // std::cout << "b_max "<< b_max - m_drift_vec << std::endl;
-
-      m_constraint.lowerBound() = b_min - m_drift_vec;
-      // std::cout << "b_min - drift = "<< b_min - m_drift_vec << std::endl;
+     b_zero(0) = 0.0;
+      b_zero(1) = 0.0;
+      m_constraint.lowerBound() =  b_min ; //- m_drift_vec;
+    //   std::cout << "b_min "<< b_min - m_drift_vec << std::endl;
       
       //A = A* Jcom.block(0,0,2,m_nv);
 
@@ -257,8 +260,10 @@ namespace tsid
       b.setZero(4);
       b_min.setZero(2);
       b_max.setZero(2);
+      m_rp_min.setZero(2);
+      m_rp_max.setZero(2);
 
-//std::cout << " COMPUTE END"<< std::endl;
+//  std::cout << " COMPUTE END"<< std::endl;
       return m_constraint;
     }
 
