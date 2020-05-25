@@ -1,4 +1,5 @@
 import pinocchio as se3
+from pinocchio import libpinocchio_pywrap as pin 
 import tsid
 import numpy as np
 from numpy.linalg import norm as norm
@@ -6,13 +7,13 @@ import os
 
 import gepetto.corbaserver
 import time
-import commands
+import subprocess
 
 np.set_printoptions(precision=3, linewidth=200)
 
-print "".center(100,'#')
-print " Test Task Space Inverse Dynamics ".center(100, '#')
-print "".center(100,'#'), '\n'
+print("".center(100,'#'))
+print(" Test Task Space Inverse Dynamics ".center(100, '#'))
+print("".center(100,'#'), '\n')
 
 lxp = 0.14                          # foot length in positive x direction
 lxn = 0.077                         # foot length in negative x direction
@@ -24,7 +25,7 @@ fMin = 5.0                          # minimum normal force
 fMax = 1000.0                       # maximum normal force
 rf_frame_name = "RAnkleRoll"        # right foot frame name
 lf_frame_name = "LAnkleRoll"        # left foot frame name
-contactNormal = np.matrix([0., 0., 1.]).T   # direction of the normal to the contact surface
+contactNormal = np.array([0., 0., 1.])   # direction of the normal to the contact surface
 w_com = 1.0                     # weight of center of mass task
 w_posture = 1e-3                # weight of joint posture task
 w_forceReg = 1e-5               # weight of force regularization task
@@ -53,17 +54,19 @@ srdf = path + '/srdf/romeo_collision.srdf'
 # for gepetto viewer .. but Fix me!!
 robot_display = se3.RobotWrapper.BuildFromURDF(urdf, [path, ], se3.JointModelFreeFlyer())
 
-l = commands.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
 if int(l[1]) == 0:
     os.system('gepetto-gui &')
 time.sleep(1)
 cl = gepetto.corbaserver.Client()
 gui = cl.gui
-robot_display.initDisplay(loadModel=True)
+robot_display.initViewer(loadModel=True)
 
-q = se3.getNeutralConfiguration(robot.model(), srdf, False)
+model = robot.model()
+pin.loadReferenceConfigurations(model, srdf, False)
+q = model.referenceConfigurations["half_sitting"]
 q[2] += 0.84
-v = np.matrix(np.zeros(robot.nv)).transpose()
+v = np.array(np.zeros(robot.nv))
 
 robot_display.displayCollisions(False)
 robot_display.displayVisuals(True)
@@ -76,40 +79,40 @@ t = 0.0                         # time
 invdyn = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
 invdyn.computeProblemData(t, q, v)
 data = invdyn.data()
-contact_Point = np.matrix(np.ones((3,4)) * lz)
+contact_Point = np.array(np.ones((3,4)) * lz)
 contact_Point[0, :] = [-lxn, -lxn, lxp, lxp]
 contact_Point[1, :] = [-lyn, lyp, -lyn, lyp]
 
 contactRF =tsid.Contact6d("contact_rfoot", robot, rf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
-contactRF.setKp(kp_contact * np.matrix(np.ones(6)).transpose())
-contactRF.setKd(2.0 * np.sqrt(kp_contact) * np.matrix(np.ones(6)).transpose())
+contactRF.setKp(kp_contact * np.array(np.ones(6)))
+contactRF.setKd(2.0 * np.sqrt(kp_contact) * np.array(np.ones(6)))
 H_rf_ref = robot.position(data, robot.model().getJointId(rf_frame_name))
 contactRF.setReference(H_rf_ref)
 invdyn.addRigidContact(contactRF, w_forceReg)
 
 contactLF =tsid.Contact6d("contact_lfoot", robot, lf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
-contactLF.setKp(kp_contact * np.matrix(np.ones(6)).transpose())
-contactLF.setKd(2.0 * np.sqrt(kp_contact) * np.matrix(np.ones(6)).transpose())
+contactLF.setKp(kp_contact * np.array(np.ones(6)))
+contactLF.setKd(2.0 * np.sqrt(kp_contact) * np.array(np.ones(6)))
 H_lf_ref = robot.position(data, robot.model().getJointId(lf_frame_name))
 contactLF.setReference(H_lf_ref)
 invdyn.addRigidContact(contactLF, w_forceReg)
 
 comTask = tsid.TaskComEquality("task-com", robot)
-comTask.setKp(kp_com * np.matrix(np.ones(3)).transpose())
-comTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(3)).transpose())
+comTask.setKp(kp_com * np.array(np.ones(3)))
+comTask.setKd(2.0 * np.sqrt(kp_com) * np.array(np.ones(3)))
 invdyn.addMotionTask(comTask, w_com, 1, 0.0)
 
 postureTask = tsid.TaskJointPosture("task-posture", robot)
-postureTask.setKp(kp_posture * np.matrix(np.ones(robot.nv-6)).transpose())
-postureTask.setKd(2.0 * np.sqrt(kp_posture) * np.matrix(np.ones(robot.nv-6)).transpose())
+postureTask.setKp(kp_posture * np.array(np.ones(robot.nv-6)))
+postureTask.setKd(2.0 * np.sqrt(kp_posture) * np.array(np.ones(robot.nv-6)))
 invdyn.addMotionTask(postureTask, w_posture, 1, 0.0)
 
 rightFootTask = tsid.TaskSE3Equality("task-right-foot", robot, rf_frame_name)
-rightFootTask.setKp(kp_RF * np.matrix(np.ones(6)).transpose())
-rightFootTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(6)).transpose())
+rightFootTask.setKp(kp_RF * np.array(np.ones(6)))
+rightFootTask.setKd(2.0 * np.sqrt(kp_com) * np.array(np.ones(6)))
 invdyn.addMotionTask(rightFootTask, w_RF, 1, 0.0)
 
-H_rf_ref.translation += np.matrix([0., 0., DELTA_FOOT_Z]).T
+H_rf_ref.translation += np.array([0., 0., DELTA_FOOT_Z])
 rightFootTraj = tsid.TrajectorySE3Constant("traj-right-foot", H_rf_ref)
 
 com_ref = robot.com(data)
@@ -126,7 +129,7 @@ for i in range(0, N_SIMULATION):
     time_start = time.time()
     
     if i == REMOVE_CONTACT_N:
-        print "\nTime %.3f Start breaking contact %s\n"%(t, contactRF.name)
+        print("\nTime %.3f Start breaking contact %s\n"%(t, contactRF.name))
         invdyn.removeRigidContact(contactRF.name, CONTACT_TRANSITION_TIME)
 
     sampleCom = trajCom.computeNext()
@@ -145,18 +148,18 @@ for i in range(0, N_SIMULATION):
     dv = invdyn.getAccelerations(sol)
 
     if i%PRINT_N == 0:
-        print "Time %.3f"%(t)
+        print("Time %.3f"%(t))
         if invdyn.checkContact(contactRF.name, sol):
             f = invdyn.getContactForce(contactRF.name, sol)
-            print "\tnormal force %s: %.1f"%(contactRF.name.ljust(20,'.'),contactRF.getNormalForce(f))
+            print("\tnormal force %s: %.1f"%(contactRF.name.ljust(20,'.'),contactRF.getNormalForce(f)))
 
         if invdyn.checkContact(contactLF.name, sol):
             f = invdyn.getContactForce(contactLF.name, sol)
-            print "\tnormal force %s: %.1f"%(contactLF.name.ljust(20,'.'),contactLF.getNormalForce(f))
+            print("\tnormal force %s: %.1f"%(contactLF.name.ljust(20,'.'),contactLF.getNormalForce(f)))
 
-        print "\ttracking err %s: %.3f"%(comTask.name.ljust(20,'.'),       norm(comTask.position_error, 2))
-        print "\ttracking err %s: %.3f"%(rightFootTask.name.ljust(20,'.'), norm(rightFootTask.position_error, 2))
-        print "\t||v||: %.3f\t ||dv||: %.3f"%(norm(v, 2), norm(dv))
+        print("\ttracking err %s: %.3f"%(comTask.name.ljust(20,'.'),       norm(comTask.position_error, 2)))
+        print("\ttracking err %s: %.3f"%(rightFootTask.name.ljust(20,'.'), norm(rightFootTask.position_error, 2)))
+        print("\t||v||: %.3f\t ||dv||: %.3f"%(norm(v, 2), norm(dv)))
 
     v_mean = v + 0.5*dt*dv
     v += dt*dv
@@ -173,5 +176,5 @@ for i in range(0, N_SIMULATION):
     assert norm(dv) < 1e6
     assert norm(v) < 1e6
 
-print "\nFinal COM Position  ", robot.com(invdyn.data()).T
-print "Desired COM Position", com_ref.T
+print("\nFinal COM Position  ", robot.com(invdyn.data()).T)
+print("Desired COM Position", com_ref.T)

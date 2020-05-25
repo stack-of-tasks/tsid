@@ -15,14 +15,14 @@ print("".center(conf.LINE_WIDTH,'#'), '\n')
 tsid = TsidBiped(conf)
 
 N = conf.N_SIMULATION
-com_pos = matlib.empty((3, N))*nan
-com_vel = matlib.empty((3, N))*nan
-com_acc = matlib.empty((3, N))*nan
+com_pos = np.empty((3, N))*nan
+com_vel = np.empty((3, N))*nan
+com_acc = np.empty((3, N))*nan
 
-com_pos_ref = matlib.empty((3, N))*nan
-com_vel_ref = matlib.empty((3, N))*nan
-com_acc_ref = matlib.empty((3, N))*nan
-com_acc_des = matlib.empty((3, N))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_err
+com_pos_ref = np.empty((3, N))*nan
+com_vel_ref = np.empty((3, N))*nan
+com_acc_ref = np.empty((3, N))*nan
+com_acc_des = np.empty((3, N))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_err
 
 t = 0.0
 q, v = tsid.q, tsid.v
@@ -80,8 +80,8 @@ time = np.arange(0.0, N*conf.dt, conf.dt)
 
 (f, ax) = plut.create_empty_figure(3,1)
 for i in range(3):
-    ax[i].plot(time, com_pos[i,:].A1, label='CoM '+str(i))
-    ax[i].plot(time, com_pos_ref[i,:].A1, 'r:', label='CoM Ref '+str(i))
+    ax[i].plot(time, com_pos[i,:], label='CoM '+str(i))
+    ax[i].plot(time, com_pos_ref[i,:], 'r:', label='CoM Ref '+str(i))
     ax[i].set_xlabel('Time [s]')
     ax[i].set_ylabel('CoM [m]')
     leg = ax[i].legend()
@@ -89,8 +89,8 @@ for i in range(3):
 
 (f, ax) = plut.create_empty_figure(3,1)
 for i in range(3):
-    ax[i].plot(time, com_vel[i,:].A1, label='CoM Vel '+str(i))
-    ax[i].plot(time, com_vel_ref[i,:].A1, 'r:', label='CoM Vel Ref '+str(i))
+    ax[i].plot(time, com_vel[i,:], label='CoM Vel '+str(i))
+    ax[i].plot(time, com_vel_ref[i,:], 'r:', label='CoM Vel Ref '+str(i))
     ax[i].set_xlabel('Time [s]')
     ax[i].set_ylabel('CoM Vel [m/s]')
     leg = ax[i].legend()
@@ -98,9 +98,9 @@ for i in range(3):
     
 (f, ax) = plut.create_empty_figure(3,1)
 for i in range(3):
-    ax[i].plot(time, com_acc[i,:].A1, label='CoM Acc '+str(i))
-    ax[i].plot(time, com_acc_ref[i,:].A1, 'r:', label='CoM Acc Ref '+str(i))
-    ax[i].plot(time, com_acc_des[i,:].A1, 'g--', label='CoM Acc Des '+str(i))
+    ax[i].plot(time, com_acc[i,:], label='CoM Acc '+str(i))
+    ax[i].plot(time, com_acc_ref[i,:], 'r:', label='CoM Acc Ref '+str(i))
+    ax[i].plot(time, com_acc_des[i,:], 'g--', label='CoM Acc Des '+str(i))
     ax[i].set_xlabel('Time [s]')
     ax[i].set_ylabel('CoM Acc [m/s^2]')
     leg = ax[i].legend()

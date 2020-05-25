@@ -1,5 +1,4 @@
 import numpy as np
-import numpy.matlib as matlib
 from numpy import nan
 from numpy.linalg import norm as norm
 import matplotlib.pyplot as plt
@@ -27,37 +26,37 @@ N = data['com'].shape[1]
 N_pre  = int(conf.T_pre/conf.dt)
 N_post = int(conf.T_post/conf.dt)
 
-com_pos = matlib.empty((3, N+N_post))*nan
-com_vel = matlib.empty((3, N+N_post))*nan
-com_acc = matlib.empty((3, N+N_post))*nan
-x_LF   = matlib.empty((3, N+N_post))*nan
-dx_LF  = matlib.empty((3, N+N_post))*nan
-ddx_LF = matlib.empty((3, N+N_post))*nan
-ddx_LF_des = matlib.empty((3, N+N_post))*nan
-x_RF   = matlib.empty((3, N+N_post))*nan
-dx_RF  = matlib.empty((3, N+N_post))*nan
-ddx_RF = matlib.empty((3, N+N_post))*nan
-ddx_RF_des = matlib.empty((3, N+N_post))*nan
-f_RF = matlib.zeros((6, N+N_post))
-f_LF = matlib.zeros((6, N+N_post))
-cop_RF = matlib.zeros((2, N+N_post))
-cop_LF = matlib.zeros((2, N+N_post))
-tau    = matlib.zeros((tsid.robot.na, N+N_post))
-q_log  = matlib.zeros((tsid.robot.nq, N+N_post))
-v_log  = matlib.zeros((tsid.robot.nv, N+N_post))
+com_pos = np.empty((3, N+N_post))*nan
+com_vel = np.empty((3, N+N_post))*nan
+com_acc = np.empty((3, N+N_post))*nan
+x_LF   = np.empty((3, N+N_post))*nan
+dx_LF  = np.empty((3, N+N_post))*nan
+ddx_LF = np.empty((3, N+N_post))*nan
+ddx_LF_des = np.empty((3, N+N_post))*nan
+x_RF   = np.empty((3, N+N_post))*nan
+dx_RF  = np.empty((3, N+N_post))*nan
+ddx_RF = np.empty((3, N+N_post))*nan
+ddx_RF_des = np.empty((3, N+N_post))*nan
+f_RF = np.zeros((6, N+N_post))
+f_LF = np.zeros((6, N+N_post))
+cop_RF = np.zeros((2, N+N_post))
+cop_LF = np.zeros((2, N+N_post))
+tau    = np.zeros((tsid.robot.na, N+N_post))
+q_log  = np.zeros((tsid.robot.nq, N+N_post))
+v_log  = np.zeros((tsid.robot.nv, N+N_post))
 
 contact_phase = data['contact_phase']
-com_pos_ref = np.asmatrix(data['com'])
-com_vel_ref = np.asmatrix(data['dcom'])
-com_acc_ref = np.asmatrix(data['ddcom'])
-x_RF_ref    = np.asmatrix(data['x_RF'])
-dx_RF_ref   = np.asmatrix(data['dx_RF'])
-ddx_RF_ref  = np.asmatrix(data['ddx_RF'])
-x_LF_ref    = np.asmatrix(data['x_LF'])
-dx_LF_ref   = np.asmatrix(data['dx_LF'])
-ddx_LF_ref  = np.asmatrix(data['ddx_LF'])
-cop_ref     = np.asmatrix(data['cop'])
-com_acc_des = matlib.empty((3, N+N_post))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_err
+com_pos_ref = np.asarray(data['com'])
+com_vel_ref = np.asarray(data['dcom'])
+com_acc_ref = np.asarray(data['ddcom'])
+x_RF_ref    = np.asarray(data['x_RF'])
+dx_RF_ref   = np.asarray(data['dx_RF'])
+ddx_RF_ref  = np.asarray(data['ddx_RF'])
+x_LF_ref    = np.asarray(data['x_LF'])
+dx_LF_ref   = np.asarray(data['dx_LF'])
+ddx_LF_ref  = np.asarray(data['ddx_LF'])
+cop_ref     = np.asarray(data['cop'])
+com_acc_des = np.empty((3, N+N_post))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_err
 
 x_rf   = tsid.get_placement_RF().translation
 offset = x_rf - x_RF_ref[:,0]
@@ -122,13 +121,13 @@ for i in range(-N_pre, N+N_post):
         
         if tsid.formulation.checkContact(tsid.contactRF.name, sol):
             T_RF = tsid.contactRF.getForceGeneratorMatrix
-            f_RF[:,i] = T_RF * tsid.formulation.getContactForce(tsid.contactRF.name, sol)
+            f_RF[:,i] = T_RF @ tsid.formulation.getContactForce(tsid.contactRF.name, sol)
             if(f_RF[2,i]>1e-3): 
                 cop_RF[0,i] = f_RF[4,i] / f_RF[2,i]
                 cop_RF[1,i] = -f_RF[3,i] / f_RF[2,i]
         if tsid.formulation.checkContact(tsid.contactLF.name, sol):
             T_LF = tsid.contactRF.getForceGeneratorMatrix
-            f_LF[:,i] = T_LF * tsid.formulation.getContactForce(tsid.contactLF.name, sol)
+            f_LF[:,i] = T_LF @ tsid.formulation.getContactForce(tsid.contactLF.name, sol)
             if(f_LF[2,i]>1e-3): 
                 cop_LF[0,i] = f_LF[4,i] / f_LF[2,i]
                 cop_LF[1,i] = -f_LF[3,i] / f_LF[2,i]
@@ -158,8 +157,8 @@ time = np.arange(0.0, (N+N_post)*conf.dt, conf.dt)
 if PLOT_COM:
     (f, ax) = plut.create_empty_figure(3,1)
     for i in range(3):
-        ax[i].plot(time, com_pos[i,:].A1, label='CoM '+str(i))
-        ax[i].plot(time[:N], com_pos_ref[i,:].A1, 'r:', label='CoM Ref '+str(i))
+        ax[i].plot(time, com_pos[i,:], label='CoM '+str(i))
+        ax[i].plot(time[:N], com_pos_ref[i,:], 'r:', label='CoM Ref '+str(i))
         ax[i].set_xlabel('Time [s]')
         ax[i].set_ylabel('CoM [m]')
         leg = ax[i].legend()
@@ -167,8 +166,8 @@ if PLOT_COM:
     
     (f, ax) = plut.create_empty_figure(3,1)
     for i in range(3):
-        ax[i].plot(time, com_vel[i,:].A1, label='CoM Vel '+str(i))
-        ax[i].plot(time[:N], com_vel_ref[i,:].A1, 'r:', label='CoM Vel Ref '+str(i))
+        ax[i].plot(time, com_vel[i,:], label='CoM Vel '+str(i))
+        ax[i].plot(time[:N], com_vel_ref[i,:], 'r:', label='CoM Vel Ref '+str(i))
         ax[i].set_xlabel('Time [s]')
         ax[i].set_ylabel('CoM Vel [m/s]')
         leg = ax[i].legend()
@@ -176,9 +175,9 @@ if PLOT_COM:
         
     (f, ax) = plut.create_empty_figure(3,1)
     for i in range(3):
-        ax[i].plot(time, com_acc[i,:].A1, label='CoM Acc '+str(i))
-        ax[i].plot(time[:N], com_acc_ref[i,:].A1, 'r:', label='CoM Acc Ref '+str(i))
-        ax[i].plot(time, com_acc_des[i,:].A1, 'g--', label='CoM Acc Des '+str(i))
+        ax[i].plot(time, com_acc[i,:], label='CoM Acc '+str(i))
+        ax[i].plot(time[:N], com_acc_ref[i,:], 'r:', label='CoM Acc Ref '+str(i))
+        ax[i].plot(time, com_acc_des[i,:], 'g--', label='CoM Acc Des '+str(i))
         ax[i].set_xlabel('Time [s]')
         ax[i].set_ylabel('CoM Acc [m/s^2]')
         leg = ax[i].legend()
@@ -187,9 +186,9 @@ if PLOT_COM:
 if PLOT_COP:
     (f, ax) = plut.create_empty_figure(2,1)
     for i in range(2):
-        ax[i].plot(time, cop_LF[i,:].A1, label='CoP LF '+str(i))
-        ax[i].plot(time, cop_RF[i,:].A1, label='CoP RF '+str(i))
-#        ax[i].plot(time[:N], cop_ref[i,:].A1, label='CoP ref '+str(i))
+        ax[i].plot(time, cop_LF[i,:], label='CoP LF '+str(i))
+        ax[i].plot(time, cop_RF[i,:], label='CoP RF '+str(i))
+#        ax[i].plot(time[:N], cop_ref[i,:], label='CoP ref '+str(i))
         if i==0:   
             ax[i].plot([time[0], time[-1]], [-conf.lxn, -conf.lxn], ':', label='CoP Lim '+str(i))
             ax[i].plot([time[0], time[-1]], [conf.lxp, conf.lxp], ':', label='CoP Lim '+str(i))
@@ -204,8 +203,8 @@ if PLOT_COP:
 #(f, ax) = plut.create_empty_figure(3,2)
 #ax = ax.reshape((6))
 #for i in range(6):
-#    ax[i].plot(time, f_LF[i,:].A1, label='Force LF '+str(i))
-#    ax[i].plot(time, f_RF[i,:].A1, label='Force RF '+str(i))
+#    ax[i].plot(time, f_LF[i,:], label='Force LF '+str(i))
+#    ax[i].plot(time, f_RF[i,:], label='Force RF '+str(i))
 #    ax[i].set_xlabel('Time [s]')
 #    ax[i].set_ylabel('Force [N/Nm]')
 #    leg = ax[i].legend()
@@ -214,34 +213,34 @@ if PLOT_COP:
 if PLOT_FOOT_TRAJ:
     for i in range(3):
         plt.figure()
-        plt.plot(time, x_RF[i,:].A1, label='x RF '+str(i))
-        plt.plot(time[:N], x_RF_ref[i,:].A1, ':', label='x RF ref '+str(i))
-        plt.plot(time, x_LF[i,:].A1, label='x LF '+str(i))
-        plt.plot(time[:N], x_LF_ref[i,:].A1, ':', label='x LF ref '+str(i))
+        plt.plot(time, x_RF[i,:], label='x RF '+str(i))
+        plt.plot(time[:N], x_RF_ref[i,:], ':', label='x RF ref '+str(i))
+        plt.plot(time, x_LF[i,:], label='x LF '+str(i))
+        plt.plot(time[:N], x_LF_ref[i,:], ':', label='x LF ref '+str(i))
         plt.legend()
         
     #for i in range(3):
     #    plt.figure()
-    #    plt.plot(time, dx_RF[i,:].A1, label='dx RF '+str(i))
-    #    plt.plot(time[:N], dx_RF_ref[i,:].A1, ':', label='dx RF ref '+str(i))
-    #    plt.plot(time, dx_LF[i,:].A1, label='dx LF '+str(i))
-    #    plt.plot(time[:N], dx_LF_ref[i,:].A1, ':', label='dx LF ref '+str(i))
+    #    plt.plot(time, dx_RF[i,:], label='dx RF '+str(i))
+    #    plt.plot(time[:N], dx_RF_ref[i,:], ':', label='dx RF ref '+str(i))
+    #    plt.plot(time, dx_LF[i,:], label='dx LF '+str(i))
+    #    plt.plot(time[:N], dx_LF_ref[i,:], ':', label='dx LF ref '+str(i))
     #    plt.legend()
     #    
     #for i in range(3):
     #    plt.figure()
-    #    plt.plot(time, ddx_RF[i,:].A1, label='ddx RF '+str(i))
-    #    plt.plot(time[:N], ddx_RF_ref[i,:].A1, ':', label='ddx RF ref '+str(i))
-    #    plt.plot(time, ddx_RF_des[i,:].A1, '--', label='ddx RF des '+str(i))
-    #    plt.plot(time, ddx_LF[i,:].A1, label='ddx LF '+str(i))
-    #    plt.plot(time[:N], ddx_LF_ref[i,:].A1, ':', label='ddx LF ref '+str(i))
-    #    plt.plot(time, ddx_LF_des[i,:].A1, '--', label='ddx LF des '+str(i))
+    #    plt.plot(time, ddx_RF[i,:], label='ddx RF '+str(i))
+    #    plt.plot(time[:N], ddx_RF_ref[i,:], ':', label='ddx RF ref '+str(i))
+    #    plt.plot(time, ddx_RF_des[i,:], '--', label='ddx RF des '+str(i))
+    #    plt.plot(time, ddx_LF[i,:], label='ddx LF '+str(i))
+    #    plt.plot(time[:N], ddx_LF_ref[i,:], ':', label='ddx LF ref '+str(i))
+    #    plt.plot(time, ddx_LF_des[i,:], '--', label='ddx LF des '+str(i))
     #    plt.legend()
     
 if(PLOT_TORQUES):        
     plt.figure()
     for i in range(tsid.robot.na):
-        tau_normalized = 2*(tau[i,:].A1-tsid.tau_min[i,0]) / (tsid.tau_max[i,0]-tsid.tau_min[i,0]) - 1
+        tau_normalized = 2*(tau[i,:]-tsid.tau_min[i]) / (tsid.tau_max[i]-tsid.tau_min[i]) - 1
         # plot torques only for joints that reached 50% of max torque
         if np.max(np.abs(tau_normalized))>0.5:
             plt.plot(time, tau_normalized, alpha=0.5, label=tsid.model.names[i+2])
@@ -255,7 +254,7 @@ if(PLOT_TORQUES):
 if(PLOT_JOINT_VEL):
     plt.figure()
     for i in range(tsid.robot.na):
-        v_normalized = 2*(v_log[6+i,:].A1-tsid.v_min[i,0]) / (tsid.v_max[i,0]-tsid.v_min[i,0]) - 1
+        v_normalized = 2*(v_log[6+i,:]-tsid.v_min[i]) / (tsid.v_max[i]-tsid.v_min[i]) - 1
         # plot v only for joints that reached 50% of max v
         if np.max(np.abs(v_normalized))>0.5:
             plt.plot(time, v_normalized, alpha=0.5, label=tsid.model.names[i+2])
@@ -264,6 +263,6 @@ if(PLOT_JOINT_VEL):
     plt.gca().set_xlabel('Time [s]')
     plt.gca().set_ylabel('Normalized Joint Vel')
     leg = plt.legend()
-    leg.get_frame().set_alpha(0.5)
+#    leg.get_frame().set_alpha(0.5)
     
 plt.show()

@@ -106,7 +106,7 @@ void ContactPoint::updateForceRegularizationTask()
   Matrix3 A = Matrix3::Zero();
   A.diagonal() = m_weightForceRegTask;
   m_forceRegTask.setMatrix(A);
-  m_forceRegTask.setVector(m_fRef);
+  m_forceRegTask.setVector(A*m_fRef);
 }
 
 void ContactPoint:: updateForceGeneratorMatrix()

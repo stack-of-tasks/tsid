@@ -47,7 +47,12 @@ namespace tsid
 
       TaskJointPosVelAccBounds(const std::string & name,
                       RobotWrapper & robot,
+<<<<<<< HEAD
                       double dt);
+=======
+                      double dt,
+                      bool verbose=true);
+>>>>>>> ebc2966e0186cc3b354ca04912dd7c9b4dc198bc
 
       int dim() const;
 
@@ -67,6 +72,10 @@ namespace tsid
       const Vector & getPositionLowerBounds() const;
       const Vector & getPositionUpperBounds() const;
 
+<<<<<<< HEAD
+=======
+      void setVerbose(bool verbose);
+>>>>>>> ebc2966e0186cc3b354ca04912dd7c9b4dc198bc
 
       void setImposeBounds(bool impose_position_bounds,
                            bool impose_velocity_bounds,
@@ -77,12 +86,20 @@ namespace tsid
        * violation of the violated inequality. Fills in m_viabViol , if the
        * state of joint i is viable m_viabViol[i] = 0
        */
+<<<<<<< HEAD
       void isStateViable(const Vector& q,const Vector& dq ,bool verbose=true);
+=======
+      void isStateViable(ConstRefVector q,ConstRefVector dq ,bool verbose=true);
+>>>>>>> ebc2966e0186cc3b354ca04912dd7c9b4dc198bc
 
       /** Compute acceleration limits imposed by position bounds. 
        * Fills in  m_ddqLBPos and m_ddqUBPos
        */
+<<<<<<< HEAD
       void computeAccLimitsFromPosLimits(const Vector&q,const Vector& dq, bool verbose=true);
+=======
+      void computeAccLimitsFromPosLimits(ConstRefVector q,ConstRefVector dq, bool verbose=true);
+>>>>>>> ebc2966e0186cc3b354ca04912dd7c9b4dc198bc
 
       /** Compute acceleration limits imposed by viability.
        * ddqMax is the maximum acceleration that will be necessary to stop the
@@ -94,7 +111,11 @@ namespace tsid
        * 
        * Fills in  m_ddqLBVia and m_ddqUBVia 
        */
+<<<<<<< HEAD
       void computeAccLimitsFromViability(const Vector& q,const Vector& dq, bool verbose=true);
+=======
+      void computeAccLimitsFromViability(ConstRefVector q,ConstRefVector dq, bool verbose=true);
+>>>>>>> ebc2966e0186cc3b354ca04912dd7c9b4dc198bc
 
      /** Given the current position and velocity, the bounds of position,
       * velocity and acceleration and the control time step, compute the
@@ -102,10 +123,14 @@ namespace tsid
       * at the next time step and can be respected in the future.
       * ddqMax is the absolute maximum acceleration.
       */
+<<<<<<< HEAD
       void computeAccLimits(const Vector& q,const Vector& dq,bool verbose=true);
 
 
       void resetVectors();
+=======
+      void computeAccLimits(ConstRefVector q,ConstRefVector dq,bool verbose=true);
+>>>>>>> ebc2966e0186cc3b354ca04912dd7c9b4dc198bc
 
       const Vector & mask() const;
       void mask(const Vector & mask);
@@ -114,12 +139,23 @@ namespace tsid
     protected:
       ConstraintInequality m_constraint;
       double m_dt;
+<<<<<<< HEAD
+=======
+      bool m_verbose;
+>>>>>>> ebc2966e0186cc3b354ca04912dd7c9b4dc198bc
       int m_nv, m_na;
 
       Vector m_mask;
       VectorXi m_activeAxes;
 
+<<<<<<< HEAD
       double eps; // tolerance used to check violations
+=======
+      Vector m_qa; //actuated part of q 
+      Vector m_dqa; //actuated part of dq 
+
+      double m_eps; // tolerance used to check violations
+>>>>>>> ebc2966e0186cc3b354ca04912dd7c9b4dc198bc
 
       Vector m_qMin;//joints position limits
       Vector m_qMax;//joints position limits
@@ -145,7 +181,10 @@ namespace tsid
       bool m_impose_velocity_bounds;
       bool m_impose_viability_bounds;
       bool m_impose_acceleration_bounds;
+<<<<<<< HEAD
       bool m_verbose;
+=======
+>>>>>>> ebc2966e0186cc3b354ca04912dd7c9b4dc198bc
 
       Vector m_viabViol;// 0 if the state is viable, error otherwise
 
@@ -163,7 +202,11 @@ namespace tsid
       Vector m_dt_two_dq;
       Vector m_two_ddqMax;
       Vector m_dt_ddqMax_dt;
+<<<<<<< HEAD
       double m_dq_square;
+=======
+      Vector m_dq_square;
+>>>>>>> ebc2966e0186cc3b354ca04912dd7c9b4dc198bc
       Vector m_q_plus_dt_dq;
       double m_two_a;
       Vector m_b_1;

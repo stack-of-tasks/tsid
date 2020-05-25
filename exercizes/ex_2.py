@@ -1,5 +1,4 @@
 import numpy as np
-import numpy.matlib as matlib
 from numpy import nan
 from numpy.linalg import norm as norm
 import matplotlib.pyplot as plt
@@ -15,20 +14,20 @@ print("".center(conf.LINE_WIDTH,'#'), '\n')
 tsid = TsidBiped(conf)
 
 N = conf.N_SIMULATION
-com_pos = matlib.empty((3, N))*nan
-com_vel = matlib.empty((3, N))*nan
-com_acc = matlib.empty((3, N))*nan
+com_pos = np.empty((3, N))*nan
+com_vel = np.empty((3, N))*nan
+com_acc = np.empty((3, N))*nan
 
-com_pos_ref = matlib.empty((3, N))*nan
-com_vel_ref = matlib.empty((3, N))*nan
-com_acc_ref = matlib.empty((3, N))*nan
-com_acc_des = matlib.empty((3, N))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_err
+com_pos_ref = np.empty((3, N))*nan
+com_vel_ref = np.empty((3, N))*nan
+com_acc_ref = np.empty((3, N))*nan
+com_acc_des = np.empty((3, N))*nan # acc_des = acc_ref - Kp*pos_err - Kd*vel_err
 
 offset     = tsid.robot.com(tsid.formulation.data())
-amp        = np.matrix([0.0, 0.05, 0.0]).T
-two_pi_f             = 2*np.pi*np.matrix([0.0, 0.5, 0.0]).T
-two_pi_f_amp         = np.multiply(two_pi_f,amp)
-two_pi_f_squared_amp = np.multiply(two_pi_f, two_pi_f_amp)
+amp        = np.array([0.0, 0.05, 0.0])
+two_pi_f             = 2*np.pi*np.array([0.0, 0.5, 0.0])
+two_pi_f_amp         = two_pi_f * amp
+two_pi_f_squared_amp = two_pi_f * two_pi_f_amp
 
 sampleCom = tsid.trajCom.computeNext()
 samplePosture = tsid.trajPosture.computeNext()
@@ -39,9 +38,9 @@ q, v = tsid.q, tsid.v
 for i in range(0, N):
     time_start = time.time()
     
-    sampleCom.pos(offset + np.multiply(amp, matlib.sin(two_pi_f*t)))
-    sampleCom.vel(np.multiply(two_pi_f_amp, matlib.cos(two_pi_f*t)))
-    sampleCom.acc(np.multiply(two_pi_f_squared_amp, -matlib.sin(two_pi_f*t)))
+    sampleCom.pos(offset + amp * np.sin(two_pi_f*t))
+    sampleCom.vel( two_pi_f_amp * np.cos(two_pi_f*t))
+    sampleCom.acc(-two_pi_f_squared_amp * np.sin(two_pi_f*t))
     
     tsid.comTask.setReference(sampleCom)
     tsid.postureTask.setReference(samplePosture)
@@ -91,8 +90,8 @@ time = np.arange(0.0, N*conf.dt, conf.dt)
 
 (f, ax) = plut.create_empty_figure(3,1)
 for i in range(3):
-    ax[i].plot(time, com_pos[i,:].A1, label='CoM '+str(i))
-    ax[i].plot(time, com_pos_ref[i,:].A1, 'r:', label='CoM Ref '+str(i))
+    ax[i].plot(time, com_pos[i,:], label='CoM '+str(i))
+    ax[i].plot(time, com_pos_ref[i,:], 'r:', label='CoM Ref '+str(i))
     ax[i].set_xlabel('Time [s]')
     ax[i].set_ylabel('CoM [m]')
     leg = ax[i].legend()
@@ -100,8 +99,8 @@ for i in range(3):
 
 (f, ax) = plut.create_empty_figure(3,1)
 for i in range(3):
-    ax[i].plot(time, com_vel[i,:].A1, label='CoM Vel '+str(i))
-    ax[i].plot(time, com_vel_ref[i,:].A1, 'r:', label='CoM Vel Ref '+str(i))
+    ax[i].plot(time, com_vel[i,:], label='CoM Vel '+str(i))
+    ax[i].plot(time, com_vel_ref[i,:], 'r:', label='CoM Vel Ref '+str(i))
     ax[i].set_xlabel('Time [s]')
     ax[i].set_ylabel('CoM Vel [m/s]')
     leg = ax[i].legend()
@@ -109,9 +108,9 @@ for i in range(3):
     
 (f, ax) = plut.create_empty_figure(3,1)
 for i in range(3):
-    ax[i].plot(time, com_acc[i,:].A1, label='CoM Acc '+str(i))
-    ax[i].plot(time, com_acc_ref[i,:].A1, 'r:', label='CoM Acc Ref '+str(i))
-    ax[i].plot(time, com_acc_des[i,:].A1, 'g--', label='CoM Acc Des '+str(i))
+    ax[i].plot(time, com_acc[i,:], label='CoM Acc '+str(i))
+    ax[i].plot(time, com_acc_ref[i,:], 'r:', label='CoM Acc Ref '+str(i))
+    ax[i].plot(time, com_acc_des[i,:], 'g--', label='CoM Acc Des '+str(i))
     ax[i].set_xlabel('Time [s]')
     ax[i].set_ylabel('CoM Acc [m/s^2]')
     leg = ax[i].legend()

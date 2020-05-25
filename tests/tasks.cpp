@@ -27,6 +27,7 @@
 #include <tsid/tasks/task-com-equality.hpp>
 #include <tsid/tasks/task-joint-posture.hpp>
 #include <tsid/tasks/task-joint-bounds.hpp>
+#include <tsid/tasks/task-joint-posVelAcc-bounds.hpp>
 
 #include <tsid/trajectories/trajectory-se3.hpp>
 #include <tsid/trajectories/trajectory-euclidian.hpp>
@@ -309,6 +310,58 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_bounds )
     robot.computeAllTerms(data, q, v);
     const ConstraintBase & constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows()==robot.nv());
+    BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols())==static_cast<tsid::math::Index>(robot.nv()));
+    BOOST_REQUIRE(isFinite(constraint.lowerBound()));
+    BOOST_REQUIRE(isFinite(constraint.upperBound()));
+
+    BOOST_REQUIRE(isFinite(v));
+    BOOST_REQUIRE(isFinite(q));
+    t += dt;
+  }
+}
+
+
+
+BOOST_AUTO_TEST_CASE ( test_task_joint_posVelAcc_bounds )
+{
+  cout<<"\n\n*********** TEST TASK JOINT POS VEL ACC BOUNDS ***********\n";
+  vector<string> package_dirs;
+  package_dirs.push_back(romeo_model_path);
+  string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
+  RobotWrapper robot(urdfFileName,
+                     package_dirs,
+                     pinocchio::JointModelFreeFlyer(),
+                     false);
+  const unsigned int na = robot.nv()-6;
+  const double dt = 0.001;
+
+  cout<<"Gonna create task\n";
+  TaskJointPosVelAccBounds task("task-joint-posVelAcc-bounds", robot, dt);
+
+  cout<<"Gonna set limits\n"<<na<<endl;
+  VectorXd dq_max = VectorXd::Ones(na);
+  VectorXd dq_min = -dq_max;
+
+  task.setPositionBounds(dq_min,dq_max);
+  task.setVelocityBounds(dq_max);
+  task.setAccelerationBounds(dq_max);
+
+  BOOST_CHECK(task.getPositionLowerBounds().isApprox(dq_min));
+  BOOST_CHECK(task.getPositionUpperBounds().isApprox(dq_max));
+  BOOST_CHECK(task.getVelocityBounds().isApprox(dq_max));
+  BOOST_CHECK(task.getAccelerationBounds().isApprox(dq_max));
+
+  cout<<"Gonna set up for simulation\n";
+  double t = 0.0;
+
+  VectorXd q = neutral(robot.model());
+  VectorXd v = VectorXd::Zero(robot.nv());
+  pinocchio::Data data(robot.model());
+  for(int i=0; i<max_it; i++)
+  {
+    robot.computeAllTerms(data, q, v);
+    const ConstraintBase & constraint = task.compute(t, q, v, data);
+    BOOST_CHECK(constraint.rows()==robot.na());
     BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols())==static_cast<tsid::math::Index>(robot.nv()));
     BOOST_REQUIRE(isFinite(constraint.lowerBound()));
     BOOST_REQUIRE(isFinite(constraint.upperBound()));

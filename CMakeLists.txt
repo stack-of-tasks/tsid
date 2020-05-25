@@ -108,7 +108,6 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
   include/tsid/tasks/task-joint-bounds.hpp
   include/tsid/tasks/task-joint-posture.hpp
   include/tsid/tasks/task-joint-posVelAcc-bounds.hpp
-  include/tsid/tasks/task-convex-hull-inequality.hpp
   include/tsid/tasks/task-angular-momentum-equality.hpp
   )
 
@@ -201,7 +200,6 @@ SET(${PROJECT_NAME}_TASKS_SOURCES
   src/tasks/task-joint-bounds.cpp
   src/tasks/task-joint-posture.cpp
   src/tasks/task-joint-posVelAcc-bounds.cpp
-  src/tasks/task-convex-hull-inequality.cpp
   src/tasks/task-motion.cpp
   src/tasks/task-se3-equality.cpp
   src/tasks/task-angular-momentum-equality.cpp
@@ -255,7 +253,6 @@ ADD_SOURCE_GROUP(${PROJECT_NAME}_SOURCES)
 ADD_LIBRARY(${PROJECT_NAME} SHARED
   ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
-TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC "/home/user/rf_ws/devel/include")
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${Boost_LIBRARIES}
   pinocchio::pinocchio)
 
