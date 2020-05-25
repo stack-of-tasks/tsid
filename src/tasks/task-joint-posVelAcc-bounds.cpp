@@ -194,7 +194,7 @@ namespace tsid
     const ConstraintBase & TaskJointPosVelAccBounds::compute(const double ,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    const Data & )
+                                                    Data & )
     {
       // getProfiler().start("TaskJointPosVelAccBounds");
       // Eigen::internal::set_is_malloc_allowed(false);

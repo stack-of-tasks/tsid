@@ -87,7 +87,7 @@ namespace tsid
                                        RobotWrapper & robot,
                                        bool verbose=false);
 
-    const Data & data() const;
+    Data & data() ;
 
     unsigned int nVar() const;
     unsigned int nEq() const;

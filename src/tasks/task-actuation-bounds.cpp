@@ -85,7 +85,7 @@ namespace tsid
     const ConstraintBase & TaskActuationBounds::compute(const double ,
                                                         ConstRefVector ,
                                                         ConstRefVector ,
-                                                        const Data & )
+                                                        Data & )
     {
       return m_constraint;
     }

@@ -164,7 +164,7 @@ namespace tsid
     const ConstraintBase & TaskSE3Equality::compute(const double ,
                                                     ConstRefVector ,
                                                     ConstRefVector ,
-                                                    const Data & data)
+                                                    Data & data)
     {
       SE3 oMi;
       Motion v_frame;

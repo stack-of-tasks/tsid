@@ -145,7 +145,7 @@ namespace tsid
     const ConstraintBase & TaskJointPosture::compute(const double ,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    const Data & )
+                                                    Data & )
     {
       // Compute errors
       m_p = q.tail(m_robot.na());

@@ -61,7 +61,7 @@ namespace tsid
       virtual const ConstraintBase & computeMotionTask(const double t,
                                                        ConstRefVector q,
                                                        ConstRefVector v,
-                                                       const Data & data) = 0;
+                                                       Data & data) = 0;
 
       virtual const ConstraintInequality & computeForceTask(const double t,
                                                             ConstRefVector q,

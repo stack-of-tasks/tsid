@@ -158,11 +158,11 @@ namespace tsid
                                     const Model::FrameIndex index,
                                     Motion & frameAcceleration) const;
       
-      void frameJacobianWorld(const Data & data,
+      void frameJacobianWorld(Data & data,
                               const Model::FrameIndex index,
                               Data::Matrix6x & J) const;
       
-      void frameJacobianLocal(const Data & data,
+      void frameJacobianLocal(Data & data,
                               const Model::FrameIndex index,
                               Data::Matrix6x & J) const;
 

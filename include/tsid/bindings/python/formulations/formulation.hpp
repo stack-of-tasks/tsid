@@ -82,7 +82,7 @@ namespace tsid
         .def("getContactForce", &InvDynPythonVisitor::getContactForce, bp::args("name", "HQPOutput"))
         ;
       }
-      static pinocchio::Data data(const T & self){
+      static pinocchio::Data data(T & self){
         pinocchio::Data data = self.data();
         return data;
       }

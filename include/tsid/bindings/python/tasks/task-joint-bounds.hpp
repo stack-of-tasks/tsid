@@ -64,7 +64,7 @@ namespace tsid
         std::string name = self.name();
         return name;
       }
-      static math::ConstraintBound compute(Task & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, const pinocchio::Data & data){
+      static math::ConstraintBound compute(Task & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, pinocchio::Data & data){
         self.compute(t, q, v, data);
         math::ConstraintBound cons(self.getConstraint().name(),
                                    self.getConstraint().lowerBound(),

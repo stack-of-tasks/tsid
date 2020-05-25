@@ -57,7 +57,7 @@ namespace tsid
       virtual const ConstraintBase & compute(const double t,
                                              ConstRefVector q,
                                              ConstRefVector v,
-                                             const Data & data) = 0;
+                                             Data & data) = 0;
 
       virtual const ConstraintBase & getConstraint() const = 0;
       

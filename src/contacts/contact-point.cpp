@@ -193,7 +193,7 @@ void ContactPoint::setReference(const SE3 & ref)
 const ConstraintBase & ContactPoint::computeMotionTask(const double t,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    const Data & data)
+                                                    Data & data)
 {
   return m_motionTask.compute(t, q, v, data);
 }
