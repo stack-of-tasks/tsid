@@ -99,6 +99,7 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
   include/tsid/tasks/task-base.hpp
   include/tsid/tasks/task-motion.hpp
   include/tsid/tasks/task-actuation.hpp
+  include/tsid/tasks/task-capture-point.hpp
   include/tsid/tasks/task-contact-force.hpp
   include/tsid/tasks/task-com-equality.hpp
   include/tsid/tasks/task-se3-equality.hpp
@@ -194,6 +195,7 @@ SET(${PROJECT_NAME}_TASKS_SOURCES
   src/tasks/task-actuation-bounds.cpp
   src/tasks/task-actuation-equality.cpp
   src/tasks/task-actuation.cpp
+  src/tasks/task-capture-point.cpp
   src/tasks/task-com-equality.cpp
   src/tasks/task-contact-force-equality.cpp
   src/tasks/task-contact-force.cpp
