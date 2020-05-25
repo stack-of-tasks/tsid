@@ -17,7 +17,7 @@
 
 #include "tsid/solvers/solver-HQP-eiquadprog.hpp"
 #include "tsid/math/utils.hpp"
-#include "tsid/solvers/eiquadprog_2011.hpp"
+#include "eiquadprog/eiquadprog.hpp"
 #include "tsid/utils/stop-watch.hpp"
 
 using namespace tsid::math;
@@ -243,7 +243,8 @@ const HQPOutput & SolverHQuadProg::solve(const HQPData & problemData)
   //  s.t.
   //  CE^T x + ce0 = 0
   //  CI^T x + ci0 >= 0
-  m_objValue = solve_quadprog(m_H, m_g, m_CE.transpose(), m_ce0,
+  m_objValue = eiquadprog::solvers::
+               solve_quadprog(m_H, m_g, m_CE.transpose(), m_ce0,
                               m_CI.transpose(), m_ci0,
                               m_output.x, m_activeSet, m_activeSetSize);
 

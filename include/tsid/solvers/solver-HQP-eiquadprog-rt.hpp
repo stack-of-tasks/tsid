@@ -22,7 +22,7 @@
 #include "tsid/solvers/fwd.hpp"
 #include "tsid/solvers/solver-HQP-base.hpp"
 
-#include "tsid/solvers/eiquadprog-rt.hpp"
+#include "eiquadprog/eiquadprog-rt.hpp"
 
 namespace tsid
 {
@@ -61,7 +61,7 @@ namespace tsid
 
       void sendMsg(const std::string & s);
 
-      RtEiquadprog<nVars, nEqCon, 2*nIneqCon> m_solver;
+      eiquadprog::solvers::RtEiquadprog<nVars, nEqCon, 2*nIneqCon> m_solver;
 
       typename RtMatrixX<nVars, nVars>::d m_H;
       typename RtVectorX<nVars>::d m_g;

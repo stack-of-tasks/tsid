@@ -10,5 +10,8 @@
   <author>Justin Carpentier</author>
   <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
 
+  
   <depend>pinocchio</depend>
+  <depend>eiquadprog</depend>
+  
 </package>

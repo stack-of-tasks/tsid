@@ -30,7 +30,10 @@ MACRO(ADD_TESTCASE NAME)
   STRING(REGEX REPLACE "-" "_" MODULE_NAME ${MODULE_NAME})
   ADD_TEST_CFLAGS(${NAME} "-DBOOST_TEST_MODULE=${MODULE_NAME}")
 
-  TARGET_LINK_LIBRARIES(${NAME} ${PROJECT_NAME} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} pinocchio::pinocchio)
+  TARGET_LINK_LIBRARIES(${NAME} ${PROJECT_NAME}
+    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+    pinocchio::pinocchio
+    eiquadprog::eiquadprog)
 ENDMACRO(ADD_TESTCASE)
 
 # --- RULES -------------------------------------------------------------------
