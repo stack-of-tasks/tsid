@@ -96,7 +96,7 @@ namespace tsid
     const ConstraintBase & TaskJointBounds::compute(const double ,
                                                     ConstRefVector ,
                                                     ConstRefVector v,
-                                                    const Data & )
+                                                    Data & )
     {
       // compute min/max joint acc imposed by velocity limits
       m_ddq_max_due_to_vel = (m_v_ub - v.tail(m_na))/m_dt;

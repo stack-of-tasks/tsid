@@ -82,7 +82,7 @@ namespace tsid
         return name;
       }
 
-      static math::ConstraintEquality computeMotionTask(Contact6d & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, const pinocchio::Data & data){
+      static math::ConstraintEquality computeMotionTask(Contact6d & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, pinocchio::Data & data){
         self.computeMotionTask(t, q, v, data);
         math::ConstraintEquality cons(self.getMotionConstraint().name(), self.getMotionConstraint().matrix(), self.getMotionConstraint().vector());
         return cons;

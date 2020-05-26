@@ -64,6 +64,8 @@ namespace tsid
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_AM, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addActuationTask", &InvDynPythonVisitor::addActuationTask_Bounds, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("updateTaskWeight", &InvDynPythonVisitor::updateTaskWeight, bp::args("task_name", "weight"))
+        .def("updateRigidContactWeights", &InvDynPythonVisitor::updateRigidContactWeights, bp::args("contact_name", "force_regularization_weight"))
+        .def("updateRigidContactWeights", &InvDynPythonVisitor::updateRigidContactWeightsWithMotionWeight, bp::args("contact_name", "force_regularization_weight", "motion_weight"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6dDeprecated, bp::args("contact"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6d, bp::args("contact", "force_reg_weight"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContactPoint, bp::args("contact", "force_reg_weight"))
@@ -80,7 +82,7 @@ namespace tsid
         .def("getContactForce", &InvDynPythonVisitor::getContactForce, bp::args("name", "HQPOutput"))
         ;
       }
-      static pinocchio::Data data(const T & self){
+      static pinocchio::Data data(T & self){
         pinocchio::Data data = self.data();
         return data;
       }
@@ -104,6 +106,12 @@ namespace tsid
       }
       static bool updateTaskWeight(T& self, const std::string & task_name, double weight){
         return self.updateTaskWeight(task_name, weight);
+      }
+      static bool updateRigidContactWeights(T& self, const std::string & contact_name, double force_regularization_weight){
+        return self.updateRigidContactWeights(contact_name, force_regularization_weight);
+      }
+      static bool updateRigidContactWeightsWithMotionWeight(T& self, const std::string & contact_name, double force_regularization_weight, double motion_weight){
+        return self.updateRigidContactWeights(contact_name, force_regularization_weight, motion_weight);
       }
       static bool addRigidContact6dDeprecated(T& self, contacts::Contact6d & contact){
         return self.addRigidContact(contact);

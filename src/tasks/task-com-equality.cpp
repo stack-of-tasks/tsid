@@ -120,7 +120,7 @@ namespace tsid
     const ConstraintBase & TaskComEquality::compute(const double ,
                                                     ConstRefVector ,
                                                     ConstRefVector ,
-                                                    const Data & data)
+                                                    Data & data)
     {
       m_robot.com(data, m_p_com, m_v_com, m_drift);
 

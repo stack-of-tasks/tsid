@@ -30,8 +30,8 @@ class TsidManipulator:
 #        q = model.referenceConfigurations["half_sitting"]
         except:
             q = conf.q0
-#            q = np.matrix(np.zeros(robot.nv)).T
-        v = np.matrix(np.zeros(robot.nv)).T
+#            q = np.array(np.zeros(robot.nv)).T
+        v = np.zeros(robot.nv)
         
         assert model.existFrame(conf.ee_frame_name)
         
@@ -39,13 +39,13 @@ class TsidManipulator:
         formulation.computeProblemData(0.0, q, v)
                 
         postureTask = tsid.TaskJointPosture("task-posture", robot)
-        postureTask.setKp(conf.kp_posture * matlib.ones(robot.nv).T)
-        postureTask.setKd(2.0 * np.sqrt(conf.kp_posture) * matlib.ones(robot.nv).T)
+        postureTask.setKp(conf.kp_posture * np.ones(robot.nv))
+        postureTask.setKd(2.0 * np.sqrt(conf.kp_posture) * np.ones(robot.nv))
         formulation.addMotionTask(postureTask, conf.w_posture, 1, 0.0)
         
         self.eeTask = tsid.TaskSE3Equality("task-ee", self.robot, self.conf.ee_frame_name)
-        self.eeTask.setKp(self.conf.kp_ee * np.matrix(np.ones(6)).T)
-        self.eeTask.setKd(2.0 * np.sqrt(self.conf.kp_ee) * np.matrix(np.ones(6)).T)
+        self.eeTask.setKp(self.conf.kp_ee * np.ones(6))
+        self.eeTask.setKd(2.0 * np.sqrt(self.conf.kp_ee) * np.ones(6))
         self.eeTask.setMask(conf.ee_task_mask)
         self.eeTask.useLocalFrame(False)
         self.EE = model.getFrameId(conf.ee_frame_name)
@@ -95,7 +95,7 @@ class TsidManipulator:
             self.robot_display.displayVisuals(True)
             self.robot_display.display(q)
             self.gui = self.robot_display.viewer.gui
-            self.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
+#            self.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
         
     def integrate_dv(self, q, v, dv, dt):
         v_mean = v + 0.5*dt*dv

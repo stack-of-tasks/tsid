@@ -62,7 +62,7 @@ namespace tsid
         std::string name = self.name();
         return name;
       }
-      static math::ConstraintInequality compute(Task & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, const pinocchio::Data & data){
+      static math::ConstraintInequality compute(Task & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, pinocchio::Data & data){
         self.compute(t, q, v, data);
         math::ConstraintInequality cons(self.getConstraint().name(), self.getConstraint().matrix(),
                                         self.getConstraint().lowerBound(), self.getConstraint().upperBound());

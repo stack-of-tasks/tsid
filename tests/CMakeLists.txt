@@ -30,7 +30,10 @@ MACRO(ADD_TESTCASE NAME)
   STRING(REGEX REPLACE "-" "_" MODULE_NAME ${MODULE_NAME})
   ADD_TEST_CFLAGS(${NAME} "-DBOOST_TEST_MODULE=${MODULE_NAME}")
 
-  TARGET_LINK_LIBRARIES(${NAME} ${PROJECT_NAME} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} pinocchio::pinocchio)
+  TARGET_LINK_LIBRARIES(${NAME} ${PROJECT_NAME}
+    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+    pinocchio::pinocchio
+    eiquadprog::eiquadprog)
 ENDMACRO(ADD_TESTCASE)
 
 # --- RULES -------------------------------------------------------------------
@@ -49,8 +52,8 @@ ADD_TEST_CFLAGS(tasks '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 ADD_TESTCASE(contacts)
 ADD_TEST_CFLAGS(contacts '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-#ADD_TESTCASE(tsid-formulation)
-#ADD_TEST_CFLAGS(tsid-formulation '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+ADD_TESTCASE(tsid-formulation)
+ADD_TEST_CFLAGS(tsid-formulation '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
 ADD_TESTCASE(math_utils)
 ADD_TESTCASE(hqp_solvers)

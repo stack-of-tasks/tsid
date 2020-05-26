@@ -106,7 +106,7 @@ void ContactPoint::updateForceRegularizationTask()
   Matrix3 A = Matrix3::Zero();
   A.diagonal() = m_weightForceRegTask;
   m_forceRegTask.setMatrix(A);
-  m_forceRegTask.setVector(m_fRef);
+  m_forceRegTask.setVector(A*m_fRef);
 }
 
 void ContactPoint:: updateForceGeneratorMatrix()
@@ -193,7 +193,7 @@ void ContactPoint::setReference(const SE3 & ref)
 const ConstraintBase & ContactPoint::computeMotionTask(const double t,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    const Data & data)
+                                                    Data & data)
 {
   return m_motionTask.compute(t, q, v, data);
 }

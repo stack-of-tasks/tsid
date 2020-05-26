@@ -111,7 +111,7 @@ namespace tsid
     const ConstraintBase & TaskAMEquality::compute(const double ,
                                                     ConstRefVector ,
                                                     ConstRefVector v,
-                                                    const Data & data)
+                                                    Data & data)
     {
       // Compute errors
       // Get momentum jacobian

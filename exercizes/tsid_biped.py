@@ -2,7 +2,6 @@ import pinocchio as se3
 from pinocchio import libpinocchio_pywrap as pin 
 import tsid
 import numpy as np
-import numpy.matlib as matlib
 import os
 import gepetto.corbaserver
 import time
@@ -24,10 +23,9 @@ class TsidBiped:
         self.robot = tsid.RobotWrapper(conf.urdf, vector, se3.JointModelFreeFlyer(), False)
         robot = self.robot
         self.model = robot.model()
-        print("srdf", conf.srdf)
         pin.loadReferenceConfigurations(self.model, conf.srdf, False)
         self.q0 = q = self.model.referenceConfigurations["half_sitting"]
-        v = np.matrix(np.zeros(robot.nv)).T
+        v = np.zeros(robot.nv)
         
         assert self.model.existFrame(conf.rf_frame_name)
         assert self.model.existFrame(conf.lf_frame_name)
@@ -35,19 +33,19 @@ class TsidBiped:
         formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
         formulation.computeProblemData(0.0, q, v)
         data = formulation.data()
-        contact_Point = np.matrix(np.ones((3,4)) * conf.lz)
+        contact_Point = np.ones((3,4)) * conf.lz
         contact_Point[0, :] = [-conf.lxn, -conf.lxn, conf.lxp, conf.lxp]
         contact_Point[1, :] = [-conf.lyn, conf.lyp, -conf.lyn, conf.lyp]
         
         contactRF =tsid.Contact6d("contact_rfoot", robot, conf.rf_frame_name, contact_Point, 
                                   conf.contactNormal, conf.mu, conf.fMin, conf.fMax)
-        contactRF.setKp(conf.kp_contact * matlib.ones(6).T)
-        contactRF.setKd(2.0 * np.sqrt(conf.kp_contact) * matlib.ones(6).T)
+        contactRF.setKp(conf.kp_contact * np.ones(6))
+        contactRF.setKd(2.0 * np.sqrt(conf.kp_contact) * np.ones(6))
         self.RF = robot.model().getJointId(conf.rf_frame_name)
         H_rf_ref = robot.position(data, self.RF)
         
         # modify initial robot configuration so that foot is on the ground (z=0)
-        q[2] -= H_rf_ref.translation[2,0] - conf.lz
+        q[2] -= H_rf_ref.translation[2] - conf.lz
         formulation.computeProblemData(0.0, q, v)
         data = formulation.data()
         H_rf_ref = robot.position(data, self.RF)
@@ -56,32 +54,32 @@ class TsidBiped:
         
         contactLF =tsid.Contact6d("contact_lfoot", robot, conf.lf_frame_name, contact_Point, 
                                   conf.contactNormal, conf.mu, conf.fMin, conf.fMax)
-        contactLF.setKp(conf.kp_contact * matlib.ones(6).T)
-        contactLF.setKd(2.0 * np.sqrt(conf.kp_contact) * matlib.ones(6).T)
+        contactLF.setKp(conf.kp_contact * np.ones(6))
+        contactLF.setKd(2.0 * np.sqrt(conf.kp_contact) * np.ones(6))
         self.LF = robot.model().getJointId(conf.lf_frame_name)
         H_lf_ref = robot.position(data, self.LF)
         contactLF.setReference(H_lf_ref)
         formulation.addRigidContact(contactLF, conf.w_forceRef)
         
         comTask = tsid.TaskComEquality("task-com", robot)
-        comTask.setKp(conf.kp_com * matlib.ones(3).T)
-        comTask.setKd(2.0 * np.sqrt(conf.kp_com) * matlib.ones(3).T)
+        comTask.setKp(conf.kp_com * np.ones(3))
+        comTask.setKd(2.0 * np.sqrt(conf.kp_com) * np.ones(3))
         formulation.addMotionTask(comTask, conf.w_com, 1, 0.0)
         
         postureTask = tsid.TaskJointPosture("task-posture", robot)
-        postureTask.setKp(conf.kp_posture * matlib.ones(robot.nv-6).T)
-        postureTask.setKd(2.0 * np.sqrt(conf.kp_posture) * matlib.ones(robot.nv-6).T)
+        postureTask.setKp(conf.kp_posture * np.ones(robot.nv-6))
+        postureTask.setKd(2.0 * np.sqrt(conf.kp_posture) * np.ones(robot.nv-6))
         formulation.addMotionTask(postureTask, conf.w_posture, 1, 0.0)
         
         self.leftFootTask = tsid.TaskSE3Equality("task-left-foot", self.robot, self.conf.lf_frame_name)
-        self.leftFootTask.setKp(self.conf.kp_foot * np.matrix(np.ones(6)).T)
-        self.leftFootTask.setKd(2.0 * np.sqrt(self.conf.kp_foot) * np.matrix(np.ones(6)).T)
+        self.leftFootTask.setKp(self.conf.kp_foot * np.ones(6))
+        self.leftFootTask.setKd(2.0 * np.sqrt(self.conf.kp_foot) * np.ones(6))
         self.trajLF = tsid.TrajectorySE3Constant("traj-left-foot", H_lf_ref)
         formulation.addMotionTask(self.leftFootTask, self.conf.w_foot, 1, 0.0)
         
         self.rightFootTask = tsid.TaskSE3Equality("task-right-foot", self.robot, self.conf.rf_frame_name)
-        self.rightFootTask.setKp(self.conf.kp_foot * np.matrix(np.ones(6)).T)
-        self.rightFootTask.setKd(2.0 * np.sqrt(self.conf.kp_foot) * np.matrix(np.ones(6)).T)
+        self.rightFootTask.setKp(self.conf.kp_foot * np.ones(6))
+        self.rightFootTask.setKd(2.0 * np.sqrt(self.conf.kp_foot) * np.ones(6))
         self.trajRF = tsid.TrajectorySE3Constant("traj-right-foot", H_rf_ref)
         formulation.addMotionTask(self.rightFootTask, self.conf.w_foot, 1, 0.0)
         
@@ -147,7 +145,7 @@ class TsidBiped:
             self.robot_display.display(q)
             
             self.gui = self.robot_display.viewer.gui
-            self.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
+#            self.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
             self.gui.addFloor('world/floor')
             self.gui.setLightingMode('world/floor', 'OFF');
         
@@ -170,18 +168,18 @@ class TsidBiped:
         self.comTask.setReference(self.sample_com)
         
     def set_RF_3d_ref(self, pos, vel, acc):
-        self.sample_RF_pos[:3,0] = pos
-        self.sample_RF_vel[:3,0] = vel
-        self.sample_RF_acc[:3,0] = acc
+        self.sample_RF_pos[:3] = pos
+        self.sample_RF_vel[:3] = vel
+        self.sample_RF_acc[:3] = acc
         self.sampleRF.pos(self.sample_RF_pos)
         self.sampleRF.vel(self.sample_RF_vel)
         self.sampleRF.acc(self.sample_RF_acc)        
         self.rightFootTask.setReference(self.sampleRF)
         
     def set_LF_3d_ref(self, pos, vel, acc):
-        self.sample_LF_pos[:3,0] = pos
-        self.sample_LF_vel[:3,0] = vel
-        self.sample_LF_acc[:3,0] = acc
+        self.sample_LF_pos[:3] = pos
+        self.sample_LF_vel[:3] = vel
+        self.sample_LF_acc[:3] = acc
         self.sampleLF.pos(self.sample_LF_pos)
         self.sampleLF.vel(self.sample_LF_vel)
         self.sampleLF.acc(self.sample_LF_acc)        

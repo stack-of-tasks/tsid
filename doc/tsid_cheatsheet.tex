@@ -1,0 +1,255 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Pinocchio Cheat Sheet
+%
+% Edited by Aurélie Bonnefoy
+% Available at https://www.overleaf.com/project/5e66106889524e000114b5df
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{article}
+\usepackage[landscape]{geometry}
+\usepackage{url}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathmorphing}
+\usepackage{amsmath,amssymb}
+
+\usepackage{colortbl}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+
+\title{Pinocchio Cheat Sheet}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{minted}
+\usemintedstyle{emacs}
+
+
+\advance\topmargin-.8in
+\advance\textheight3in
+\advance\textwidth3in
+\advance\oddsidemargin-1.5in
+\advance\evensidemargin-1.5in
+\parindent0pt
+\parskip2pt
+\newcommand{\hr}{\centerline{\rule{3.5in}{1pt}}}
+\begin{document}
+
+\setlength{\columnsep}{.5cm}
+
+
+
+\begin{center}{\huge{\textbf{TSID Cheat Sheet}}}\\
+\end{center}
+\begin{multicols*}{2}
+
+\tikzstyle{mybox} = [draw=black, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{fancytitle} =[fill=black, text=white, font=\bfseries]
+
+
+
+
+%------------ Text ---------------------
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.95\linewidth}
+
+        \begin{minted}[autogobble]{python}
+        import tsid
+        \end{minted}
+        
+    \end{minipage}
+};
+%------------ Title ---------------------
+\node[fancytitle, right=10pt] at (box.north west) {Initialization};
+\end{tikzpicture}
+
+
+%------------ Text ---------------------
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.95\linewidth}
+
+        \begin{minted}[autogobble]{python}
+        # Poblem creation
+        invdyn = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
+        # Data
+        invdyn.computeProblemData(t, q, v)
+        indyn.data()
+        # Suppresion
+        invdyn.removeFromHqpData('constraint_name')
+        \end{minted}
+        
+    \end{minipage}
+};
+%------------ Title ---------------------
+\node[fancytitle, right=10pt] at (box.north west) {Inverse Dynamics HQP problem};
+\end{tikzpicture}
+
+
+%------------ Text ---------------------
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.95\linewidth}
+
+        \begin{minted}[autogobble]{python}
+        # Motion Tasks
+        tsid.TaskComEquality('task_name', robot)
+        tsid.TaskJointPosture('task_name', robot)
+        tsid.TaskSE3Equality('task_name', robot, 'joint_name')
+        tsid.TaskJointBounds('task_name', robot, time_step)
+        # Actuation Tasks
+        tsid.TaskActuationtBounds('task_name', robot)
+        tsid.TaskAMEquality('task_name', robot)
+        
+        # Task creation
+        invdyn.addMotionTask(task, weight, priority_level, 
+                                transition_duration)
+        invdyn.addActuationTask(task, weight, priority_level, 
+                                transition_duration)
+        # Task update
+        invdyn.UpdateTaskWeight('task_name', weight)
+        # Task suppression
+        invdyn.removeTask('task_name', duration)
+        
+        # Gains value
+        task.setKp(value) # Proportional gain
+        task.setKd(value) # Derivative gain
+        
+        \end{minted}
+        
+        
+    \end{minipage}
+};
+%------------ Title ---------------------
+\node[fancytitle, right=10pt] at (box.north west) {Tasks};
+\end{tikzpicture}
+
+%------------ Text ---------------------
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.95\linewidth}
+
+        \begin{minted}[autogobble]{python}
+        # Contact creation
+        tsid.Contact6d('contact_name', robot, 'frame_name', contact_point, 
+                        contact_normal, friction_parameter, minForce, 
+                        maxForce)
+        invdyn.addRigidContact('contact_name', weight)
+        # Contact suppression
+        invdyn.removeRigidContact('contact_name', duration)
+        \end{minted}
+        
+    \end{minipage}
+};
+%------------ Title ---------------------
+\node[fancytitle, right=10pt] at (box.north west) {Contact};
+\end{tikzpicture}
+
+%------------ Text ---------------------
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.95\linewidth}
+
+        \begin{minted}[autogobble]{python}
+        # Set trajectory
+        tsid.TrajectoryEuclidianConstant('traj_name', init_value)
+        tsid.TrajectorySE3Constant('traj_name', init_value)
+        
+        # Compute
+        traj.computeNext()
+        
+        # Define
+        traj.pos(value) # Position
+        traj.vel(value) # Velocity
+        traj.acc(value) # Acceleration
+        task.setReference(traj) 
+        \end{minted}
+        
+    \end{minipage}
+};
+%------------ Title ---------------------
+\node[fancytitle, right=10pt] at (box.north west) {Trajectory};
+\end{tikzpicture}
+
+
+
+%------------ Text ---------------------
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.95\linewidth}
+
+        \begin{minted}[autogobble]{python}
+        tsid.SolverHQuadProgFast('solver_name')
+        solver.resize(invdyn.nVar, invdyn.nEq, invdyn.nIn)
+        \end{minted}
+        
+    \end{minipage}
+};
+%------------ Title ---------------------
+\node[fancytitle, right=10pt] at (box.north west) {Solver};
+\end{tikzpicture}
+
+
+%------------ Text ---------------------
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.95\linewidth}
+
+        \begin{minted}[autogobble]{python}
+        # Get solution
+        solver.solve(HQP_data)
+        
+        # Dynamics
+        invdyn.getActuatorForces(HQP_output)
+        invdyn.getAccelerations(HQP_output)
+        
+        # CoM
+        robot.com(data) # Position
+        robot.com_vel(data) # Velocity
+        task.getAcceleration(dv) # Acceleration
+        
+        # Trajectory
+        traj.pos() # Position
+        traj.vel() # Velocity
+        traj.acc() # Acceleration
+        task.getDesiredAcceleration 
+        
+        # Contact
+        invdyn.checkContact('contact_name', HQP_output)
+        invdyn.getContactForce('contact_name', HQP_output)
+        contact.getNormalForce(force)
+        
+        # Error
+        task.position_error
+        
+        \end{minted}
+        
+    \end{minipage}
+};
+%------------ Title ---------------------
+\node[fancytitle, right=10pt] at (box.north west) {Results};
+\end{tikzpicture}
+
+
+
+
+
+
+
+
+
+
+
+
+\end{multicols*}
+\end{document}

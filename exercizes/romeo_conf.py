@@ -24,7 +24,7 @@ fMin = 5.0                          # minimum normal force
 fMax = 1000.0                       # maximum normal force
 rf_frame_name = "RAnkleRoll"        # right foot frame name
 lf_frame_name = "LAnkleRoll"        # left foot frame name
-contactNormal = np.matrix([0., 0., 1.]).T   # direction of the normal to the contact surface
+contactNormal = np.array([0., 0., 1.])   # direction of the normal to the contact surface
 
 w_com = 1.0                     # weight of center of mass task
 w_foot = 1e-1                   # weight of the foot motion task
