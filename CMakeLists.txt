@@ -73,7 +73,7 @@ ENDIF(EIGEN_NO_AUTOMATIC_RESIZING)
 ADD_PROJECT_DEPENDENCY(pinocchio 2.3.1 REQUIRED
   PKG_CONFIG_REQUIRES "pinocchio >= 2.3.1")
 ADD_PROJECT_DEPENDENCY(eiquadprog 1.1.3 REQUIRED
-  PKG_CONFIG_REQUIRES "eiquaprog >= 1.1.3")
+  PKG_CONFIG_REQUIRES "eiquadprog >= 1.1.3")
 
 SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 
