@@ -320,6 +320,11 @@ namespace tsid
     Vector3 RobotWrapper::angularMomentumTimeVariation(const Data & data) const{
       return pinocchio::computeCentroidalMomentumTimeVariation(m_model, const_cast<Data&>(data)).angular();
     }
+        
+    void RobotWrapper::setGravity(const Motion & gravity)
+    {
+	  m_model.gravity = gravity; 
+	}
     
     //    const Vector3 & com(Data & data,const Vector & q,
     //                        const bool computeSubtreeComs = true,
