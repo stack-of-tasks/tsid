@@ -80,6 +80,7 @@ namespace tsid
         .def("frameAccelerationWorldOriented", &RobotPythonVisitor::frameAccelerationWorldOriented, bp::args("data", "index"))
         .def("frameClassicAccelerationWorldOriented", &RobotPythonVisitor::frameClassicAccelerationWorldOriented, bp::args("data", "index"))
         .def("angularMomentumTimeVariation", &RobotPythonVisitor::angularMomentumTimeVariation, bp::arg("data"))
+        .def("setGravity", &RobotPythonVisitor::setGravity, bp::arg("gravity"))
         ;
       }
 
@@ -172,6 +173,9 @@ namespace tsid
       static Eigen::Vector3d angularMomentumTimeVariation(const Robot & self, const pinocchio::Data & data){
         return self.angularMomentumTimeVariation(data);
       }
+      static void setGravity(Robot & self, const pinocchio::Motion & gravity){
+		return self.setGravity(gravity);
+	  }
       static void expose(const std::string & class_name)
       {
         std::string doc = "Robot Wrapper info.";

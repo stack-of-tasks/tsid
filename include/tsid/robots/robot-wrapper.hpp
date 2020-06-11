@@ -169,6 +169,8 @@ namespace tsid
       const Data::Matrix6x & momentumJacobian(const Data & data) const;
 
       Vector3 angularMomentumTimeVariation(const Data & data) const;
+            
+      void setGravity(const Motion & gravity) ;
 
 
     protected:
