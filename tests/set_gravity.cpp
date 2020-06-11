@@ -23,14 +23,9 @@
 #include <tsid/math/utils.hpp>
 #include "tsid/robots/robot-wrapper.hpp"
 
-#include <pinocchio/multibody/model.hpp>
-#include <pinocchio/parsers/srdf.hpp>
-#include <pinocchio/algorithm/joint-configuration.hpp>
-#include <pinocchio/algorithm/center-of-mass.hpp>
 
 using namespace tsid;
 using namespace tsid::robots;
-using namespace tsid::math;
 using namespace std;
 using namespace pinocchio;
 
