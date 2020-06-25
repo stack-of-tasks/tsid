@@ -11,6 +11,7 @@ Take a look at the project [wiki](https://github.com/stack-of-tasks/tsid/wiki) f
 * boost (unit_test_framework)
 * eigen3
 * [pinocchio](https://github.com/stack-of-tasks/pinocchio)
+* [eiquadprog](https://github.com/stack-of-tasks/eiquadprog)
 
 To install eigen3 on Ubuntu you can use apt-get:
   `sudo apt-get install libeigen3-dev`
