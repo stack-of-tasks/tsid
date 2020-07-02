@@ -43,7 +43,7 @@ REF_SPHERE_RADIUS = 0.03
 EE_SPHERE_COLOR  = (1, 0.5, 0, 0.5)
 EE_REF_SPHERE_COLOR  = (1, 0, 0, 0.5)
 
-ERROR_MSG = 'You should set the environment variable UR5_MODEL_DIR to something like "$DEVEL_DIR/install/share"\n';
-path      = os.environ.get('UR5_MODEL_DIR', ERROR_MSG)
-urdf      = path + "/ur_description/urdf/ur5_robot.urdf";
-srdf      = path + '/ur_description/srdf/ur5_robot.srdf'
+from example_robot_data.robots_loader import getModelPath
+urdf = "/ur_description/urdf/ur5_robot.urdf"
+path = getModelPath(urdf)
+urdf = path+urdf

@@ -153,7 +153,7 @@ def run_simu():
             J = np.vstack((J_LF, J_RF))
             J_com = tsid.comTask.compute(t, q, v, data).matrix
             A = np.vstack((J_com, J))
-            b = np.vstack((np.array(push_robot_com_vel).T, np.zeros((J.shape[0],1))))
+            b = np.concatenate((np.array(push_robot_com_vel), np.zeros(J.shape[0])))
             v = np.linalg.lstsq(A, b, rcond=-1)[0]
         
         if i%conf.DISPLAY_N == 0: 
