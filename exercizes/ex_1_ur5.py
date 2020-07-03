@@ -10,7 +10,7 @@ from tsid_manipulator import TsidManipulator
 import ur5_reaching_conf as conf
 
 print(("".center(conf.LINE_WIDTH,'#')))
-print((" Task Space Inverse Dynamics - Manipulator ".center(conf.LINE_WIDTH, '#')))
+print((" TSID - Manipulator End-Effector Sin Tracking ".center(conf.LINE_WIDTH, '#')))
 print(("".center(conf.LINE_WIDTH,'#'), '\n'))
 
 PLOT_EE_POS = 1

@@ -87,9 +87,9 @@ for i in range(0, N):
     time_start = time.time()
     
     # set reference trajectory
-    q_ref[:,i]  = q0 +  np.multiply(amp, np.sin(two_pi_f*t + phi))
-    v_ref[:,i]  = np.multiply(two_pi_f_amp, np.cos(two_pi_f*t + phi))
-    dv_ref[:,i] = np.multiply(two_pi_f_squared_amp, -np.sin(two_pi_f*t + phi))
+    q_ref[:,i]  = q0 +  amp * np.sin(two_pi_f*t + phi)
+    v_ref[:,i]  = two_pi_f_amp * np.cos(two_pi_f*t + phi)
+    dv_ref[:,i] = -two_pi_f_squared_amp * np.sin(two_pi_f*t + phi)
     samplePosture.pos(q_ref[:,i])
     samplePosture.vel(v_ref[:,i])
     samplePosture.acc(dv_ref[:,i])
