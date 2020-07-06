@@ -36,20 +36,16 @@ namespace tsid
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       typedef math::Index Index;
-      // typedef trajectories::TrajectorySample TrajectorySample;
       typedef math::Vector Vector;
       typedef math::Matrix Matrix;
       typedef math::Vector3 Vector3;
       typedef math::ConstraintInequality ConstraintInequality;
       typedef pinocchio::Data Data;
-      // typedef pinocchio::Motion Motion;
       typedef pinocchio::SE3 SE3;
 
       TaskCapturePointInequality(const std::string & name,
                                RobotWrapper & robot,
-                               const std::vector<std::string> & links_in_contact,
-                               const double safety_margin = 0.01,
-                               const double timeStep = 0.001);
+                               const double timeStep);
 
       int dim() const;
       //
@@ -60,33 +56,16 @@ namespace tsid
 
       const ConstraintBase & getConstraint() const;
 
-
-      /** Return the task acceleration (after applying the specified mask).
-       *  The value is expressed in local frame is the local_frame flag is true,
-       *  otherwise it is expressed in a local world-oriented frame.
-      */
       Vector getAcceleration(ConstRefVector dv) const;
 
-
       const Vector & position() const;
-     
-      bool getSupportPolygonPoints(const std::vector<std::string> & links_in_contact,
-                                   const std::string & referenceFrame,
-                                   const Data & data);
 
+      void setSupportLimitsXAxis(const double x_min, const double x_max);
 
-      bool computeCapturePoint(std::vector<Vector> & points, std::vector<Vector> & ch);
+      void setSupportLimitsYAxis(const double y_min, const double y_max);
 
-      bool getCapturePoint(std::vector<Vector> & ch, const Data & data, std::string & fame);
+      void setSafetyMargin(const double x_margin, const double y_margin);
 
-      void setSafetyMargin(const double safetyMargin);
-
-      std::vector<std::string> getLinksInContact() const;
-
-      void setLinksInContact(const std::vector<std::string> & links_in_contact);
-
-      void getConstraints(const std::vector<Vector> & capture_point, Matrix & A, Vector & b,
-                          const double safety_margin, const double timeStep);
     protected:
 
   
@@ -96,28 +75,21 @@ namespace tsid
       Vector m_rp_min;
       Vector m_rp_max;
       
-      TrajectorySample m_ref;
       ConstraintInequality m_constraint;
-      SE3 m_M_com;
 
-      std::vector<Vector> m_ch;
-      std::vector<Vector> m_points;
-      std::vector<std::string> m_links_in_contact;
-      double m_safety_margin;
+      Vector m_safety_margin;
+      Vector m_support_limits_x;
+      Vector m_support_limits_y;
+
       double m_nv;
       double m_delta_t;
-  
-      SE3 com_M_point;
-      SE3 w_M_point;
-      SE3 w_M_com;
-      Index frame_id;
-      Vector com_p_point;
+      double m_g;
+      double m_w;
+      double m_ka;
+      int m_dim;
 
-      Matrix A;
-
-      Vector b;
-      Vector b_min;
-      Vector b_max;
+      Vector b_lower;
+      Vector b_upper;
     };
 
   }

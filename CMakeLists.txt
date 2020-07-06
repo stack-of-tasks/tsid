@@ -102,7 +102,6 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
   include/tsid/tasks/task-base.hpp
   include/tsid/tasks/task-motion.hpp
   include/tsid/tasks/task-actuation.hpp
-  include/tsid/tasks/task-capture-point.hpp
   include/tsid/tasks/task-contact-force.hpp
   include/tsid/tasks/task-com-equality.hpp
   include/tsid/tasks/task-se3-equality.hpp
@@ -112,6 +111,7 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
   include/tsid/tasks/task-joint-bounds.hpp
   include/tsid/tasks/task-joint-posture.hpp
   include/tsid/tasks/task-joint-posVelAcc-bounds.hpp
+  include/tsid/tasks/task-capture-point-inequality.hpp
   include/tsid/tasks/task-angular-momentum-equality.hpp
   )
 
@@ -194,13 +194,13 @@ SET(${PROJECT_NAME}_TASKS_SOURCES
   src/tasks/task-actuation-bounds.cpp
   src/tasks/task-actuation-equality.cpp
   src/tasks/task-actuation.cpp
-  src/tasks/task-capture-point.cpp
   src/tasks/task-com-equality.cpp
   src/tasks/task-contact-force-equality.cpp
   src/tasks/task-contact-force.cpp
   src/tasks/task-joint-bounds.cpp
   src/tasks/task-joint-posture.cpp
   src/tasks/task-joint-posVelAcc-bounds.cpp
+  src/tasks/task-capture-point-inequality.cpp
   src/tasks/task-motion.cpp
   src/tasks/task-se3-equality.cpp
   src/tasks/task-angular-momentum-equality.cpp

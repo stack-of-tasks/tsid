@@ -32,7 +32,7 @@ namespace tsid
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
+
       typedef math::Index Index;
       typedef trajectories::TrajectorySample TrajectorySample;
       typedef math::Vector Vector;
@@ -81,7 +81,7 @@ namespace tsid
       TrajectorySample m_ref;
       ConstraintEquality m_constraint;
     };
-    
+
   }
 }
 

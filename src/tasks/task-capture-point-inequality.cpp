@@ -33,50 +33,37 @@ namespace tsid
 
     TaskCapturePointInequality::TaskCapturePointInequality(const std::string & name,
                                                        RobotWrapper & robot,
-                                                       const std::vector<std::string> & links_in_contact,
-                                                       const double safety_margin,
                                                        const double timeStep):
       TaskMotion(name, robot),
       m_constraint(name, 2, robot.nv()),
       m_nv(robot.nv()),
-      m_links_in_contact(links_in_contact),
-      m_safety_margin(safety_margin),
       m_delta_t(timeStep)
     {
-      assert(links_in_contact.size() > 0);
-     // std::cout << " CONSTRUCTOR CONVEX_HULL BEGIN "<< std::endl;
+      m_dim = 2;
       m_p_com.setZero(3);
       m_v_com.setZero(3);
-
-      m_rp_max.setZero(3);
-      m_rp_min.setZero(3);
-
-      Vector zero;
-      zero.setZero(3);
-      for(int i=0; i < links_in_contact.size(); i++)
-      {
-        m_ch.push_back(zero);
-        m_points.push_back(zero);
-      }
-
-      w_M_com.setIdentity();
-      com_M_point.setIdentity();
-      w_M_point.setIdentity();
-      com_p_point.setZero(3);
       
-      A.setZero(4,2);
-      b.setZero(4);
-      b_min.setZero(2);
-      b_max.setZero(2);
+      m_safety_margin.setZero(m_dim);
+
+      m_support_limits_x.setZero(m_dim);
+      m_support_limits_y.setZero(m_dim);
+
+      m_rp_max.setZero(m_dim);
+      m_rp_min.setZero(m_dim);
+
+      b_lower.setZero(m_dim);
+      b_upper.setZero(m_dim);
       
-    //  std::cout << " CONSTRUCTOR CONVEX_HULL END"<< std::endl;
+      m_g = 9.81;
+      m_w = 0;
+      m_ka = 0; 
+      
     }
 
 
     int TaskCapturePointInequality::dim() const
     {
-      //return self._mask.sum ()
-      return 2;
+      return m_dim;
     }
 
     Vector TaskCapturePointInequality::getAcceleration(ConstRefVector dv) const
@@ -93,119 +80,24 @@ namespace tsid
       return m_constraint;
     }
 
-    bool TaskCapturePointInequality::getSupportPolygonPoints(const std::vector<std::string>  & links_in_contact,
-                                                           const std::string & referenceFrame,
-                                                           const Data & data)
+    void TaskCapturePointInequality::setSupportLimitsXAxis(const double x_min, const double x_max)
     {
-      if(referenceFrame != "COM" && referenceFrame != "world")
-        std::cerr << "ERROR: "
-                  << "trying to get support polygon points in unknown reference frame "
-                  << std::endl;
-      if(links_in_contact.empty() ||
-         (referenceFrame != "COM" &&
-         referenceFrame != "world" ))
-         return false;
-      w_M_com.setIdentity();
-      w_M_com.translation(m_p_com.head<3>());
-     
-      for(int i=0; i< links_in_contact.size(); i++)
-      {
-        if(referenceFrame == "world")
-        {
-          //get points in world frame
-          assert(m_robot.model().existFrame(links_in_contact[i]));
-          frame_id = m_robot.model().getFrameId(links_in_contact[i]);
-          m_robot.framePosition(data, frame_id, w_M_point);
-
-          m_points[i]= w_M_point.translation();
-          //std::cout << " Transform world to points[" <<i<<"]: " << w_M_point << std::endl;
-        }
-        if(referenceFrame == "COM")
-        {
-        
-        com_M_point =  w_M_com.inverse() * w_M_point;
-        
-        m_points[i]= com_M_point.translation();//com_p_point;
-        // std::cout << "points[" << i << "] : " << m_points[i] << std::endl;
-        }
-      }
-      
-      return true;
+      assert(x_min >= x_max);
+      m_support_limits_x(0) = x_min;
+      m_support_limits_x(1) = x_max;
     }
 
-     bool TaskCapturePointInequality::getCapturePoint(std::vector<Vector> & ch,
-                                                 const Data & data,
-                                                 std::string & frame
-                                               )
+    void TaskCapturePointInequality::setSupportLimitsYAxis(const double y_min, const double y_max)
     {
-
-      if(getSupportPolygonPoints(m_links_in_contact,frame, data))
-      {
-       //  std::cout << "Points size.. ?  : "<< m_points.size() <<  std::endl;
-        if(m_points.size()>2)
-        {
-            return true;
-        }
-        else
-            std::cout<<"Too few points for Convex Hull computation!, old Convex Hull will be used"<<std::endl;
-      }
-      else
-        std::cout<<"Problems getting Points for Convex Hull computation!, old Convex Hull will be used"<<std::endl;
-      return false;
+      assert(y_min >= y_max);
+      m_support_limits_y(0) = y_min;
+      m_support_limits_y(1) = y_max;
     }
 
-    bool TaskCapturePointInequality::computeCapturePoint(std::vector<Vector> & points, std::vector<Vector> & ch)
+    void TaskCapturePointInequality::setSafetyMargin(const double x_margin, const double y_margin)
     {
-      //TODO :reodering points to be a trigonometry rotation
-      ch = points;
-    //  std::cout << "COMPUTE CONVEX_HULL END"<< std::endl;
-      return true;
-    }
-
-    void TaskCapturePointInequality::setSafetyMargin(const double safetyMargin)
-    {
-      m_safety_margin = safetyMargin;
-    }
-
-    std::vector<std::string> TaskCapturePointInequality::getLinksInContact() const
-    {
-      return m_links_in_contact;
-    }
-
-    void TaskCapturePointInequality::setLinksInContact(const std::vector<std::string> & links_in_contact)
-    {
-      m_links_in_contact = links_in_contact;
-    }
-    void TaskCapturePointInequality::getConstraints(const std::vector<Vector> & convex_hull, Matrix & A,
-                                                  Vector & b, const double boundScaling, const double timeStep)
-    {
-    double m_g = 9.81;
-    double w = sqrt(m_g/m_p_com(2));
-
-    m_delta_t = timeStep;
-
-    double Ka = (2*w)/((w*m_delta_t+2)*m_delta_t);
-  //  std::cout << "Ka = " << Ka << std::endl;
-
-    m_rp_min(0) = -0.127 +0.01; // x min support polygon
-    m_rp_min(1) = -0.135 +0.03; // y min support polygon
-
-    m_rp_max(0) = 0.07 -0.01;  // x max support polygon
-    m_rp_max(1) = 0.135 -0.03; // y max support polygon
-
-    b_min(0) = Ka*(m_rp_min(0) - m_p_com(0) - m_v_com(0)*(m_delta_t+ 1/w)); // x axe
-    b_min(1) = Ka*(m_rp_min(1) - m_p_com(1) - m_v_com(1)*(m_delta_t+ 1/w)); // y axe
-
-    b_max(0) = Ka*(m_rp_max(0) - m_p_com(0) - m_v_com(0)*(m_delta_t+ 1/w)); // x axe
-    b_max(1) = Ka*(m_rp_max(1) - m_p_com(1) - m_v_com(1)*(m_delta_t+ 1/w)); // y axe
-
-    // std::cout << "b_max(0) = " << b_max(0) << std::endl;
-    // std::cout << "b_max(1) = " << b_max(1) << std::endl;
-
-    // std::cout << "b_min(0) = " << b_min(0) << std::endl;
-    // std::cout << "b_min(1) = " << b_min(1) << std::endl;
-    
-    //  std::cout << " GET CONSTRAINT END"<< std::endl;
+      m_safety_margin(0) = x_margin;
+      m_safety_margin(1) = y_margin;
     }
 
     const ConstraintBase & TaskCapturePointInequality::compute(const double t,
@@ -213,57 +105,32 @@ namespace tsid
                                                     ConstRefVector v,
                                                     const Data & data)
     {
-     // std::cout << " COMPUTE BEGIN"<< std::endl;
       m_robot.com(data, m_p_com, m_v_com, m_drift);
 
       const Matrix3x & Jcom = m_robot.Jcom(data);
       
-      std::string frame = "COM";
-    //  if(getCapturePoint(m_ch, data, frame))
-        getConstraints(m_ch, A, b, m_safety_margin, m_delta_t);
+      m_w = sqrt(m_g/m_p_com(2));
+      m_ka = (2*m_w)/((m_w*m_delta_t+2)*m_delta_t);
+
+      m_rp_min(0) = m_support_limits_x(0) + m_safety_margin(0); // x min support polygon
+      m_rp_min(1) = m_support_limits_y(0) + m_safety_margin(1); // y min support polygon
+
+      m_rp_max(0) = m_support_limits_x(1) -m_safety_margin(0);  // x max support polygon
+      m_rp_max(1) = m_support_limits_y(1) -m_safety_margin(1); // y max support polygon
+
+      for(int i=0; i< m_dim; i++){
+        b_lower(i) = m_ka*(m_rp_min(i) - m_p_com(i) - m_v_com(i)*(m_delta_t+1/m_w)); 
+        b_upper(i) = m_ka*(m_rp_max(i) - m_p_com(i) - m_v_com(i)*(m_delta_t+1/m_w));
+      }
+
+      m_constraint.lowerBound() =  b_lower - m_drift.head(m_dim); 
+      m_constraint.upperBound() =  b_upper - m_drift.head(m_dim);
  
-       
-      m_drift_vec=m_drift.head(2);
+      m_constraint.setMatrix(Jcom.block(0,0,m_dim,m_nv));
 
-      Vector b_zero;
-      b_zero.setZero(2);
-      b_zero(0) = 0.1;
-      b_zero(1) = 0.1 ;
-      m_constraint.upperBound() =  b_max ; //- m_drift_vec;
-     // std::cout << "b_max "<< b_max - m_drift_vec << std::endl;
-     b_zero(0) = 0.0;
-      b_zero(1) = 0.0;
-      m_constraint.lowerBound() =  b_min ; //- m_drift_vec;
-    //   std::cout << "b_min "<< b_min - m_drift_vec << std::endl;
-      
-      //A = A* Jcom.block(0,0,2,m_nv);
+      b_lower.setZero(m_dim);
+      b_upper.setZero(m_dim);
 
-    // double m_g = 9.81;
-    // double w = sqrt(m_g/m_p_com(2));
-
-    // double Ka = 0.5*0.1*0.1 + 0.1/w;
-    // Matrix Ka_v;
-    // Ka_v.setZero(2,2);
-    // Ka_v(0,0) = Ka;
-    // Ka_v(1,1)= Ka;
-    // std::cout << "Jcom size: "<< std::endl;
-    //   std::cout << Jcom.size() << std::endl; 
-    //      std::cout << "m_nv size: "<< std::endl;
-    //   std::cout << m_nv << std::endl; 
-
-    // Matrix F;
-    // F.setZero(2,36);
-    // F = Ka_v*Jcom.block(0,0,2,m_nv);
-      m_constraint.setMatrix(Jcom.block(0,0,2,m_nv));
-      //m_constraint.lowerBound() = -100000*(b-A*m_drift_vec);
-      A.setZero(4,2);
-      b.setZero(4);
-      b_min.setZero(2);
-      b_max.setZero(2);
-      m_rp_min.setZero(2);
-      m_rp_max.setZero(2);
-
-//  std::cout << " COMPUTE END"<< std::endl;
       return m_constraint;
     }
 
