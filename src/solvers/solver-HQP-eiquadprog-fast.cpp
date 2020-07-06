@@ -17,12 +17,12 @@
 
 #include "tsid/solvers/solver-HQP-eiquadprog-fast.hpp"
 #include "tsid/math/utils.hpp"
-#include "tsid/solvers/eiquadprog-fast.hpp"
+#include "eiquadprog/eiquadprog-fast.hpp"
 #include "tsid/utils/stop-watch.hpp"
 
 //#define PROFILE_EIQUADPROG_FAST
 
-
+using namespace eiquadprog::solvers;
 
 namespace tsid
 {
@@ -181,10 +181,11 @@ namespace tsid
       //  CE x + ce0 = 0
       //  CI x + ci0 >= 0
       EIGEN_MALLOC_ALLOWED
-      EiquadprogFast_status status = m_solver.solve_quadprog(m_H, m_g,
-                                                             m_CE, m_ce0,
-                                                             m_CI, m_ci0,
-                                                             m_output.x);
+      eiquadprog::solvers::EiquadprogFast_status
+          status = m_solver.solve_quadprog(m_H, m_g,
+                                           m_CE, m_ce0,
+                                           m_CI, m_ci0,
+                                           m_output.x);
     
       STOP_PROFILER_EIQUADPROG_FAST(PROFILE_EIQUADPROG_SOLUTION);
       

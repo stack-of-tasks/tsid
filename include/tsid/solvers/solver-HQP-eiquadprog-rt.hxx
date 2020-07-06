@@ -19,10 +19,11 @@
 #define __invdyn_solvers_hqp_eiquadprog_rt_hxx__
 
 #include "tsid/solvers/solver-HQP-eiquadprog-rt.hpp"
-#include "tsid/solvers/eiquadprog-rt.hxx"
+#include "eiquadprog/eiquadprog-rt.hxx"
 #include "tsid/utils/stop-watch.hpp"
 #include "tsid/math/utils.hpp"
 
+namespace eisol=eiquadprog::solvers;
 
 #define PROFILE_EIQUADPROG_PREPARATION "EiquadprogRT problem preparation"
 #define PROFILE_EIQUADPROG_SOLUTION "EiquadprogRT problem solution"
@@ -167,10 +168,11 @@ namespace tsid
       //  CI x + ci0 >= 0
       typename RtVectorX<nVars>::d sol(m_n);
       EIGEN_MALLOC_ALLOWED
-      RtEiquadprog_status status = m_solver.solve_quadprog(m_H, m_g,
-                                                           m_CE, m_ce0,
-                                                           m_CI, m_ci0,
-                                                           sol);
+      eisol::RtEiquadprog_status
+          status = m_solver.solve_quadprog(m_H, m_g,
+                                           m_CE, m_ce0,
+                                           m_CI, m_ci0,
+                                           sol);
       STOP_PROFILER_EIQUADPROG_RT(PROFILE_EIQUADPROG_SOLUTION);
       
       m_output.x = sol;
@@ -179,7 +181,7 @@ namespace tsid
       //  Eigen::internal::set_is_malloc_allowed(true);
 //#endif
       
-      if(status==RT_EIQUADPROG_OPTIMAL)
+      if(status==eisol::RT_EIQUADPROG_OPTIMAL)
       {
         m_output.status = HQP_STATUS_OPTIMAL;
         m_output.lambda = m_solver.getLagrangeMultipliers();
@@ -219,11 +221,11 @@ namespace tsid
         }
 #endif
       }
-      else if(status==RT_EIQUADPROG_UNBOUNDED)
+      else if(status==eisol::RT_EIQUADPROG_UNBOUNDED)
         m_output.status = HQP_STATUS_INFEASIBLE;
-      else if(status==RT_EIQUADPROG_MAX_ITER_REACHED)
+      else if(status==eisol::RT_EIQUADPROG_MAX_ITER_REACHED)
         m_output.status = HQP_STATUS_MAX_ITER_REACHED;
-      else if(status==RT_EIQUADPROG_REDUNDANT_EQUALITIES)
+      else if(status==eisol::RT_EIQUADPROG_REDUNDANT_EQUALITIES)
         m_output.status = HQP_STATUS_ERROR;
       
       return m_output;

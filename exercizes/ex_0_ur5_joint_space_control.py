@@ -1,11 +1,10 @@
 import numpy as np
-import numpy.matlib as matlib
 from numpy import nan
 from numpy.linalg import norm as norm
 import matplotlib.pyplot as plt
 import plot_utils as plut
 import time
-import pinocchio as se3
+import pinocchio as pin
 import tsid
 import gepetto.corbaserver
 import subprocess
@@ -23,7 +22,7 @@ PLOT_JOINT_ACC = 1
 PLOT_TORQUES = 0
 USE_VIEWER = 1
 
-vector = se3.StdVec_StdString()
+vector = pin.StdVec_StdString()
 vector.extend(item for item in conf.path)
 robot = tsid.RobotWrapper(conf.urdf, vector, False)
 model = robot.model()
@@ -51,7 +50,7 @@ solver = tsid.SolverHQuadProgFast("qp solver")
 solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
 
 if(USE_VIEWER):
-    robot_display = se3.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path, ])
+    robot_display = pin.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path, ])
     l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
     if int(l[1]) == 0:
         os.system('gepetto-gui &')
@@ -88,9 +87,9 @@ for i in range(0, N):
     time_start = time.time()
     
     # set reference trajectory
-    q_ref[:,i]  = q0 +  np.multiply(amp, np.sin(two_pi_f*t + phi))
-    v_ref[:,i]  = np.multiply(two_pi_f_amp, np.cos(two_pi_f*t + phi))
-    dv_ref[:,i] = np.multiply(two_pi_f_squared_amp, -np.sin(two_pi_f*t + phi))
+    q_ref[:,i]  = q0 +  amp * np.sin(two_pi_f*t + phi)
+    v_ref[:,i]  = two_pi_f_amp * np.cos(two_pi_f*t + phi)
+    dv_ref[:,i] = -two_pi_f_squared_amp * np.sin(two_pi_f*t + phi)
     samplePosture.pos(q_ref[:,i])
     samplePosture.vel(v_ref[:,i])
     samplePosture.acc(dv_ref[:,i])
@@ -113,7 +112,7 @@ for i in range(0, N):
     # numerical integration
     v_mean = v[:,i] + 0.5*dt*dv[:,i]
     v[:,i+1] = v[:,i] + dt*dv[:,i]
-    q[:,i+1] = se3.integrate(model, q[:,i], dt*v_mean)
+    q[:,i+1] = pin.integrate(model, q[:,i], dt*v_mean)
     t += conf.dt
     
     if i%conf.DISPLAY_N == 0: 

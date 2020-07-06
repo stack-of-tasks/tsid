@@ -70,7 +70,10 @@ IF(EIGEN_NO_AUTOMATIC_RESIZING)
 ENDIF(EIGEN_NO_AUTOMATIC_RESIZING)
 
 # Project dependencies
-ADD_PROJECT_DEPENDENCY(pinocchio 2.3.1 REQUIRED PKG_CONFIG_REQUIRES "pinocchio >= 2.3.1")
+ADD_PROJECT_DEPENDENCY(pinocchio 2.3.1 REQUIRED
+  PKG_CONFIG_REQUIRES "pinocchio >= 2.3.1")
+ADD_PROJECT_DEPENDENCY(eiquadprog 1.1.3 REQUIRED
+  PKG_CONFIG_REQUIRES "eiquadprog >= 1.1.3")
 
 SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 
@@ -127,10 +130,6 @@ SET(${PROJECT_NAME}_TRAJECTORIES_HEADERS
   )
 
 SET(${PROJECT_NAME}_SOLVERS_HEADERS
-  include/tsid/solvers/eiquadprog_2011.hpp
-  include/tsid/solvers/eiquadprog-rt.hpp
-  include/tsid/solvers/eiquadprog-rt.hxx
-  include/tsid/solvers/eiquadprog-fast.hpp
   include/tsid/solvers/fwd.hpp
   include/tsid/solvers/utils.hpp
   include/tsid/solvers/solver-HQP-output.hpp
@@ -219,7 +218,6 @@ SET(${PROJECT_NAME}_TRAJECTORIES_SOURCES
   )
 
 SET(${PROJECT_NAME}_SOLVERS_SOURCES
-  src/solvers/eiquadprog-fast.cpp
   src/solvers/solver-HQP-base.cpp
   src/solvers/solver-HQP-factory.cpp
   src/solvers/solver-HQP-eiquadprog.cpp
@@ -256,7 +254,7 @@ ADD_LIBRARY(${PROJECT_NAME} SHARED
   ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${Boost_LIBRARIES}
-  pinocchio::pinocchio)
+  pinocchio::pinocchio eiquadprog::eiquadprog)
 
 
 IF(SUFFIX_SO_VERSION)

@@ -1,5 +1,4 @@
 import numpy as np
-import numpy.matlib as matlib
 from numpy import nan
 from numpy.linalg import norm as norm
 import matplotlib.pyplot as plt
@@ -9,7 +8,7 @@ import romeo_conf as conf
 from tsid_biped import TsidBiped
 
 print("".center(conf.LINE_WIDTH,'#'))
-print(" Test Task Space Inverse Dynamics ".center(conf.LINE_WIDTH, '#'))
+print(" Test Task Space Inverse Dynamics - Biped ".center(conf.LINE_WIDTH, '#'))
 print("".center(conf.LINE_WIDTH,'#'), '\n')
 
 tsid = TsidBiped(conf)

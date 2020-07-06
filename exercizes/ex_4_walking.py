@@ -15,8 +15,8 @@ print("".center(conf.LINE_WIDTH,'#'), '\n')
 PLOT_COM = 1
 PLOT_COP = 1
 PLOT_FOOT_TRAJ = 0
-PLOT_TORQUES = 1
-PLOT_JOINT_VEL = 1
+PLOT_TORQUES = 0
+PLOT_JOINT_VEL = 0
 
 data = np.load(conf.DATA_FILE_TSID)
 
@@ -61,7 +61,7 @@ com_acc_des = np.empty((3, N+N_post))*nan # acc_des = acc_ref - Kp*pos_err - Kd*
 x_rf   = tsid.get_placement_RF().translation
 offset = x_rf - x_RF_ref[:,0]
 for i in range(N):
-    com_pos_ref[:,i] += offset
+    com_pos_ref[:,i] += offset + np.array([0.,0.,0.0])
     x_RF_ref[:,i] += offset
     x_LF_ref[:,i] += offset
 

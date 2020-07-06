@@ -8,7 +8,7 @@ import romeo_conf as conf
 from tsid_biped import TsidBiped
 
 print("".center(conf.LINE_WIDTH,'#'))
-print(" Test Task Space Inverse Dynamics ".center(conf.LINE_WIDTH, '#'))
+print(" TSID - Biped Sin Tracking ".center(conf.LINE_WIDTH, '#'))
 print("".center(conf.LINE_WIDTH,'#'), '\n')
 
 tsid = TsidBiped(conf)

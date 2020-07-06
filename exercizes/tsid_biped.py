@@ -1,5 +1,4 @@
-import pinocchio as se3
-from pinocchio import libpinocchio_pywrap as pin 
+import pinocchio as pin
 import tsid
 import numpy as np
 import os
@@ -18,9 +17,9 @@ class TsidBiped:
     
     def __init__(self, conf, viewer=True):
         self.conf = conf
-        vector = se3.StdVec_StdString()
+        vector = pin.StdVec_StdString()
         vector.extend(item for item in conf.path)
-        self.robot = tsid.RobotWrapper(conf.urdf, vector, se3.JointModelFreeFlyer(), False)
+        self.robot = tsid.RobotWrapper(conf.urdf, vector, pin.JointModelFreeFlyer(), False)
         robot = self.robot
         self.model = robot.model()
         pin.loadReferenceConfigurations(self.model, conf.srdf, False)
@@ -50,7 +49,10 @@ class TsidBiped:
         data = formulation.data()
         H_rf_ref = robot.position(data, self.RF)
         contactRF.setReference(H_rf_ref)
-        formulation.addRigidContact(contactRF, conf.w_forceRef)
+        if(conf.w_contact>=0.0):
+            formulation.addRigidContact(contactRF, conf.w_forceRef, conf.w_contact, 1)
+        else:
+            formulation.addRigidContact(contactRF, conf.w_forceRef)
         
         contactLF =tsid.Contact6d("contact_lfoot", robot, conf.lf_frame_name, contact_Point, 
                                   conf.contactNormal, conf.mu, conf.fMin, conf.fMax)
@@ -59,7 +61,10 @@ class TsidBiped:
         self.LF = robot.model().getJointId(conf.lf_frame_name)
         H_lf_ref = robot.position(data, self.LF)
         contactLF.setReference(H_lf_ref)
-        formulation.addRigidContact(contactLF, conf.w_forceRef)
+        if(conf.w_contact>=0.0):
+            formulation.addRigidContact(contactLF, conf.w_forceRef, conf.w_contact, 1)
+        else:
+            formulation.addRigidContact(contactLF, conf.w_forceRef)
         
         comTask = tsid.TaskComEquality("task-com", robot)
         comTask.setKp(conf.kp_com * np.ones(3))
@@ -133,7 +138,7 @@ class TsidBiped:
         
         # for gepetto viewer
         if(viewer):
-            self.robot_display = se3.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path, ], se3.JointModelFreeFlyer())
+            self.robot_display = pin.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path, ], pin.JointModelFreeFlyer())
             l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
             if int(l[1]) == 0:
                 os.system('gepetto-gui &')
@@ -152,7 +157,7 @@ class TsidBiped:
     def integrate_dv(self, q, v, dv, dt):
         v_mean = v + 0.5*dt*dv
         v += dt*dv
-        q = se3.integrate(self.model, q, dt*v_mean)
+        q = pin.integrate(self.model, q, dt*v_mean)
         return q,v
         
     def get_placement_LF(self):
@@ -218,13 +223,19 @@ class TsidBiped:
     def add_contact_RF(self, transition_time=0.0):       
         H_rf_ref = self.robot.position(self.formulation.data(), self.RF)
         self.contactRF.setReference(H_rf_ref)
-        self.formulation.addRigidContact(self.contactRF, self.conf.w_forceRef)
+        if(self.conf.w_contact>=0.0):
+            self.formulation.addRigidContact(self.contactRF, self.conf.w_forceRef, self.conf.w_contact, 1)
+        else:
+            self.formulation.addRigidContact(self.contactRF, self.conf.w_forceRef)
         
         self.contact_RF_active = True
         
     def add_contact_LF(self, transition_time=0.0):        
         H_lf_ref = self.robot.position(self.formulation.data(), self.LF)
         self.contactLF.setReference(H_lf_ref)
-        self.formulation.addRigidContact(self.contactLF, self.conf.w_forceRef)
+        if(self.conf.w_contact>=0.0):
+            self.formulation.addRigidContact(self.contactLF, self.conf.w_forceRef, self.conf.w_contact, 1)
+        else:
+            self.formulation.addRigidContact(self.contactLF, self.conf.w_forceRef)
         
         self.contact_LF_active = True

@@ -59,7 +59,7 @@ namespace tsid
       const ConstraintBase & compute(const double t,
                                      ConstRefVector q,
                                      ConstRefVector v,
-                                     const Data & data);
+                                     Data & data);
 
       const ConstraintBase & getConstraint() const;
 

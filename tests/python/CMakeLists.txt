@@ -3,6 +3,7 @@ SET(${PYWRAP}_TESTS
   #ContactPoint
   #Contact
   Formulation
+  Gravity
   RobotWrapper
   #Solvers
   Tasks

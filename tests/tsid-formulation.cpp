@@ -128,7 +128,7 @@ class StandardRomeoInvDynCtrl
     // Create the inverse-dynamics formulation
     tsid = new InverseDynamicsFormulationAccForce("tsid", *robot);
     tsid->computeProblemData(t, q, v);
-    const pinocchio::Data & data = tsid->data();
+    pinocchio::Data & data = tsid->data();
 
     // Add the contact constraints
     Matrix3x contactPoints(3,4);
@@ -531,7 +531,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
   InverseDynamicsFormulationAccForce *tsid =
       new InverseDynamicsFormulationAccForce("tsid", robot);
   tsid->computeProblemData(t, q, v);
-  const pinocchio::Data & data = tsid->data();
+  pinocchio::Data & data = tsid->data();
 
   // Place the robot onto the ground.
 

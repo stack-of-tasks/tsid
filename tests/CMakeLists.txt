@@ -30,7 +30,10 @@ MACRO(ADD_TESTCASE NAME)
   STRING(REGEX REPLACE "-" "_" MODULE_NAME ${MODULE_NAME})
   ADD_TEST_CFLAGS(${NAME} "-DBOOST_TEST_MODULE=${MODULE_NAME}")
 
-  TARGET_LINK_LIBRARIES(${NAME} ${PROJECT_NAME} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} pinocchio::pinocchio)
+  TARGET_LINK_LIBRARIES(${NAME} ${PROJECT_NAME}
+    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+    pinocchio::pinocchio
+    eiquadprog::eiquadprog)
 ENDMACRO(ADD_TESTCASE)
 
 # --- RULES -------------------------------------------------------------------
@@ -54,6 +57,9 @@ ADD_TEST_CFLAGS(tsid-formulation '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE
 
 ADD_TESTCASE(math_utils)
 ADD_TESTCASE(hqp_solvers)
+
+ADD_TESTCASE(set_gravity)
+ADD_TEST_CFLAGS(set_gravity '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
 IF(BUILD_PYTHON_INTERFACE)
   ADD_SUBDIRECTORY(python)

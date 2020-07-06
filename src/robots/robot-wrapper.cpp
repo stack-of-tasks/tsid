@@ -298,14 +298,14 @@ namespace tsid
       return a_world;
     }
     
-    void RobotWrapper::frameJacobianWorld(const Data & data,
+    void RobotWrapper::frameJacobianWorld(Data & data,
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
       return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::WORLD, J);
     }
     
-    void RobotWrapper::frameJacobianLocal(const Data & data,
+    void RobotWrapper::frameJacobianLocal(Data & data,
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
@@ -320,6 +320,11 @@ namespace tsid
     Vector3 RobotWrapper::angularMomentumTimeVariation(const Data & data) const{
       return pinocchio::computeCentroidalMomentumTimeVariation(m_model, const_cast<Data&>(data)).angular();
     }
+        
+    void RobotWrapper::setGravity(const Motion & gravity)
+    {
+	  m_model.gravity = gravity; 
+	}
     
     //    const Vector3 & com(Data & data,const Vector & q,
     //                        const bool computeSubtreeComs = true,

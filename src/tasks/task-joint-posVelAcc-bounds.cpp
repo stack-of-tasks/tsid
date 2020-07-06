@@ -223,7 +223,7 @@ namespace tsid
     const ConstraintBase & TaskJointPosVelAccBounds::compute(const double ,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    const Data & )
+                                                    Data & )
     {
 <<<<<<< HEAD
       computeAccLimits(q,v,m_verbose);

@@ -59,7 +59,7 @@ InverseDynamicsFormulationAccForce::InverseDynamicsFormulationAccForce(const std
 }
 
 
-const Data & InverseDynamicsFormulationAccForce::data() const
+Data & InverseDynamicsFormulationAccForce::data()
 {
   return m_data;
 }

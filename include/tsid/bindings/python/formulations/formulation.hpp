@@ -68,6 +68,7 @@ namespace tsid
         .def("updateRigidContactWeights", &InvDynPythonVisitor::updateRigidContactWeightsWithMotionWeight, bp::args("contact_name", "force_regularization_weight", "motion_weight"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6dDeprecated, bp::args("contact"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6d, bp::args("contact", "force_reg_weight"))
+        .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6dWithPriorityLevel, bp::args("contact", "force_reg_weight", "motion_weight", "priority_level"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContactPoint, bp::args("contact", "force_reg_weight"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContactPointWithPriorityLevel, bp::args("contact", "force_reg_weight", "motion_weight", "priority_level"))
         .def("removeTask", &InvDynPythonVisitor::removeTask, bp::args("task_name", "duration"))
@@ -82,7 +83,7 @@ namespace tsid
         .def("getContactForce", &InvDynPythonVisitor::getContactForce, bp::args("name", "HQPOutput"))
         ;
       }
-      static pinocchio::Data data(const T & self){
+      static pinocchio::Data data(T & self){
         pinocchio::Data data = self.data();
         return data;
       }
@@ -118,6 +119,12 @@ namespace tsid
       }
       static bool addRigidContact6d(T& self, contacts::Contact6d & contact, double force_regularization_weight){
         return self.addRigidContact(contact, force_regularization_weight);
+      }
+      static bool addRigidContact6dWithPriorityLevel(T& self, contacts::Contact6d & contact,
+                                                        double force_regularization_weight,
+                                                        double motion_weight,
+                                                        const bool priority_level){
+        return self.addRigidContact(contact, force_regularization_weight, motion_weight, priority_level);
       }
       static bool addRigidContactPoint(T& self, contacts::ContactPoint & contact, double force_regularization_weight){
         return self.addRigidContact(contact, force_regularization_weight);
