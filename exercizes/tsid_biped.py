@@ -72,8 +72,9 @@ class TsidBiped:
         formulation.addMotionTask(comTask, conf.w_com, 1, 0.0)
 
         postureTask = tsid.TaskJointPosture("task-posture", robot)
-        postureTask.setKp(conf.kp_posture * np.ones(robot.nv-6))
-        postureTask.setKd(2.0 * np.sqrt(conf.kp_posture) * np.ones(robot.nv-6))
+        postureTask.setKp(conf.kp_posture * conf.gain_vector)
+        postureTask.setKd(2.0 * np.sqrt(conf.kp_posture * conf.gain_vector))
+        postureTask.mask(conf.masks_posture)
         formulation.addMotionTask(postureTask, conf.w_posture, 1, 0.0)
 
         self.leftFootTask = tsid.TaskSE3Equality("task-left-foot", self.robot, self.conf.lf_frame_name)

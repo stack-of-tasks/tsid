@@ -24,10 +24,48 @@ contactNormal = np.array([0., 0., 1.])      # direction of the normal to the con
 w_com = 1.0             # weight of center of mass task
 w_foot = 1e-1           # weight of the foot motion task
 w_contact = -1.0        # weight of foot in contact (negative means infinite weight)
-w_posture = 1e-4        # weight of joint posture task
+w_posture = 1e-1        # weight of joint posture task
 w_forceRef = 1e-5       # weight of force regularization task
 w_torque_bounds = 1.0   # weight of the torque bounds
 w_joint_bounds = 0.0
+
+gain_vector = np.array(  # gain vector for postural task
+    [
+        10.,
+        5.,
+        5.,
+        1.,
+        1.,
+        10.,  # lleg  #low gain on axis along y and knee
+        10.,
+        5.,
+        5.,
+        1.,
+        1.,
+        10.,  #rleg
+        5000.,
+        5000.,  #chest
+        500.,
+        1000.,
+        10.,
+        10.,
+        10.,
+        10.,
+        100.,
+        50.,  #larm
+        50.,
+        100.,
+        10.,
+        10.,
+        10.,
+        10.,
+        100.,
+        50.,  #rarm
+        100.,
+        100.
+    ]  #head
+)
+masks_posture = np.ones(32)
 
 tau_max_scaling = 1.45  # scaling factor of torque bounds
 v_max_scaling = 0.8
