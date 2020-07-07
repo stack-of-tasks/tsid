@@ -92,3 +92,4 @@ urdf = "/talos_data/robots/talos_reduced.urdf"
 path = getModelPath(urdf)
 urdf = path + urdf
 srdf = path + '/talos_data/srdf/talos.srdf'
+path = os.path.join(path, '../..')
