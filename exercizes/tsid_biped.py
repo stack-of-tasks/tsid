@@ -139,7 +139,7 @@ class TsidBiped:
 
         if viewer:
             self.robot_display = pin.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path], pin.JointModelFreeFlyer())
-            try:
+            if isinstance(self.viz, pin.visualize.GepettoVisualizer):
                 import gepetto.corbaserver
                 Viewer = pin.visualize.GepettoVisualizer
                 launched = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
@@ -157,7 +157,7 @@ class TsidBiped:
                 # self.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
                 self.gui.addFloor('world/floor')
                 self.gui.setLightingMode('world/floor', 'OFF')
-            except ModuleNotFoundError:  # Meshcat
+            elif isinstance(self.viz, pin.visualize.MeshcatVisualizer):
                 Viewer = pin.visualize.MeshcatVisualizer
                 self.viz = Viewer(self.robot_display.model, self.robot_display.collision_model,
                                   self.robot_display.visual_model)
