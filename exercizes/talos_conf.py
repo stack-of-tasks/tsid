@@ -10,10 +10,10 @@ N_SIMULATION = 4000  # number of time steps simulated
 dt = 0.002           # controller time step
 
 lxp = 0.10                                  # foot length in positive x direction
-lxn = 0.05                                  # foot length in negative x direction
-lyp = 0.05                                  # foot length in positive y direction
-lyn = 0.05                                  # foot length in negative y direction
-lz = 0.07                                   # foot sole height with respect to ankle joint
+lxn = 0.10                                  # foot length in negative x direction
+lyp = 0.065                                  # foot length in positive y direction
+lyn = 0.065                                  # foot length in negative y direction
+lz = 0.                                     # foot sole height with respect to ankle joint
 mu = 0.3                                    # friction coefficient
 fMin = 5.0                                  # minimum normal force
 fMax = 1000.0                               # maximum normal force
