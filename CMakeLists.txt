@@ -28,7 +28,7 @@ OPTION(INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
 OPTION(SUFFIX_SO_VERSION "Suffix library name with its version" ON)
 OPTION(INITIALIZE_WITH_NAN "Initialize Eigen entries with NaN" OFF)
 OPTION(EIGEN_RUNTIME_NO_MALLOC "If ON, it can assert in case of runtime allocation" ON)
-OPTION(EIGEN_NO_AUTOMATIC_RESIZING "If ON, it forbids automatic resizing of dynamics arrays and matrices" ON)
+OPTION(EIGEN_NO_AUTOMATIC_RESIZING "If ON, it forbids automatic resizing of dynamics arrays and matrices" OFF)
 
 # Project configuration
 IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
@@ -79,7 +79,6 @@ SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 
 IF(BUILD_PYTHON_INTERFACE)
   FINDPYTHON()
-  INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS})
   SET(PYWRAP ${PROJECT_NAME}_pywrap)
   ADD_PROJECT_DEPENDENCY(eigenpy REQUIRED PKG_CONFIG_REQUIRES eigenpy)
   SET(BOOST_COMPONENTS ${BOOST_COMPONENTS} python)
