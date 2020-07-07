@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
+// Copyright (c) 2020 CNRS, NYU, MPI Tübingen, PAL Robotics
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it

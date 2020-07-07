@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
+// Copyright (c) 2020 CNRS, NYU, MPI Tübingen, PAL Robotics
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -127,9 +127,6 @@ namespace tsid
       m_constraint.upperBound() =  b_upper - m_drift.head(m_dim);
  
       m_constraint.setMatrix(Jcom.block(0,0,m_dim,m_nv));
-
-      b_lower.setZero(m_dim);
-      b_upper.setZero(m_dim);
 
       return m_constraint;
     }
