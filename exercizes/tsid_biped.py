@@ -40,14 +40,14 @@ class TsidBiped:
                                    conf.contactNormal, conf.mu, conf.fMin, conf.fMax)
         contactRF.setKp(conf.kp_contact * np.ones(6))
         contactRF.setKd(2.0 * np.sqrt(conf.kp_contact) * np.ones(6))
-        self.RF = robot.model().getJointId(conf.rf_frame_name)
-        H_rf_ref = robot.position(data, self.RF)
+        self.RF = robot.model().getFrameId(conf.rf_frame_name)
+        H_rf_ref = robot.framePosition(data, self.RF)
 
         # modify initial robot configuration so that foot is on the ground (z=0)
         q[2] -= H_rf_ref.translation[2] - conf.lz
         formulation.computeProblemData(0.0, q, v)
         data = formulation.data()
-        H_rf_ref = robot.position(data, self.RF)
+        H_rf_ref = robot.framePosition(data, self.RF)
         contactRF.setReference(H_rf_ref)
         if conf.w_contact >= 0.0:
             formulation.addRigidContact(contactRF, conf.w_forceRef, conf.w_contact, 1)
@@ -58,8 +58,8 @@ class TsidBiped:
                                    conf.contactNormal, conf.mu, conf.fMin, conf.fMax)
         contactLF.setKp(conf.kp_contact * np.ones(6))
         contactLF.setKd(2.0 * np.sqrt(conf.kp_contact) * np.ones(6))
-        self.LF = robot.model().getJointId(conf.lf_frame_name)
-        H_lf_ref = robot.position(data, self.LF)
+        self.LF = robot.model().getFrameId(conf.lf_frame_name)
+        H_lf_ref = robot.framePosition(data, self.LF)
         contactLF.setReference(H_lf_ref)
         if conf.w_contact >= 0.0:
             formulation.addRigidContact(contactLF, conf.w_forceRef, conf.w_contact, 1)
@@ -170,10 +170,10 @@ class TsidBiped:
         return q, v
 
     def get_placement_LF(self):
-        return self.robot.position(self.formulation.data(), self.LF)
+        return self.robot.framePosition(self.formulation.data(), self.LF)
 
     def get_placement_RF(self):
-        return self.robot.position(self.formulation.data(), self.RF)
+        return self.robot.framePosition(self.formulation.data(), self.RF)
 
     def set_com_ref(self, pos, vel, acc):
         self.sample_com.pos(pos)
@@ -201,20 +201,20 @@ class TsidBiped:
 
     def get_LF_3d_pos_vel_acc(self, dv):
         data = self.formulation.data()
-        H = self.robot.position(data, self.LF)
-        v = self.robot.velocity(data, self.LF)
+        H = self.robot.framePosition(data, self.LF)
+        v = self.robot.frameVelocity(data, self.LF)
         a = self.leftFootTask.getAcceleration(dv)
         return H.translation, v.linear, a[:3]
 
     def get_RF_3d_pos_vel_acc(self, dv):
         data = self.formulation.data()
-        H = self.robot.position(data, self.RF)
-        v = self.robot.velocity(data, self.RF)
+        H = self.robot.framePosition(data, self.RF)
+        v = self.robot.frameVelocity(data, self.RF)
         a = self.rightFootTask.getAcceleration(dv)
         return H.translation, v.linear, a[:3]
 
     def remove_contact_RF(self, transition_time=0.0):
-        H_rf_ref = self.robot.position(self.formulation.data(), self.RF)
+        H_rf_ref = self.robot.framePosition(self.formulation.data(), self.RF)
         self.trajRF.setReference(H_rf_ref)
         self.rightFootTask.setReference(self.trajRF.computeNext())
 
@@ -222,7 +222,7 @@ class TsidBiped:
         self.contact_RF_active = False
 
     def remove_contact_LF(self, transition_time=0.0):
-        H_lf_ref = self.robot.position(self.formulation.data(), self.LF)
+        H_lf_ref = self.robot.framePosition(self.formulation.data(), self.LF)
         self.trajLF.setReference(H_lf_ref)
         self.leftFootTask.setReference(self.trajLF.computeNext())
 
@@ -230,7 +230,7 @@ class TsidBiped:
         self.contact_LF_active = False
 
     def add_contact_RF(self, transition_time=0.0):
-        H_rf_ref = self.robot.position(self.formulation.data(), self.RF)
+        H_rf_ref = self.robot.framePosition(self.formulation.data(), self.RF)
         self.contactRF.setReference(H_rf_ref)
         if self.conf.w_contact >= 0.0:
             self.formulation.addRigidContact(self.contactRF, self.conf.w_forceRef, self.conf.w_contact, 1)
@@ -240,7 +240,7 @@ class TsidBiped:
         self.contact_RF_active = True
 
     def add_contact_LF(self, transition_time=0.0):
-        H_lf_ref = self.robot.position(self.formulation.data(), self.LF)
+        H_lf_ref = self.robot.framePosition(self.formulation.data(), self.LF)
         self.contactLF.setReference(H_lf_ref)
         if self.conf.w_contact >= 0.0:
             self.formulation.addRigidContact(self.contactLF, self.conf.w_forceRef, self.conf.w_contact, 1)

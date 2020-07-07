@@ -171,8 +171,8 @@ def run_simu():
             tsid.viz.display(q)
             x_com = tsid.robot.com(tsid.formulation.data())
             x_com_ref = tsid.trajCom.getSample(t).pos()
-            H_lf = tsid.robot.position(tsid.formulation.data(), tsid.LF)
-            H_rf = tsid.robot.position(tsid.formulation.data(), tsid.RF)
+            H_lf = tsid.robot.framePosition(tsid.formulation.data(), tsid.LF)
+            H_rf = tsid.robot.framePosition(tsid.formulation.data(), tsid.RF)
             x_lf_ref = tsid.trajLF.getSample(t).pos()[:3]
             x_rf_ref = tsid.trajRF.getSample(t).pos()[:3]
             vizutils.applyViewerConfiguration(tsid.viz, 'world/com', x_com.tolist() + [0, 0, 0, 1.])
@@ -197,9 +197,11 @@ print(" Test Task Space Inverse Dynamics ".center(conf.LINE_WIDTH, '#'))
 print("#" * conf.LINE_WIDTH)
 
 tsid = TsidBiped(conf)
+tsid.q0[2] = 1.02127
+
 com_0 = tsid.robot.com(tsid.formulation.data())
-H_rf_0 = tsid.robot.position(tsid.formulation.data(), tsid.model.getJointId(conf.rf_frame_name))
-H_lf_0 = tsid.robot.position(tsid.formulation.data(), tsid.model.getJointId(conf.lf_frame_name))
+H_rf_0 = tsid.robot.framePosition(tsid.formulation.data(), tsid.model.getFrameId(conf.rf_frame_name))
+H_lf_0 = tsid.robot.framePosition(tsid.formulation.data(), tsid.model.getFrameId(conf.lf_frame_name))
 
 vizutils.addViewerSphere(tsid.viz, 'world/com', conf.SPHERE_RADIUS, conf.COM_SPHERE_COLOR)
 vizutils.addViewerSphere(tsid.viz, 'world/com_ref', conf.REF_SPHERE_RADIUS, conf.COM_REF_SPHERE_COLOR)
