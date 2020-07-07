@@ -15,7 +15,7 @@ class TsidBiped:
         - Regularization task for contact forces
     '''
 
-    def __init__(self, conf, viewer=True):
+    def __init__(self, conf, viewer=pin.visualize.MeshcatVisualizer):
         self.conf = conf
         vector = pin.StdVec_StdString()
         vector.extend(item for item in conf.path)
@@ -139,14 +139,13 @@ class TsidBiped:
 
         if viewer:
             self.robot_display = pin.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path], pin.JointModelFreeFlyer())
-            if isinstance(self.viz, pin.visualize.GepettoVisualizer):
+            if viewer == pin.visualize.GepettoVisualizer:
                 import gepetto.corbaserver
-                Viewer = pin.visualize.GepettoVisualizer
                 launched = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
                 if int(launched[1]) == 0:
                     os.system('gepetto-gui &')
                 time.sleep(1)
-                self.viz = Viewer(self.robot_display.model, self.robot_display.collision_model,
+                self.viz = viewer(self.robot_display.model, self.robot_display.collision_model,
                                   self.robot_display.visual_model)
                 self.viz.initViewer(loadModel=True)
                 self.viz.displayCollisions(False)
@@ -157,9 +156,8 @@ class TsidBiped:
                 # self.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
                 self.gui.addFloor('world/floor')
                 self.gui.setLightingMode('world/floor', 'OFF')
-            elif isinstance(self.viz, pin.visualize.MeshcatVisualizer):
-                Viewer = pin.visualize.MeshcatVisualizer
-                self.viz = Viewer(self.robot_display.model, self.robot_display.collision_model,
+            elif viewer == pin.visualize.MeshcatVisualizer:
+                self.viz = viewer(self.robot_display.model, self.robot_display.collision_model,
                                   self.robot_display.visual_model)
                 self.viz.initViewer(loadModel=True)
                 self.viz.display(q)
