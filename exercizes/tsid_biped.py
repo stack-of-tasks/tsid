@@ -69,7 +69,7 @@ class TsidBiped:
         comTask = tsid.TaskComEquality("task-com", robot)
         comTask.setKp(conf.kp_com * np.ones(3))
         comTask.setKd(2.0 * np.sqrt(conf.kp_com) * np.ones(3))
-        formulation.addMotionTask(comTask, conf.w_com, 1, 0.0)
+        formulation.addMotionTask(comTask, conf.w_com, 0, 0.0)
 
         postureTask = tsid.TaskJointPosture("task-posture", robot)
         postureTask.setKp(conf.kp_posture * conf.gain_vector)
