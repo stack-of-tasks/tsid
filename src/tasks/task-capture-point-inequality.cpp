@@ -42,7 +42,7 @@ namespace tsid
       m_dim = 2;
       m_p_com.setZero(3);
       m_v_com.setZero(3);
-      
+
       m_safety_margin.setZero(m_dim);
 
       m_support_limits_x.setZero(m_dim);
@@ -53,11 +53,11 @@ namespace tsid
 
       b_lower.setZero(m_dim);
       b_upper.setZero(m_dim);
-      
+
       m_g = 9.81;
       m_w = 0;
-      m_ka = 0; 
-      
+      m_ka = 0;
+
     }
 
 
@@ -103,12 +103,12 @@ namespace tsid
     const ConstraintBase & TaskCapturePointInequality::compute(const double t,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    const Data & data)
+                                                    Data & data)
     {
       m_robot.com(data, m_p_com, m_v_com, m_drift);
 
       const Matrix3x & Jcom = m_robot.Jcom(data);
-      
+
       m_w = sqrt(m_g/m_p_com(2));
       m_ka = (2*m_w)/((m_w*m_delta_t+2)*m_delta_t);
 
@@ -119,13 +119,13 @@ namespace tsid
       m_rp_max(1) = m_support_limits_y(1) -m_safety_margin(1); // y max support polygon
 
       for(int i=0; i< m_dim; i++){
-        b_lower(i) = m_ka*(m_rp_min(i) - m_p_com(i) - m_v_com(i)*(m_delta_t+1/m_w)); 
+        b_lower(i) = m_ka*(m_rp_min(i) - m_p_com(i) - m_v_com(i)*(m_delta_t+1/m_w));
         b_upper(i) = m_ka*(m_rp_max(i) - m_p_com(i) - m_v_com(i)*(m_delta_t+1/m_w));
       }
 
-      m_constraint.lowerBound() =  b_lower - m_drift.head(m_dim); 
+      m_constraint.lowerBound() =  b_lower - m_drift.head(m_dim);
       m_constraint.upperBound() =  b_upper - m_drift.head(m_dim);
- 
+
       m_constraint.setMatrix(Jcom.block(0,0,m_dim,m_nv));
 
       return m_constraint;

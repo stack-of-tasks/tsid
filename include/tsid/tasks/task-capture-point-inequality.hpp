@@ -48,11 +48,11 @@ namespace tsid
                                const double timeStep);
 
       int dim() const;
-      //
+
       const ConstraintBase & compute(const double t,
                                      ConstRefVector q,
                                      ConstRefVector v,
-                                     const Data & data);
+                                     Data & data);
 
       const ConstraintBase & getConstraint() const;
 
@@ -68,13 +68,13 @@ namespace tsid
 
     protected:
 
-  
+
       Vector m_drift_vec;
       Vector3 m_drift;
       Vector m_p_com, m_v_com;
       Vector m_rp_min;
       Vector m_rp_max;
-      
+
       ConstraintInequality m_constraint;
 
       Vector m_safety_margin;
