@@ -86,14 +86,14 @@ contact_Point[1, :] = [-lyn, lyp, -lyn, lyp]
 contactRF =tsid.Contact6d("contact_rfoot", robot, rf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
 contactRF.setKp(kp_contact * np.array(np.ones(6)))
 contactRF.setKd(2.0 * np.sqrt(kp_contact) * np.array(np.ones(6)))
-H_rf_ref = robot.position(data, robot.model().getJointId(rf_frame_name))
+H_rf_ref = robot.position(data, robot.model().getFrameId(rf_frame_name))
 contactRF.setReference(H_rf_ref)
 invdyn.addRigidContact(contactRF, w_forceReg)
 
 contactLF =tsid.Contact6d("contact_lfoot", robot, lf_frame_name, contact_Point, contactNormal, mu, fMin, fMax)
 contactLF.setKp(kp_contact * np.array(np.ones(6)))
 contactLF.setKd(2.0 * np.sqrt(kp_contact) * np.array(np.ones(6)))
-H_lf_ref = robot.position(data, robot.model().getJointId(lf_frame_name))
+H_lf_ref = robot.position(data, robot.model().getFrameId(lf_frame_name))
 contactLF.setReference(H_lf_ref)
 invdyn.addRigidContact(contactLF, w_forceReg)
 
