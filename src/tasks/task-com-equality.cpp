@@ -146,6 +146,6 @@ namespace tsid
       m_constraint.setVector(m_a_des - m_drift);
       return m_constraint;
     }
-    
+
   }
 }

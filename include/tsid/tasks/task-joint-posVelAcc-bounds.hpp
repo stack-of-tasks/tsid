@@ -23,7 +23,7 @@
 #include <tsid/math/constraint-inequality.hpp>
 
 /** This class has been implemented following :
-* Andrea del Prete. Joint Position and Velocity Bounds in Discrete-Time 
+* Andrea del Prete. Joint Position and Velocity Bounds in Discrete-Time
 * Acceleration/Torque Control of Robot Manipulators. IEEE Robotics and Automation
 * Letters, IEEE 2018, 3 (1), pp.281-288.￿10.1109/LRA.2017.2738321￿. hal-01356989v3
 * And
@@ -81,7 +81,7 @@ namespace tsid
        */
       void isStateViable(ConstRefVector q,ConstRefVector dq ,bool verbose=true);
 
-      /** Compute acceleration limits imposed by position bounds. 
+      /** Compute acceleration limits imposed by position bounds.
        * Fills in  m_ddqLBPos and m_ddqUBPos
        */
       void computeAccLimitsFromPosLimits(ConstRefVector q,ConstRefVector dq, bool verbose=true);
@@ -89,12 +89,12 @@ namespace tsid
       /** Compute acceleration limits imposed by viability.
        * ddqMax is the maximum acceleration that will be necessary to stop the
        * joint before hitting the position limits.
-       * 
+       *
        * -sqrt( 2*ddqMax*(q-qMin) ) < dq[t+1] < sqrt( 2*ddqMax*(qMax-q) )
        * ddqMin[2] = (-sqrt(max(0.0, 2*MAX_ACC*(q[i]+DT*dq[i]-qMin))) - dq[i])/DT;
        * ddqMax[2] = (sqrt(max(0.0, 2*MAX_ACC*(qMax-q[i]-DT*dq[i]))) - dq[i])/DT;
-       * 
-       * Fills in  m_ddqLBVia and m_ddqUBVia 
+       *
+       * Fills in  m_ddqLBVia and m_ddqUBVia
        */
       void computeAccLimitsFromViability(ConstRefVector q,ConstRefVector dq, bool verbose=true);
 
@@ -158,7 +158,7 @@ namespace tsid
       Vector m_ddqMax_q2;
       Vector m_ddqMin_q2;
       Vector m_minus_dq_over_dt;
-      
+
       //Used in computeAccLimitsFromViability
       double m_dt_square;
       Vector m_dt_dq;
