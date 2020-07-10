@@ -152,7 +152,7 @@ class TsidBiped:
                 self.viz.displayVisuals(True)
                 self.viz.display(q)
 
-                self.gui = self.robot_display.viewer.gui
+                self.gui = self.viz.viewer.gui
                 # self.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
                 self.gui.addFloor('world/floor')
                 self.gui.setLightingMode('world/floor', 'OFF')
@@ -161,6 +161,9 @@ class TsidBiped:
                                   self.robot_display.visual_model)
                 self.viz.initViewer(loadModel=True)
                 self.viz.display(q)
+                
+    def display(self, q):
+        self.viz.display(q)
 
     def integrate_dv(self, q, v, dv, dt):
         v_mean = v + 0.5 * dt * dv

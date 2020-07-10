@@ -7,12 +7,14 @@ Created on Thu Apr 18 09:47:07 2019
 
 import numpy as np
 import os
+import pinocchio as pin
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 LINE_WIDTH = 60
 
 N_SIMULATION = 4000             # number of time steps simulated
 dt = 0.002                      # controller time step
+nv = 37
 
 lxp = 0.10                          # foot length in positive x direction
 lxn = 0.05                          # foot length in negative x direction
@@ -41,7 +43,10 @@ kp_contact = 10.0               # proportional gain of contact constraint
 kp_foot = 10.0                  # proportional gain of contact constraint
 kp_com = 10.0                   # proportional gain of center of mass task
 kp_posture = 1.0               # proportional gain of joint posture task
+gain_vector = kp_posture*np.ones(nv-6)
+masks_posture = np.ones(nv-6)
 
+viewer = pin.visualize.GepettoVisualizer
 PRINT_N = 500                   # print every PRINT_N time steps
 DISPLAY_N = 20                  # update robot configuration in viwewer every DISPLAY_N time steps
 CAMERA_TRANSFORM = [4.0, -0.2, 0.4, 0.5243823528289795, 0.518651008605957, 0.4620114266872406, 0.4925136864185333]

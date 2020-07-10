@@ -11,7 +11,7 @@ print("".center(conf.LINE_WIDTH,'#'))
 print(" Test Task Space Inverse Dynamics - Biped ".center(conf.LINE_WIDTH, '#'))
 print("".center(conf.LINE_WIDTH,'#'), '\n')
 
-tsid = TsidBiped(conf)
+tsid = TsidBiped(conf, conf.viewer)
 
 N = conf.N_SIMULATION
 com_pos = np.empty((3, N))*nan
@@ -69,7 +69,7 @@ for i in range(0, N):
     q, v = tsid.integrate_dv(q, v, dv, conf.dt)
     t += conf.dt
     
-    if i%conf.DISPLAY_N == 0: tsid.robot_display.display(q)
+    if i%conf.DISPLAY_N == 0: tsid.display(q)
 
     time_spent = time.time() - time_start
     if(time_spent < conf.dt): time.sleep(conf.dt-time_spent)

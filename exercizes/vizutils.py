@@ -1,4 +1,3 @@
-import meshcat
 import numpy as np
 import pinocchio as pin
 
@@ -21,6 +20,7 @@ def meshcat_transform(x, y, z, q, u, a, t):
 
 def addViewerBox(viz, name, sizex, sizey, sizez, rgba):
     if isinstance(viz, pin.visualize.MeshcatVisualizer):
+        import meshcat
         viz.viewer[name].set_object(meshcat.geometry.Box([sizex, sizey, sizez]),
                                     meshcat_material(*rgba))
     elif isinstance(viz, pin.visualize.GepettoVisualizer):
@@ -31,6 +31,7 @@ def addViewerBox(viz, name, sizex, sizey, sizez, rgba):
 
 def addViewerSphere(viz, name, size, rgba):
     if isinstance(viz, pin.visualize.MeshcatVisualizer):
+        import meshcat
         viz.viewer[name].set_object(meshcat.geometry.Sphere(size),
                                     meshcat_material(*rgba))
     elif isinstance(viz, pin.visualize.GepettoVisualizer):

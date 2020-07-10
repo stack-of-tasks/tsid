@@ -20,7 +20,7 @@ PLOT_JOINT_VEL = 0
 
 data = np.load(conf.DATA_FILE_TSID)
 
-tsid = TsidBiped(conf)
+tsid = TsidBiped(conf, conf.viewer)
 
 N = data['com'].shape[1]
 N_pre  = int(conf.T_pre/conf.dt)
@@ -146,7 +146,7 @@ for i in range(-N_pre, N+N_post):
     q, v = tsid.integrate_dv(q, v, dv, conf.dt)
     t += conf.dt
     
-    if i%conf.DISPLAY_N == 0: tsid.robot_display.display(q)
+    if i%conf.DISPLAY_N == 0: tsid.display(q)
 
     time_spent = time.time() - time_start
     if(time_spent < conf.dt): time.sleep(conf.dt-time_spent)

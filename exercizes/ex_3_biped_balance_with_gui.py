@@ -14,6 +14,7 @@ import numpy as np
 import pinocchio as pin
 
 import talos_conf as conf
+#import romeo_conf as conf
 import vizutils
 from tsid_biped import TsidBiped
 
@@ -94,7 +95,7 @@ def switch_contact_LF():
 
 
 def toggle_wireframe_mode():
-    tsid.viz.setWireFrameMode('world', 'WIREFRAME')
+    tsid.gui.setWireFrameMode('world', 'WIREFRAME')
 
 
 def push_robot():
@@ -168,7 +169,7 @@ def run_simu():
             v = np.linalg.lstsq(A, b, rcond=-1)[0]
 
         if i % conf.DISPLAY_N == 0:
-            tsid.viz.display(q)
+            tsid.display(q)
             x_com = tsid.robot.com(tsid.formulation.data())
             x_com_ref = tsid.trajCom.getSample(t).pos()
             H_lf = tsid.robot.framePosition(tsid.formulation.data(), tsid.LF)
@@ -196,7 +197,7 @@ print("#" * conf.LINE_WIDTH)
 print(" Test Task Space Inverse Dynamics ".center(conf.LINE_WIDTH, '#'))
 print("#" * conf.LINE_WIDTH)
 
-tsid = TsidBiped(conf)
+tsid = TsidBiped(conf, conf.viewer)
 tsid.q0[2] = 1.02127
 
 com_0 = tsid.robot.com(tsid.formulation.data())

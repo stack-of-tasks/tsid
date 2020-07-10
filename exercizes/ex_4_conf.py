@@ -7,6 +7,7 @@ Created on Thu Apr 18 09:47:07 2019
 
 import numpy as np
 import os
+import pinocchio as pin
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 LINE_WIDTH = 60
@@ -20,6 +21,7 @@ filename = str(os.path.dirname(os.path.abspath(__file__)))
 path = filename + '/../models/romeo'
 urdf = path + '/urdf/romeo.urdf'
 srdf = path + '/srdf/romeo_collision.srdf'
+nv = 37
 foot_scaling = 1.
 lxp = foot_scaling*0.10                          # foot length in positive x direction
 lxn = foot_scaling*0.05                          # foot length in negative x direction
@@ -68,9 +70,12 @@ kp_contact = 10.0               # proportional gain of contact constraint
 kp_foot = 10.0                  # proportional gain of contact constraint
 kp_com = 10.0                   # proportional gain of center of mass task
 kp_posture = 1.0               # proportional gain of joint posture task
+gain_vector = kp_posture*np.ones(nv-6)
+masks_posture = np.ones(nv-6)
 
 # configuration for viewer
 # ----------------------------------------------
+viewer = pin.visualize.GepettoVisualizer
 PRINT_N = 500                   # print every PRINT_N time steps
 DISPLAY_N = 20                  # update robot configuration in viwewer every DISPLAY_N time steps
 CAMERA_TRANSFORM = [3.578777551651001, 1.2937744855880737, 0.8885031342506409, 0.4116811454296112, 0.5468055009841919, 0.6109083890914917, 0.3978860676288605]
