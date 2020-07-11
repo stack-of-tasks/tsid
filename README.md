@@ -3,21 +3,45 @@
 [![Pipeline status](https://gitlab.laas.fr/stack-of-tasks/tsid/badges/master/pipeline.svg)](https://gitlab.laas.fr/stack-of-tasks/tsid/commits/master)
 [![Coverage report](https://gitlab.laas.fr/stack-of-tasks/tsid/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/stack-of-tasks/tsid/master/coverage/)
 
-TSID is C++ library for optimization-based inverse-dynamics control based on the rigid multi-body dynamics library [Pinocchio](https://github.com/stack-of-tasks/pinocchio).
-Take a look at the project [wiki](https://github.com/stack-of-tasks/tsid/wiki) for more details.
+TSID is a C++ library for optimization-based inverse-dynamics control based on the rigid multi-body dynamics library [Pinocchio](https://github.com/stack-of-tasks/pinocchio).
 
-## Dependencies
+## Documentation
+* Take a look at the project [wiki](https://github.com/stack-of-tasks/tsid/wiki) for an overview of the design of the library.
+* In the exercises folder you can find several examples of how to use TSID in Python with robot manipulators, humanoids, or quadrupeds.
+* On the [website of Andrea Del Prete](https://andreadelprete.github.io/#teaching) you can find slides and video lessons on TSID.
+* [Memmo 2020 summer school](https://memory-of-motion.github.io/summer-school/)
+
+## Installation from Debian/Ubuntu packages, with robotpkg
+If you have never added robotpkg's software repository you can do it with the following commands:
+```
+sudo tee /etc/apt/sources.list.d/robotpkg.list <<EOF
+deb [arch=amd64] http://robotpkg.openrobots.org/packages/debian/pub $(lsb_release -sc) robotpkg
+EOF
+
+curl http://robotpkg.openrobots.org/packages/debian/robotpkg.key | sudo apt-key add -
+sudo apt update
+```
+You can install TSID and its python bindings (replace * with you Python version) with:
+```
+sudo apt install robotpkg-py3*-tsid
+```
+
+
+## Installation from sources
+
+First you need to install the following dependencies:
 * boost (unit_test_framework)
 * eigen3
 * [pinocchio](https://github.com/stack-of-tasks/pinocchio)
 * [eiquadprog](https://github.com/stack-of-tasks/eiquadprog)
+* [example-robot-data](https://github.com/Gepetto/example-robot-data) (only for running the examples)
 
 To install eigen3 on Ubuntu you can use apt-get:
   `sudo apt-get install libeigen3-dev`
 
 To install [pinocchio](https://github.com/stack-of-tasks/pinocchio) follow the instruction on its website.
 
-## Installation
+To compile TSID:
 
     cd $DEVEL/openrobots/src/
     git clone --recursive git@github.com:stack-of-tasks/tsid.git
@@ -36,7 +60,7 @@ To install EigenPy you can compile the source code:
 
 or, on Ubuntu, you can use apt-get:
 
-    sudo apt-get install robotpkg-py27-eigenpy
+    sudo apt-get install robotpkg-py3*-eigenpy
 
 For testing the python bindings, you can run the unit test scripts in the `script` folder, for instance:
 
