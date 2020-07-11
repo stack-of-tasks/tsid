@@ -1,6 +1,5 @@
 # TSID - Task Space Inverse Dynamics
-
-[![Building Status](https://travis-ci.org/stack-of-tasks/tsid.svg?branch=master)](https://travis-ci.org/stack-of-tasks/tsid)
+[![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![Pipeline status](https://gitlab.laas.fr/stack-of-tasks/tsid/badges/master/pipeline.svg)](https://gitlab.laas.fr/stack-of-tasks/tsid/commits/master)
 [![Coverage report](https://gitlab.laas.fr/stack-of-tasks/tsid/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/stack-of-tasks/tsid/master/coverage/)
 
@@ -51,14 +50,32 @@ To run the demo using gepetto-viewer:
 
 This package is authored by:
 
-- [Andread Del Prete](https://andreadelprete.github.io) (University of Trento)
+- [Andrea Del Prete](https://andreadelprete.github.io) (University of Trento)
 - [Justin Carpentier](https://jcarpent.github.io) (INRIA)
 
 It includes key contributions from:
 
 - [Julian Viereck](https://github.com/jviereck) (Max Planck Institute, New  York  University)
 - [Sanghyun Kim](https://github.com/ggory15) (Seoul National University)
+- [Eloise Dalin](https://github.com/dalinel) (LORIA, INRIA Lorraine)
+- [Noelie Ramuzat](https://github.com/NoelieRamuzat) (LAAS, CNRS)
+- [Pierre Fernbach](https://github.com/pFernbach) (LAAS, CNRS)
+- [Aurelie Bonnefoy](https://github.com/ABonnefoy) (LAAS, CNRS)
 
 And is maintained by:
 
 - [Guilhem Saurel](https://github.com/nim65s) (LAAS-CNRS)
+
+## Citing
+
+If you are (or not) happy with TSID and want to cite it, please use the following citation:
+
+    @inproceedings {adelprete:jnrh:2016,
+	    title = {Implementing Torque Control with High-Ratio Gear Boxes and without Joint-Torque Sensors},
+	    booktitle = {Int. Journal of Humanoid Robotics},
+	    year = {2016},
+	    pages = {1550044},
+	    url = {https://hal.archives-ouvertes.fr/hal-01136936/document},
+	    author = {Andrea Del Prete, Nicolas Mansard, Oscar E Ramos, Olivier Stasse, Francesco Nori}
+    }
+
