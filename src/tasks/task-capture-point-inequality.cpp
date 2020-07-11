@@ -54,7 +54,7 @@ namespace tsid
       b_lower.setZero(m_dim);
       b_upper.setZero(m_dim);
 
-      m_g = 9.81;
+      m_g = robot.model().gravity.linear().norm();
       m_w = 0;
       m_ka = 0;
 
