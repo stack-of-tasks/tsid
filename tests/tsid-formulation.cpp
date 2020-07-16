@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   tsid->addMotionTask(*rightFootTask, w_RF, 1);
 
   TrajectorySample s(12, 6);
-  SE3ToVector(H_rf_ref, s.pos);
+  SE3ToVector(H_rf_ref, s.value);
   rightFootTask->setReference(s);
 
   Vector3 com_ref = robot.com(tsid->data());
