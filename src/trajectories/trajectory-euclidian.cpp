@@ -35,14 +35,14 @@ namespace tsid
 
     void TrajectoryEuclidianConstant::setReference(ConstRefVector ref)
     {
-      m_sample.pos = ref;
-      m_sample.vel.setZero(ref.size());
-      m_sample.acc.setZero(ref.size());
+      m_sample.value = ref;
+      m_sample.derivative.setZero(ref.size());
+      m_sample.second_derivative.setZero(ref.size());
     }
 
     unsigned int TrajectoryEuclidianConstant::size() const
     {
-      return (unsigned int)m_sample.pos.size();
+      return (unsigned int)m_sample.value.size();
     }
 
     const TrajectorySample & TrajectoryEuclidianConstant::operator()(double )

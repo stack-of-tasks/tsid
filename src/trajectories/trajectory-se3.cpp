@@ -36,7 +36,7 @@ namespace tsid
       :TrajectoryBase(name)
     {
       m_sample.resize(12, 6);
-      SE3ToVector(M, m_sample.pos);
+      SE3ToVector(M, m_sample.value);
     }
 
     unsigned int TrajectorySE3Constant::size() const
@@ -47,7 +47,7 @@ namespace tsid
     void TrajectorySE3Constant::setReference(const pinocchio::SE3 & ref)
     {
       m_sample.resize(12, 6);
-      SE3ToVector(ref, m_sample.pos);
+      SE3ToVector(ref, m_sample.value);
     }
 
     const TrajectorySample & TrajectorySE3Constant::operator()(double )

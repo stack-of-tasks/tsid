@@ -120,12 +120,12 @@ namespace tsid
 
     const Vector & TaskComEquality::position_ref() const
     {
-      return m_ref.pos;
+      return m_ref.value;
     }
 
     const Vector & TaskComEquality::velocity_ref() const
     {
-      return m_ref.vel;
+      return m_ref.derivative;
     }
 
     const ConstraintBase & TaskComEquality::getConstraint() const
@@ -141,11 +141,11 @@ namespace tsid
       m_robot.com(data, m_p_com, m_v_com, m_drift);
 
       // Compute errors
-      m_p_error = m_p_com - m_ref.pos;
-      m_v_error = m_v_com - m_ref.vel;
+      m_p_error = m_p_com - m_ref.value;
+      m_v_error = m_v_com - m_ref.derivative;
       m_a_des = - m_Kp.cwiseProduct(m_p_error)
                 - m_Kd.cwiseProduct(m_v_error)
-                + m_ref.acc;
+                + m_ref.second_derivative;
 
       m_p_error_vec = m_p_error;
       m_v_error_vec = m_v_error;

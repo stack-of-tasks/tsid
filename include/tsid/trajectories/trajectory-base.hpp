@@ -32,16 +32,16 @@ namespace tsid
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       
-      math::Vector pos, vel, acc;
+      math::Vector value, derivative, second_derivative;
 
       TrajectorySample(unsigned int size=0)
       {
         resize(size, size);
       }
 
-      TrajectorySample(unsigned int size_pos, unsigned int size_vel)
+      TrajectorySample(unsigned int size_value, unsigned int size_derivative)
       {
-        resize(size_pos, size_vel);
+        resize(size_value, size_derivative);
       }
 
       void resize(unsigned int size)
@@ -49,11 +49,11 @@ namespace tsid
         resize(size, size);
       }
 
-      void resize(unsigned int size_pos, unsigned int size_vel)
+      void resize(unsigned int size_value, unsigned int size_derivative)
       {
-        pos.setZero(size_pos);
-        vel.setZero(size_vel);
-        acc.setZero(size_vel);
+        value.setZero(size_value);
+        derivative.setZero(size_derivative);
+        second_derivative.setZero(size_derivative);
       }
     };
 

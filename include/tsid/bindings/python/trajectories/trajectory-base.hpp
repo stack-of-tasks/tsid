@@ -58,12 +58,12 @@ namespace tsid
       }
 
       static void setpos_vec(TrajSample & self, const Eigen::VectorXd pos){
-        assert (self.pos.size() == pos.size());
-        self.pos = pos;
+        assert (self.value.size() == pos.size());
+        self.value = pos;
       }
       static void setpos_se3(TrajSample & self, const pinocchio::SE3 & pos){
-        assert (self.pos.size() == 12);
-        tsid::math::SE3ToVector(pos, self.pos);
+        assert (self.value.size() == 12);
+        tsid::math::SE3ToVector(pos, self.value);
       }
       static void setvel(TrajSample & self, const Eigen::VectorXd vel){
         assert (self.vel.size() == vel.size());
@@ -80,7 +80,7 @@ namespace tsid
           self.resize(pos_size, vel_size);
       }
       static Eigen::VectorXd pos(const TrajSample & self){
-          return self.pos;
+          return self.value;
       }
       static Eigen::VectorXd vel(const TrajSample & self){
           return self.vel;
