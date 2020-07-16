@@ -96,12 +96,12 @@ namespace tsid
     }
     const Vector & TaskAMEquality::momentum_ref() const
     {
-      return m_ref.derivative;
+      return m_ref.value;
     }
 
     const Vector & TaskAMEquality::dmomentum_ref() const
     {
-      return m_ref.second_derivative;
+      return m_ref.derivative;
     }
 
     const ConstraintBase & TaskAMEquality::getConstraint() const
@@ -118,10 +118,10 @@ namespace tsid
       // Get momentum jacobian
       const Matrix6x & J_am = m_robot.momentumJacobian(data);
       m_L = J_am.bottomRows(3) * v;
-      m_L_error = m_L - m_ref.derivative;
+      m_L_error = m_L - m_ref.value;
 
       m_dL_des = - m_Kp.cwiseProduct(m_L_error)
-                + m_ref.second_derivative;
+                + m_ref.derivative;
 
 #ifndef NDEBUG
 //      std::cout<<m_name<<" errors: "<<m_L_error.norm()<<" "
