@@ -36,7 +36,7 @@ namespace tsid
     class TSID_DLLAPI SolverHQPBase
     {
     public:
-      
+
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       static std::string const HQP_status_string [5];
@@ -46,6 +46,7 @@ namespace tsid
       typedef math::ConstRefMatrix ConstRefMatrix;
 
       SolverHQPBase(const std::string & name);
+      virtual ~SolverHQPBase() {};
 
       virtual const std::string & name() { return m_name; }
 
@@ -75,7 +76,7 @@ namespace tsid
       virtual bool setMaximumTime(double seconds);
 
     protected:
-      
+
       std::string           m_name;
       bool                  m_useWarmStart;   // true if the solver is allowed to warm start
       int                   m_maxIter;        // max number of iterations

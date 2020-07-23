@@ -309,6 +309,10 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   std::cout<<"\n### TEST FINISHED ###\n";
   getProfiler().report_all(3, std::cout);
   getStatistics().report_all(1, std::cout);
+
+  delete solver;
+  delete solver_rt;
+  delete solver_fast;
 }
 
 
