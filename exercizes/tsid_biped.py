@@ -17,9 +17,7 @@ class TsidBiped:
 
     def __init__(self, conf, viewer=pin.visualize.MeshcatVisualizer):
         self.conf = conf
-        vector = pin.StdVec_StdString()
-        vector.extend(item for item in conf.path)
-        self.robot = tsid.RobotWrapper(conf.urdf, vector, pin.JointModelFreeFlyer(), False)
+        self.robot = tsid.RobotWrapper(conf.urdf, [conf.path], pin.JointModelFreeFlyer(), False)
         robot = self.robot
         self.model = robot.model()
         pin.loadReferenceConfigurations(self.model, conf.srdf, False)

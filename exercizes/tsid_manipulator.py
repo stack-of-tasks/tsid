@@ -18,9 +18,7 @@ class TsidManipulator:
     
     def __init__(self, conf, viewer=True):
         self.conf = conf
-        vector = se3.StdVec_StdString()
-        vector.extend(item for item in conf.path)
-        self.robot = tsid.RobotWrapper(conf.urdf, vector, False)
+        self.robot = tsid.RobotWrapper(conf.urdf, [conf.path], False)
         robot = self.robot
         self.model = model = robot.model()
         try:

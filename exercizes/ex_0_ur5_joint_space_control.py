@@ -22,9 +22,7 @@ PLOT_JOINT_ACC = 1
 PLOT_TORQUES = 0
 USE_VIEWER = 1
 
-vector = pin.StdVec_StdString()
-vector.extend(item for item in conf.path)
-robot = tsid.RobotWrapper(conf.urdf, vector, False)
+robot = tsid.RobotWrapper(conf.urdf, [conf.path], False)
 model = robot.model()
 
 formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
