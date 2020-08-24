@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_6d )
   pinocchio::Data data(robot.model());
   robot.computeAllTerms(data, q, v);
 
-  pinocchio::SE3 H_ref = robot.position(data, robot.model().getJointId(frameName));
+  pinocchio::SE3 H_ref = robot.position(data, robot.model().getFrameId(frameName));
   contact.setReference(H_ref);
 
   double t = 0.0;
