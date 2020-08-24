@@ -23,10 +23,8 @@ notifications:
 email:
   - pinocchio@laas.fr
 branches:
-only:
-  - master
-  - debian
-  - devel
+  only:
+    - never
 matrix:
 allow_failures:
   - compiler:
