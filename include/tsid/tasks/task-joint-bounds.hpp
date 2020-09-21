@@ -60,13 +60,13 @@ namespace tsid
 //      void mask(const Vector & mask);
 
     protected:
-      double m_dt;
-      int m_na, m_nv;
       Vector m_v_lb, m_v_ub;
       Vector m_a_lb, m_a_ub;
       Vector m_ddq_max_due_to_vel, m_ddq_min_due_to_vel;
 //      Vector m_mask;
       ConstraintBound m_constraint;
+      double m_dt;
+      int m_nv, m_na;
     };
 
   }
