@@ -36,7 +36,7 @@ namespace tsid
         ss<<"Level "<< priority<<endl;
         for(ConstraintLevel::const_iterator iit=it->begin(); iit!=it->end(); iit++)
         {
-          const math::ConstraintBase* c = iit->second;
+          auto c = iit->second;
           ss<<" - "<<c->name()<<": w="<<iit->first<<", ";
           if(c->isEquality())
             ss<<"equality, ";
@@ -56,7 +56,7 @@ namespace tsid
         {
           for(ConstraintLevel::const_iterator iit=it->begin(); iit!=it->end(); iit++)
           {
-            const math::ConstraintBase* c = iit->second;
+            auto c = iit->second;
             ss<<"*** "<<c->name()<<" *** ";
             if(c->isEquality())
             {

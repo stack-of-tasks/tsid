@@ -40,6 +40,7 @@ namespace tsid
                            ConstRefMatrix A,
                            ConstRefVector lb,
                            ConstRefVector ub);
+      virtual ~ConstraintInequality() {}
 
       unsigned int rows() const;
       unsigned int cols() const;
