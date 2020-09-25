@@ -100,9 +100,9 @@ namespace tsid
       m_safety_margin(1) = y_margin;
     }
 
-    const ConstraintBase & TaskCapturePointInequality::compute(const double t,
-                                                    ConstRefVector q,
-                                                    ConstRefVector v,
+    const ConstraintBase & TaskCapturePointInequality::compute(const double,
+                                                    ConstRefVector,
+                                                    ConstRefVector,
                                                     Data & data)
     {
       m_robot.com(data, m_p_com, m_v_com, m_drift);

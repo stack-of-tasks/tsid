@@ -81,7 +81,7 @@ namespace tsid
       Vector m_support_limits_x;
       Vector m_support_limits_y;
 
-      double m_nv;
+      Eigen::Index m_nv;
       double m_delta_t;
       double m_g;
       double m_w;

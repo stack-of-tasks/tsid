@@ -309,7 +309,7 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_bounds )
   {
     robot.computeAllTerms(data, q, v);
     const ConstraintBase & constraint = task.compute(t, q, v, data);
-    BOOST_CHECK(constraint.rows()==robot.nv());
+    BOOST_CHECK(constraint.rows()==(Eigen::Index)robot.nv());
     BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols())==static_cast<tsid::math::Index>(robot.nv()));
     BOOST_REQUIRE(isFinite(constraint.lowerBound()));
     BOOST_REQUIRE(isFinite(constraint.upperBound()));
@@ -361,7 +361,7 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posVelAcc_bounds )
   {
     robot.computeAllTerms(data, q, v);
     const ConstraintBase & constraint = task.compute(t, q, v, data);
-    BOOST_CHECK(constraint.rows()==robot.na());
+    BOOST_CHECK(constraint.rows()==(Eigen::Index)robot.na());
     BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols())==static_cast<tsid::math::Index>(robot.nv()));
     BOOST_REQUIRE(isFinite(constraint.lowerBound()));
     BOOST_REQUIRE(isFinite(constraint.upperBound()));

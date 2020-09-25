@@ -55,6 +55,7 @@ namespace tsid
     protected:
       math::Vector m_mask;
       math::Vector m_dummy;
+      trajectories::TrajectorySample TrajectorySample_dummy;
     };
   }
 }

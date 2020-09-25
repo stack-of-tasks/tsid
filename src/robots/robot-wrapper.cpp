@@ -168,21 +168,21 @@ namespace tsid
     const SE3 & RobotWrapper::position(const Data & data,
                                        const Model::JointIndex index) const
     {
-      assert(index>=0 && index<data.oMi.size());
+      assert(index<data.oMi.size());
       return data.oMi[index];
     }
     
     const Motion & RobotWrapper::velocity(const Data & data,
                                           const Model::JointIndex index) const
     {
-      assert(index>=0 && index<data.v.size());
+      assert(index<data.v.size());
       return data.v[index];
     }
     
     const Motion & RobotWrapper::acceleration(const Data & data,
                                               const Model::JointIndex index) const
     {
-      assert(index>=0 && index<data.a.size());
+      assert(index<data.a.size());
       return data.a[index];
     }
     
@@ -190,7 +190,7 @@ namespace tsid
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      assert(index>=0 && index<data.oMi.size());
+      assert(index<data.oMi.size());
       return pinocchio::getJointJacobian(m_model, data, index, pinocchio::WORLD, J);
     }
     
@@ -198,14 +198,14 @@ namespace tsid
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      assert(index>=0 && index<data.oMi.size());
+      assert(index<data.oMi.size());
       return pinocchio::getJointJacobian(m_model, data, index, pinocchio::LOCAL, J);
     }
     
     SE3 RobotWrapper::framePosition(const Data & data,
                                     const Model::FrameIndex index) const
     {
-      assert(index>=0 && index<m_model.frames.size());
+      assert(index<m_model.frames.size());
       const Frame & f = m_model.frames[index];
       return data.oMi[f.parent].act(f.placement);
     }
@@ -214,7 +214,7 @@ namespace tsid
                                      const Model::FrameIndex index,
                                      SE3 & framePosition) const
     {
-      assert(index>=0 && index<m_model.frames.size());
+      assert(index<m_model.frames.size());
       const Frame & f = m_model.frames[index];
       framePosition = data.oMi[f.parent].act(f.placement);
     }
@@ -222,7 +222,7 @@ namespace tsid
     Motion RobotWrapper::frameVelocity(const Data & data,
                                        const Model::FrameIndex index) const
     {
-      assert(index>=0 && index<m_model.frames.size());
+      assert(index<m_model.frames.size());
       const Frame & f = m_model.frames[index];
       return f.placement.actInv(data.v[f.parent]);
     }
@@ -231,7 +231,7 @@ namespace tsid
                                      const Model::FrameIndex index,
                                      Motion & frameVelocity) const
     {
-      assert(index>=0 && index<m_model.frames.size());
+      assert(index<m_model.frames.size());
       const Frame & f = m_model.frames[index];
       frameVelocity = f.placement.actInv(data.v[f.parent]);
     }
@@ -251,7 +251,7 @@ namespace tsid
     Motion RobotWrapper::frameAcceleration(const Data & data,
                                            const Model::FrameIndex index) const
     {
-      assert(index>=0 && index<m_model.frames.size());
+      assert(index<m_model.frames.size());
       const Frame & f = m_model.frames[index];
       return f.placement.actInv(data.a[f.parent]);
     }
@@ -260,7 +260,7 @@ namespace tsid
                                          const Model::FrameIndex index,
                                          Motion & frameAcceleration) const
     {
-      assert(index>=0 && index<m_model.frames.size());
+      assert(index<m_model.frames.size());
       const Frame & f = m_model.frames[index];
       frameAcceleration = f.placement.actInv(data.a[f.parent]);
     }
@@ -280,7 +280,7 @@ namespace tsid
     Motion RobotWrapper::frameClassicAcceleration(const Data & data,
                                                   const Model::FrameIndex index) const
     {
-      assert(index>=0 && index<m_model.frames.size());
+      assert(index<m_model.frames.size());
       const Frame & f = m_model.frames[index];
       Motion a = f.placement.actInv(data.a[f.parent]);
       Motion v = f.placement.actInv(data.v[f.parent]);
@@ -292,7 +292,7 @@ namespace tsid
                                                 const Model::FrameIndex index,
                                                 Motion & frameAcceleration) const
     {
-      assert(index>=0 && index<m_model.frames.size());
+      assert(index<m_model.frames.size());
       const Frame & f = m_model.frames[index];
       frameAcceleration = f.placement.actInv(data.a[f.parent]);
       Motion v = f.placement.actInv(data.v[f.parent]);
@@ -315,7 +315,7 @@ namespace tsid
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      assert(index>=0 && index<m_model.frames.size());
+      assert(index<m_model.frames.size());
       return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::WORLD, J);
     }
     
@@ -323,7 +323,7 @@ namespace tsid
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      assert(index>=0 && index<m_model.frames.size());
+      assert(index<m_model.frames.size());
       return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::LOCAL, J);
     }
 
