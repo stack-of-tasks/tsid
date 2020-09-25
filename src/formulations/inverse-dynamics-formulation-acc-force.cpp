@@ -384,13 +384,11 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     }
   }
 
-  //for(it=m_taskContactForces.begin(); it!=m_taskContactForces.end(); it++)
   for (auto& it : m_taskContactForces)
   {
     assert(false);
   }
 
-  //for(it=m_taskActuations.begin(); it!=m_taskActuations.end(); it++)
   for (auto& it : m_taskActuations)
   {
     const ConstraintBase & c = it->task.compute(time, q, v, m_data);
@@ -482,8 +480,7 @@ bool InverseDynamicsFormulationAccForce::getContactForces(const std::string & na
                                                           RefVector f)
 {
   decodeSolution(sol);
-  //for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
-   for (auto &it : m_contacts)
+  for (auto &it : m_contacts)
   {
     if(it->contact.name()==name)
     {
@@ -604,7 +601,6 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
   }
 
   int k=0;
-//  for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
   for (auto &it : m_contacts)
   {
     it->index = k;
