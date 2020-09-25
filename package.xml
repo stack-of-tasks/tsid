@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>tsid</name>
-  <version>1.4.0</version>
+  <version>1.4.1</version>
   <description>
     Efficient Task Space Inverse Dynamics (TSID) based on Pinocchio
   </description>
@@ -21,7 +21,7 @@
   <depend>eigenpy</depend>
   <depend>boost</depend>
   <depend>graphviz</depend>
-  
+
   <buildtool_depend>cmake</buildtool_depend>
 
   <export>
