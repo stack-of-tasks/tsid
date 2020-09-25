@@ -46,7 +46,7 @@ namespace tsid
             stringstream ss;
             for(ConstraintLevel::const_iterator iit=m_std_const.begin(); iit!=m_std_const.end(); iit++)
             {
-                const math::ConstraintBase* c = iit->second;
+                auto c = iit->second;
                 ss<<" - "<<c->name()<<": w="<<iit->first<<", ";
                 if(c->isEquality())
                     ss<<"equality, ";
@@ -62,14 +62,14 @@ namespace tsid
             return m_std_const;
         }
     
-        inline void append_eq (double num, math::ConstraintEquality* i){
-           m_std_const.push_back(solvers::make_pair<double, math::ConstraintBase*>(num, i));
+        inline void append_eq (double num, std::shared_ptr<math::ConstraintEquality> i){
+           m_std_const.push_back(solvers::make_pair<double, std::shared_ptr<math::ConstraintBase> >(num, i));
         }
-        inline void append_ineq (double num, math::ConstraintInequality* i){
-           m_std_const.push_back(solvers::make_pair<double, math::ConstraintBase*>(num, i));
+        inline void append_ineq (double num, std::shared_ptr<math::ConstraintInequality> i){
+           m_std_const.push_back(solvers::make_pair<double, std::shared_ptr<math::ConstraintBase> >(num, i));
         }
-        inline void append_bound (double num, math::ConstraintBound* i){
-           m_std_const.push_back(solvers::make_pair<double, math::ConstraintBase*>(num, i));
+        inline void append_bound (double num, std::shared_ptr<math::ConstraintBound> i){
+           m_std_const.push_back(solvers::make_pair<double, std::shared_ptr<math::ConstraintBase> >(num, i));
         }
     private:
         ConstraintLevel m_std_const;
@@ -93,7 +93,7 @@ namespace tsid
                 ss<<"Level "<< priority<<endl;
                 for(ConstraintLevel::const_iterator iit=it->begin(); iit!=it->end(); iit++)
                 {
-                const math::ConstraintBase* c = iit->second;
+                auto c = iit->second;
                 ss<<" - "<<c->name()<<": w="<<iit->first<<", ";
                 if(c->isEquality())
                     ss<<"equality, ";

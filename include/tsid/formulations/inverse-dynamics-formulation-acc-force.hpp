@@ -25,15 +25,13 @@
 
 namespace tsid
 {
-
   class TaskLevel
   {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     
     tasks::TaskBase & task;
-    math::ConstraintBase * constraint;
-//    double weight;
+    std::shared_ptr<math::ConstraintBase> constraint;
     unsigned int priority;
 
     TaskLevel(tasks::TaskBase & task,
@@ -46,9 +44,9 @@ namespace tsid
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     
     contacts::ContactBase & contact;
-    math::ConstraintBase * motionConstraint;
-    math::ConstraintInequality * forceConstraint;
-    math::ConstraintEquality * forceRegTask;
+    std::shared_ptr<math::ConstraintBase> motionConstraint;
+    std::shared_ptr<math::ConstraintInequality> forceConstraint;
+    std::shared_ptr<math::ConstraintEquality> forceRegTask;
     unsigned int index; /// index of 1st element of associated force variable in the force vector
 
     ContactLevel(contacts::ContactBase & contact);
@@ -63,7 +61,7 @@ namespace tsid
     double time_end;
     double fMax_start;  /// max normal force at time time_start
     double fMax_end;    /// max normal force at time time_end
-    ContactLevel * contactLevel;
+    std::shared_ptr<ContactLevel> contactLevel;
   };
 
   class InverseDynamicsFormulationAccForce:
@@ -140,7 +138,7 @@ namespace tsid
 
   public:
 
-    void addTask(TaskLevel* task,
+    void addTask(std::shared_ptr<TaskLevel> task,
                  double weight,
                  unsigned int priorityLevel);
 
@@ -152,10 +150,10 @@ namespace tsid
 
     Data m_data;
     HQPData m_hqpData;
-    std::vector<TaskLevel*>     m_taskMotions;
-    std::vector<TaskLevel*>     m_taskContactForces;
-    std::vector<TaskLevel*>     m_taskActuations;
-    std::vector<ContactLevel*>   m_contacts;
+    std::vector<std::shared_ptr<TaskLevel> >     m_taskMotions;
+    std::vector<std::shared_ptr<TaskLevel> >     m_taskContactForces;
+    std::vector<std::shared_ptr<TaskLevel> >     m_taskActuations;
+    std::vector<std::shared_ptr<ContactLevel> >  m_contacts;
     double m_t;         /// time
     unsigned int m_k;   /// number of contact-force variables
     unsigned int m_v;   /// number of acceleration variables
@@ -163,14 +161,14 @@ namespace tsid
     unsigned int m_eq;  /// number of equality constraints
     unsigned int m_in;  /// number of inequality constraints
     Matrix m_Jc;        /// contact force Jacobian
-    math::ConstraintEquality m_baseDynamics;
+    std::shared_ptr<math::ConstraintEquality> m_baseDynamics;
 
     bool m_solutionDecoded;
     Vector m_dv;
     Vector m_f;
     Vector m_tau;
 
-    std::vector<ContactTransitionInfo*> m_contactTransitions;
+    std::vector<std::shared_ptr<ContactTransitionInfo> > m_contactTransitions;
   };
 
 }

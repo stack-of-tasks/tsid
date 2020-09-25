@@ -64,10 +64,12 @@ using namespace std;
 const string romeo_model_path = TSID_SOURCE_DIR"/models/romeo";
 const string quadruped_model_path = TSID_SOURCE_DIR"/models/quadruped";
 
+
+
 #ifndef NDEBUG
 const int max_it = 10;
 #else
-const int max_it = 1000;
+const int max_it = 10;
 #endif
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
@@ -94,13 +96,13 @@ class StandardRomeoInvDynCtrl
   static const double kp_posture;
   double t;
 
-  RobotWrapper * robot;
-  InverseDynamicsFormulationAccForce * tsid;
-  Contact6d * contactRF;
-  Contact6d * contactLF;
-  TaskComEquality * comTask;
-  TaskJointPosture * postureTask;
-  TaskJointBounds * jointBoundsTask;
+  std::shared_ptr<RobotWrapper> robot;
+  std::shared_ptr<InverseDynamicsFormulationAccForce> tsid;
+  std::shared_ptr<Contact6d> contactRF;
+  std::shared_ptr<Contact6d> contactLF;
+  std::shared_ptr<TaskComEquality> comTask;
+  std::shared_ptr<TaskJointPosture> postureTask;
+  std::shared_ptr<TaskJointBounds> jointBoundsTask;
   Vector q;
   Vector v;
   pinocchio::SE3 H_rf_ref;
@@ -111,7 +113,7 @@ class StandardRomeoInvDynCtrl
     vector<string> package_dirs;
     package_dirs.push_back(romeo_model_path);
     const string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
-    robot = new RobotWrapper(urdfFileName, package_dirs, pinocchio::JointModelFreeFlyer());
+    robot = std::make_shared<RobotWrapper>(urdfFileName, package_dirs, pinocchio::JointModelFreeFlyer());
     
     const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
 
@@ -126,7 +128,7 @@ class StandardRomeoInvDynCtrl
     BOOST_REQUIRE(robot->model().existFrame(lf_frame_name));
 
     // Create the inverse-dynamics formulation
-    tsid = new InverseDynamicsFormulationAccForce("tsid", *robot);
+    tsid = std::make_shared<InverseDynamicsFormulationAccForce>("tsid", *robot);
     tsid->computeProblemData(t, q, v);
     pinocchio::Data & data = tsid->data();
 
@@ -135,18 +137,18 @@ class StandardRomeoInvDynCtrl
     contactPoints << -lxn, -lxn, +lxp, +lxp,
                      -lyn, +lyp, -lyn, +lyp,
                       lz,  lz,  lz,  lz;
-    contactRF = new Contact6d("contact_rfoot", *robot, rf_frame_name,
-                              contactPoints, contactNormal,
-                              mu, fMin, fMax);
+    contactRF = std::make_shared<Contact6d>("contact_rfoot", *robot, rf_frame_name,
+                                           contactPoints, contactNormal,
+                                           mu, fMin, fMax);
     contactRF->Kp(kp_contact*Vector::Ones(6));
     contactRF->Kd(2.0*contactRF->Kp().cwiseSqrt());
     H_rf_ref = robot->position(data, robot->model().getJointId(rf_frame_name));
     contactRF->setReference(H_rf_ref);
     tsid->addRigidContact(*contactRF, w_forceReg);
 
-    contactLF = new Contact6d ("contact_lfoot", *robot, lf_frame_name,
-                               contactPoints, contactNormal,
-                               mu, fMin, fMax);
+    contactLF = std::make_shared<Contact6d>("contact_lfoot", *robot, lf_frame_name,
+                                            contactPoints, contactNormal,
+                                            mu, fMin, fMax);
     contactLF->Kp(kp_contact*Vector::Ones(6));
     contactLF->Kd(2.0*contactLF->Kp().cwiseSqrt());
     H_lf_ref = robot->position(data, robot->model().getJointId(lf_frame_name));
@@ -154,19 +156,19 @@ class StandardRomeoInvDynCtrl
     tsid->addRigidContact(*contactLF, w_forceReg);
 
     // Add the com task
-    comTask = new TaskComEquality("task-com", *robot);
+    comTask = std::make_shared<TaskComEquality>("task-com", *robot);
     comTask->Kp(kp_com*Vector::Ones(3));
     comTask->Kd(2.0*comTask->Kp().cwiseSqrt());
     tsid->addMotionTask(*comTask, w_com, 1);
 
     // Add the posture task
-    postureTask = new TaskJointPosture("task-posture", *robot);
+    postureTask = std::make_shared<TaskJointPosture>("task-posture", *robot);
     postureTask->Kp(kp_posture*Vector::Ones(nv-6));
     postureTask->Kd(2.0*postureTask->Kp().cwiseSqrt());
     tsid->addMotionTask(*postureTask, w_posture, 1);
 
     // Add the joint bounds task
-    jointBoundsTask = new TaskJointBounds("task-joint-bounds", *robot, dt);
+    jointBoundsTask = std::make_shared<TaskJointBounds>("task-joint-bounds", *robot, dt);
     Vector dq_max = 10*Vector::Ones(robot->na());
     Vector dq_min = -dq_max;
     jointBoundsTask->setVelocityBounds(dq_min, dq_max);
@@ -205,7 +207,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
 
   StandardRomeoInvDynCtrl romeo_inv_dyn(dt);
   RobotWrapper & robot = *(romeo_inv_dyn.robot);
-  InverseDynamicsFormulationAccForce * tsid = romeo_inv_dyn.tsid;
+  auto tsid = romeo_inv_dyn.tsid;
   Contact6d & contactRF = *(romeo_inv_dyn.contactRF);
   Contact6d & contactLF = *(romeo_inv_dyn.contactLF);
   TaskComEquality & comTask = *(romeo_inv_dyn.comTask);
@@ -215,9 +217,9 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
   const int nv = robot.model().nv;
 
   // Add the right foot task
-  TaskSE3Equality * rightFootTask = new TaskSE3Equality("task-right-foot",
-                                                       robot,
-                                                       romeo_inv_dyn.rf_frame_name);
+  auto rightFootTask = std::make_shared<TaskSE3Equality>("task-right-foot",
+                                                        robot,
+                                                        romeo_inv_dyn.rf_frame_name);
   rightFootTask->Kp(kp_RF*Vector::Ones(6));
   rightFootTask->Kd(2.0*rightFootTask->Kp().cwiseSqrt());
   pinocchio::SE3 H_rf_ref = robot.position(tsid->data(),
@@ -230,11 +232,11 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
 
   Vector3 com_ref = robot.com(tsid->data());
   com_ref(1) += 0.1;
-  TrajectoryBase *trajCom = new TrajectoryEuclidianConstant("traj_com", com_ref);
+  auto trajCom = std::make_shared<TrajectoryEuclidianConstant>("traj_com", com_ref);
   TrajectorySample sampleCom(3);
 
   Vector q_ref = q.tail(nv-6);
-  TrajectoryBase *trajPosture = new TrajectoryEuclidianConstant("traj_posture", q_ref);
+  auto trajPosture = std::make_shared<TrajectoryEuclidianConstant>("traj_posture", q_ref);
   TrajectorySample samplePosture(nv-6);
 
   // Create an HQP solver
@@ -318,6 +320,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
     CHECK_LESS_THAN(v.norm(), 1e6);
   }
 
+  delete solver;
   cout<<"\n### TEST FINISHED ###\n";
   PRINT_VECTOR(v);
   cout<<"Final   CoM position: "<<robot.com(tsid->data()).transpose()<<endl;
@@ -334,7 +337,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
 
   StandardRomeoInvDynCtrl romeo_inv_dyn(dt);
   RobotWrapper & robot = *(romeo_inv_dyn.robot);
-  InverseDynamicsFormulationAccForce * tsid = romeo_inv_dyn.tsid;
+  auto tsid = romeo_inv_dyn.tsid;
   Contact6d & contactRF = *(romeo_inv_dyn.contactRF);
   Contact6d & contactLF = *(romeo_inv_dyn.contactLF);
   TaskComEquality & comTask = *(romeo_inv_dyn.comTask);
@@ -345,11 +348,11 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
 
   Vector3 com_ref = robot.com(tsid->data());
   com_ref(1) += 0.1;
-  TrajectoryBase *trajCom = new TrajectoryEuclidianConstant("traj_com", com_ref);
+  auto trajCom = std::make_shared<TrajectoryEuclidianConstant>("traj_com", com_ref);
   TrajectorySample sampleCom(3);
 
   Vector q_ref = q.tail(nv-6);
-  TrajectoryBase *trajPosture = new TrajectoryEuclidianConstant("traj_posture", q_ref);
+  auto trajPosture = std::make_shared<TrajectoryEuclidianConstant>("traj_posture", q_ref);
   TrajectorySample samplePosture(nv-6);
 
   // Create an HQP solver
@@ -423,7 +426,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
 
     for(ConstraintLevel::const_iterator it=HQPData[0].begin(); it!=HQPData[0].end(); it++)
     {
-      const ConstraintBase* constr = it->second;
+      auto constr = it->second;
       if(constr->checkConstraint(sol.x)==false)
       {
         if(constr->isEquality())
@@ -480,6 +483,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force )
     CHECK_LESS_THAN(v.norm(), 1e6);
   }
 
+  delete solver;
   cout<<"\n### TEST FINISHED ###\n";
   PRINT_VECTOR(v);
   cout<<"Final   CoM position: "<<robot.com(tsid->data()).transpose()<<endl;
@@ -528,8 +532,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
   }
 
   // Create the inverse-dynamics formulation
-  InverseDynamicsFormulationAccForce *tsid =
-      new InverseDynamicsFormulationAccForce("tsid", robot);
+  auto tsid = std::make_shared<InverseDynamicsFormulationAccForce>("tsid", robot);
   tsid->computeProblemData(t, q, v);
   pinocchio::Data & data = tsid->data();
 
@@ -541,13 +544,13 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
   tsid->computeProblemData(t, q, v);
 
   // Add task for the COM.
-  TaskComEquality *comTask = new TaskComEquality("task-com", robot);
+  auto comTask = std::make_shared<TaskComEquality>("task-com", robot);
   comTask->Kp(kp_com * Vector::Ones(3));
   comTask->Kd(2.0 * comTask->Kp().cwiseSqrt());
   tsid->addMotionTask(*comTask, w_com, 1);
 
   Vector3 com_ref = robot.com(data);
-  TrajectoryBase *trajCom = new TrajectoryEuclidianConstant("traj_com", com_ref);
+  auto trajCom = std::make_shared<TrajectoryEuclidianConstant>("traj_com", com_ref);
   TrajectorySample sampleCom(3);
   sampleCom = trajCom->computeNext();
   comTask->setReference(sampleCom);
@@ -559,10 +562,10 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
   };
 
   Vector3 contactNormal = Vector3::UnitZ();
-  std::vector<ContactPoint*> contacts(4);
+  std::vector<std::shared_ptr<ContactPoint>> contacts(4);
 
   for (int i = 0; i < 4; i++) {
-    ContactPoint* cp = new ContactPoint("contact_" + contactFrames[i], robot,
+    auto cp = std::make_shared<ContactPoint>("contact_" + contactFrames[i], robot,
         contactFrames[i], contactNormal, mu, fMin, fMax);
     cp->Kp(kp_contact*Vector::Ones(3));
     cp->Kd(2.0*sqrt(kp_contact)*Vector::Ones(3));
@@ -596,7 +599,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
 
     for(ConstraintLevel::const_iterator it=HQPData[0].begin(); it!=HQPData[0].end(); it++)
     {
-      const ConstraintBase* constr = it->second;
+      auto constr = it->second;
       if(constr->checkConstraint(sol->x)==false)
       {
         if(constr->isEquality())
@@ -638,6 +641,8 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
     cout << contacts[i]->name() << " force:" << f.transpose() << endl;
   }
 
+  delete solver;
+  
   cout<<"\n### TEST FINISHED ###\n";
   PRINT_VECTOR(v);
   cout<<"Final   CoM position: "<<robot.com(tsid->data()).transpose()<<endl;
@@ -659,7 +664,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
 
   StandardRomeoInvDynCtrl romeo_inv_dyn(dt);
   RobotWrapper & robot = *(romeo_inv_dyn.robot);
-  InverseDynamicsFormulationAccForce * tsid = romeo_inv_dyn.tsid;
+  auto tsid = romeo_inv_dyn.tsid;
   TaskComEquality & comTask = *(romeo_inv_dyn.comTask);
   TaskJointPosture & postureTask = *(romeo_inv_dyn.postureTask);
   Vector q = romeo_inv_dyn.q;
@@ -668,11 +673,11 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
 
   Vector3 com_ref = robot.com(tsid->data());
   com_ref(1) += 0.1;
-  TrajectoryBase *trajCom = new TrajectoryEuclidianConstant("traj_com", com_ref);
+  auto trajCom = std::make_shared<TrajectoryEuclidianConstant>("traj_com", com_ref);
   TrajectorySample sampleCom(3);
 
   Vector q_ref = q.tail(nv-6);
-  TrajectoryBase *trajPosture = new TrajectoryEuclidianConstant("traj_posture", q_ref);
+  auto trajPosture = std::make_shared<TrajectoryEuclidianConstant>("traj_posture", q_ref);
   TrajectorySample samplePosture(nv-6);
 
   // Create an HQP solver
@@ -728,12 +733,13 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_computation_time )
     REQUIRE_FINITE(v.transpose());
     REQUIRE_FINITE(q.transpose());
   }
-
+  delete solver;
+  delete solver_fast;
+  delete solver_rt;
   cout<<"\n### TEST FINISHED ###\n";
   getProfiler().report_all(3, cout);
   getStatistics().report_all(1, cout);
 }
-
 
 
 BOOST_AUTO_TEST_SUITE_END ()

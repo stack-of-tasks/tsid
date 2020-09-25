@@ -38,6 +38,7 @@ namespace tsid
       ConstraintBound(const std::string & name,
                       ConstRefVector lb,
                       ConstRefVector ub);
+      virtual ~ConstraintBound() {}
 
       unsigned int rows() const;
       unsigned int cols() const;

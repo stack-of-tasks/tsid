@@ -44,7 +44,7 @@ InverseDynamicsFormulationAccForce::InverseDynamicsFormulationAccForce(const std
                                                                        bool verbose):
   InverseDynamicsFormulationBase(name, robot, verbose),
   m_data(robot.model()),
-  m_baseDynamics("base-dynamics", robot.nv()-robot.na(), robot.nv()),
+  m_baseDynamics(new math::ConstraintEquality("base-dynamics", robot.nv()-robot.na(), robot.nv())),
   m_solutionDecoded(false)
 {
   m_t = 0.0;
@@ -55,7 +55,7 @@ InverseDynamicsFormulationAccForce::InverseDynamicsFormulationAccForce(const std
   m_in = 0;
   m_hqpData.resize(2);
   m_Jc.setZero(m_k, m_v);
-  m_hqpData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &m_baseDynamics));
+  m_hqpData[0].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(1.0, m_baseDynamics));
 }
 
 
@@ -83,7 +83,7 @@ unsigned int InverseDynamicsFormulationAccForce::nIn() const
 void InverseDynamicsFormulationAccForce::resizeHqpData()
 {
   m_Jc.setZero(m_k, m_v);
-  m_baseDynamics.resize(m_u, m_v+m_k);
+  m_baseDynamics->resize(m_u, m_v+m_k);
   for(HQPData::iterator it=m_hqpData.begin(); it!=m_hqpData.end(); it++)
   {
     for(ConstraintLevel::iterator itt=it->begin(); itt!=it->end(); itt++)
@@ -94,7 +94,7 @@ void InverseDynamicsFormulationAccForce::resizeHqpData()
 }
 
 
-void InverseDynamicsFormulationAccForce::addTask(TaskLevel* tl,
+void InverseDynamicsFormulationAccForce::addTask(std::shared_ptr<TaskLevel> tl,
                                                  double weight,
                                                  unsigned int priorityLevel)
 {
@@ -103,20 +103,20 @@ void InverseDynamicsFormulationAccForce::addTask(TaskLevel* tl,
   const ConstraintBase & c = tl->task.getConstraint();
   if(c.isEquality())
   {
-    tl->constraint = new ConstraintEquality(c.name(), c.rows(), m_v+m_k);
+    tl->constraint = std::make_shared<ConstraintEquality>(c.name(), c.rows(), m_v+m_k);
     if(priorityLevel==0)
       m_eq += c.rows();
   }
   else //if(c.isInequality())
   {
-    tl->constraint = new ConstraintInequality(c.name(), c.rows(), m_v+m_k);
+    tl->constraint = std::make_shared<ConstraintInequality>(c.name(), c.rows(), m_v+m_k);
     if(priorityLevel==0)
       m_in += c.rows();
   }
   // don't use bounds for now because EiQuadProg doesn't exploit them anyway
 //  else
 //    tl->constraint = new ConstraintBound(c.name(), m_v+m_k);
-  m_hqpData[priorityLevel].push_back(make_pair<double, ConstraintBase*>(weight, tl->constraint));
+  m_hqpData[priorityLevel].push_back(make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tl->constraint));
 }
 
 
@@ -137,7 +137,7 @@ bool InverseDynamicsFormulationAccForce::addMotionTask(TaskMotion & task,
   if (transition_duration<0.0)
     std::cerr << "transition_duration should be positive" << std::endl;
 
-  TaskLevel *tl = new TaskLevel(task, priorityLevel);
+  auto tl = std::make_shared<TaskLevel>(task, priorityLevel);
   m_taskMotions.push_back(tl);
   addTask(tl, weight, priorityLevel);
 
@@ -160,7 +160,7 @@ bool InverseDynamicsFormulationAccForce::addForceTask(TaskContactForce & task,
   // This part is not used frequently so we can do some tests.
   if (transition_duration<0.0)
     std::cerr << "transition_duration should be positive" << std::endl;
-  TaskLevel *tl = new TaskLevel(task, priorityLevel);
+  auto tl = std::make_shared<TaskLevel>(task, priorityLevel);
   m_taskContactForces.push_back(tl);
   addTask(tl, weight, priorityLevel);
   return true;
@@ -182,7 +182,7 @@ bool InverseDynamicsFormulationAccForce::addActuationTask(TaskActuation & task,
   if (transition_duration<0.0)
     std::cerr << "transition_duration should be positive" << std::endl;
 
-  TaskLevel *tl = new TaskLevel(task, priorityLevel);
+  auto tl = std::make_shared<TaskLevel>(task, priorityLevel);
   m_taskActuations.push_back(tl);
 
   if(priorityLevel > m_hqpData.size())
@@ -191,18 +191,18 @@ bool InverseDynamicsFormulationAccForce::addActuationTask(TaskActuation & task,
   const ConstraintBase & c = tl->task.getConstraint();
   if(c.isEquality())
   {
-    tl->constraint = new ConstraintEquality(c.name(), c.rows(), m_v+m_k);
+    tl->constraint = std::make_shared<ConstraintEquality>(c.name(), c.rows(), m_v+m_k);
     if(priorityLevel==0)
       m_eq += c.rows();
   }
   else  // an actuator bound becomes an inequality because actuator forces are not in the problem variables
   {
-    tl->constraint = new ConstraintInequality(c.name(), c.rows(), m_v+m_k);
+    tl->constraint = std::make_shared<ConstraintInequality>(c.name(), c.rows(), m_v+m_k);
     if(priorityLevel==0)
       m_in += c.rows();
   }
 
-  m_hqpData[priorityLevel].push_back(make_pair<double, ConstraintBase*>(weight, tl->constraint));
+  m_hqpData[priorityLevel].push_back(make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tl->constraint));
 
   return true;
 }
@@ -232,23 +232,23 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact,
                                                          double motion_weight,
                                                          unsigned int motionPriorityLevel)
 {
-  ContactLevel *cl = new ContactLevel(contact);
+  auto cl = std::make_shared<ContactLevel>(contact);
   cl->index = m_k;
   m_k += contact.n_force();
   m_contacts.push_back(cl);
   resizeHqpData();
 
   const ConstraintBase & motionConstr = contact.getMotionConstraint();
-  cl->motionConstraint = new ConstraintEquality(contact.name()+"_motion_task", motionConstr.rows(), m_v+m_k);
-  m_hqpData[motionPriorityLevel].push_back(make_pair<double, ConstraintBase*>(motion_weight, cl->motionConstraint));
+  cl->motionConstraint = std::make_shared<ConstraintEquality>(contact.name()+"_motion_task", motionConstr.rows(), m_v+m_k);
+  m_hqpData[motionPriorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(motion_weight, cl->motionConstraint));
 
   const ConstraintInequality & forceConstr = contact.getForceConstraint();
-  cl->forceConstraint = new ConstraintInequality(contact.name()+"_force_constraint", forceConstr.rows(), m_v+m_k);
-  m_hqpData[0].push_back(make_pair<double, ConstraintBase*>(1.0, cl->forceConstraint));
+  cl->forceConstraint = std::make_shared<ConstraintInequality>(contact.name()+"_force_constraint", forceConstr.rows(), m_v+m_k);
+  m_hqpData[0].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(1.0, cl->forceConstraint));
 
   const ConstraintEquality & forceRegConstr = contact.getForceRegularizationTask();
-  cl->forceRegTask = new ConstraintEquality(contact.name()+"_force_reg_task", forceRegConstr.rows(), m_v+m_k);
-  m_hqpData[1].push_back(make_pair<double, ConstraintBase*>(force_regularization_weight, cl->forceRegTask));
+  cl->forceRegTask = std::make_shared<ConstraintEquality>(contact.name()+"_force_reg_task", forceRegConstr.rows(), m_v+m_k);
+  m_hqpData[1].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(force_regularization_weight, cl->forceRegTask));
 
   m_eq += motionConstr.rows();
   m_in += forceConstr.rows();
@@ -302,10 +302,9 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
 {
   m_t = time;
 
-  std::vector<ContactTransitionInfo*>::iterator it_ct;
-  for(it_ct=m_contactTransitions.begin(); it_ct!=m_contactTransitions.end(); it_ct++)
+  for(auto it_ct=m_contactTransitions.begin(); it_ct!=m_contactTransitions.end(); it_ct++)
   {
-    const ContactTransitionInfo * c = *it_ct;
+    auto c = *it_ct;
     assert(c->time_start <= m_t);
     if(m_t <= c->time_end)
     {
@@ -327,9 +326,10 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
 
   m_robot.computeAllTerms(m_data, q, v);
 
-  for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+  for(auto cl : m_contacts)
+//    std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
   {
-    ContactLevel* cl = *it;
+//    ContactLevel* cl = *it;
     unsigned int m = cl->contact.n_force();
 
     const ConstraintBase & mc = cl->contact.computeMotionTask(time, q, v, m_data);
@@ -356,64 +356,65 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   const Vector & h_u = m_robot.nonLinearEffects(m_data).head(m_u);
   const Matrix & J_u = m_Jc.leftCols(m_u);
 
-  m_baseDynamics.matrix().leftCols(m_v) = M_u;
-  m_baseDynamics.matrix().rightCols(m_k) = -J_u.transpose();
-  m_baseDynamics.vector() = -h_u;
+  m_baseDynamics->matrix().leftCols(m_v) = M_u;
+  m_baseDynamics->matrix().rightCols(m_k) = -J_u.transpose();
+  m_baseDynamics->vector() = -h_u;
 
-  std::vector<TaskLevel*>::iterator it;
-  for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
+//  std::vector<TaskLevel*>::iterator it;
+//  for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
+  for (auto& it : m_taskMotions)
   {
-    const ConstraintBase & c = (*it)->task.compute(time, q, v, m_data);
+    const ConstraintBase & c = it->task.compute(time, q, v, m_data);
     if(c.isEquality())
     {
-      (*it)->constraint->matrix().leftCols(m_v) = c.matrix();
-      (*it)->constraint->vector() = c.vector();
+      it->constraint->matrix().leftCols(m_v) = c.matrix();
+      it->constraint->vector() = c.vector();
     }
     else if(c.isInequality())
     {
-      (*it)->constraint->matrix().leftCols(m_v) = c.matrix();
-      (*it)->constraint->lowerBound() = c.lowerBound();
-      (*it)->constraint->upperBound() = c.upperBound();
+      it->constraint->matrix().leftCols(m_v) = c.matrix();
+      it->constraint->lowerBound() = c.lowerBound();
+      it->constraint->upperBound() = c.upperBound();
     }
     else
     {
-      (*it)->constraint->matrix().leftCols(m_v) = Matrix::Identity(m_v, m_v);
-      (*it)->constraint->lowerBound() = c.lowerBound();
-      (*it)->constraint->upperBound() = c.upperBound();
+      it->constraint->matrix().leftCols(m_v) = Matrix::Identity(m_v, m_v);
+      it->constraint->lowerBound() = c.lowerBound();
+      it->constraint->upperBound() = c.upperBound();
     }
   }
 
-  for(it=m_taskContactForces.begin(); it!=m_taskContactForces.end(); it++)
+  for (auto& it : m_taskContactForces)
   {
     assert(false);
   }
 
-  for(it=m_taskActuations.begin(); it!=m_taskActuations.end(); it++)
+  for (auto& it : m_taskActuations)
   {
-    const ConstraintBase & c = (*it)->task.compute(time, q, v, m_data);
+    const ConstraintBase & c = it->task.compute(time, q, v, m_data);
     if(c.isEquality())
     {
-      (*it)->constraint->matrix().leftCols(m_v).noalias() = c.matrix() * M_a;
-      (*it)->constraint->matrix().rightCols(m_k).noalias() = - c.matrix() * J_a.transpose();
-      (*it)->constraint->vector() = c.vector();
-      (*it)->constraint->vector().noalias() -= c.matrix() * h_a;
+      it->constraint->matrix().leftCols(m_v).noalias() = c.matrix() * M_a;
+      it->constraint->matrix().rightCols(m_k).noalias() = - c.matrix() * J_a.transpose();
+      it->constraint->vector() = c.vector();
+      it->constraint->vector().noalias() -= c.matrix() * h_a;
     }
     else if(c.isInequality())
     {
-      (*it)->constraint->matrix().leftCols(m_v).noalias() = c.matrix() * M_a;
-      (*it)->constraint->matrix().rightCols(m_k).noalias() = - c.matrix() * J_a.transpose();
-      (*it)->constraint->lowerBound() = c.lowerBound();
-      (*it)->constraint->lowerBound().noalias() -= c.matrix() * h_a;
-      (*it)->constraint->upperBound() = c.upperBound();
-      (*it)->constraint->upperBound().noalias() -= c.matrix() * h_a;
+      it->constraint->matrix().leftCols(m_v).noalias() = c.matrix() * M_a;
+      it->constraint->matrix().rightCols(m_k).noalias() = - c.matrix() * J_a.transpose();
+      it->constraint->lowerBound() = c.lowerBound();
+      it->constraint->lowerBound().noalias() -= c.matrix() * h_a;
+      it->constraint->upperBound() = c.upperBound();
+      it->constraint->upperBound().noalias() -= c.matrix() * h_a;
     }
     else
     {
       // NB: An actuator bound becomes an inequality
-      (*it)->constraint->matrix().leftCols(m_v) = M_a;
-      (*it)->constraint->matrix().rightCols(m_k) = - J_a.transpose();
-      (*it)->constraint->lowerBound() = c.lowerBound() - h_a;
-      (*it)->constraint->upperBound() = c.upperBound() - h_a;
+      it->constraint->matrix().leftCols(m_v) = M_a;
+      it->constraint->matrix().rightCols(m_k) = - J_a.transpose();
+      it->constraint->lowerBound() = c.lowerBound() - h_a;
+      it->constraint->upperBound() = c.upperBound() - h_a;
     }
   }
 
@@ -462,12 +463,13 @@ Vector InverseDynamicsFormulationAccForce::getContactForces(const std::string & 
                                                             const HQPOutput & sol)
 {
   decodeSolution(sol);
-  for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+ // for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+ for (auto &it : m_contacts)
   {
-    if((*it)->contact.name()==name)
+    if(it->contact.name()==name)
     {
-      const int k = (*it)->contact.n_force();
-      return m_f.segment((*it)->index, k);
+      const int k = it->contact.n_force();
+      return m_f.segment(it->index, k);
     }
   }
   return Vector::Zero(0);
@@ -478,13 +480,13 @@ bool InverseDynamicsFormulationAccForce::getContactForces(const std::string & na
                                                           RefVector f)
 {
   decodeSolution(sol);
-  for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+  for (auto &it : m_contacts)
   {
-    if((*it)->contact.name()==name)
+    if(it->contact.name()==name)
     {
-      const int k = (*it)->contact.n_force();
+      const int k = it->contact.n_force();
       assert(f.size()==k);
-      f = m_f.segment((*it)->index, k);
+      f = m_f.segment(it->index, k);
       return true;
     }
   }
@@ -501,8 +503,7 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
   removeFromHqpData(taskName);
 #endif
   
-  std::vector<TaskLevel*>::iterator it;
-  for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
+  for(auto it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
   {
     if((*it)->task.name()==taskName)
     {
@@ -517,7 +518,7 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
       return true;
     }
   }
-  for(it=m_taskContactForces.begin(); it!=m_taskContactForces.end(); it++)
+  for(auto it=m_taskContactForces.begin(); it!=m_taskContactForces.end(); it++)
   {
     if((*it)->task.name()==taskName)
     {
@@ -525,7 +526,7 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
       return true;
     }
   }
-  for(it=m_taskActuations.begin(); it!=m_taskActuations.end(); it++)
+  for(auto it=m_taskActuations.begin(); it!=m_taskActuations.end(); it++)
   {
     if((*it)->task.name()==taskName)
     {
@@ -549,25 +550,25 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
 {
   if(transition_duration>0.0)
   {
-    for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+    for(auto &it : m_contacts)
     {
-      if((*it)->contact.name()==contactName)
+      if(it->contact.name()==contactName)
       {
-        ContactTransitionInfo * transitionInfo = new ContactTransitionInfo();
-        transitionInfo->contactLevel = (*it);
+        auto transitionInfo = std::make_shared<ContactTransitionInfo>();
+        transitionInfo->contactLevel = it;
         transitionInfo->time_start = m_t;
         transitionInfo->time_end = m_t + transition_duration;
-        const int k = (*it)->contact.n_force();
-        if(m_f.size() >= (*it)->index+k)
+        const int k =  it->contact.n_force();
+        if(m_f.size() >= it->index+k)
         {
-          const Vector f = m_f.segment((*it)->index, k);
-          transitionInfo->fMax_start = (*it)->contact.getNormalForce(f);
+          const Vector f = m_f.segment(it->index, k);
+          transitionInfo->fMax_start = it->contact.getNormalForce(f);
         }
         else
         {
-          transitionInfo->fMax_start = (*it)->contact.getMaxNormalForce();
+          transitionInfo->fMax_start = it->contact.getMaxNormalForce();
         }
-        transitionInfo->fMax_end = (*it)->contact.getMinNormalForce() + 1e-3;
+        transitionInfo->fMax_end = it->contact.getMinNormalForce() + 1e-3;
         m_contactTransitions.push_back(transitionInfo);
         return true;
       }
@@ -585,7 +586,7 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
   assert(third_constraint_found);
 
   bool contact_found = false;
-  for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+  for(auto it=m_contacts.begin(); it!=m_contacts.end(); it++)
   {
     if((*it)->contact.name()==contactName)
     {
@@ -600,11 +601,10 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
   }
 
   int k=0;
-  for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
+  for (auto &it : m_contacts)
   {
-    ContactLevel * cl = *it;
-    cl->index = k;
-    k += cl->contact.n_force();
+    it->index = k;
+    k += it->contact.n_force();
   }
   return contact_found && first_constraint_found && second_constraint_found && third_constraint_found;
 }

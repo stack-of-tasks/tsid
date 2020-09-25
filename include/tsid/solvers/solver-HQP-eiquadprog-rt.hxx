@@ -86,7 +86,7 @@ namespace tsid
         const unsigned int n = cl0[0].second->cols();
         for(ConstraintLevel::const_iterator it=cl0.begin(); it!=cl0.end(); it++)
         {
-          const ConstraintBase* constr = it->second;
+          auto constr = it->second;
           assert(n==constr->cols());
           if(constr->isEquality())
             neq += constr->rows();
@@ -99,7 +99,7 @@ namespace tsid
         int i_eq=0, i_in=0;
         for(ConstraintLevel::const_iterator it=cl0.begin(); it!=cl0.end(); it++)
         {
-          const ConstraintBase* constr = it->second;
+          auto constr = it->second;
           if(constr->isEquality())
           {
             m_CE.middleRows(i_eq, constr->rows()) = constr->matrix();
@@ -137,7 +137,7 @@ namespace tsid
         for(ConstraintLevel::const_iterator it=cl1.begin(); it!=cl1.end(); it++)
         {
           const double & w = it->first;
-          const ConstraintBase* constr = it->second;
+          auto constr = it->second;
           if(!constr->isEquality())
             assert(false && "Inequalities in the cost function are not implemented yet");
           
@@ -196,7 +196,7 @@ namespace tsid
         {
           for(ConstraintLevel::const_iterator it=cl0.begin(); it!=cl0.end(); it++)
           {
-            const ConstraintBase* constr = it->second;
+            auto constr = it->second;
             if(constr->checkConstraint(x)==false)
             {
               if(constr->isEquality())

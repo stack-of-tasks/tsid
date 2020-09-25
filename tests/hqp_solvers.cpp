@@ -213,8 +213,8 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
 
   Matrix A1 = Matrix::Random(n, n);
   Vector b1 = Vector::Random(n);
-  ConstraintEquality cost("c1", A1, b1);
-  HQPData[1].push_back(make_pair<double, ConstraintBase*>(1.0, &cost));
+  auto cost = std::make_shared<ConstraintEquality>("c1", A1, b1);
+  HQPData[1].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(1.0, cost));
 
   Vector x(n);
   svdSolveWithDamping(A1, b1, x, damping);
@@ -236,13 +236,13 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
         A_lb[i] = constrVal[i] - MARGIN_PERC*fabs(constrVal[i]);
       }
   }
-  ConstraintInequality in_constraint("in1", A_in, A_lb, A_ub);
-  HQPData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &in_constraint));
+  auto in_constraint = std::make_shared<ConstraintInequality>("in1", A_in, A_lb, A_ub);
+  HQPData[0].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(1.0, in_constraint));
 
   Matrix A_eq = Matrix::Random(neq, n);
   Vector b_eq = A_eq*x;
-  ConstraintEquality eq_constraint("eq1", A_eq, b_eq);
-  HQPData[0].push_back(make_pair<double, ConstraintBase*>(1.0, &eq_constraint));
+  auto eq_constraint = std::make_shared<ConstraintEquality>("eq1", A_eq, b_eq);
+  HQPData[0].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(1.0, eq_constraint));
 
   // Prepare random data to perturb initial QP
   std::vector<Vector> gradientPerturbations(nTest);
@@ -258,8 +258,8 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   {
     if(true || i==0)
     {
-      cost.matrix() += hessianPerturbations[i];
-      cost.vector() += gradientPerturbations[i];
+      cost->matrix() += hessianPerturbations[i];
+      cost->vector() += gradientPerturbations[i];
     }
 
     getProfiler().start(PROFILE_EIQUADPROG_FAST);

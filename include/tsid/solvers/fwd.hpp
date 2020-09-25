@@ -18,6 +18,8 @@
 #ifndef __invdyn_solvers_fwd_hpp__
 #define __invdyn_solvers_fwd_hpp__
 
+#include <memory>
+
 #include "tsid/config.hpp"
 #include "tsid/math/fwd.hpp"
 #include <pinocchio/container/aligned-vector.hpp>
@@ -81,8 +83,8 @@ namespace tsid
     { return aligned_pair<T1,T2>(t1,t2); }
     
     
-    typedef pinocchio::container::aligned_vector< aligned_pair<double, math::ConstraintBase*> > ConstraintLevel;
-    typedef pinocchio::container::aligned_vector< aligned_pair<double, const math::ConstraintBase*> > ConstConstraintLevel;
+    typedef pinocchio::container::aligned_vector< aligned_pair<double, std::shared_ptr<math::ConstraintBase> > > ConstraintLevel;
+    typedef pinocchio::container::aligned_vector< aligned_pair<double, std::shared_ptr<const math::ConstraintBase> > > ConstConstraintLevel;
     typedef pinocchio::container::aligned_vector<ConstraintLevel> HQPData;
     typedef pinocchio::container::aligned_vector<ConstConstraintLevel> ConstHQPData;
     

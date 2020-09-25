@@ -39,6 +39,7 @@ namespace tsid
       ConstraintEquality(const std::string & name,
                          ConstRefMatrix A,
                          ConstRefVector b);
+      virtual ~ConstraintEquality() {}
 
       unsigned int rows() const;
       unsigned int cols() const;
