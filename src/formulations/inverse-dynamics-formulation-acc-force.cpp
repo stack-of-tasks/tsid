@@ -55,7 +55,7 @@ InverseDynamicsFormulationAccForce::InverseDynamicsFormulationAccForce(const std
   m_in = 0;
   m_hqpData.resize(2);
   m_Jc.setZero(m_k, m_v);
-  m_hqpData[0].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(1.0, m_baseDynamics));
+  m_hqpData[0].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(1.0, m_baseDynamics));
 }
 
 
@@ -116,7 +116,7 @@ void InverseDynamicsFormulationAccForce::addTask(std::shared_ptr<TaskLevel> tl,
   // don't use bounds for now because EiQuadProg doesn't exploit them anyway
 //  else
 //    tl->constraint = new ConstraintBound(c.name(), m_v+m_k);
-  m_hqpData[priorityLevel].push_back(make_pair<double, std::shared_ptr<ConstraintBase>>(weight, tl->constraint));
+  m_hqpData[priorityLevel].push_back(make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tl->constraint));
 }
 
 
@@ -202,7 +202,7 @@ bool InverseDynamicsFormulationAccForce::addActuationTask(TaskActuation & task,
       m_in += c.rows();
   }
 
-  m_hqpData[priorityLevel].push_back(make_pair<double, std::shared_ptr<ConstraintBase>>(weight, tl->constraint));
+  m_hqpData[priorityLevel].push_back(make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tl->constraint));
 
   return true;
 }
@@ -240,15 +240,15 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact,
 
   const ConstraintBase & motionConstr = contact.getMotionConstraint();
   cl->motionConstraint = std::make_shared<ConstraintEquality>(contact.name()+"_motion_task", motionConstr.rows(), m_v+m_k);
-  m_hqpData[motionPriorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(motion_weight, cl->motionConstraint));
+  m_hqpData[motionPriorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(motion_weight, cl->motionConstraint));
 
   const ConstraintInequality & forceConstr = contact.getForceConstraint();
   cl->forceConstraint = std::make_shared<ConstraintInequality>(contact.name()+"_force_constraint", forceConstr.rows(), m_v+m_k);
-  m_hqpData[0].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(1.0, cl->forceConstraint));
+  m_hqpData[0].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(1.0, cl->forceConstraint));
 
   const ConstraintEquality & forceRegConstr = contact.getForceRegularizationTask();
   cl->forceRegTask = std::make_shared<ConstraintEquality>(contact.name()+"_force_reg_task", forceRegConstr.rows(), m_v+m_k);
-  m_hqpData[1].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(force_regularization_weight, cl->forceRegTask));
+  m_hqpData[1].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(force_regularization_weight, cl->forceRegTask));
 
   m_eq += motionConstr.rows();
   m_in += forceConstr.rows();

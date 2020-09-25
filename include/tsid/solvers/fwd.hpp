@@ -83,8 +83,8 @@ namespace tsid
     { return aligned_pair<T1,T2>(t1,t2); }
     
     
-    typedef pinocchio::container::aligned_vector< aligned_pair<double, std::shared_ptr<math::ConstraintBase>> > ConstraintLevel;
-    typedef pinocchio::container::aligned_vector< aligned_pair<double, std::shared_ptr<const math::ConstraintBase>>> ConstConstraintLevel;
+    typedef pinocchio::container::aligned_vector< aligned_pair<double, std::shared_ptr<math::ConstraintBase> > > ConstraintLevel;
+    typedef pinocchio::container::aligned_vector< aligned_pair<double, std::shared_ptr<const math::ConstraintBase> > > ConstConstraintLevel;
     typedef pinocchio::container::aligned_vector<ConstraintLevel> HQPData;
     typedef pinocchio::container::aligned_vector<ConstConstraintLevel> ConstHQPData;
     

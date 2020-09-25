@@ -63,13 +63,13 @@ namespace tsid
         }
     
         inline void append_eq (double num, std::shared_ptr<math::ConstraintEquality> i){
-           m_std_const.push_back(solvers::make_pair<double, std::shared_ptr<math::ConstraintBase>>(num, i));
+           m_std_const.push_back(solvers::make_pair<double, std::shared_ptr<math::ConstraintBase> >(num, i));
         }
         inline void append_ineq (double num, std::shared_ptr<math::ConstraintInequality> i){
-           m_std_const.push_back(solvers::make_pair<double, std::shared_ptr<math::ConstraintBase>>(num, i));
+           m_std_const.push_back(solvers::make_pair<double, std::shared_ptr<math::ConstraintBase> >(num, i));
         }
         inline void append_bound (double num, std::shared_ptr<math::ConstraintBound> i){
-           m_std_const.push_back(solvers::make_pair<double, std::shared_ptr<math::ConstraintBase>>(num, i));
+           m_std_const.push_back(solvers::make_pair<double, std::shared_ptr<math::ConstraintBase> >(num, i));
         }
     private:
         ConstraintLevel m_std_const;
