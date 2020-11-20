@@ -77,7 +77,8 @@ namespace tsid
       Vector m_p_error_masked_vec, m_v_error_masked_vec;
       Vector3 m_a_des;
       Vector m_a_des_vec, m_a_des_masked;
-      Vector3 m_drift, m_drift_masked;
+      Vector3 m_drift;
+      Vector m_drift_masked;
       Vector m_p_com, m_v_com;
       Vector m_p_error_vec, m_v_error_vec;
       TrajectorySample m_ref;
