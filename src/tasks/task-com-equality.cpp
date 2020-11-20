@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017-2020 CNRS, Inria
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -38,12 +38,27 @@ namespace tsid
       m_p_com.setZero(3);
       m_v_com.setZero(3);
       m_a_des_vec.setZero(3);
+      m_mask.resize(3);
+      m_mask.fill(1.);
+      setMask(m_mask);      
+    }
+
+
+    void TaskComEquality::setMask(math::ConstRefVector mask)
+    {
+      assert(mask.size() == 3);
+      TaskMotion::setMask(mask);
+      int n = dim();
+      m_constraint.resize(n, m_robot.nv());
+      m_p_error_masked_vec.resize(n);
+      m_v_error_masked_vec.resize(n);
+      m_drift_masked.resize(n);
+      m_a_des_masked.resize(n);
     }
 
     int TaskComEquality::dim() const
     {
-      //return self._mask.sum ()
-      return 3;
+      return m_mask.sum();
     }
 
     const Vector3 & TaskComEquality::Kp(){ return m_Kp; }
@@ -74,22 +89,22 @@ namespace tsid
 
     const Vector & TaskComEquality::getDesiredAcceleration() const
     {
-      return m_a_des_vec;
+      return m_a_des_masked;
     }
 
     Vector TaskComEquality::getAcceleration(ConstRefVector dv) const
     {
-      return m_constraint.matrix()*dv - m_drift;
+      return m_constraint.matrix()*dv - m_drift_masked;
     }
 
     const Vector & TaskComEquality::position_error() const
     {
-      return m_p_error_vec;
+      return m_p_error_masked_vec;
     }
 
     const Vector & TaskComEquality::velocity_error() const
     {
-      return m_v_error_vec;
+      return m_v_error_masked_vec;
     }
 
     const Vector & TaskComEquality::position() const
@@ -142,8 +157,21 @@ namespace tsid
       // Get CoM jacobian
       const Matrix3x & Jcom = m_robot.Jcom(data);
 
-      m_constraint.setMatrix(Jcom);
-      m_constraint.setVector(m_a_des - m_drift);
+      int idx = 0;
+      for (int i = 0; i < 3; i++) {
+        if (m_mask(i) != 1.) continue;
+
+        m_constraint.matrix().row(idx) = Jcom.row(i);
+        m_constraint.vector().row(idx) = (m_a_des - m_drift).row(i);
+       
+        m_a_des_masked(idx)            = m_a_des(i);
+        m_drift_masked(idx)            = m_drift(i);
+        m_p_error_masked_vec(idx)      = m_p_error_vec(i);
+        m_v_error_masked_vec(idx)      = m_v_error_vec(i);
+
+        idx += 1;
+      }
+
       return m_constraint;
     }
 
