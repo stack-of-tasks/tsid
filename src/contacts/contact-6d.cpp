@@ -138,7 +138,7 @@ typedef Eigen::Matrix<double,6,6> Matrix6;
   Matrix6 A = Matrix6::Zero();
   A.diagonal() = m_weightForceRegTask;
   m_forceRegTask.setMatrix(A*m_forceGenMat);
-  m_forceRegTask.setVector(m_fRef);
+  m_forceRegTask.setVector(A*m_fRef);
 }
 
 void Contact6d:: updateForceGeneratorMatrix()
