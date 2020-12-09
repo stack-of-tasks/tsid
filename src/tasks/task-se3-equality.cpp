@@ -23,6 +23,7 @@ namespace tsid
 {
   namespace tasks
   {
+    using namespace std;
     using namespace math;
     using namespace trajectories;
     using namespace pinocchio;
@@ -181,10 +182,9 @@ namespace tsid
       SE3ToVector(m_M_ref, m_p_ref);
       SE3ToVector(oMi, m_p);
 
-      // Transformation from local to world
-      m_wMl.rotation(oMi.rotation());
-
       if (m_local_frame) {
+        // Transformation from local to world
+        m_wMl.rotation(oMi.rotation());
         m_v_error = v_frame - m_wMl.actInv(m_v_ref);  // vel err in local frame
 
         // desired acc in local frame
@@ -192,8 +192,13 @@ namespace tsid
                   - m_Kd.cwiseProduct(m_v_error.toVector())
                   + m_wMl.actInv(m_a_ref).toVector();
       } else {
+        // Transformation from reference to world
+        m_wMl.rotation(m_M_ref.rotation());
         m_p_error_vec = m_wMl.toActionMatrix() *   // pos err in local world-oriented frame
             m_p_error.toVector();
+
+        // Transformation from local to world
+        m_wMl.rotation(oMi.rotation());
         m_v_error = m_wMl.act(v_frame) - m_v_ref;  // vel err in local world-oriented frame
 
         m_drift = m_wMl.act(m_drift);
@@ -225,6 +230,7 @@ namespace tsid
 
         idx += 1;
       }
+      
       return m_constraint;
     }
   }

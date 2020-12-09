@@ -11,13 +11,14 @@ import ur5_reaching_conf as conf
 
 print(("".center(conf.LINE_WIDTH,'#')))
 print((" TSID - Manipulator End-Effector Sin Tracking ".center(conf.LINE_WIDTH, '#')))
-print(("".center(conf.LINE_WIDTH,'#'), '\n'))
+print(("".center(conf.LINE_WIDTH,'#')))
+print("")
 
 PLOT_EE_POS = 1
-PLOT_EE_VEL = 1
+PLOT_EE_VEL = 0
 PLOT_EE_ACC = 0
-PLOT_JOINT_VEL = 1
-PLOT_TORQUES = 1
+PLOT_JOINT_VEL = 0
+PLOT_TORQUES = 0
 
 tsid = TsidManipulator(conf)
 
@@ -37,6 +38,7 @@ sampleEE = tsid.trajEE.computeNext()
 samplePosture = tsid.trajPosture.computeNext()
 
 offset               = sampleEE.pos()
+offset[3:] = np.array([1., 0, 0, 0., 1, 0, 0., 0, 1]) # useless
 offset[:3]          += conf.offset
 two_pi_f_amp         = conf.two_pi_f * conf.amp
 two_pi_f_squared_amp = conf.two_pi_f * two_pi_f_amp

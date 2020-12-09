@@ -49,7 +49,10 @@ namespace tsid
                      const pinocchio::SE3 & Mdes,
                      pinocchio::Motion & error)
     {
-      error = pinocchio::log6(Mdes.inverse() * M);
+      // error = pinocchio::log6(Mdes.inverse() * M);
+      pinocchio::SE3 M_err = Mdes.inverse() * M;
+      error.linear() = M_err.translation();
+      error.angular() = pinocchio::log3(M_err.rotation());
     }
     
     void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd> & svd,

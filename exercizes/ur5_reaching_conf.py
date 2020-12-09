@@ -19,7 +19,7 @@ q0 = np.array([ 0. , -1.0,  0.7,  0. ,  0. ,  0. ])  # initial configuration
 amp                  = np.array([0.0, 0.0, 0.0])           # amplitude
 phi                  = np.array([0.0, 0.5*np.pi, 0.0])         # phase
 two_pi_f             = 2*np.pi*np.array([1.0, 0.5, 0.5])   # frequency (time 2 PI)
-offset               = np.array([0.2, 0.0, 0.0])
+offset               = np.array([0.1, 0.0, 0.0])
 
 w_ee = 1.0                      # weight of end-effector task
 w_posture = 1e-3                # weight of joint posture task
