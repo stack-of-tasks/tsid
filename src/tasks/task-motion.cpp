@@ -40,6 +40,8 @@ namespace tsid
       return m_mask.size() > 0;
     }
 
+    const Vector & TaskMotion::getMask() const { return m_mask; }
+
     const TrajectorySample & TaskMotion::getReference() const { return TrajectorySample_dummy; }
 
     const Vector & TaskMotion::getDesiredAcceleration() const  { return m_dummy; }

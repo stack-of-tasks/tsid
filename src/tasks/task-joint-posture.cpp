@@ -45,6 +45,12 @@ namespace tsid
 
     void TaskJointPosture::mask(const Vector & m)
     {
+      // std::cerr<<"The method TaskJointPosture::mask is deprecated. Use TaskJointPosture::setMask instead.\n";
+      return setMask(m);
+    }
+
+    void TaskJointPosture::setMask(ConstRefVector m)
+    {
       assert(m.size()==m_robot.na());
       m_mask = m;
       const Vector::Index dim = static_cast<Vector::Index>(m.sum());

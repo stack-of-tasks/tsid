@@ -50,11 +50,12 @@ namespace tsid
       virtual const Vector & velocity_ref() const;
 
       virtual void setMask(math::ConstRefVector mask);
+      virtual const Vector & getMask() const;
       virtual bool hasMask();
 
     protected:
-      math::Vector m_mask;
-      math::Vector m_dummy;
+      Vector m_mask;
+      Vector m_dummy;
       trajectories::TrajectorySample TrajectorySample_dummy;
     };
   }

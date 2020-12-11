@@ -56,14 +56,12 @@ namespace tsid
       const Vector & getVelocityLowerBounds() const;
       const Vector & getVelocityUpperBounds() const;
 
-//      const Vector & mask() const;
-//      void mask(const Vector & mask);
+      virtual void setMask(math::ConstRefVector mask);
 
     protected:
       Vector m_v_lb, m_v_ub;
       Vector m_a_lb, m_a_ub;
       Vector m_ddq_max_due_to_vel, m_ddq_min_due_to_vel;
-//      Vector m_mask;
       ConstraintBound m_constraint;
       double m_dt;
       int m_nv, m_na;

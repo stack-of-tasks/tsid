@@ -21,6 +21,7 @@
 #include <tsid/tasks/task-motion.hpp>
 #include <tsid/math/constraint-bound.hpp>
 #include <tsid/math/constraint-inequality.hpp>
+#include <tsid/deprecation.hpp>
 
 /** This class has been implemented following :
 * Andrea del Prete. Joint Position and Velocity Bounds in Discrete-Time
@@ -106,8 +107,9 @@ namespace tsid
       */
       void computeAccLimits(ConstRefVector q,ConstRefVector dq,bool verbose=true);
 
-      const Vector & mask() const;
-      void mask(const Vector & mask);
+      DEPRECATED const Vector & mask() const; // deprecated
+      DEPRECATED void mask(const Vector & mask); // deprecated
+      virtual void setMask(math::ConstRefVector mask);
 
 
     protected:

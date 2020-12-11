@@ -93,6 +93,11 @@ namespace tsid
       return m_constraint;
     }
 
+    void TaskJointBounds::setMask(ConstRefVector mask)
+    {
+      m_mask = mask;
+    }
+
     const ConstraintBase & TaskJointBounds::compute(const double ,
                                                     ConstRefVector ,
                                                     ConstRefVector v,
@@ -106,6 +111,7 @@ namespace tsid
       int offset = m_nv-m_na;
       for(int i=0; i<m_na; i++)
       {
+        // TODO: use mask here
         m_constraint.upperBound()(offset+i) = std::min(m_ddq_max_due_to_vel(i), m_a_ub(i));
         m_constraint.lowerBound()(offset+i) = std::max(m_ddq_min_due_to_vel(i), m_a_lb(i));
       }
