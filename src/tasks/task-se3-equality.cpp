@@ -178,34 +178,34 @@ namespace tsid
       m_robot.frameJacobianLocal(data, m_frame_id, m_J);
 
       errorInSE3(oMi, m_M_ref, m_p_error);          // pos err in local frame
-      m_p_error_vec = m_p_error.toVector();
       SE3ToVector(m_M_ref, m_p_ref);
       SE3ToVector(oMi, m_p);
 
+      // Transformation from local to world
+      m_wMl.rotation(oMi.rotation());
+
       if (m_local_frame) {
-        // Transformation from local to world
-        m_wMl.rotation(oMi.rotation());
-        m_v_error = v_frame - m_wMl.actInv(m_v_ref);  // vel err in local frame
+        m_p_error_vec = m_p_error.toVector();
+        m_v_error =  m_wMl.actInv(m_v_ref) - v_frame;  // vel err in local frame
 
         // desired acc in local frame
-        m_a_des = - m_Kp.cwiseProduct(m_p_error_vec)
-                  - m_Kd.cwiseProduct(m_v_error.toVector())
+        m_a_des = m_Kp.cwiseProduct(m_p_error_vec)
+                  + m_Kd.cwiseProduct(m_v_error.toVector())
                   + m_wMl.actInv(m_a_ref).toVector();
       } else {
-        // Transformation from reference to world
-        m_wMl.rotation(m_M_ref.rotation());
         m_p_error_vec = m_wMl.toActionMatrix() *   // pos err in local world-oriented frame
             m_p_error.toVector();
 
-        // Transformation from local to world
-        m_wMl.rotation(oMi.rotation());
-        m_v_error = m_wMl.act(v_frame) - m_v_ref;  // vel err in local world-oriented frame
+        cout<<"m_p_error_vec="<<m_p_error_vec.head<3>().transpose()<<endl;
+        cout<<"oMi-m_M_ref  ="<<-(oMi.translation()-m_M_ref.translation()).transpose()<<endl;
+
+        m_v_error = m_v_ref - m_wMl.act(v_frame);  // vel err in local world-oriented frame
 
         m_drift = m_wMl.act(m_drift);
 
         // desired acc in local world-oriented frame
-        m_a_des = - m_Kp.cwiseProduct(m_p_error_vec)
-                  - m_Kd.cwiseProduct(m_v_error.toVector())
+        m_a_des = m_Kp.cwiseProduct(m_p_error_vec)
+                  + m_Kd.cwiseProduct(m_v_error.toVector())
                   + m_a_ref.toVector();
 
         // Use an explicit temporary `m_J_rotated` here to avoid allocations.

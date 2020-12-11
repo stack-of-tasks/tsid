@@ -50,7 +50,8 @@ namespace tsid
                      pinocchio::Motion & error)
     {
       // error = pinocchio::log6(Mdes.inverse() * M);
-      pinocchio::SE3 M_err = Mdes.inverse() * M;
+      // pinocchio::SE3 M_err = Mdes.inverse() * M;
+      pinocchio::SE3 M_err = M.inverse() * Mdes;
       error.linear() = M_err.translation();
       error.angular() = pinocchio::log3(M_err.rotation());
     }
