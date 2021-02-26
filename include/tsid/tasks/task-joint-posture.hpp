@@ -80,7 +80,6 @@ namespace tsid
       Vector m_p_error, m_v_error;
       Vector m_p, m_v;
       Vector m_a_des;
-      Vector m_mask;
       VectorXi m_activeAxes;
       TrajectorySample m_ref;
       ConstraintEquality m_constraint;
