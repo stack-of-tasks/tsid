@@ -34,6 +34,7 @@ v_max_scaling = 0.4
 
 ee_frame_name = "ee_fixed_joint"        # end-effector frame name
 ee_task_mask = np.array([1., 1, 1, 0, 0, 0])
+ee_task_local_frame = False      # specifies whether task is formulated in local frame
 
 PRINT_N = 500                   # print every PRINT_N time steps
 DISPLAY_N = 20                  # update robot configuration in viwewer every DISPLAY_N time steps

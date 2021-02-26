@@ -45,7 +45,7 @@ class TsidManipulator:
         self.eeTask.setKp(self.conf.kp_ee * np.ones(6))
         self.eeTask.setKd(2.0 * np.sqrt(self.conf.kp_ee) * np.ones(6))
         self.eeTask.setMask(conf.ee_task_mask)
-        self.eeTask.useLocalFrame(False)
+        self.eeTask.useLocalFrame(conf.ee_task_local_frame)
         self.EE = model.getFrameId(conf.ee_frame_name)
         H_ee_ref = self.robot.framePosition(formulation.data(), self.EE)
         self.trajEE = tsid.TrajectorySE3Constant("traj-ee", H_ee_ref)
