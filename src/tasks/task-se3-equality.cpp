@@ -196,8 +196,8 @@ namespace tsid
         m_p_error_vec = m_wMl.toActionMatrix() *   // pos err in local world-oriented frame
             m_p_error.toVector();
 
-        cout<<"m_p_error_vec="<<m_p_error_vec.head<3>().transpose()<<endl;
-        cout<<"oMi-m_M_ref  ="<<-(oMi.translation()-m_M_ref.translation()).transpose()<<endl;
+        // cout<<"m_p_error_vec="<<m_p_error_vec.head<3>().transpose()<<endl;
+        // cout<<"oMi-m_M_ref  ="<<-(oMi.translation()-m_M_ref.translation()).transpose()<<endl;
 
         m_v_error = m_v_ref - m_wMl.act(v_frame);  // vel err in local world-oriented frame
 
