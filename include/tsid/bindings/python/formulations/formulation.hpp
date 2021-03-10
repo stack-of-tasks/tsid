@@ -120,7 +120,8 @@ namespace tsid
         return self.updateRigidContactWeights(contact_name, force_regularization_weight, motion_weight);
       }
       static bool addRigidContact6dDeprecated(T& self, contacts::Contact6d & contact){
-        return self.addRigidContact(contact);
+        std::cout<<"[InverseDynamicsFormulationAccForce] Method addRigidContact(ContactBase) is deprecated. You should use addRigidContact(ContactBase, double) instead.\n";
+        return self.addRigidContact(contact, 1e-5);
       }
       static bool addRigidContact6d(T& self, contacts::Contact6d & contact, double force_regularization_weight){
         return self.addRigidContact(contact, force_regularization_weight);
