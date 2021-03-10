@@ -35,7 +35,7 @@ namespace tsid
       m_Kp.setZero(robot.na());
       m_Kd.setZero(robot.na());
       Vector m = Vector::Ones(robot.na());
-      mask(m);
+      setMask(m);
     }
 
     const Vector & TaskJointPosture::mask() const

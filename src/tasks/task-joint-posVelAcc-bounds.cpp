@@ -103,7 +103,7 @@ namespace tsid
       m_dqa = Vector::Zero(m_na);
 
       Vector m = Vector::Ones(robot.na());
-      mask(m);
+      setMask(m);
 
       for(int i=0; i<m_na; i++)
       {
