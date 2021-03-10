@@ -1,3 +1,12 @@
+''' This script is a slight variation of ex_4_walking.py introduced to test the new
+    center of pressure (CoP) task. In this script, besides tracking a reference
+    center of mass (CoM), the TSID controller also tries to track a reference CoP.
+    The resulting motion doesn't look great because the reference CoP is an open-loop
+    reference trajectory, so it is not stabilizing, and it conflicts with the CoM task.
+    However, the results show that the CoP is tracked reasonably well during the motion,
+    which was the goal of the test, validating the CoP task.
+'''
+
 import numpy as np
 from numpy import nan
 from numpy.linalg import norm as norm
