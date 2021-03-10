@@ -66,6 +66,9 @@ namespace tsid
       void setReference(const Vector3 & ref);
       const Vector3 & getReference() const;
 
+      void setContactNormal(const Vector3 & n);
+      const Vector3 & getContactNormal() const;
+
     protected:
       const std::vector<std::shared_ptr<ContactLevel> > *m_contacts;
       std::string m_contact_name; // an empty string

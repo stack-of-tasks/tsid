@@ -49,6 +49,7 @@ namespace tsid
         .def(bp::init<std::string, robots::RobotWrapper &> ((bp::arg("name"), bp::arg("robot")), "Default Constructor"))
         .add_property("dim", &TaskCOP::dim, "return dimension size")
         .def("setReference", &TaskCOPEqualityPythonVisitor::setReference, bp::arg("ref"))
+        .def("setContactNormal", &TaskCOPEqualityPythonVisitor::setContactNormal, bp::arg("normal"))
         .def("compute", &TaskCOPEqualityPythonVisitor::compute, bp::args("t", "q", "v", "data"))
         .def("getConstraint",  &TaskCOPEqualityPythonVisitor::getConstraint)
         .add_property("name", &TaskCOPEqualityPythonVisitor::name)
@@ -70,6 +71,9 @@ namespace tsid
       static void setReference(TaskCOP & self, const Eigen::Vector3d & ref){
         self.setReference(ref);
       }
+      static void setContactNormal(TaskCOP & self, const Eigen::Vector3d & n){
+        self.setContactNormal(n);
+      }
       static void expose(const std::string & class_name)
       {
         std::string doc = "TaskCOPEqualityPythonVisitor info.";
@@ -77,8 +81,6 @@ namespace tsid
                           doc.c_str(),
                           bp::no_init)
         .def(TaskCOPEqualityPythonVisitor<TaskCOP>());
-
-        // bp::register_ptr_to_python< boost::shared_ptr<math::ConstraintBase> >();
       }
     };
   }

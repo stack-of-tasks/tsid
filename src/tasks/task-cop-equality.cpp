@@ -110,5 +110,15 @@ const Vector3 & TaskCopEquality::getReference() const
   return m_ref;
 }
 
+void TaskCopEquality::setContactNormal(const Vector3 & n)
+{
+  m_normal = n;
+}
+
+const Vector3 & TaskCopEquality::getContactNormal() const
+{
+  return m_normal;
+}
+
 }
 }

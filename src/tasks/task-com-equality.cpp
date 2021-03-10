@@ -58,7 +58,7 @@ namespace tsid
 
     int TaskComEquality::dim() const
     {
-      return m_mask.sum();
+      return int(m_mask.sum());
     }
 
     const Vector3 & TaskComEquality::Kp(){ return m_Kp; }
