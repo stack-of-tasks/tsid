@@ -55,6 +55,7 @@ namespace tsid
         .def("computeMotionTask", &Contact6DPythonVisitor::computeMotionTask, bp::args("t", "q", "v", "data"))
         .def("computeForceTask", &Contact6DPythonVisitor::computeForceTask, bp::args("t", "q", "v", "data"))
         .def("computeForceRegularizationTask", &Contact6DPythonVisitor::computeForceRegularizationTask, bp::args("t", "q", "v", "data"))
+        .def("getMotionTask", &Contact6DPythonVisitor::getMotionTask)
         
         .add_property("getForceGeneratorMatrix", bp::make_function(&Contact6DPythonVisitor::getForceGeneratorMatrix, bp::return_value_policy<bp::copy_const_reference>()))
         
@@ -96,6 +97,10 @@ namespace tsid
         self.computeForceRegularizationTask(t, q, v, data);
         math::ConstraintEquality cons(self.getForceRegularizationTask().name(), self.getForceRegularizationTask().matrix(), self.getForceRegularizationTask().vector());
         return cons;
+      }
+      static tsid::tasks::TaskSE3Equality getMotionTask(Contact6d & self){
+        tsid::tasks::TaskSE3Equality t = self.getMotionTask();
+        return t;
       }
 
       static const Eigen::MatrixXd & getForceGeneratorMatrix(Contact6d & self){
