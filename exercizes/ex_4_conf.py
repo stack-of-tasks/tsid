@@ -56,6 +56,7 @@ T_pre  = 1.5                    # simulation time before starting to walk
 T_post = 1.5                    # simulation time after walking
 
 w_com = 1.0                     # weight of center of mass task
+w_cop = 0.0                     # weight of center of pressure task
 w_foot = 1e0                    # weight of the foot motion task
 w_contact = 1e2                 # weight of the foot in contact
 w_posture = 1e-4                # weight of joint posture task

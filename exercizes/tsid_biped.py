@@ -30,7 +30,7 @@ class TsidBiped:
         formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
         formulation.computeProblemData(0.0, q, v)
         data = formulation.data()
-        contact_Point = np.ones((3, 4)) * conf.lz
+        contact_Point = np.ones((3, 4)) * (-conf.lz)
         contact_Point[0, :] = [-conf.lxn, -conf.lxn, conf.lxp, conf.lxp]
         contact_Point[1, :] = [-conf.lyn, conf.lyp, -conf.lyn, conf.lyp]
 
@@ -67,7 +67,10 @@ class TsidBiped:
         comTask = tsid.TaskComEquality("task-com", robot)
         comTask.setKp(conf.kp_com * np.ones(3))
         comTask.setKd(2.0 * np.sqrt(conf.kp_com) * np.ones(3))
-        formulation.addMotionTask(comTask, conf.w_com, 0, 0.0)
+        formulation.addMotionTask(comTask, conf.w_com, 1, 0.0)
+        
+        copTask = tsid.TaskCopEquality("task-cop", robot)
+        formulation.addForceTask(copTask, conf.w_cop, 1, 0.0)
 
         postureTask = tsid.TaskJointPosture("task-posture", robot)
         postureTask.setKp(conf.kp_posture * conf.gain_vector)
@@ -123,6 +126,7 @@ class TsidBiped:
         self.solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
 
         self.comTask = comTask
+        self.copTask = copTask
         self.postureTask = postureTask
         self.contactRF = contactRF
         self.contactLF = contactLF
