@@ -24,20 +24,9 @@ using namespace math;
 using namespace tasks;
 using namespace contacts;
 using namespace solvers;
+using namespace std;
 
 typedef pinocchio::Data Data;
-
-TaskLevel::TaskLevel(tasks::TaskBase & task,
-                     unsigned int priority):
-  task(task),
-  priority(priority)
-{}
-
-
-ContactLevel::ContactLevel(contacts::ContactBase & contact):
-  contact(contact)
-{}
-
 
 InverseDynamicsFormulationAccForce::InverseDynamicsFormulationAccForce(const std::string & name,
                                                                        RobotWrapper & robot,
@@ -93,8 +82,8 @@ void InverseDynamicsFormulationAccForce::resizeHqpData()
   }
 }
 
-
-void InverseDynamicsFormulationAccForce::addTask(std::shared_ptr<TaskLevel> tl,
+template<class TaskLevelPointer>
+void InverseDynamicsFormulationAccForce::addTask(TaskLevelPointer tl,
                                                  double weight,
                                                  unsigned int priorityLevel)
 {
@@ -160,7 +149,7 @@ bool InverseDynamicsFormulationAccForce::addForceTask(TaskContactForce & task,
   // This part is not used frequently so we can do some tests.
   if (transition_duration<0.0)
     std::cerr << "transition_duration should be positive" << std::endl;
-  auto tl = std::make_shared<TaskLevel>(task, priorityLevel);
+  auto tl = std::make_shared<TaskLevelForce>(task, priorityLevel);
   m_taskContactForces.push_back(tl);
   addTask(tl, weight, priorityLevel);
   return true;
@@ -314,8 +303,8 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     }
     else
     {
-      std::cout<<"[InverseDynamicsFormulationAccForce] Remove contact "<<
-                 c->contactLevel->contact.name()<<" at time "<<time<<std::endl;
+      // std::cout<<"[InverseDynamicsFormulationAccForce] Remove contact "<<
+      //            c->contactLevel->contact.name()<<" at time "<<time<<std::endl;
       removeRigidContact(c->contactLevel->contact.name());
       // FIXME: this won't work if multiple contact transitions occur at the same time
       // because after erasing an element the iterator is invalid
@@ -327,9 +316,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   m_robot.computeAllTerms(m_data, q, v);
 
   for(auto cl : m_contacts)
-//    std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
   {
-//    ContactLevel* cl = *it;
     unsigned int m = cl->contact.n_force();
 
     const ConstraintBase & mc = cl->contact.computeMotionTask(time, q, v, m_data);
@@ -386,7 +373,50 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
 
   for (auto& it : m_taskContactForces)
   {
-    assert(false);
+    // cout<<"Task "<<it->task.name()<<endl;
+    // by default the task is associated to all contact forces
+    int i0 = m_v;
+    int c_size = m_k;
+
+    // if the task is associated to a specific contact
+    // cout<<"Associated contact name: "<<it->task.getAssociatedContactName()<<endl;
+    if(it->task.getAssociatedContactName()!="")
+    {
+      // look for the associated contact
+      for(auto cl : m_contacts)
+      {
+        if(it->task.getAssociatedContactName() == cl->contact.name())
+        {
+          i0 += cl->index;
+          c_size = cl->contact.n_force();
+          break;
+        }
+      }
+    }
+
+    const ConstraintBase & c = it->task.compute(time, q, v, m_data, &m_contacts);
+    // cout<<"matrix"<<endl<<c.matrix()<<endl;
+    // cout<<"vector"<<endl<<c.vector().transpose()<<endl;
+    // cout<<"i0 "<<i0<<" c_size "<<c_size<<endl;
+    // cout<<"constraint matrix size: "<<it->constraint->matrix().rows()<<" x "<<it->constraint->matrix().cols()<<endl;
+
+    if(c.isEquality())
+    {
+      it->constraint->matrix().middleCols(i0, c_size) = c.matrix();
+      it->constraint->vector() = c.vector();
+    }
+    else if(c.isInequality())
+    {
+      it->constraint->matrix().middleCols(i0, c_size) = c.matrix();
+      it->constraint->lowerBound() = c.lowerBound();
+      it->constraint->upperBound() = c.upperBound();
+    }
+    else
+    {
+      it->constraint->matrix().middleCols(i0, c_size) = Matrix::Identity(c_size, c_size);
+      it->constraint->lowerBound() = c.lowerBound();
+      it->constraint->upperBound() = c.upperBound();
+    }
   }
 
   for (auto& it : m_taskActuations)

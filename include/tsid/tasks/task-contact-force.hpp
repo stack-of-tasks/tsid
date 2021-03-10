@@ -19,6 +19,9 @@
 #define __invdyn_task_contact_force_hpp__
 
 #include <tsid/tasks/task-base.hpp>
+#include <tsid/formulations/contact-level.hpp>
+#include <memory>
+
 
 namespace tsid
 {
@@ -31,6 +34,23 @@ namespace tsid
       
       TaskContactForce(const std::string & name,
                        RobotWrapper & robot);
+
+      /**
+       * Contact force tasks have an additional compute method that takes as extra input
+       * argument the list of active contacts. This can be needed for force tasks that
+       * involve all contacts, such as the CoP task.
+       */
+      virtual const ConstraintBase & compute(const double t,
+                                             ConstRefVector q,
+                                             ConstRefVector v,
+                                             Data & data,
+                                             const std::vector<std::shared_ptr<ContactLevel> >  *contacts) = 0;
+
+      /**
+       * Return the name of the contact associated to this task if this task is associated to a specific contact.
+       * If this task is associated to multiple contact forces (all of them), returns an empty string.
+       */
+      virtual const std::string& getAssociatedContactName() = 0;
     };
   }
 }

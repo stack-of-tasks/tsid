@@ -39,7 +39,6 @@ namespace tsid
       typedef math::Vector6 Vector6;
       typedef math::Vector3 Vector3;
       typedef math::Vector Vector;
-      typedef tasks::TaskMotion TaskMotion;
       typedef tasks::TaskSE3Equality TaskSE3Equality;
       typedef math::ConstraintInequality ConstraintInequality;
       typedef math::ConstraintEquality ConstraintEquality;
@@ -87,7 +86,7 @@ namespace tsid
                                                                         ConstRefVector v,
                                                                         const Data & data);
 
-      const TaskMotion & getMotionTask() const;
+      const TaskSE3Equality & getMotionTask() const;
       const ConstraintBase & getMotionConstraint() const;
       const ConstraintInequality & getForceConstraint() const;
       const ConstraintEquality & getForceRegularizationTask() const;
@@ -95,6 +94,7 @@ namespace tsid
       double getNormalForce(ConstRefVector f) const;
       double getMinNormalForce() const;
       double getMaxNormalForce() const;
+      const Matrix3x & getContactPoints() const;
 
       const Vector & Kp() const;
       const Vector & Kd() const;

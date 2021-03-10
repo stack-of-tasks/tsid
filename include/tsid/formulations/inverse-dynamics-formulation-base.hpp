@@ -32,6 +32,30 @@
 namespace tsid
 {
 
+  struct TaskLevel
+  {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    
+    tasks::TaskBase & task;
+    std::shared_ptr<math::ConstraintBase> constraint;
+    unsigned int priority;
+
+    TaskLevel(tasks::TaskBase & task,
+              unsigned int priority);
+  };
+
+  struct TaskLevelForce
+  {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    
+    tasks::TaskContactForce & task;
+    std::shared_ptr<math::ConstraintBase> constraint;
+    unsigned int priority;
+
+    TaskLevelForce(tasks::TaskContactForce & task,
+                    unsigned int priority);
+  };
+
   ///
   /// \brief Wrapper for a robot based on pinocchio
   ///

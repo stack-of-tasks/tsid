@@ -171,6 +171,11 @@ bool Contact6d::setContactPoints(ConstRefMatrix contactPoints)
   return true;
 }
 
+const Matrix3x & Contact6d::getContactPoints() const
+{
+  return m_contactPoints;
+}
+
 bool Contact6d::setContactNormal(ConstRefVector contactNormal)
 {
   assert(contactNormal.size()==3);
@@ -259,7 +264,7 @@ computeForceRegularizationTask(const double ,
 double Contact6d::getMinNormalForce() const { return m_fMin; }
 double Contact6d::getMaxNormalForce() const { return m_fMax; }
 
-const TaskMotion & Contact6d::getMotionTask() const { return m_motionTask; }
+const TaskSE3Equality & Contact6d::getMotionTask() const { return m_motionTask; }
 
 const ConstraintBase & Contact6d::getMotionConstraint() const { return m_motionTask.getConstraint(); }
 

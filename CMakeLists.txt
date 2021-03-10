@@ -107,6 +107,7 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
   include/tsid/tasks/task-com-equality.hpp
   include/tsid/tasks/task-se3-equality.hpp
   include/tsid/tasks/task-contact-force-equality.hpp
+  include/tsid/tasks/task-cop-equality.hpp
   include/tsid/tasks/task-actuation-equality.hpp
   include/tsid/tasks/task-actuation-bounds.hpp
   include/tsid/tasks/task-joint-bounds.hpp
@@ -150,6 +151,7 @@ SET(${PROJECT_NAME}_ROBOTS_HEADERS
   )
 
 SET(${PROJECT_NAME}_FORMULATIONS_HEADERS
+  include/tsid/formulations/contact-level.hpp
   include/tsid/formulations/inverse-dynamics-formulation-base.hpp
   include/tsid/formulations/inverse-dynamics-formulation-acc-force.hpp
   )
@@ -198,6 +200,7 @@ SET(${PROJECT_NAME}_TASKS_SOURCES
   src/tasks/task-com-equality.cpp
   src/tasks/task-contact-force-equality.cpp
   src/tasks/task-contact-force.cpp
+  src/tasks/task-cop-equality.cpp
   src/tasks/task-joint-bounds.cpp
   src/tasks/task-joint-posture.cpp
   src/tasks/task-joint-posVelAcc-bounds.cpp
@@ -232,6 +235,7 @@ SET(${PROJECT_NAME}_ROBOTS_SOURCES
   )
 
 SET(${PROJECT_NAME}_FORMULATIONS_SOURCES
+  src/formulations/contact-level.cpp
   src/formulations/inverse-dynamics-formulation-base.cpp
   src/formulations/inverse-dynamics-formulation-acc-force.cpp
   )

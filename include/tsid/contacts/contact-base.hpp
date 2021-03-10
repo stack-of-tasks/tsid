@@ -20,7 +20,7 @@
 
 #include "tsid/math/fwd.hpp"
 #include "tsid/robots/fwd.hpp"
-#include "tsid/tasks/task-motion.hpp"
+#include "tsid/tasks/task-se3-equality.hpp"
 
 
 namespace tsid
@@ -41,7 +41,8 @@ namespace tsid
       typedef math::ConstraintEquality ConstraintEquality;
       typedef math::ConstRefVector ConstRefVector;
       typedef math::Matrix Matrix;
-      typedef tasks::TaskMotion TaskMotion;
+      typedef math::Matrix3x Matrix3x;
+      typedef tasks::TaskSE3Equality TaskSE3Equality;
       typedef pinocchio::Data Data;
       typedef robots::RobotWrapper RobotWrapper;
 
@@ -75,7 +76,7 @@ namespace tsid
                                                                         ConstRefVector v,
                                                                         const Data & data) = 0;
 
-      virtual const TaskMotion & getMotionTask() const = 0;
+      virtual const TaskSE3Equality & getMotionTask() const = 0;
       virtual const ConstraintBase & getMotionConstraint() const = 0;
       virtual const ConstraintInequality & getForceConstraint() const = 0;
       virtual const ConstraintEquality & getForceRegularizationTask() const = 0;
@@ -85,6 +86,7 @@ namespace tsid
       virtual bool setMinNormalForce(const double minNormalForce) = 0;
       virtual bool setMaxNormalForce(const double maxNormalForce) = 0;
       virtual double getNormalForce(ConstRefVector f) const = 0;
+      virtual const Matrix3x & getContactPoints() const = 0;
 
     protected:
       std::string m_name;

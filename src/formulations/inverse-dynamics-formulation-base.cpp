@@ -21,6 +21,18 @@
 namespace tsid
 {
 
+  TaskLevel::TaskLevel(tasks::TaskBase & task,
+                      unsigned int priority):
+    task(task),
+    priority(priority)
+  {}
+
+  TaskLevelForce::TaskLevelForce(tasks::TaskContactForce & task,
+                                unsigned int priority):
+    task(task),
+    priority(priority)
+  {}
+
   InverseDynamicsFormulationBase::InverseDynamicsFormulationBase(const std::string & name,
                                                                  RobotWrapper & robot,
                                                                  bool verbose)

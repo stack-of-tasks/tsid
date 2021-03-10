@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
+// Copyright (c) 2017 CNRS, NYU, MPI Tübingen, UNITN
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -19,38 +19,13 @@
 #define __invdyn_inverse_dynamics_formulation_acc_force_hpp__
 
 #include "tsid/formulations/inverse-dynamics-formulation-base.hpp"
+#include "tsid/formulations/contact-level.hpp"
 #include "tsid/math/constraint-equality.hpp"
 
 #include <vector>
 
 namespace tsid
 {
-  class TaskLevel
-  {
-  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    
-    tasks::TaskBase & task;
-    std::shared_ptr<math::ConstraintBase> constraint;
-    unsigned int priority;
-
-    TaskLevel(tasks::TaskBase & task,
-              unsigned int priority);
-  };
-
-  class ContactLevel
-  {
-  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    
-    contacts::ContactBase & contact;
-    std::shared_ptr<math::ConstraintBase> motionConstraint;
-    std::shared_ptr<math::ConstraintInequality> forceConstraint;
-    std::shared_ptr<math::ConstraintEquality> forceRegTask;
-    unsigned int index; /// index of 1st element of associated force variable in the force vector
-
-    ContactLevel(contacts::ContactBase & contact);
-  };
 
   class ContactTransitionInfo
   {
@@ -138,7 +113,8 @@ namespace tsid
 
   public:
 
-    void addTask(std::shared_ptr<TaskLevel> task,
+    template<class TaskLevelPointer>
+    void addTask(TaskLevelPointer task,
                  double weight,
                  unsigned int priorityLevel);
 
@@ -150,10 +126,10 @@ namespace tsid
 
     Data m_data;
     HQPData m_hqpData;
-    std::vector<std::shared_ptr<TaskLevel> >     m_taskMotions;
-    std::vector<std::shared_ptr<TaskLevel> >     m_taskContactForces;
-    std::vector<std::shared_ptr<TaskLevel> >     m_taskActuations;
-    std::vector<std::shared_ptr<ContactLevel> >  m_contacts;
+    std::vector<std::shared_ptr<TaskLevel> >        m_taskMotions;
+    std::vector<std::shared_ptr<TaskLevelForce> >   m_taskContactForces;
+    std::vector<std::shared_ptr<TaskLevel> >        m_taskActuations;
+    std::vector<std::shared_ptr<ContactLevel> >     m_contacts;
     double m_t;         /// time
     unsigned int m_k;   /// number of contact-force variables
     unsigned int m_v;   /// number of acceleration variables

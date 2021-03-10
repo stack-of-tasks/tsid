@@ -45,6 +45,8 @@ ContactPoint::ContactPoint(const std::string & name,
   m_weightForceRegTask << 1, 1, 1e-3;
   m_forceGenMat.resize(3, 3);
   m_fRef = Vector3::Zero();
+  m_contactPoints.resize(3,1);
+  m_contactPoints.setZero();
   updateForceGeneratorMatrix();
   updateForceInequalityConstraints();
   updateForceRegularizationTask();
@@ -94,6 +96,11 @@ double ContactPoint::getNormalForce(ConstRefVector f) const
   return m_contactNormal.dot(f);
 }
 
+const Matrix3x & ContactPoint::getContactPoints() const
+{
+  return m_contactPoints;
+}
+
 void ContactPoint::setRegularizationTaskWeightVector(ConstRefVector & w)
 {
   m_weightForceRegTask = w;
@@ -117,8 +124,18 @@ void ContactPoint:: updateForceGeneratorMatrix()
 unsigned int ContactPoint::n_motion() const { return m_motionTask.dim(); }
 unsigned int ContactPoint::n_force() const { return 3; }
 
-const Vector & ContactPoint::Kp() const { return m_motionTask.Kp().head<3>(); }
-const Vector & ContactPoint::Kd() const { return m_motionTask.Kd().head<3>(); }
+const Vector & ContactPoint::Kp() 
+{ 
+  m_Kp3 = m_motionTask.Kp().head<3>(); 
+  return m_Kp3; 
+}
+
+const Vector & ContactPoint::Kd() 
+{ 
+  m_Kd3 = m_motionTask.Kd().head<3>(); 
+  return m_Kd3; 
+}
+
 void ContactPoint::Kp(ConstRefVector Kp)
 {
   assert(Kp.size()==3);
@@ -223,7 +240,7 @@ computeForceRegularizationTask(const double ,
 double ContactPoint::getMinNormalForce() const { return m_fMin; }
 double ContactPoint::getMaxNormalForce() const { return m_fMax; }
 
-const TaskMotion & ContactPoint::getMotionTask() const { return m_motionTask; }
+const TaskSE3Equality & ContactPoint::getMotionTask() const { return m_motionTask; }
 
 const ConstraintBase & ContactPoint::getMotionConstraint() const { return m_motionTask.getConstraint(); }
 
