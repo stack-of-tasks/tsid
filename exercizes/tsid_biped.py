@@ -71,6 +71,14 @@ class TsidBiped:
         
         copTask = tsid.TaskCopEquality("task-cop", robot)
         formulation.addForceTask(copTask, conf.w_cop, 1, 0.0)
+        
+        amTask = tsid.TaskAMEquality("task-am", robot)
+        amTask.setKp(conf.kp_am * np.array([1., 1., 0.]))
+        amTask.setKd(2.0 * np.sqrt(conf.kp_am * np.array([1., 1., 0.])))
+        formulation.addMotionTask(amTask, conf.w_am, 1, 0.)
+        sampleAM = tsid.TrajectorySample(3)
+        amTask.setReference(sampleAM)
+
 
         postureTask = tsid.TaskJointPosture("task-posture", robot)
         postureTask.setKp(conf.kp_posture * conf.gain_vector)
@@ -127,6 +135,7 @@ class TsidBiped:
 
         self.comTask = comTask
         self.copTask = copTask
+        self.amTask = amTask
         self.postureTask = postureTask
         self.contactRF = contactRF
         self.contactLF = contactLF

@@ -84,6 +84,7 @@ for i in range(-N_pre, N+N_post):
                 tsid.add_contact_RF()
                 tsid.remove_contact_LF()
     
+    
     if i<0:
         tsid.set_com_ref(com_pos_ref[:,0], 0*com_vel_ref[:,0], 0*com_acc_ref[:,0])
     elif i<N:

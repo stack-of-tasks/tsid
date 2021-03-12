@@ -88,7 +88,7 @@ for i in range(-N_pre, N+N_post):
         print("Starting to walk (remove contact left foot)")
         tsid.remove_contact_LF()
         # activate CoP task only when robot starts walking
-        tsid.formulation.updateTaskWeight(tsid.copTask.name, 1e-3)
+        tsid.formulation.updateTaskWeight(tsid.copTask.name, 1e-4)
     elif i>0 and i<N-1:
         if contact_phase[i] != contact_phase[i-1]:
             print("Time %.3f Changing contact phase from %s to %s"%(t, contact_phase[i-1], contact_phase[i]))
@@ -98,6 +98,12 @@ for i in range(-N_pre, N+N_post):
             else:
                 tsid.add_contact_RF()
                 tsid.remove_contact_LF()
+    elif i==N:
+        # switch to double support at the end
+        if contact_phase[i-1] == 'left':
+            tsid.add_contact_RF()
+        else:
+            tsid.add_contact_LF()
     
     if i<0:
         tsid.set_com_ref(com_pos_ref[:,0], 0*com_vel_ref[:,0], 0*com_acc_ref[:,0])
