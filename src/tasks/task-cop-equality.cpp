@@ -31,6 +31,7 @@ m_constraint(name, 3, 3),
 m_contact_name("")
 {
   m_normal << 0, 0, 1;
+  m_ref.setZero();
 }
 
 void TaskCopEquality::setContactList(const std::vector<std::shared_ptr<ContactLevel> >  *contacts)

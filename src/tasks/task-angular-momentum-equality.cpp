@@ -40,6 +40,7 @@ namespace tsid
       m_L.setZero(3);
       m_dL.setZero(3);
       m_dL_des.setZero(3);
+      m_ref.resize(3);
     }
 
     int TaskAMEquality::dim() const
