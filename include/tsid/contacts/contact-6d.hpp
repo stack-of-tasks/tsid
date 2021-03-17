@@ -18,7 +18,7 @@
 #ifndef __invdyn_contact_6d_hpp__
 #define __invdyn_contact_6d_hpp__
 
-#include "tsid/deprecation.hpp"
+#include "tsid/deprecated.hh"
 #include "tsid/contacts/contact-base.hpp"
 #include "tsid/tasks/task-se3-equality.hpp"
 #include "tsid/math/constraint-inequality.hpp"
@@ -53,7 +53,7 @@ namespace tsid
                 const double minNormalForce,
                 const double maxNormalForce);
 
-      DEPRECATED Contact6d(const std::string & name,
+      TSID_DEPRECATED Contact6d(const std::string & name,
                 RobotWrapper & robot,
                 const std::string & frameName,
                 ConstRefMatrix contactPoints,
