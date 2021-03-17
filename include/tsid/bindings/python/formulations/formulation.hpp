@@ -24,6 +24,8 @@
 #include <eigenpy/eigenpy.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
+#include <pinocchio/bindings/python/utils/deprecation.hpp>
+
 #include "tsid/formulations/inverse-dynamics-formulation-acc-force.hpp"
 #include "tsid/bindings/python/solvers/HQPData.hpp"
 #include "tsid/contacts/contact-6d.hpp"
@@ -68,7 +70,8 @@ namespace tsid
         .def("updateTaskWeight", &InvDynPythonVisitor::updateTaskWeight, bp::args("task_name", "weight"))
         .def("updateRigidContactWeights", &InvDynPythonVisitor::updateRigidContactWeights, bp::args("contact_name", "force_regularization_weight"))
         .def("updateRigidContactWeights", &InvDynPythonVisitor::updateRigidContactWeightsWithMotionWeight, bp::args("contact_name", "force_regularization_weight", "motion_weight"))
-        .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6dDeprecated, bp::args("contact"))
+        .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6dDeprecated, bp::args("contact"), pinocchio::python::deprecated_function<>(
+              "Method addRigidContact(ContactBase) is deprecated. You should use addRigidContact(ContactBase, double) instead"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6d, bp::args("contact", "force_reg_weight"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContact6dWithPriorityLevel, bp::args("contact", "force_reg_weight", "motion_weight", "priority_level"))
         .def("addRigidContact", &InvDynPythonVisitor::addRigidContactPoint, bp::args("contact", "force_reg_weight"))
@@ -120,7 +123,7 @@ namespace tsid
         return self.updateRigidContactWeights(contact_name, force_regularization_weight, motion_weight);
       }
       static bool addRigidContact6dDeprecated(T& self, contacts::Contact6d & contact){
-        return self.addRigidContact(contact);
+        return self.addRigidContact(contact, 1e-5);
       }
       static bool addRigidContact6d(T& self, contacts::Contact6d & contact, double force_regularization_weight){
         return self.addRigidContact(contact, force_regularization_weight);

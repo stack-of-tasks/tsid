@@ -27,8 +27,8 @@ namespace tasks
 
 TaskCopEquality::TaskCopEquality(const std::string & name, RobotWrapper & robot):
 TaskContactForce(name, robot),
-m_constraint(name, 3, 3),
-m_contact_name("")
+m_contact_name(""),
+m_constraint(name, 3, 3)
 {
   m_normal << 0, 0, 1;
   m_ref.setZero();
