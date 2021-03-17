@@ -163,6 +163,7 @@ SET(${PROJECT_NAME}_FORMULATIONS_HEADERS
   )
 
 FILE(GLOB ${PYWRAP}_HEADERS
+  include/tsid/bindings/python/fwd.hpp
   include/tsid/bindings/python/constraint/*.hpp
   include/tsid/bindings/python/contacts/*.hpp
   include/tsid/bindings/python/formulations/*.hpp

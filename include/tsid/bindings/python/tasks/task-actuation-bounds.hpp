@@ -18,11 +18,7 @@
 #ifndef __tsid_python_task_actuation_bounds_hpp__
 #define __tsid_python_task_actuation_bounds_hpp__
 
-#include <pinocchio/fwd.hpp>
-#include <boost/python.hpp>
-#include <string>
-#include <eigenpy/eigenpy.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include "tsid/bindings/python/fwd.hpp"
 
 #include "tsid/tasks/task-actuation-bounds.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
