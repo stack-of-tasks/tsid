@@ -18,10 +18,7 @@
 #ifndef __tsid_python_HQPOutput_hpp__
 #define __tsid_python_HQPOutput_hpp__
 
-#include <boost/python.hpp>
-#include <string>
-#include <eigenpy/eigenpy.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include "tsid/bindings/python/fwd.hpp"
 
 #include "tsid/solvers/solver-HQP-output.hpp"
 

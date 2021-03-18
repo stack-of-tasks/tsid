@@ -18,11 +18,7 @@
 #ifndef __tsid_python_traj_sample_hpp__
 #define __tsid_python_traj_sample_hpp__
 
-#include <pinocchio/fwd.hpp>
-#include <boost/python.hpp>
-#include <string>
-#include <eigenpy/eigenpy.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include "tsid/bindings/python/fwd.hpp"
 
 #include <tsid/math/utils.hpp>
 #include "tsid/trajectories/trajectory-base.hpp"
