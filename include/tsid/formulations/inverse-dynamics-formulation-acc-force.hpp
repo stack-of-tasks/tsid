@@ -20,6 +20,7 @@
 
 #include "tsid/formulations/inverse-dynamics-formulation-base.hpp"
 #include "tsid/formulations/contact-level.hpp"
+#include "tsid/formulations/task-energy-level.hpp"
 #include "tsid/math/constraint-equality.hpp"
 
 #include <vector>
@@ -53,6 +54,7 @@ namespace tsid
     typedef tasks::TaskMotion TaskMotion;
     typedef tasks::TaskContactForce TaskContactForce;
     typedef tasks::TaskActuation TaskActuation;
+    typedef tasks::TaskEnergy TaskEnergy;
     typedef solvers::HQPOutput HQPOutput;
 
 
@@ -80,6 +82,11 @@ namespace tsid
                           double weight,
                           unsigned int priorityLevel,
                           double transition_duration=0.0);
+
+    bool addEnergyTask(TaskEnergy & task,
+                       double weight,
+                       unsigned int priorityLevel,
+                       double transition_duration=0.0);
 
     bool updateTaskWeight(const std::string & task_name,
                           double weight);
@@ -130,6 +137,7 @@ namespace tsid
     std::vector<std::shared_ptr<TaskLevelForce> >   m_taskContactForces;
     std::vector<std::shared_ptr<TaskLevel> >        m_taskActuations;
     std::vector<std::shared_ptr<ContactLevel> >     m_contacts;
+    std::vector<std::shared_ptr<TaskEnergyLevel> > m_taskEnergies;
     double m_t;         /// time
     unsigned int m_k;   /// number of contact-force variables
     unsigned int m_v;   /// number of acceleration variables

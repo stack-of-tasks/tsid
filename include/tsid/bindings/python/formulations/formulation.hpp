@@ -32,6 +32,7 @@
 #include "tsid/tasks/task-cop-equality.hpp"
 #include "tsid/tasks/task-actuation-bounds.hpp"
 #include "tsid/tasks/task-joint-bounds.hpp"
+#include "tsid/tasks/task-energy.hpp"
 #include "tsid/tasks/task-angular-momentum-equality.hpp"
 
 
@@ -62,6 +63,7 @@ namespace tsid
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_JointBounds, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_AM, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addForceTask", &InvDynPythonVisitor::addForceTask_COP, bp::args("task", "weight", "priorityLevel", "transition duration"))
+        .def("addEnergyTask", &InvDynPythonVisitor::addEnergyTask, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addActuationTask", &InvDynPythonVisitor::addActuationTask_Bounds, bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("updateTaskWeight", &InvDynPythonVisitor::updateTaskWeight, bp::args("task_name", "weight"))
         .def("updateRigidContactWeights", &InvDynPythonVisitor::updateRigidContactWeights, bp::args("contact_name", "force_regularization_weight"))
@@ -105,6 +107,9 @@ namespace tsid
       }
       static bool addForceTask_COP(T & self, tasks::TaskCopEquality & task, double weight, unsigned int priorityLevel, double transition_duration){
         return self.addForceTask(task, weight, priorityLevel, transition_duration);
+      }
+      static bool addEnergyTask(T & self, tasks::TaskEnergy & task, double weight, unsigned int priorityLevel, double transition_duration){
+        return self.addEnergyTask(task, weight, priorityLevel, transition_duration);
       }
       static bool addActuationTask_Bounds(T & self, tasks::TaskActuationBounds & task, double weight, unsigned int priorityLevel, double transition_duration){
         return self.addActuationTask(task, weight, priorityLevel, transition_duration);
