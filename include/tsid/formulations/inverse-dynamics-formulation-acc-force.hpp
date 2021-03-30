@@ -117,6 +117,7 @@ namespace tsid
     bool getContactForces(const std::string & name,
                           const HQPOutput & sol,
                           RefVector f);
+    Vector getJContactForces(const HQPOutput & sol);
 
   public:
 

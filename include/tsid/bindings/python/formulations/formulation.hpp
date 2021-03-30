@@ -167,6 +167,9 @@ namespace tsid
       static Eigen::VectorXd getContactForces (T & self, const solvers::HQPOutput & sol){
         return self.getContactForces(sol);
       }
+      static Eigen::VectorXd getJContactForces (T & self, const solvers::HQPOutput & sol){
+          return self.getJContactForces(sol);
+      }
       static bool checkContact(T& self, const std::string & name,  const solvers::HQPOutput & sol){
           tsid::math::Vector f = self.getContactForces(name, sol);
           if(f.size()>0)

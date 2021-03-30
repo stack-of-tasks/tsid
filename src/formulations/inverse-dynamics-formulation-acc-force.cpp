@@ -602,6 +602,13 @@ bool InverseDynamicsFormulationAccForce::getContactForces(const std::string & na
   return false;
 }
 
+Vector InverseDynamicsFormulationAccForce::getJContactForces(const HQPOutput & sol)
+{
+  decodeSolution(sol);
+  Vector JF = m_Jc.transpose() * m_f;
+  return JF;
+}
+
 bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName,
                                                     double )
 {
