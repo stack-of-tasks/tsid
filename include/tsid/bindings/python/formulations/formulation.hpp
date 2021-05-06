@@ -82,6 +82,7 @@ namespace tsid
         .def("getActuatorForces", &InvDynPythonVisitor::getActuatorForces, bp::args("HQPOutput"))
         .def("getAccelerations", &InvDynPythonVisitor::getAccelerations, bp::args("HQPOutput"))
         .def("getContactForces", &InvDynPythonVisitor::getContactForces, bp::args("HQPOutput"))
+        .def("getJContactForces", &InvDynPythonVisitor::getJContactForces, bp::args("HQPOutput"))
         .def("checkContact", &InvDynPythonVisitor::checkContact, bp::args("name", "HQPOutput"))
         .def("getContactForce", &InvDynPythonVisitor::getContactForce, bp::args("name", "HQPOutput"))
         ;

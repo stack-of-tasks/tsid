@@ -38,7 +38,8 @@ namespace tsid
 
       typedef math::Index Index;
       typedef trajectories::TrajectorySample TrajectorySample;
-      typedef math::Vector Vector;      
+      typedef math::Vector Vector;
+      typedef math::Matrix Matrix;     
       typedef math::ConstraintInequality ConstraintInequality;
       typedef math::ConstraintEquality ConstraintEquality;
       typedef pinocchio::Data Data;
@@ -72,26 +73,39 @@ namespace tsid
       const double & get_upperBound() const;
       const double & get_E_c() const;
       const double & get_E_p() const;
+      const double & get_E_tank() const;
+      const double & get_dt() const;
       const Vector & get_A() const;
-
+      const Vector & get_v() const;
+      const double & get_upperBoundMaxEnergyCst() const;
+      const double & get_lowerBoundMaxEnergyCst() const;
+      const double & get_vectorEnergyTask() const;
+      const Matrix & get_matrixEnergyTask() const;
+      const Matrix & get_LyapunovMatrix() const;
       const Vector & K() const;
       void K(ConstRefVector K);
-      const double & H_d() const;
-      void setH_d(const double H);
+      const double & E_d() const;
+      void setE_d(const double E);
+      void setLyapunovMatrix(const Matrix M);
+      void setE_m_ctrl(const double E_m);
 
     protected:
       Vector m_q_init;
-      Vector m_q_prev, m_v_prev;
+      Vector m_v; //m_q_prev, 
       double m_dt;
       double m_time_preview;
       Vector m_K;
       int m_dim;
       Vector m_A;
+      Matrix m_LyapMat;
       double m_E_c;
       double m_E_p;
-      double m_H_max;
-      double m_H_d;
-      Vector m_q_error, m_q_prev_error;
+      double m_E_tank;
+      double m_E_max;
+      double m_E_d;
+      double m_E_m_ctrl;
+      double m_E_max_tank;
+      Vector m_q_error; //, m_q_prev_error;
       Vector m_a_des;
       Vector m_BK;
       ConstraintInequality m_lyapunovConstraint;

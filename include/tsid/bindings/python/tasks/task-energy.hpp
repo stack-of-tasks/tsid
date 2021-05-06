@@ -54,11 +54,17 @@ namespace tsid
         .add_property("get_upperBound", bp::make_function(&TaskEnergyPythonVisitor::get_upperBound, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_E_c", bp::make_function(&TaskEnergyPythonVisitor::get_E_c, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_E_p", bp::make_function(&TaskEnergyPythonVisitor::get_E_p, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_E_tank", bp::make_function(&TaskEnergyPythonVisitor::get_E_tank, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_A", bp::make_function(&TaskEnergyPythonVisitor::get_A, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_upperBoundMaxEnergyCst", bp::make_function(&TaskEnergyPythonVisitor::get_upperBoundMaxEnergyCst, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_lowerBoundMaxEnergyCst", bp::make_function(&TaskEnergyPythonVisitor::get_lowerBoundMaxEnergyCst, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_vectorEnergyTask", bp::make_function(&TaskEnergyPythonVisitor::get_vectorEnergyTask, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_matrixEnergyTask", bp::make_function(&TaskEnergyPythonVisitor::get_matrixEnergyTask, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_LyapunovMatrix", bp::make_function(&TaskEnergyPythonVisitor::get_LyapunovMatrix, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("K", bp::make_function(&TaskEnergyPythonVisitor::K, bp::return_value_policy<bp::copy_const_reference>()))
         .def("setK", &TaskEnergyPythonVisitor::setK, bp::arg("K"))
-        .add_property("H_d", bp::make_function(&TaskEnergyPythonVisitor::H_d, bp::return_value_policy<bp::copy_const_reference>()))
-        .def("setH_d", &TaskEnergyPythonVisitor::setH_d, bp::arg("H"))
+        .add_property("E_d", bp::make_function(&TaskEnergyPythonVisitor::E_d, bp::return_value_policy<bp::copy_const_reference>()))
+        .def("setE_d", &TaskEnergyPythonVisitor::setE_d, bp::arg("E"))
         .def("computeLyapunovTask", &TaskEnergyPythonVisitor::computeLyapunovTask, bp::args("t", "q", "v", "data"))
         .add_property("name", &TaskEnergyPythonVisitor::name)
         ;
@@ -90,8 +96,26 @@ namespace tsid
       static const double & get_E_p (const TaskEnergy & self){
         return self.get_E_p();
       }
+      static const double & get_E_tank (const TaskEnergy & self){
+        return self.get_E_tank();
+      }
       static const Eigen::VectorXd & get_A (const TaskEnergy & self){
         return self.get_A();
+      }
+      static const double & get_upperBoundMaxEnergyCst (const TaskEnergy & self){
+        return self.get_upperBoundMaxEnergyCst();
+      } 
+      static const double & get_lowerBoundMaxEnergyCst (const TaskEnergy & self){
+        return self.get_lowerBoundMaxEnergyCst();
+      } 
+      static const double & get_vectorEnergyTask (const TaskEnergy & self){
+        return self.get_vectorEnergyTask();
+      } 
+      static const Eigen::Matrix<double, Eigen::Dynamic,Eigen::Dynamic> & get_matrixEnergyTask (const TaskEnergy & self){
+        return self.get_matrixEnergyTask();
+      }
+      static const Eigen::Matrix<double, Eigen::Dynamic,Eigen::Dynamic> & get_LyapunovMatrix (const TaskEnergy & self){
+        return self.get_LyapunovMatrix();
       } 
       static const Eigen::VectorXd & K (TaskEnergy & self){
         return self.K();
@@ -99,11 +123,11 @@ namespace tsid
       static void setK (TaskEnergy & self, const::Eigen::VectorXd K){
         return self.K(K);
       }
-      static const double & H_d (TaskEnergy & self){
-        return self.H_d();
+      static const double & E_d (TaskEnergy & self){
+        return self.E_d();
       }   
-      static void setH_d (TaskEnergy & self, const double H){
-        return self.setH_d(H);
+      static void setE_d (TaskEnergy & self, const double E){
+        return self.setE_d(E);
       }
       static void expose(const std::string & class_name)
       {
