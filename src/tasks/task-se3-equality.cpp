@@ -230,7 +230,7 @@ namespace tsid
 
         idx += 1;
       }
-      
+
       return m_constraint;
     }
   }
