@@ -155,8 +155,8 @@ void Contact6d:: updateForceGeneratorMatrix()
 unsigned int Contact6d::n_motion() const { return 6; }
 unsigned int Contact6d::n_force() const { return 12; }
 
-const Vector & Contact6d::Kp() const { return m_motionTask.Kp(); }
-const Vector & Contact6d::Kd() const { return m_motionTask.Kd(); }
+const Vector & Contact6d::Kp() { return m_motionTask.Kp(); }
+const Vector & Contact6d::Kd() { return m_motionTask.Kd(); }
 void Contact6d::Kp(ConstRefVector Kp){ m_motionTask.Kp(Kp); }
 void Contact6d::Kd(ConstRefVector Kd){ m_motionTask.Kd(Kd); }
 
@@ -264,7 +264,7 @@ computeForceRegularizationTask(const double ,
 double Contact6d::getMinNormalForce() const { return m_fMin; }
 double Contact6d::getMaxNormalForce() const { return m_fMax; }
 
-const TaskSE3Equality & Contact6d::getMotionTask() const { return m_motionTask; }
+TaskSE3Equality & Contact6d::getMotionTask() { return m_motionTask; }
 
 const ConstraintBase & Contact6d::getMotionConstraint() const { return m_motionTask.getConstraint(); }
 

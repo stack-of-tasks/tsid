@@ -21,6 +21,7 @@
 #include "tsid/formulations/inverse-dynamics-formulation-base.hpp"
 #include "tsid/formulations/contact-level.hpp"
 #include "tsid/formulations/task-energy-level.hpp"
+#include "tsid/formulations/task-motion-level.hpp"
 #include "tsid/math/constraint-equality.hpp"
 
 #include <vector>
@@ -134,11 +135,11 @@ namespace tsid
 
     Data m_data;
     HQPData m_hqpData;
-    std::vector<std::shared_ptr<TaskLevel> >        m_taskMotions;
+    std::vector<std::shared_ptr<TaskLevelMotion> >  m_taskMotions;
     std::vector<std::shared_ptr<TaskLevelForce> >   m_taskContactForces;
     std::vector<std::shared_ptr<TaskLevel> >        m_taskActuations;
     std::vector<std::shared_ptr<ContactLevel> >     m_contacts;
-    std::vector<std::shared_ptr<TaskEnergyLevel> > m_taskEnergies;
+    std::vector<std::shared_ptr<TaskEnergyLevel> >  m_taskEnergies;
     double m_t;         /// time
     unsigned int m_k;   /// number of contact-force variables
     unsigned int m_v;   /// number of acceleration variables
@@ -149,6 +150,7 @@ namespace tsid
     std::shared_ptr<math::ConstraintEquality> m_baseDynamics;
 
     bool m_solutionDecoded;
+    bool m_first_iter;
     Vector m_dv;
     Vector m_f;
     Vector m_tau;

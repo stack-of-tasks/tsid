@@ -74,7 +74,7 @@ namespace tsid
                                                                         ConstRefVector v,
                                                                         const Data & data);
 
-      const TaskSE3Equality & getMotionTask() const;
+      TaskSE3Equality & getMotionTask();
       const ConstraintBase & getMotionConstraint() const;
       const ConstraintInequality & getForceConstraint() const;
       const ConstraintEquality & getForceRegularizationTask() const;

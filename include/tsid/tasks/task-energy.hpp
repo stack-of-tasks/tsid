@@ -22,9 +22,15 @@
 #include "tsid/trajectories/trajectory-base.hpp"
 #include "tsid/math/constraint-inequality.hpp"
 #include "tsid/math/constraint-equality.hpp"
+#include "tsid/formulations/task-motion-level.hpp"
+#include "tsid/formulations/contact-level.hpp"
 
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/data.hpp>
+#include <pinocchio/algorithm/centroidal.hpp>
+#include <pinocchio/algorithm/jacobian.hpp>
+#include <pinocchio/algorithm/frames.hpp>
+#include <pinocchio/algorithm/energy.hpp>
 
 namespace tsid
 {
@@ -70,13 +76,19 @@ namespace tsid
 
       const Vector & position_ref() const;
       const Vector & get_BK_vector() const;
-      const double & get_upperBound() const;
-      const double & get_E_c() const;
-      const double & get_E_p() const;
+      const double & get_lowerBound() const;
+      const double & get_H() const;
+      const double & get_dH() const;
       const double & get_E_tank() const;
+      const double & get_H_tot() const;
+      const double & get_dH_tot() const;
+      const Vector & get_S() const;
+      const Vector & get_dS() const;
       const double & get_dt() const;
-      const Vector & get_A() const;
       const Vector & get_v() const;
+      const double & get_alpha() const;
+      const double & get_beta() const;
+      const double & get_gamma() const;
       const double & get_upperBoundMaxEnergyCst() const;
       const double & get_lowerBoundMaxEnergyCst() const;
       const double & get_vectorEnergyTask() const;
@@ -89,22 +101,37 @@ namespace tsid
       void setLyapunovMatrix(const Matrix M);
       void setE_m_ctrl(const double E_m);
 
+      void setTasks(const std::vector<std::shared_ptr<TaskLevelMotion> >  taskMotions, 
+                    const std::vector<std::shared_ptr<ContactLevel> >  taskContacts, Data & data);
+
     protected:
       Vector m_q_init;
       Vector m_v; //m_q_prev, 
       double m_dt;
       double m_time_preview;
+      double m_alpha;
+      double m_beta;
+      double m_gamma;
+      double m_Plow; 
+      Vector m_A;     
+      double m_H;
+      double m_dH;
+      double m_H_tot;
+      double m_dH_tot;
+      double m_H_tot_prev;
+      Vector m_dS;
+      Vector m_S;
+      Vector m_S_prev;
       Vector m_K;
+      std::vector<Vector> m_maked_Kp_prev;
       int m_dim;
-      Vector m_A;
       Matrix m_LyapMat;
-      double m_E_c;
-      double m_E_p;
       double m_E_tank;
       double m_E_max;
       double m_E_d;
       double m_E_m_ctrl;
       double m_E_max_tank;
+      double m_E_min_tank;
       Vector m_q_error; //, m_q_prev_error;
       Vector m_a_des;
       Vector m_BK;
@@ -114,6 +141,9 @@ namespace tsid
       TrajectorySample m_ref;
       Vector m_b_lower;
       Vector m_b_upper;
+      std::vector<std::shared_ptr<TaskLevelMotion> > m_taskMotions;
+      std::vector<std::shared_ptr<ContactLevel> >   m_taskContacts;
+      bool m_first_iter;
     };
 
   }

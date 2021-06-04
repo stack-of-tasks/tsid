@@ -51,11 +51,17 @@ namespace tsid
         .def("setReference", &TaskEnergyPythonVisitor::setReference, bp::arg("ref"))
         .add_property("position_ref", bp::make_function(&TaskEnergyPythonVisitor::position_ref, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_BK_vector", bp::make_function(&TaskEnergyPythonVisitor::get_BK_vector, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("get_upperBound", bp::make_function(&TaskEnergyPythonVisitor::get_upperBound, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("get_E_c", bp::make_function(&TaskEnergyPythonVisitor::get_E_c, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("get_E_p", bp::make_function(&TaskEnergyPythonVisitor::get_E_p, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_lowerBound", bp::make_function(&TaskEnergyPythonVisitor::get_lowerBound, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_H", bp::make_function(&TaskEnergyPythonVisitor::get_H, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_dH", bp::make_function(&TaskEnergyPythonVisitor::get_dH, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_E_tank", bp::make_function(&TaskEnergyPythonVisitor::get_E_tank, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("get_A", bp::make_function(&TaskEnergyPythonVisitor::get_A, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_H_tot", bp::make_function(&TaskEnergyPythonVisitor::get_H_tot, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_S", bp::make_function(&TaskEnergyPythonVisitor::get_S, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_dH_tot", bp::make_function(&TaskEnergyPythonVisitor::get_dH_tot, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_alpha", bp::make_function(&TaskEnergyPythonVisitor::get_alpha, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_beta", bp::make_function(&TaskEnergyPythonVisitor::get_beta, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_gamma", bp::make_function(&TaskEnergyPythonVisitor::get_gamma, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_dS", bp::make_function(&TaskEnergyPythonVisitor::get_dS, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_upperBoundMaxEnergyCst", bp::make_function(&TaskEnergyPythonVisitor::get_upperBoundMaxEnergyCst, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_lowerBoundMaxEnergyCst", bp::make_function(&TaskEnergyPythonVisitor::get_lowerBoundMaxEnergyCst, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_vectorEnergyTask", bp::make_function(&TaskEnergyPythonVisitor::get_vectorEnergyTask, bp::return_value_policy<bp::copy_const_reference>()))
@@ -87,20 +93,38 @@ namespace tsid
       static const Eigen::VectorXd & get_BK_vector (const TaskEnergy & self){
         return self.get_BK_vector();
       }
-      static const double & get_upperBound (const TaskEnergy & self){
-        return self.get_upperBound();
+      static const double & get_lowerBound (const TaskEnergy & self){
+        return self.get_lowerBound();
       } 
-      static const double & get_E_c (const TaskEnergy & self){
-        return self.get_E_c();
+      static const double & get_H (const TaskEnergy & self){
+        return self.get_H();
       }
-      static const double & get_E_p (const TaskEnergy & self){
-        return self.get_E_p();
+      static const double & get_dH (const TaskEnergy & self){
+        return self.get_dH();
       }
       static const double & get_E_tank (const TaskEnergy & self){
         return self.get_E_tank();
       }
-      static const Eigen::VectorXd & get_A (const TaskEnergy & self){
-        return self.get_A();
+      static const double & get_H_tot (const TaskEnergy & self){
+        return self.get_H_tot();
+      }
+      static const double & get_dH_tot (const TaskEnergy & self){
+        return self.get_dH_tot();
+      }
+      static const Eigen::VectorXd & get_S (const TaskEnergy & self){
+        return self.get_S();
+      }
+      static const Eigen::VectorXd & get_dS (const TaskEnergy & self){
+        return self.get_dS();
+      }
+      static const double & get_gamma (const TaskEnergy & self){
+        return self.get_gamma();
+      }
+      static const double & get_alpha (const TaskEnergy & self){
+        return self.get_alpha();
+      }
+      static const double & get_beta (const TaskEnergy & self){
+        return self.get_beta();
       }
       static const double & get_upperBoundMaxEnergyCst (const TaskEnergy & self){
         return self.get_upperBoundMaxEnergyCst();

@@ -35,6 +35,7 @@ namespace tsid
       
       typedef math::Index Index;
       typedef trajectories::TrajectorySample TrajectorySample;
+      typedef math::Matrix Matrix;
       typedef math::Vector Vector;
       typedef math::VectorXi VectorXi;
       typedef math::ConstraintEquality ConstraintEquality;
@@ -68,11 +69,14 @@ namespace tsid
       const Vector & velocity() const;
       const Vector & position_ref() const;
       const Vector & velocity_ref() const;
+      const Vector & acceleration_ref() const;
 
       const Vector & Kp();
       const Vector & Kd();
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
+      const std::string getFrameName() { return "posture"; }
+      const Matrix & getJacobian() const;
 
     protected:
       Vector m_Kp;
@@ -80,6 +84,7 @@ namespace tsid
       Vector m_p_error, m_v_error;
       Vector m_p, m_v;
       Vector m_a_des;
+      Matrix m_J;
       VectorXi m_activeAxes;
       TrajectorySample m_ref;
       ConstraintEquality m_constraint;

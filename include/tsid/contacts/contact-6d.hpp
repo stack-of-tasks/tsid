@@ -86,7 +86,7 @@ namespace tsid
                                                                         ConstRefVector v,
                                                                         const Data & data);
 
-      const TaskSE3Equality & getMotionTask() const;
+      TaskSE3Equality & getMotionTask();
       const ConstraintBase & getMotionConstraint() const;
       const ConstraintInequality & getForceConstraint() const;
       const ConstraintEquality & getForceRegularizationTask() const;
@@ -96,8 +96,8 @@ namespace tsid
       double getMaxNormalForce() const;
       const Matrix3x & getContactPoints() const;
 
-      const Vector & Kp() const;
-      const Vector & Kd() const;
+      const Vector & Kp();
+      const Vector & Kd();
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
 

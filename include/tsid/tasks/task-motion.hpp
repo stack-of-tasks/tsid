@@ -20,6 +20,9 @@
 
 #include "tsid/tasks/task-base.hpp"
 #include "tsid/trajectories/trajectory-base.hpp"
+#include <pinocchio/multibody/model.hpp>
+#include <pinocchio/multibody/data.hpp>
+#include <string>
 
 namespace tsid
 {
@@ -31,12 +34,14 @@ namespace tsid
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       
       typedef math::Vector Vector;
+      typedef math::Matrix Matrix;
       typedef trajectories::TrajectorySample TrajectorySample;
 
       TaskMotion(const std::string & name,
                  RobotWrapper & robot);
 
       virtual const TrajectorySample & getReference() const;
+      virtual const Matrix & getJacobian() const;
 
       virtual const Vector & getDesiredAcceleration() const;
 
@@ -48,14 +53,23 @@ namespace tsid
       virtual const Vector & velocity() const;
       virtual const Vector & position_ref() const;
       virtual const Vector & velocity_ref() const;
+      virtual const Vector & acceleration_ref() const;
 
       virtual void setMask(math::ConstRefVector mask);
       virtual const Vector & getMask() const;
       virtual bool hasMask();
+      virtual const std::string getFrameName();
+      virtual const Vector & Kp();
+      virtual const Vector & Kd();
+      virtual void Kp(ConstRefVector Kp);
+      virtual void Kd(ConstRefVector Kp);
 
     protected:
+      Vector m_Kp_dummy;
+      Vector m_Kd_dummy;
       Vector m_mask;
       Vector m_dummy;
+      Matrix m_Matrix_dummy;
       trajectories::TrajectorySample TrajectorySample_dummy;
     };
   }

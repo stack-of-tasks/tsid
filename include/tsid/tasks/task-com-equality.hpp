@@ -38,6 +38,7 @@ namespace tsid
       typedef math::Vector Vector;
       typedef math::Vector3 Vector3;
       typedef math::ConstraintEquality ConstraintEquality;
+      typedef math::Matrix Matrix;
 
       TaskComEquality(const std::string & name,
                       RobotWrapper & robot);
@@ -53,7 +54,7 @@ namespace tsid
 
       void setReference(const TrajectorySample & ref);
       const TrajectorySample & getReference() const;
-
+      const Matrix & getJacobian() const;
       const Vector & getDesiredAcceleration() const;
       Vector getAcceleration(ConstRefVector dv) const;
       virtual void setMask(math::ConstRefVector mask);
@@ -64,15 +65,17 @@ namespace tsid
       const Vector & velocity() const;
       const Vector & position_ref() const;
       const Vector & velocity_ref() const;
+      const Vector & acceleration_ref() const;
+      const std::string getFrameName() { return "com"; }
 
-      const Vector3 & Kp();
-      const Vector3 & Kd();
+      const Vector & Kp();
+      const Vector & Kd();
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
 
     protected:
-      Vector3 m_Kp;
-      Vector3 m_Kd;
+      Vector m_Kp;
+      Vector m_Kd;
       Vector3 m_p_error, m_v_error;
       Vector m_p_error_masked_vec, m_v_error_masked_vec;
       Vector3 m_a_des;
@@ -81,6 +84,7 @@ namespace tsid
       Vector m_drift_masked;
       Vector m_p_com, m_v_com;
       Vector m_p_error_vec, m_v_error_vec;
+      Matrix m_Jcom;
       TrajectorySample m_ref;
       ConstraintEquality m_constraint;
     };

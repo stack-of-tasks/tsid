@@ -17,6 +17,7 @@
 
 #include <tsid/tasks/task-joint-posture.hpp>
 #include "tsid/robots/robot-wrapper.hpp"
+#include "tsid/math/utils.hpp"
 
 namespace tsid
 {
@@ -67,6 +68,7 @@ namespace tsid
         }
       m_constraint.resize((unsigned int)dim, m_robot.nv());
       m_constraint.setMatrix(S);
+      m_J = S;
     }
 
     int TaskJointPosture::dim() const
@@ -143,24 +145,43 @@ namespace tsid
       return m_ref.vel;
     }
 
+    const Vector & TaskJointPosture::acceleration_ref() const
+    {
+      return m_ref.acc;
+    }
+    
     const ConstraintBase & TaskJointPosture::getConstraint() const
     {
       return m_constraint;
+    }
+    const Matrix & TaskJointPosture::getJacobian() const
+    { 
+      return m_J; 
     }
 
     const ConstraintBase & TaskJointPosture::compute(const double ,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
-                                                    Data & )
+                                                    Data & data)
     {
       // Compute errors
       m_p = q.tail(m_robot.na());
       m_v = v.tail(m_robot.na());
       m_p_error = m_p - m_ref.pos;
       m_v_error = m_v - m_ref.vel;
-      m_a_des = - m_Kp.cwiseProduct(m_p_error)
-                - m_Kd.cwiseProduct(m_v_error)
-                + m_ref.acc;
+      // Matrix Lambda_inv, Lambda, Jpinv;
+      // Jpinv.setZero(m_J.cols(), m_J.rows());
+      // pseudoInverse(m_J, Jpinv, 1e-6);
+      // Lambda = Jpinv.transpose() * m_robot.mass(data) * Jpinv;
+      // Lambda_inv.setZero(Lambda.cols(), Lambda.rows());
+      // pseudoInverse(Lambda, Lambda_inv, 1e-6);
+      // Matrix LKP = (Lambda_inv * m_Kp).cwiseAbs();
+      // Matrix LKD = (Lambda_inv * m_Kd).cwiseAbs();
+      //std::cout << "##################### Lambda_inv posture: "<<  Lambda_inv << "################################" << std::endl;
+      // std::cout << "##################### Lambda_inv * m_Kp posture: "<<  LKP << "################################" << std::endl;
+      // std::cout << "##################### Lambda_inv * m_Kd posture: "<<  LKD << "################################" << std::endl;
+      m_a_des = - m_Kp.cwiseProduct(m_p_error) - m_Kd.cwiseProduct(m_v_error) + m_ref.acc; //- Lambda_inv * m_Kp.cwiseProduct(m_p_error) - Lambda_inv * m_Kd.cwiseProduct(m_v_error)
+                
 
       for(unsigned int i=0; i<m_activeAxes.size(); i++)
         m_constraint.vector()(i) = m_a_des(m_activeAxes(i));

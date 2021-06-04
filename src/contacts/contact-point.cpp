@@ -240,7 +240,7 @@ computeForceRegularizationTask(const double ,
 double ContactPoint::getMinNormalForce() const { return m_fMin; }
 double ContactPoint::getMaxNormalForce() const { return m_fMax; }
 
-const TaskSE3Equality & ContactPoint::getMotionTask() const { return m_motionTask; }
+TaskSE3Equality & ContactPoint::getMotionTask() { return m_motionTask; }
 
 const ConstraintBase & ContactPoint::getMotionConstraint() const { return m_motionTask.getConstraint(); }
 

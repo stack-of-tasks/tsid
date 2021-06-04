@@ -151,6 +151,7 @@ SET(${PROJECT_NAME}_ROBOTS_HEADERS
 
 SET(${PROJECT_NAME}_FORMULATIONS_HEADERS
   include/tsid/formulations/contact-level.hpp
+  include/tsid/formulations/task-motion-level.hpp
   include/tsid/formulations/task-energy-level.hpp
   include/tsid/formulations/inverse-dynamics-formulation-base.hpp
   include/tsid/formulations/inverse-dynamics-formulation-acc-force.hpp
@@ -238,6 +239,7 @@ SET(${PROJECT_NAME}_ROBOTS_SOURCES
 
 SET(${PROJECT_NAME}_FORMULATIONS_SOURCES
   src/formulations/contact-level.cpp
+  src/formulations/task-motion-level.cpp
   src/formulations/task-energy-level.cpp
   src/formulations/inverse-dynamics-formulation-base.cpp
   src/formulations/inverse-dynamics-formulation-acc-force.cpp

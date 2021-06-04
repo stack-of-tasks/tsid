@@ -42,6 +42,7 @@ namespace tsid
       typedef math::Vector3 Vector3;
       typedef math::ConstraintEquality ConstraintEquality;
       typedef pinocchio::Data::Matrix6x Matrix6x;
+      typedef math::Matrix Matrix;
 
 
       TaskAMEquality(const std::string & name, 
@@ -58,28 +59,34 @@ namespace tsid
 
       void setReference(const TrajectorySample & ref);
       const TrajectorySample & getReference() const;
-
+      const Matrix & getJacobian() const;
       const Vector3 & getDesiredMomentumDerivative() const;
       Vector3 getdMomentum(ConstRefVector dv) const;
 
-      const Vector3 & momentum_error() const;
-      const Vector3 & momentum() const;
+      const Vector & momentum_error() const;
+      const Vector & momentum() const;
       const Vector & momentum_ref() const;
       const Vector & dmomentum_ref() const;
+      const Vector & velocity_error() const { return momentum_error(); }
+      const Vector & velocity() const { return momentum(); }
+      const Vector & velocity_ref() const { return momentum_ref(); }
+      const Vector & acceleration_ref() const { return dmomentum_ref(); }
+      const std::string getFrameName() { return "am"; }
 
-      const Vector3 & Kp();
-      const Vector3 & Kd();
+      const Vector & Kp();
+      const Vector & Kd();
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
 
     protected:
-      Vector3 m_Kp;
-      Vector3 m_Kd;
-      Vector3 m_L_error, m_dL_error;
+      Vector m_Kp;
+      Vector m_Kd;
+      Vector m_L_error, m_dL_error;
       Vector3 m_dL_des;
+      Matrix m_J_am;
       
       Vector3 m_drift;
-      Vector3 m_L, m_dL;
+      Vector m_L, m_dL;
       TrajectorySample m_ref;
       ConstraintEquality m_constraint;
     };
