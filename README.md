@@ -11,6 +11,15 @@ TSID is a C++ library for optimization-based inverse-dynamics control based on t
 * On the [website of Andrea Del Prete](https://andreadelprete.github.io/#teaching) you can find slides and video lessons on TSID.
 * [Memmo 2020 summer school](https://memory-of-motion.github.io/summer-school/)
 
+## Installation with Conda
+
+If you want to directly dive into TSID in Python, only one single line is sufficient (assuming you have Conda installed):
+
+<p align="center">
+conda install tsid -c conda-forge
+</p>
+
+
 ## Installation from Debian/Ubuntu packages, with robotpkg
 If you have never added robotpkg's software repository you can do it with the following commands:
 ```
@@ -85,6 +94,7 @@ It includes key contributions from:
 - [Noelie Ramuzat](https://github.com/NoelieRamuzat) (LAAS, CNRS)
 - [Pierre Fernbach](https://github.com/pFernbach) (LAAS, CNRS)
 - [Aurelie Bonnefoy](https://github.com/ABonnefoy) (LAAS, CNRS)
+- [Etienne Arlaud](https://github.com/EtienneAr) (INRIA)
 
 And is maintained by:
 
