@@ -45,6 +45,8 @@ EE_SPHERE_COLOR  = (1, 0.5, 0, 0.5)
 EE_REF_SPHERE_COLOR  = (1, 0, 0, 0.5)
 
 from example_robot_data.robots_loader import getModelPath
-urdf = "/ur_description/urdf/ur5_robot.urdf"
+from os.path import join
+urdf = "ur_description/urdf/ur5_robot.urdf"
 path = getModelPath(urdf)
-urdf = path+urdf
+urdf = join(path, urdf)
+path = join(path, '../..')

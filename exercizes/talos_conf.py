@@ -22,10 +22,12 @@ lf_frame_name = "leg_left_sole_fix_joint"   # left foot frame name
 contactNormal = np.array([0., 0., 1.])      # direction of the normal to the contact surface
 
 w_com = 1.0             # weight of center of mass task
+w_am = 1e-3             # weight of angular momentum task
 w_foot = 1e-1           # weight of the foot motion task
 w_contact = -1.0        # weight of foot in contact (negative means infinite weight)
 w_posture = 1e-1        # weight of joint posture task
 w_forceRef = 1e-5       # weight of force regularization task
+w_cop = 0.0
 w_torque_bounds = 1.0   # weight of the torque bounds
 w_joint_bounds = 0.0
 
@@ -73,6 +75,7 @@ v_max_scaling = 0.8
 kp_contact = 10.0       # proportional gain of contact constraint
 kp_foot = 10.0          # proportional gain of contact constraint
 kp_com = 10.0           # proportional gain of center of mass task
+kp_am = 10.0            # proportional gain of angular momentum task
 kp_posture = 1.0        # proportional gain of joint posture task
 
 viewer = pin.visualize.GepettoVisualizer
