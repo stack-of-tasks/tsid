@@ -223,7 +223,7 @@ bool InverseDynamicsFormulationAccForce::addEnergyTask(TaskEnergy & task,
 
   const ConstraintBase & lyapunovConstr = task.getLyapunovConstraint();
   tel->lyapunovConstraint = std::make_shared<ConstraintInequality>(task.name()+"_lyapunov_constraint", lyapunovConstr.rows(), m_v+m_k);
-  m_hqpData[0].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(1.0, tel->lyapunovConstraint));
+  m_hqpData[priorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tel->lyapunovConstraint));
 
   // const ConstraintInequality & maxEnergyConstr = task.getMaxEnergyConstraint();
   // tel->maxEnergyConstraint = std::make_shared<ConstraintInequality>(task.name()+"_max_energy_constraint", maxEnergyConstr.rows(), m_v+m_k);
@@ -423,7 +423,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   gamma = 1.0;
   for (auto& it : m_taskEnergies)
   {
-    std::cout << "##################### TASK_ENERGY ################################" << std::endl;
+    // std::cout << "##################### TASK_ENERGY ################################" << std::endl;
     // std::cout << "##################### size taskMotions: " << m_taskMotions.size() << "################################" << std::endl;
     it->task.setTasks(m_taskMotions, m_contacts, m_data);
     // std::cout << "##################### setTasks ok ################################" << std::endl;
@@ -431,23 +431,27 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     // std::cout << "##################### it->task.compute ok ################################" << std::endl;
     beta = it->task.get_beta();
     // std::cout << "##################### it->task.get_beta ok ################################" << std::endl;   
-    std::cout << "##################### beta : " << beta << " ################################" << std::endl;
+    // std::cout << "##################### beta : " << beta << " ################################" << std::endl;
     gamma = it->task.get_gamma();
     // std::cout << "##################### it->task.get_gamma ok ################################" << std::endl;
-    std::cout << "##################### gamma : " << gamma << " ################################" << std::endl;
+    // std::cout << "##################### gamma : " << gamma << " ################################" << std::endl;
 
     const Matrix & M = m_robot.mass(m_data);
     const Vector & h = m_robot.nonLinearEffects(m_data);
-    it->lyapunovConstraint->matrix().leftCols(m_v).noalias() = c_energy.matrix() * M;
-    std::cout << "##################### lyapunovConstraint matrix().leftCols ################################" << std::endl;
-    it->lyapunovConstraint->matrix().rightCols(m_k).noalias() = - c_energy.matrix() * m_Jc.transpose();
-    std::cout << "##################### lyapunovConstraint matrix().rightCols ################################" << std::endl;
-    it->lyapunovConstraint->lowerBound() = c_energy.lowerBound();
-    it->lyapunovConstraint->lowerBound().noalias() -= c_energy.matrix() * h;
-    std::cout << "##################### lyapunovConstraint lowerBound ###############################" << std::endl;
-    it->lyapunovConstraint->upperBound() = c_energy.upperBound();
-    it->lyapunovConstraint->upperBound().noalias() -= c_energy.matrix() * h;
-    std::cout << "##################### lyapunovConstraint ok ################################" << std::endl;
+    if (m_first_iter) {
+      m_first_iter = false;
+    } else {
+      it->lyapunovConstraint->matrix().leftCols(m_v).noalias() = c_energy.matrix() * M;
+      // std::cout << "##################### lyapunovConstraint matrix().leftCols ################################" << std::endl;
+      it->lyapunovConstraint->matrix().rightCols(m_k).noalias() = - c_energy.matrix() * m_Jc.transpose();
+      // std::cout << "##################### lyapunovConstraint matrix().rightCols ################################" << std::endl;
+      it->lyapunovConstraint->lowerBound() = c_energy.lowerBound();
+      it->lyapunovConstraint->lowerBound().noalias() -= c_energy.matrix() * h;
+      // std::cout << "##################### lyapunovConstraint lowerBound ###############################" << std::endl;
+      it->lyapunovConstraint->upperBound() = c_energy.upperBound();
+      it->lyapunovConstraint->upperBound().noalias() -= c_energy.matrix() * h;
+      // std::cout << "##################### lyapunovConstraint ok ################################" << std::endl;
+    }
 
     // const ConstraintInequality & c_max_energy = it->task.getMaxEnergyConstraint();
     // const ConstraintEquality & c_energy = it->task.getEnergyTask();

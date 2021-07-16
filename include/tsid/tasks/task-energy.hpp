@@ -51,6 +51,12 @@ namespace tsid
       typedef pinocchio::Data Data;
 
       Vector qQuatToRPY(const Vector & q);
+      double H_min(const double a, const double b, const double x, const double e_val);
+      double H_max(const double a, const double b, const double x, const double e_val);
+      double gammaFunction(const double A, const double P,
+                           const double delta, const double gamma_prev);
+      double lowPassFilter(const double& frequency, const double& signal,
+                           double& previous_signal);
 
       TaskEnergy(const std::string & name,
                  RobotWrapper & robot,
@@ -75,11 +81,12 @@ namespace tsid
       const TrajectorySample & getReference() const;
 
       const Vector & position_ref() const;
-      const Vector & get_BK_vector() const;
+      const Vector & get_A_vector() const;
       const double & get_lowerBound() const;
       const double & get_H() const;
       const double & get_dH() const;
       const double & get_E_tank() const;
+      void set_E_tank(const double & E_tank);
       const double & get_H_tot() const;
       const double & get_dH_tot() const;
       const Vector & get_S() const;

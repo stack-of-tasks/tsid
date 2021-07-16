@@ -40,6 +40,59 @@ namespace tsid
       return q_rpy;
     }
 
+    double TaskEnergy::H_min(const double a, const double b, const double x, const double e_val){
+      if ((x<a) && (e_val < 0)){
+        return 0;
+      } else if ((a <= x) && (x <= b) && (e_val < 0)){ //
+        double q = (x-a)/(b-a);
+        double value = 6*pow(q,5) - 15*pow(q,4) + 10*pow(q,3);
+        std::cout << "H_min value: " << value << std::endl;
+        return value;
+      } else {
+        return 1;
+      }
+    }
+    double TaskEnergy::H_max(const double a, const double b, const double x, const double e_val){
+      if ((x>b) && (e_val>0)){
+        return 1;
+      } else if ((a <= x) && (x <= b) && (e_val>0)) { //
+        double q = (x-a)/(b-a);
+        double value = 6*pow(q,5) - 15*pow(q,4) + 10*pow(q,3);
+        //std::cout << "H_max value: " << value << std::endl;
+        return value;
+      } else {
+        return 0;
+      }
+    }
+
+    double TaskEnergy::gammaFunction(const double A, const double P,
+                                     const double delta, const double gamma_prev){
+      if (A < P) {
+        return P/A;
+      } else if (A <= P + delta) { //((P <= A) && (A <= P + delta)){
+        double x = (A - P)/delta;
+        //double T = pow(x,2) * (3 - 2*x);
+        double value = 6*pow(x,5) - 15*pow(x,4) + 10*pow(x,3);
+        double test = (P/A*exp(1 - 1/(1-value)) + exp(1 - 1/value));
+        // std::cout << "gammaFunction value: " << value << std::endl;
+        // std::cout << "gammaFunction test: " << test << std::endl;
+        if (test > 1) {
+          return 1;
+        }
+        return test; //gamma_prev*
+      } else { 
+        return 1;
+      }
+    }
+
+    double TaskEnergy::lowPassFilter(const double& frequency, const double& signal,
+                                     double& previous_signal) {
+      // signal = alpha * previous_signal + (1-alpha) * signal_des
+      double alpha = exp(-m_dt * 2 * M_PI * frequency);
+      double output = alpha * previous_signal + signal * (1 - alpha);
+      return output;
+    }
+
     TaskEnergy::TaskEnergy(const std::string & name,
                            RobotWrapper & robot,
                            const Vector & q,
@@ -110,12 +163,12 @@ namespace tsid
         auto tl = std::make_shared<TaskLevelMotion>(contact_motion, 1);
         m_taskMotions.push_back(tl);
       }
-      std::cout << "##################### size taskMotions: " << m_taskMotions.size() << "################################" << std::endl;
+      // std::cout << "##################### size taskMotions: " << m_taskMotions.size() << "################################" << std::endl;
       if (m_first_iter){
         m_alpha = 0.0;
         m_beta = 1.0;
         m_gamma = 1.0;
-        m_Plow = - 1.0; 
+        m_Plow = -2.0; 
         m_E_tank = 5.0;
         m_H = m_E_tank;
         m_dH = 0.0;
@@ -126,7 +179,7 @@ namespace tsid
         m_dH_tot = 0.0;
         m_dS.setZero(m_taskMotions.size());
         m_A.setZero(m_taskMotions.size());
-        std::cout << "##################### size m_A: " << m_A.size() << "################################" << std::endl;
+        // std::cout << "##################### size m_A: " << m_A.size() << "################################" << std::endl;
         m_S.setZero(m_taskMotions.size());
         m_S_prev.setZero(m_taskMotions.size());
         m_maked_Kp_prev.resize(m_taskMotions.size());
@@ -152,9 +205,9 @@ namespace tsid
       return m_ref.pos;
     }
 
-    const Vector & TaskEnergy::get_BK_vector() const
+    const Vector & TaskEnergy::get_A_vector() const
     {
-      return m_BK;
+      return m_A;
     }
 
     const double & TaskEnergy::get_lowerBound() const
@@ -190,6 +243,10 @@ namespace tsid
     const double & TaskEnergy::get_E_tank() const
     {
       return m_E_tank;
+    }
+    void TaskEnergy::set_E_tank(const double & E_tank)
+    {
+      m_E_tank = E_tank;
     }
     const double & TaskEnergy::get_H_tot() const
     {
@@ -286,7 +343,7 @@ namespace tsid
 
       double non_linear_effect_term;
       non_linear_effect_term = v.transpose() * m_robot.nonLinearEffects(data);
-      std::cout << "##################### non_linear_effect_term: " << non_linear_effect_term << " ################################" << std::endl;
+      // std::cout << "##################### non_linear_effect_term: " << non_linear_effect_term << " ################################" << std::endl;
       double contact_forces_term = 0.0;
       // std::cout << "##################### size m_taskContacts: " << m_taskContacts.size() << " ################################" << std::endl;
       for (auto cl : m_taskContacts){
@@ -299,14 +356,14 @@ namespace tsid
         // std::cout << "##################### f_k_ref: " << f_k_ref << " ################################" << std::endl;
         contact_forces_term += v.transpose() * J_k.transpose() * f_k_ref;
       }
-      std::cout << "##################### contact_forces_term: " << contact_forces_term << " ################################" << std::endl;
+      // std::cout << "##################### contact_forces_term: " << contact_forces_term << " ################################" << std::endl;
       
       int i = 0;
       for (auto& it : m_taskMotions){
-        std::cout << "##################### For loop i: " << i << " ################################" << std::endl;
+        // std::cout << "##################### For loop i: " << i << " ################################" << std::endl;
         std::string frame_name = it->task.getFrameName();
         double damping_term, acc_term;
-        std::cout << "##################### Frame name: " << frame_name << " ################################" << std::endl;
+        // std::cout << "##################### Frame name: " << frame_name << " ################################" << std::endl;
         
         Matrix J = it->task.getJacobian();
         // std::cout << "##################### J i: " << i << " " << J << "################################" << std::endl;
@@ -386,10 +443,10 @@ namespace tsid
         // std::cout << "##################### it->task.Kp(): " << it->task.Kd() << "################################" << std::endl;
         Vector task_Kp = Lambda * it->task.Kp();
         Vector task_Kd = Lambda * it->task.Kd();
-        std::cout << "##################### task_Kp: " << task_Kp << "################################" << std::endl;
-        std::cout << "##################### task_Kd: " << task_Kd << "################################" << std::endl;
-        std::cout << task_Kp.size() << std::endl;
-        std::cout << task_Kd.size() << std::endl;
+        // std::cout << "##################### task_Kp: " << task_Kp << "################################" << std::endl;
+        // std::cout << "##################### task_Kd: " << task_Kd << "################################" << std::endl;
+        // std::cout << task_Kp.size() << std::endl;
+        // std::cout << task_Kd.size() << std::endl;
         int idx = 0;
         for (int k = 0; k < mask.size(); k++) {
           if (mask(k) != 1.) continue;
@@ -398,12 +455,12 @@ namespace tsid
           masked_Kd[idx] = task_Kd[k];
           idx ++;
         }
-        std::cout << "##################### FOR loop mask ok ################################" << std::endl;
-        std::cout << masked_vel.size() << std::endl;
-        std::cout << masked_Kp.size() << std::endl;
-        std::cout << masked_Kd.size() << std::endl;
+        // std::cout << "##################### FOR loop mask ok ################################" << std::endl;
+        // std::cout << masked_vel.size() << std::endl;
+        // std::cout << masked_Kp.size() << std::endl;
+        // std::cout << masked_Kd.size() << std::endl;
         damping_term = masked_vel.transpose() * masked_Kd.cwiseProduct(it->task.velocity_error());
-        std::cout << "##################### damping_term i: " << i << " " << damping_term << " ################################" << std::endl;
+        // std::cout << "##################### damping_term i: " << i << " " << damping_term << " ################################" << std::endl;
 
         // std::cout << "##################### acc_error i: " << i << " " << acc_error << "################################" << std::endl;
         Vector test;
@@ -413,37 +470,51 @@ namespace tsid
         // std::cout << test.cols() << std::endl;
         // std::cout << "##################### it->task.velocity() i: " << i << " " << it->task.velocity() << "################################" << std::endl;
         acc_term = (it->task.velocity()).transpose() * test;
-        std::cout << "##################### acc_term i: " << i << " " << acc_term << " ################################" << std::endl;
-        std::cout << "##################### size m_A: " << m_A.size() << " ################################" << std::endl;
+        // std::cout << "##################### acc_term i: " << i << " " << acc_term << " ################################" << std::endl;
+        // std::cout << "##################### size m_A: " << m_A.size() << " ################################" << std::endl;
 
         Vector dot_Lambda_Kp;
         if (m_maked_Kp_prev[i].size() == 0){
-          std::cout << "##################### m_maked_Kp_prev[i].size() == 0 ################################" << std::endl;
+          // std::cout << "##################### m_maked_Kp_prev[i].size() == 0 ################################" << std::endl;
           dot_Lambda_Kp = Vector::Zero(masked_Kp.size());
         } else {
-          std::cout << "##################### m_maked_Kp_prev[i] : " << m_maked_Kp_prev[i] << " ################################" << std::endl;
+          // std::cout << "##################### m_maked_Kp_prev[i] : " << m_maked_Kp_prev[i] << " ################################" << std::endl;
           dot_Lambda_Kp = (masked_Kp - m_maked_Kp_prev[i]) * m_dt;
         } 
         double Lambda_dot_term;
+        double vel_ref_term;
         if (frame_name != "am"){
           m_S[i] = 0.5 * it->task.position_error().transpose() * masked_Kp.cwiseProduct(it->task.position_error());
-          m_dS[i] = masked_vel.transpose() * masked_Kp.cwiseProduct(it->task.position_error());
+          // if (m_first_iter) {
+          //    // m_dS[i] = 0.0;
+          //    m_dS[i] = masked_vel.transpose() * masked_Kp.cwiseProduct(it->task.position_error());
+          //    m_first_iter = false;
+          // } else{
+          //   m_dS[i] = (m_S[i] - m_S_prev[i])/m_dt;
+          // }
+          // it->task.velocity_error().transpose() 
+          
+          m_dS[i] = it->task.velocity_error().transpose() * masked_Kp.cwiseProduct(it->task.position_error());
           Lambda_dot_term = 0.5 * it->task.position_error().transpose() * dot_Lambda_Kp.cwiseProduct(it->task.position_error());
+          m_dS[i] += Lambda_dot_term;
+          vel_ref_term = it->task.velocity_ref().transpose() * task_Kp.cwiseProduct(it->task.position_error());
         } else {
           m_dS[i] = 0.0;
           m_S[i] = 0.0;
           Lambda_dot_term = 0.0;
+          vel_ref_term = 0.0;
         }
         
-        std::cout << "##################### dS i: " << i << " " << m_dS[i] << " ################################" << std::endl;
-        std::cout << "##################### S i: " << i << " " << m_S[i] << " ################################" << std::endl;
+        // std::cout << "##################### dS i: " << i << " " << m_dS[i] << " ################################" << std::endl;
+        // std::cout << "##################### S i: " << i << " " << m_S[i] << " ################################" << std::endl;
         m_S_prev[i] = m_S[i];
         m_maked_Kp_prev[i].resize(masked_Kp.size());
         m_maked_Kp_prev[i] = masked_Kp;
-        std::cout << "##################### m_maked_Kp_prev[i][0] : " << m_maked_Kp_prev[i][0] << " ################################" << std::endl;
-          
-        m_A[i] = damping_term - acc_term - Lambda_dot_term;
-        std::cout << "##################### A_i i: " << i << " " << m_A[i] << " ################################" << std::endl;
+        // std::cout << "##################### m_maked_Kp_prev[i][0] : " << m_maked_Kp_prev[i][0] << " ################################" << std::endl;
+        
+        double signal_to_filter = damping_term - acc_term - Lambda_dot_term + vel_ref_term;
+        m_A[i] = signal_to_filter; //lowPassFilter(1.0, signal_to_filter, m_A[i]);
+        // std::cout << "##################### A_i i: " << i << " " << m_A[i] << " ################################" << std::endl;
 
         E_c += 0.5 * (it->task.velocity()).transpose() * Lambda * (it->task.velocity());
 
@@ -454,27 +525,30 @@ namespace tsid
       double dS = m_dS.sum();
       double B = non_linear_effect_term - contact_forces_term;
 
-      if (A < m_Plow){
-        m_gamma = m_Plow/A;
-      } else {
-        m_gamma = 1.0;
-      }
+      m_gamma = gammaFunction(A, m_Plow, 1.5, m_gamma);
 
-      if ((m_E_tank <= m_E_min_tank) && ((m_gamma * A - B) < 0)) {
-        m_beta = 0.0;
-      } else {
-        m_beta = 1.0;
-      }
+      // if (A < m_Plow){
+      //   m_gamma = m_Plow/A;
+      // } else {
+      //   m_gamma = 1.0;
+      // }
+      m_beta = H_min(m_E_min_tank, m_E_min_tank + 5*m_E_min_tank, m_E_tank, m_gamma * A - B);
+      // if ((m_E_tank <= m_E_min_tank) && ((m_gamma * A - B) < 0)) {
+      //   m_beta = 0.0;
+      // } else {
+      //   m_beta = 1.0;
+      // }
 
-      if ((m_E_tank >= m_E_max_tank) && ((m_beta * m_gamma * A - B) > 0)){
-        m_alpha = 1.0;
-      } else {
-        m_alpha = 0.0;
-      }
+      m_alpha = H_max(m_E_max_tank -0.2*m_E_max_tank, m_E_max_tank, m_E_tank, m_beta * m_gamma * A - B);
+      // if ((m_E_tank >= m_E_max_tank) && ((m_beta * m_gamma * A - B) > 0)){
+      //   m_alpha = 1.0;
+      // } else {
+      //   m_alpha = 0.0;
+      // }
 
       dE_tank = (1-m_alpha) * (m_beta * m_gamma * A);
       dE_tank -= (1-m_alpha) * B;
-      std::cout << "##################### dE_tank : " << dE_tank << "################################" << std::endl;
+      // std::cout << "##################### dE_tank : " << dE_tank << "################################" << std::endl;
 
       m_E_tank += dE_tank * m_dt;
       if (m_E_tank < m_E_min_tank){
@@ -482,13 +556,14 @@ namespace tsid
       } else if (m_E_tank > m_E_max_tank){
         m_E_tank = m_E_max_tank;
       }
-      std::cout << "##################### m_E_tank : " << m_E_tank << "################################" << std::endl;
+      // std::cout << "##################### m_E_tank : " << m_E_tank << "################################" << std::endl;
 
       m_H = S + m_E_tank;
-      std::cout << "##################### m_H : " << m_H << "################################" << std::endl;
+      // std::cout << "##################### m_H : " << m_H << "################################" << std::endl;
 
       m_dH = dS + dE_tank;
-      std::cout << "##################### m_dH : " << m_dH << "################################" << std::endl;
+      //m_dH += (S + m_E_tank) * m_dt; //dS + dE_tank;
+      // std::cout << "##################### m_dH : " << m_dH << "################################" << std::endl;
       
       double V_g_i = data.potential_energy; //pinocchio::computePotentialEnergy(m_robot.model(), data, q);
       // std::cout << "##################### V_g_i i: " << i << " " << V_g_i << "################################" << std::endl;

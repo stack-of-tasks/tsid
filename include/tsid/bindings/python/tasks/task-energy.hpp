@@ -49,8 +49,9 @@ namespace tsid
         .def(bp::init<std::string, robots::RobotWrapper &, Eigen::VectorXd , Eigen::VectorXd , double, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("position"), bp::arg("velocity"), bp::arg("dt"), bp::arg("timePreview")), "Default Constructor"))
         .add_property("dim", &TaskEnergy::dim, "return dimension size")
         .def("setReference", &TaskEnergyPythonVisitor::setReference, bp::arg("ref"))
+        .def("set_E_tank", &TaskEnergyPythonVisitor::set_E_tank, bp::arg("E_tank"))
         .add_property("position_ref", bp::make_function(&TaskEnergyPythonVisitor::position_ref, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("get_BK_vector", bp::make_function(&TaskEnergyPythonVisitor::get_BK_vector, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_A_vector", bp::make_function(&TaskEnergyPythonVisitor::get_A_vector, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_lowerBound", bp::make_function(&TaskEnergyPythonVisitor::get_lowerBound, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_H", bp::make_function(&TaskEnergyPythonVisitor::get_H, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_dH", bp::make_function(&TaskEnergyPythonVisitor::get_dH, bp::return_value_policy<bp::copy_const_reference>()))
@@ -90,8 +91,8 @@ namespace tsid
       static const Eigen::VectorXd & position_ref (const TaskEnergy & self){
         return self.position_ref();
       }
-      static const Eigen::VectorXd & get_BK_vector (const TaskEnergy & self){
-        return self.get_BK_vector();
+      static const Eigen::VectorXd & get_A_vector (const TaskEnergy & self){
+        return self.get_A_vector();
       }
       static const double & get_lowerBound (const TaskEnergy & self){
         return self.get_lowerBound();
@@ -104,6 +105,9 @@ namespace tsid
       }
       static const double & get_E_tank (const TaskEnergy & self){
         return self.get_E_tank();
+      }
+      static void set_E_tank(TaskEnergy & self, const double & E_tank){
+        self.set_E_tank(E_tank);
       }
       static const double & get_H_tot (const TaskEnergy & self){
         return self.get_H_tot();
