@@ -87,6 +87,7 @@ namespace tsid
       const double & get_dH() const;
       const double & get_E_tank() const;
       void set_E_tank(const double & E_tank);
+      const double & get_dE_tank() const;
       const double & get_H_tot() const;
       const double & get_dH_tot() const;
       const Vector & get_S() const;
@@ -134,6 +135,7 @@ namespace tsid
       int m_dim;
       Matrix m_LyapMat;
       double m_E_tank;
+      double m_dE_tank;
       double m_E_max;
       double m_E_d;
       double m_E_m_ctrl;

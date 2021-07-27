@@ -218,22 +218,22 @@ bool InverseDynamicsFormulationAccForce::addEnergyTask(TaskEnergy & task,
   m_taskEnergies.push_back(tel);
   //addTask(tl, weight, priorityLevel);
   
-  if(priorityLevel > m_hqpData.size())
-    m_hqpData.resize(priorityLevel);
+  // if(priorityLevel > m_hqpData.size())
+  //   m_hqpData.resize(priorityLevel);
 
   const ConstraintBase & lyapunovConstr = task.getLyapunovConstraint();
   tel->lyapunovConstraint = std::make_shared<ConstraintInequality>(task.name()+"_lyapunov_constraint", lyapunovConstr.rows(), m_v+m_k);
-  m_hqpData[priorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tel->lyapunovConstraint));
+  // m_hqpData[priorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tel->lyapunovConstraint));
 
   // const ConstraintInequality & maxEnergyConstr = task.getMaxEnergyConstraint();
   // tel->maxEnergyConstraint = std::make_shared<ConstraintInequality>(task.name()+"_max_energy_constraint", maxEnergyConstr.rows(), m_v+m_k);
-  // m_hqpData[0].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(1.0, tel->maxEnergyConstraint));
+  // m_hqpData[priorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tel->maxEnergyConstraint));
 
   // const ConstraintEquality & energyConst = task.getEnergyTask();
   // tel->energyTask = std::make_shared<ConstraintEquality>(task.name()+"_energy_task", energyConst.rows(), m_v+m_k);
   // m_hqpData[priorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tel->energyTask));
 
-  m_in += lyapunovConstr.rows();
+  // m_in += lyapunovConstr.rows();
   // m_in += maxEnergyConstr.rows();
 
   return true;
@@ -436,22 +436,22 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     // std::cout << "##################### it->task.get_gamma ok ################################" << std::endl;
     // std::cout << "##################### gamma : " << gamma << " ################################" << std::endl;
 
-    const Matrix & M = m_robot.mass(m_data);
-    const Vector & h = m_robot.nonLinearEffects(m_data);
-    if (m_first_iter) {
-      m_first_iter = false;
-    } else {
-      it->lyapunovConstraint->matrix().leftCols(m_v).noalias() = c_energy.matrix() * M;
-      // std::cout << "##################### lyapunovConstraint matrix().leftCols ################################" << std::endl;
-      it->lyapunovConstraint->matrix().rightCols(m_k).noalias() = - c_energy.matrix() * m_Jc.transpose();
-      // std::cout << "##################### lyapunovConstraint matrix().rightCols ################################" << std::endl;
-      it->lyapunovConstraint->lowerBound() = c_energy.lowerBound();
-      it->lyapunovConstraint->lowerBound().noalias() -= c_energy.matrix() * h;
-      // std::cout << "##################### lyapunovConstraint lowerBound ###############################" << std::endl;
-      it->lyapunovConstraint->upperBound() = c_energy.upperBound();
-      it->lyapunovConstraint->upperBound().noalias() -= c_energy.matrix() * h;
-      // std::cout << "##################### lyapunovConstraint ok ################################" << std::endl;
-    }
+    // const Matrix & M = m_robot.mass(m_data);
+    // const Vector & h = m_robot.nonLinearEffects(m_data);
+    // if (m_first_iter) {
+    //   m_first_iter = false;
+    // } else {
+    // it->lyapunovConstraint->matrix().leftCols(m_v).noalias() = c_energy.matrix() * M;
+    // // std::cout << "##################### lyapunovConstraint matrix().leftCols ################################" << std::endl;
+    // it->lyapunovConstraint->matrix().rightCols(m_k).noalias() = - c_energy.matrix() * m_Jc.transpose();
+    // // std::cout << "##################### lyapunovConstraint matrix().rightCols ################################" << std::endl;
+    // it->lyapunovConstraint->lowerBound() = c_energy.lowerBound();
+    // it->lyapunovConstraint->lowerBound().noalias() -= c_energy.matrix() * h;
+    // // std::cout << "##################### lyapunovConstraint lowerBound ###############################" << std::endl;
+    // it->lyapunovConstraint->upperBound() = c_energy.upperBound();
+    // it->lyapunovConstraint->upperBound().noalias() -= c_energy.matrix() * h;
+    // std::cout << "##################### lyapunovConstraint ok ################################" << std::endl;
+    // }
 
     // const ConstraintInequality & c_max_energy = it->task.getMaxEnergyConstraint();
     // const ConstraintEquality & c_energy = it->task.getEnergyTask();
@@ -753,8 +753,8 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
   {
     if((*it)->task.name()==taskName)
     {
-      bool first_constraint_found = removeFromHqpData(taskName+"_lyapunov_constraint");
-      assert(first_constraint_found);
+      // bool first_constraint_found = removeFromHqpData(taskName+"_lyapunov_constraint");
+      // assert(first_constraint_found);
 
       // bool second_constraint_found = removeFromHqpData(taskName+"_max_energy_constraint");
       // assert(second_constraint_found);
@@ -762,11 +762,11 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
       // bool third_constraint_found = removeFromHqpData(taskName+"_energy_task");
       // assert(third_constraint_found);
 
-      m_in -= (*it)->lyapunovConstraint->rows();
+      // m_in -= (*it)->lyapunovConstraint->rows();
       // m_in -= (*it)->maxEnergyConstraint->rows();
       m_taskEnergies.erase(it);
 
-      return first_constraint_found; //&& second_constraint_found && third_constraint_found
+      return true; //first_constraint_found; //&& second_constraint_found && third_constraint_found
     }
   }
   return false;

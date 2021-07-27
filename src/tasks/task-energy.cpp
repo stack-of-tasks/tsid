@@ -43,10 +43,10 @@ namespace tsid
     double TaskEnergy::H_min(const double a, const double b, const double x, const double e_val){
       if ((x<a) && (e_val < 0)){
         return 0;
-      } else if ((a <= x) && (x <= b) && (e_val < 0)){ //
+      } else if ((a <= x) && (x <= b)){ // && (e_val < 0)
         double q = (x-a)/(b-a);
         double value = 6*pow(q,5) - 15*pow(q,4) + 10*pow(q,3);
-        std::cout << "H_min value: " << value << std::endl;
+        // std::cout << "H_min value: " << value << std::endl;
         return value;
       } else {
         return 1;
@@ -168,8 +168,9 @@ namespace tsid
         m_alpha = 0.0;
         m_beta = 1.0;
         m_gamma = 1.0;
-        m_Plow = -2.0; 
-        m_E_tank = 5.0;
+        m_Plow = -1.0; 
+        m_E_tank = 0.5;
+        m_dE_tank = 0.0;
         m_H = m_E_tank;
         m_dH = 0.0;
         m_H_tot = 0.0;
@@ -247,6 +248,10 @@ namespace tsid
     void TaskEnergy::set_E_tank(const double & E_tank)
     {
       m_E_tank = E_tank;
+    }
+    const double & TaskEnergy::get_dE_tank() const
+    {
+      return m_dE_tank;
     }
     const double & TaskEnergy::get_H_tot() const
     {
@@ -338,7 +343,7 @@ namespace tsid
         std::cerr << "No motion tasks for energy calculation !" << std::endl;
         return m_lyapunovConstraint;
       }
-      double dE_tank = 0.0;
+      // double dE_tank = 0.0;
       double E_c = 0.0;
 
       double non_linear_effect_term;
@@ -434,6 +439,8 @@ namespace tsid
         // std::cout << "##################### mask i: " << i << " " << mask << "################################" << std::endl;
         // std::cout << mask.size() << std::endl;
         Vector masked_vel((int)mask.sum()), masked_Kd((int)mask.sum()), masked_Kp((int)mask.sum());
+        Vector vel_ref = it->task.velocity_ref();
+        Vector masked_vel_ref((int)mask.sum());
         // std::cout << masked_vel.size() << std::endl;
         // std::cout << masked_Kd.size() << std::endl;
         // std::cout << masked_Kp.size() << std::endl;
@@ -451,6 +458,7 @@ namespace tsid
         for (int k = 0; k < mask.size(); k++) {
           if (mask(k) != 1.) continue;
           masked_vel[idx] = task_vel[k];
+          masked_vel_ref[idx] = vel_ref[k];
           masked_Kp[idx] = task_Kp[k];
           masked_Kd[idx] = task_Kd[k];
           idx ++;
@@ -479,7 +487,7 @@ namespace tsid
           dot_Lambda_Kp = Vector::Zero(masked_Kp.size());
         } else {
           // std::cout << "##################### m_maked_Kp_prev[i] : " << m_maked_Kp_prev[i] << " ################################" << std::endl;
-          dot_Lambda_Kp = (masked_Kp - m_maked_Kp_prev[i]) * m_dt;
+          dot_Lambda_Kp = (masked_Kp - m_maked_Kp_prev[i])/m_dt;
         } 
         double Lambda_dot_term;
         double vel_ref_term;
@@ -496,8 +504,9 @@ namespace tsid
           
           m_dS[i] = it->task.velocity_error().transpose() * masked_Kp.cwiseProduct(it->task.position_error());
           Lambda_dot_term = 0.5 * it->task.position_error().transpose() * dot_Lambda_Kp.cwiseProduct(it->task.position_error());
-          m_dS[i] += Lambda_dot_term;
-          vel_ref_term = it->task.velocity_ref().transpose() * task_Kp.cwiseProduct(it->task.position_error());
+          vel_ref_term = masked_vel_ref.transpose() * masked_Kp.cwiseProduct(it->task.position_error());
+          // double vel_masked_term = masked_vel.transpose() * masked_Kp.cwiseProduct(it->task.position_error());
+          m_dS[i] += Lambda_dot_term;// + vel_masked_term;
         } else {
           m_dS[i] = 0.0;
           m_S[i] = 0.0;
@@ -513,7 +522,7 @@ namespace tsid
         // std::cout << "##################### m_maked_Kp_prev[i][0] : " << m_maked_Kp_prev[i][0] << " ################################" << std::endl;
         
         double signal_to_filter = damping_term - acc_term - Lambda_dot_term + vel_ref_term;
-        m_A[i] = signal_to_filter; //lowPassFilter(1.0, signal_to_filter, m_A[i]);
+        m_A[i] = signal_to_filter; //  lowPassFilter(1.0, signal_to_filter, m_A[i]); //
         // std::cout << "##################### A_i i: " << i << " " << m_A[i] << " ################################" << std::endl;
 
         E_c += 0.5 * (it->task.velocity()).transpose() * Lambda * (it->task.velocity());
@@ -521,36 +530,34 @@ namespace tsid
         i++;
       }
       double A = m_A.sum();
-      double S = m_S.sum();
-      double dS = m_dS.sum();
       double B = non_linear_effect_term - contact_forces_term;
 
-      m_gamma = gammaFunction(A, m_Plow, 1.5, m_gamma);
+      m_gamma = gammaFunction(A, m_Plow, .5, m_gamma);
 
       // if (A < m_Plow){
       //   m_gamma = m_Plow/A;
       // } else {
       //   m_gamma = 1.0;
       // }
-      m_beta = H_min(m_E_min_tank, m_E_min_tank + 5*m_E_min_tank, m_E_tank, m_gamma * A - B);
+      m_beta = H_min(m_E_min_tank, m_E_min_tank + 10*m_E_min_tank, m_E_tank, m_gamma * A - B);
       // if ((m_E_tank <= m_E_min_tank) && ((m_gamma * A - B) < 0)) {
       //   m_beta = 0.0;
       // } else {
       //   m_beta = 1.0;
       // }
 
-      m_alpha = H_max(m_E_max_tank -0.2*m_E_max_tank, m_E_max_tank, m_E_tank, m_beta * m_gamma * A - B);
+      m_alpha = H_max(0.0, m_E_max_tank, m_E_tank, m_beta * m_gamma * A - B); //m_E_max_tank -0.2*m_E_max_tank
       // if ((m_E_tank >= m_E_max_tank) && ((m_beta * m_gamma * A - B) > 0)){
       //   m_alpha = 1.0;
       // } else {
       //   m_alpha = 0.0;
       // }
 
-      dE_tank = (1-m_alpha) * (m_beta * m_gamma * A);
-      dE_tank -= (1-m_alpha) * B;
-      // std::cout << "##################### dE_tank : " << dE_tank << "################################" << std::endl;
+      m_dE_tank = (1-m_alpha) * (m_beta * m_gamma * A);
+      m_dE_tank -= (1-m_alpha) * B;
+      // std::cout << "##################### m_dE_tank : " << m_dE_tank << "################################" << std::endl;
 
-      m_E_tank += dE_tank * m_dt;
+      m_E_tank += m_dE_tank * m_dt;
       if (m_E_tank < m_E_min_tank){
         m_E_tank = m_E_min_tank;
       } else if (m_E_tank > m_E_max_tank){
@@ -558,11 +565,15 @@ namespace tsid
       }
       // std::cout << "##################### m_E_tank : " << m_E_tank << "################################" << std::endl;
 
+      m_S = m_beta * m_gamma * m_S;
+      m_dS = m_beta * m_gamma * m_dS;
+      double S = m_S.sum();
+      double dS = m_dS.sum();
       m_H = S + m_E_tank;
       // std::cout << "##################### m_H : " << m_H << "################################" << std::endl;
 
-      m_dH = dS + dE_tank;
-      //m_dH += (S + m_E_tank) * m_dt; //dS + dE_tank;
+      m_dH = dS + m_dE_tank;
+      //m_dH += (S + m_E_tank) * m_dt; //dS + m_dE_tank;
       // std::cout << "##################### m_dH : " << m_dH << "################################" << std::endl;
       
       double V_g_i = data.potential_energy; //pinocchio::computePotentialEnergy(m_robot.model(), data, q);
@@ -584,7 +595,9 @@ namespace tsid
       m_lyapunovConstraint.upperBound() = m_b_upper;
       m_lyapunovConstraint.lowerBound() = m_b_lower;
       
-
+      // m_maxEnergyConstraint.setMatrix(matrix);
+      // m_maxEnergyConstraint.upperBound() = m_b_upper;
+      // m_maxEnergyConstraint.lowerBound() = m_b_lower;
       // m_q_error = q_rpy - m_ref.pos;
       // Vector v_error = v - m_ref.vel;
       // //m_q_prev_error = m_ref.pos - m_q_prev;

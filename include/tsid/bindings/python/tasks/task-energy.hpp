@@ -56,6 +56,7 @@ namespace tsid
         .add_property("get_H", bp::make_function(&TaskEnergyPythonVisitor::get_H, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_dH", bp::make_function(&TaskEnergyPythonVisitor::get_dH, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_E_tank", bp::make_function(&TaskEnergyPythonVisitor::get_E_tank, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_dE_tank", bp::make_function(&TaskEnergyPythonVisitor::get_dE_tank, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_H_tot", bp::make_function(&TaskEnergyPythonVisitor::get_H_tot, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_S", bp::make_function(&TaskEnergyPythonVisitor::get_S, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_dH_tot", bp::make_function(&TaskEnergyPythonVisitor::get_dH_tot, bp::return_value_policy<bp::copy_const_reference>()))
@@ -108,6 +109,9 @@ namespace tsid
       }
       static void set_E_tank(TaskEnergy & self, const double & E_tank){
         self.set_E_tank(E_tank);
+      }     
+      static const double & get_dE_tank (const TaskEnergy & self){
+        return self.get_dE_tank();
       }
       static const double & get_H_tot (const TaskEnergy & self){
         return self.get_H_tot();
