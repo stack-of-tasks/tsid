@@ -1,5 +1,6 @@
 import pinocchio as se3
-from pinocchio import libpinocchio_pywrap as pin
+import pinocchio as pin
+#from pinocchio import libpinocchio_pywrap as pin
 import tsid
 import numpy as np
 from numpy import nan
@@ -112,6 +113,8 @@ sampleCom = trajCom.computeNext()
 q_ref = q[7:]
 trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
 
+print("Create QP solver with ", invdyn.nVar, " variables, ", invdyn.nEq, 
+      " equality and ", invdyn.nIn, " inequality constraints")
 solver = tsid.SolverHQuadProgFast("qp solver")
 solver.resize(invdyn.nVar, invdyn.nEq, invdyn.nIn)
 
