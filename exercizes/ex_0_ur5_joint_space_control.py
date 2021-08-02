@@ -126,10 +126,10 @@ if(PLOT_JOINT_POS):
     (f, ax) = plut.create_empty_figure(int(robot.nv/2),2)
     ax = ax.reshape(robot.nv)
     for i in range(robot.nv):
-        ax[i].plot(time, q[i,:-1], label='Joint pos '+str(i))
-        ax[i].plot(time, q_ref[i,:], '--', label='Joint ref pos '+str(i))
+        ax[i].plot(time, q[i,:-1], label='q '+str(i))
+        ax[i].plot(time, q_ref[i,:], '--', label='q ref '+str(i))
         ax[i].set_xlabel('Time [s]')
-        ax[i].set_ylabel('Joint angles [rad]')
+        ax[i].set_ylabel('Q [rad]')
         leg = ax[i].legend()
         leg.get_frame().set_alpha(0.5)
         
@@ -137,12 +137,12 @@ if(PLOT_JOINT_VEL):
     (f, ax) = plut.create_empty_figure(int(robot.nv/2),2)
     ax = ax.reshape(robot.nv)
     for i in range(robot.nv):
-        ax[i].plot(time, v[i,:-1], label='Joint vel '+str(i))
-        ax[i].plot(time, v_ref[i,:], '--', label='Joint ref vel '+str(i))
+        ax[i].plot(time, v[i,:-1], label='dq '+str(i))
+        ax[i].plot(time, v_ref[i,:], '--', label='dq ref '+str(i))
         ax[i].plot([time[0], time[-1]], 2*[v_min[i]], ':')
         ax[i].plot([time[0], time[-1]], 2*[v_max[i]], ':')
         ax[i].set_xlabel('Time [s]')
-        ax[i].set_ylabel('Joint velocity [rad/s]')
+        ax[i].set_ylabel('dq [rad/s]')
         leg = ax[i].legend()
         leg.get_frame().set_alpha(0.5)
         
@@ -150,11 +150,11 @@ if(PLOT_JOINT_ACC):
     (f, ax) = plut.create_empty_figure(int(robot.nv/2),2)
     ax = ax.reshape(robot.nv)
     for i in range(robot.nv):
-        ax[i].plot(time, dv[i,:-1], label='Joint acc '+str(i))
-        ax[i].plot(time, dv_ref[i,:], '--', label='Joint ref acc '+str(i))
-        ax[i].plot(time, dv_des[i,:], ':', label='Joint des acc '+str(i))
+        ax[i].plot(time, dv[i,:-1], label='ddq '+str(i))
+        ax[i].plot(time, dv_ref[i,:], '--', label='ddq ref '+str(i))
+        ax[i].plot(time, dv_des[i,:], ':', label='ddq des '+str(i))
         ax[i].set_xlabel('Time [s]')
-        ax[i].set_ylabel('Joint acceleration [rad/s^2]')
+        ax[i].set_ylabel('ddq [rad/s^2]')
         leg = ax[i].legend()
         leg.get_frame().set_alpha(0.5)
    
