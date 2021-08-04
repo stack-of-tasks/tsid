@@ -49,6 +49,9 @@ namespace tsid
         .def("compute", &TaskContactForceEqualityPythonVisitor::compute, bp::args("t", "q", "v", "data"))
         .def("getConstraint",  &TaskContactForceEqualityPythonVisitor::getConstraint)
         .add_property("name", &TaskContactForceEqualityPythonVisitor::name)
+        .add_property("Kp", bp::make_function(&TaskContactForceEqualityPythonVisitor::Kp, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("Kd", bp::make_function(&TaskContactForceEqualityPythonVisitor::Kd, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("Ki", bp::make_function(&TaskContactForceEqualityPythonVisitor::Kd, bp::return_value_policy<bp::copy_const_reference>()))
         ;
       }
       static std::string name(TaskContactForceEquality & self){
@@ -64,11 +67,20 @@ namespace tsid
         math::ConstraintEquality cons(self.getConstraint().name(), self.getConstraint().matrix(), self.getConstraint().vector());
         return cons;
       }
-      static void setReference(TaskContactForceEquality & self, const Eigen::Vector3d & ref){
+      static void setReference(TaskContactForceEquality & self, trajectories::TrajectorySample & ref){
         self.setReference(ref);
       }
-      static void setExternalForce(TaskContactForceEquality & self, const Eigen::Vector3d & f_ext){
+      static void setExternalForce(TaskContactForceEquality & self, trajectories::TrajectorySample & f_ext){
         self.setExternalForce(f_ext);
+      }
+      static const Eigen::VectorXd & Kp (TaskContactForceEquality & self){
+        return self.Kp();
+      }
+      static const Eigen::VectorXd & Kd (TaskContactForceEquality & self){
+        return self.Kd();
+      }
+      static const Eigen::VectorXd & Ki (TaskContactForceEquality & self){
+        return self.Ki();
       }
       static void expose(const std::string & class_name)
       {

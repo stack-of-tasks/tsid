@@ -38,6 +38,7 @@ namespace tsid
       typedef trajectories::TrajectorySample TrajectorySample;
       typedef math::Vector Vector;
       typedef math::Vector6 Vector6;
+      typedef math::Vector3 Vector3;
       typedef math::ConstraintEquality ConstraintEquality;
       typedef pinocchio::SE3 SE3;
 
@@ -84,8 +85,8 @@ namespace tsid
       ConstraintEquality m_constraint;
       TrajectorySample m_ref;  // reference Force in world frame
       TrajectorySample m_fext;     // external force in the world frame
-      Vector6 m_forceIntegralError;
-	  Vector m_Kp;
+      Vector3 m_forceIntegralError;
+	    Vector m_Kp;
       Vector m_Kd;
       Vector m_Ki;
       double m_dt;

@@ -30,10 +30,10 @@ TaskContactForceEquality::TaskContactForceEquality(const std::string & name, Rob
                                                    const std::string & contactName):
   TaskContactForce(name, robot),
   m_contact_name(contactName),
-  m_constraint(name, 6, 6),
+  m_constraint(name, 3, 3),
   m_ref(6,6),
   m_fext(6,6) {
-  m_forceIntegralError = Vector::Zero(6);
+  m_forceIntegralError = Vector::Zero(3);
   m_dt = 0.001;
 }
 
@@ -42,7 +42,7 @@ void TaskContactForceEquality::setContactList(const std::vector<std::shared_ptr<
 }
 
 int TaskContactForceEquality::dim() const {
-  return 6;
+  return 3;
 }
 
 const Vector & TaskContactForceEquality::Kp() const { return m_Kp; }
@@ -109,19 +109,43 @@ const ConstraintBase & TaskContactForceEquality::compute(const double,
   // fill constraint matrix
   SE3 oMi;
   // Vector3 p_local, p_world;
-  auto& M = m_constraint.matrix();
-  std::shared_ptr<ContactLevel> cl = (*m_contacts)[0];
+  
+  std::shared_ptr<ContactLevel> cl;
+  bool contactNotFound = true;
+  for(auto it : *m_contacts) {
+    // std::cout << "################### m_contact_name: " << m_contact_name << " ###################" << std::endl;
+    // std::cout << "################### Contact name: " << it->contact.name() << " ###################" << std::endl;
+    if (m_contact_name == it->contact.name()) {
+      cl = it;
+      contactNotFound = false;
+      break;
+    }
+  }
+  if (contactNotFound) {
+    std::cout << "################### ERROR CONTACT NAME NOT FOUND ###################" << std::endl;
+    return m_constraint;
+  }
+  // = (*m_contacts)[0];
   int n = cl->contact.n_force(); //6
-  M.resize(6, n);
+  auto& M = m_constraint.matrix();
+  // M.resize(38, n);
   // get frame of the contactPoint
   // m_robot.framePosition(data, cl->contact.getMotionTask().frame_id(), oMi);
   const Matrix & T = cl->contact.getForceGeneratorMatrix(); // e.g., 6x12 for a 6d contact
   M = T.transpose()*cl->contact.getMotionConstraint().matrix();
   std::cout << "################### task contact force M ok ###################" << std::endl;
+  std::cout << M.rows() << std::endl;
+  std::cout << M.cols() << std::endl;
+  std::cout << M << std::endl;
 
-  const Vector6 forceError = m_ref.pos - m_fext.pos;
-  m_constraint.vector() = m_Kp.cwiseProduct(forceError) + m_Kd.cwiseProduct(m_ref.vel - m_fext.vel) 
-                          + m_Ki.cwiseProduct(m_forceIntegralError);
+  Vector3 forceError = (m_ref.pos).head(3) - (m_fext.pos).head(3);
+  std::cout << "################### task contact forceError ###################" << std::endl;
+  std::cout << forceError << std::endl;
+  Vector a_ref = m_Kp.head(3).cwiseProduct(forceError) + m_Kd.head(3).cwiseProduct((m_ref.vel).head(3) - (m_fext.vel).head(3)) 
+                 + m_Ki.head(3).cwiseProduct(m_forceIntegralError);
+  std::cout << "################### task contact a_ref ###################" << std::endl;
+  std::cout << a_ref << std::endl;
+  m_constraint.vector() = a_ref;
   std::cout << "################### task contact force m_constraint ok ###################" << std::endl;
 
   m_forceIntegralError += (forceError - 0.2 * m_forceIntegralError) * m_dt;
