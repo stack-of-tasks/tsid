@@ -23,6 +23,7 @@ namespace tsid
   {
 
     typedef math::Vector Vector;
+    typedef math::Matrix Matrix;
     typedef trajectories::TrajectorySample TrajectorySample;
 
     TaskMotion::TaskMotion(const std::string & name,
@@ -39,10 +40,18 @@ namespace tsid
     {
       return m_mask.size() > 0;
     }
+    const std::string TaskMotion::getFrameName() { return ""; }
 
     const Vector & TaskMotion::getMask() const { return m_mask; }
+    const Vector & TaskMotion::Kp(){ return m_Kp_dummy; }
+    const Vector & TaskMotion::Kd(){ return m_Kd_dummy; }
+
+    void TaskMotion::Kp(ConstRefVector Kp){ m_Kp_dummy = Kp; }
+    void TaskMotion::Kd(ConstRefVector Kd){ m_Kd_dummy = Kd; }
 
     const TrajectorySample & TaskMotion::getReference() const { return TrajectorySample_dummy; }
+
+    const Matrix & TaskMotion::getJacobian() const { return m_Matrix_dummy; }
 
     const Vector & TaskMotion::getDesiredAcceleration() const  { return m_dummy; }
 
@@ -54,6 +63,7 @@ namespace tsid
     const Vector & TaskMotion::velocity() const  { return m_dummy; }
     const Vector & TaskMotion::position_ref() const  { return m_dummy; }
     const Vector & TaskMotion::velocity_ref() const  { return m_dummy; }
+    const Vector & TaskMotion::acceleration_ref() const { return m_dummy; }
 
   }
 }

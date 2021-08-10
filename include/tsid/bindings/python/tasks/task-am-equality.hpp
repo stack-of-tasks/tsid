@@ -82,10 +82,10 @@ namespace tsid
       static Eigen::Vector3d getdMomentum (TaskAM & self, const Eigen::VectorXd dv){
         return self.getdMomentum(dv);
       }
-      static const Eigen::Vector3d & momentum_error(const TaskAM & self){
+      static const Eigen::VectorXd & momentum_error(const TaskAM & self){
         return self.momentum_error();
       }
-      static const Eigen::Vector3d & momentum (const TaskAM & self){
+      static const Eigen::VectorXd & momentum (const TaskAM & self){
         return self.momentum();
       }
       static const Eigen::VectorXd & momentum_ref (const TaskAM & self){
@@ -94,10 +94,10 @@ namespace tsid
       static const Eigen::VectorXd & dmomentum_ref (const TaskAM & self){
         return self.dmomentum_ref();
       }     
-      static const Eigen::Vector3d & Kp (TaskAM & self){
+      static const Eigen::VectorXd & Kp (TaskAM & self){
         return self.Kp();
       }  
-      static const Eigen::Vector3d & Kd (TaskAM & self){
+      static const Eigen::VectorXd & Kd (TaskAM & self){
         return self.Kd();
       }    
       static void setKp (TaskAM & self, const::Eigen::VectorXd Kp){

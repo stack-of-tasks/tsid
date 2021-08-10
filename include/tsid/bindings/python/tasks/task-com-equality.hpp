@@ -104,10 +104,10 @@ namespace tsid
       static const Eigen::VectorXd & velocity_ref (const TaskCOM & self){
         return self.velocity_ref();
       }     
-      static const Eigen::Vector3d & Kp (TaskCOM & self){
+      static const Eigen::VectorXd & Kp (TaskCOM & self){
         return self.Kp();
       }  
-      static const Eigen::Vector3d & Kd (TaskCOM & self){
+      static const Eigen::VectorXd & Kd (TaskCOM & self){
         return self.Kd();
       }    
       static void setKp (TaskCOM & self, const::Eigen::VectorXd Kp){

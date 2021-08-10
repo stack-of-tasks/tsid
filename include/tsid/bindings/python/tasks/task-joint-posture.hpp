@@ -25,6 +25,7 @@
 #include "tsid/trajectories/trajectory-base.hpp"
 #include "tsid/math/constraint-equality.hpp"
 #include "tsid/math/constraint-base.hpp"
+
 namespace tsid
 {
   namespace python
@@ -57,6 +58,7 @@ namespace tsid
         .add_property("velocity_ref", bp::make_function(&TaskJointPosturePythonVisitor::velocity_ref, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("Kp", bp::make_function(&TaskJointPosturePythonVisitor::Kp, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("Kd", bp::make_function(&TaskJointPosturePythonVisitor::Kd, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("getJacobian", bp::make_function(&TaskJointPosturePythonVisitor::getJacobian, bp::return_value_policy<bp::copy_const_reference>()))
         .def("setKp", &TaskJointPosturePythonVisitor::setKp, bp::arg("Kp"))
         .def("setKd", &TaskJointPosturePythonVisitor::setKd, bp::arg("Kd"))
         .def("compute", &TaskJointPosturePythonVisitor::compute, bp::args("t", "q", "v", "data"))
@@ -115,7 +117,10 @@ namespace tsid
       }  
       static const Eigen::VectorXd & Kd (TaskJoint & self){
         return self.Kd();
-      }    
+      } 
+      static const Eigen::MatrixXd & getJacobian (TaskJoint & self){
+        return self.getJacobian();
+      }  
       static void setKp (TaskJoint & self, const::Eigen::VectorXd Kp){
         return self.Kp(Kp);
       }

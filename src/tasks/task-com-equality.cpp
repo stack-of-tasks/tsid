@@ -17,6 +17,7 @@
 
 #include "tsid/tasks/task-com-equality.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
+#include "tsid/math/utils.hpp"
 
 namespace tsid
 {
@@ -41,7 +42,8 @@ namespace tsid
       m_ref.resize(3);
       m_mask.resize(3);
       m_mask.fill(1.);
-      setMask(m_mask);      
+      setMask(m_mask);
+      m_Jcom.setZero(3, robot.nv());
     }
 
 
@@ -62,9 +64,9 @@ namespace tsid
       return int(m_mask.sum());
     }
 
-    const Vector3 & TaskComEquality::Kp(){ return m_Kp; }
+    const Vector & TaskComEquality::Kp(){ return m_Kp; }
 
-    const Vector3 & TaskComEquality::Kd(){ return m_Kd; }
+    const Vector & TaskComEquality::Kd(){ return m_Kd; }
 
     void TaskComEquality::Kp(ConstRefVector Kp)
     {
@@ -86,6 +88,11 @@ namespace tsid
     const TrajectorySample & TaskComEquality::getReference() const
     {
       return m_ref;
+    }
+
+    const Matrix & TaskComEquality::getJacobian() const
+    {
+      return m_Jcom;
     }
 
     const Vector & TaskComEquality::getDesiredAcceleration() const
@@ -128,6 +135,11 @@ namespace tsid
       return m_ref.vel;
     }
 
+    const Vector & TaskComEquality::acceleration_ref() const
+    {
+      return m_ref.acc;
+    }
+
     const ConstraintBase & TaskComEquality::getConstraint() const
     {
       return m_constraint;
@@ -140,12 +152,26 @@ namespace tsid
     {
       m_robot.com(data, m_p_com, m_v_com, m_drift);
 
+      // Get CoM jacobian
+      m_Jcom = m_robot.Jcom(data);
+
+      // Matrix Lambda_inv, Lambda, Jpinv;
+      // Jpinv.setZero(m_Jcom.cols(), m_Jcom.rows());
+      // pseudoInverse(m_Jcom, Jpinv, 1e-6);
+      // Lambda = Jpinv.transpose() * m_robot.mass(data) * Jpinv;
+      // Lambda_inv.setZero(Lambda.cols(), Lambda.rows());
+      // pseudoInverse(Lambda, Lambda_inv, 1e-6);
+      // Matrix LKP = (Lambda_inv * m_Kp).cwiseAbs();
+      // Matrix LKD = (Lambda_inv * m_Kd).cwiseAbs();
+      // // std::cout << "##################### Minv com: "<<  Minv << "################################" << std::endl;
+      // // std::cout << "##################### Lambda_inv com: "<<  Lambda_inv << "################################" << std::endl;
+      // std::cout << "##################### Lambda_inv * m_Kp com: "<<  LKP << "################################" << std::endl;
+      // std::cout << "##################### Lambda_inv * m_Kd com: "<<  LKD << "################################" << std::endl;
+
       // Compute errors
       m_p_error = m_p_com - m_ref.pos;
       m_v_error = m_v_com - m_ref.vel;
-      m_a_des = - m_Kp.cwiseProduct(m_p_error)
-                - m_Kd.cwiseProduct(m_v_error)
-                + m_ref.acc;
+      m_a_des = - m_Kp.cwiseProduct(m_p_error) - m_Kd.cwiseProduct(m_v_error) + m_ref.acc;
 
       m_p_error_vec = m_p_error;
       m_v_error_vec = m_v_error;
@@ -155,14 +181,12 @@ namespace tsid
 //        <<m_v_error.norm()<<std::endl;
 #endif
 
-      // Get CoM jacobian
-      const Matrix3x & Jcom = m_robot.Jcom(data);
 
       int idx = 0;
       for (int i = 0; i < 3; i++) {
         if (m_mask(i) != 1.) continue;
 
-        m_constraint.matrix().row(idx) = Jcom.row(i);
+        m_constraint.matrix().row(idx) = m_Jcom.row(i);
         m_constraint.vector().row(idx) = (m_a_des - m_drift).row(i);
        
         m_a_des_masked(idx)            = m_a_des(i);

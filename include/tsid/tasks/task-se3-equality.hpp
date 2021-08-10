@@ -38,6 +38,7 @@ namespace tsid
       typedef math::Index Index;
       typedef trajectories::TrajectorySample TrajectorySample;
       typedef math::Vector Vector;
+      typedef math::Matrix Matrix;
       typedef math::ConstraintEquality ConstraintEquality;
       typedef pinocchio::Data Data;
       typedef pinocchio::Data::Matrix6x Matrix6x;
@@ -59,6 +60,7 @@ namespace tsid
 
       void setReference(TrajectorySample & ref);
       const TrajectorySample & getReference() const;
+      const Matrix & getJacobian() const;
 
       /** Return the desired task acceleration (after applying the specified mask).
        *  The value is expressed in local frame is the local_frame flag is true,
@@ -90,23 +92,24 @@ namespace tsid
       const Vector & velocity() const;
       const Vector & position_ref() const;
       const Vector & velocity_ref() const;
-
-      const Vector & Kp() const;
-      const Vector & Kd() const;
+      const Vector & acceleration_ref() const;
+      const Vector & Kp() override;
+      const Vector & Kd() override;
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
 
       Index frame_id() const;
 
       /**
-       * @brief Specifies if the jacobian and desired acceloration should be
+       * @brief Specifies if the jacobian and desired acceleration should be
        * expressed in the local frame or the local world-oriented frame.
        *
-       * @param local_frame If true, represent jacobian and acceloration in the
+       * @param local_frame If true, represent jacobian and acceleration in the
        *   local frame. If false, represent them in the local world-oriented frame.
        */
       void useLocalFrame(bool local_frame);
-
+      const std::string getFrameName() { return m_frame_name; }
+      
     protected:
 
       std::string m_frame_name;
@@ -124,6 +127,7 @@ namespace tsid
       Motion m_drift;
       Vector m_drift_masked;
       Matrix6x m_J;
+      Matrix m_J_dyn;
       Matrix6x m_J_rotated;
       ConstraintEquality m_constraint;
       TrajectorySample m_ref;

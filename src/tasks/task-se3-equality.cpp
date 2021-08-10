@@ -78,9 +78,9 @@ namespace tsid
       return (int)m_mask.sum();
     }
 
-    const Vector & TaskSE3Equality::Kp() const { return m_Kp; }
+    const Vector & TaskSE3Equality::Kp() { return m_Kp; }
 
-    const Vector & TaskSE3Equality::Kd() const { return m_Kd; }
+    const Vector & TaskSE3Equality::Kd() { return m_Kd; }
 
     void TaskSE3Equality::Kp(ConstRefVector Kp)
     {
@@ -105,6 +105,13 @@ namespace tsid
     const TrajectorySample & TaskSE3Equality::getReference() const
     {
       return m_ref;
+    }
+
+    const Matrix & TaskSE3Equality::getJacobian() const
+    {
+      // double * data = m_J.data();
+      // Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>> J(data, m_J.rows(), m_J.cols());
+      return m_J_dyn;
     }
 
     const Vector & TaskSE3Equality::position_error() const
@@ -135,6 +142,11 @@ namespace tsid
     const Vector & TaskSE3Equality::velocity_ref() const
     {
       return m_v_ref_vec;
+    }
+
+    const Vector & TaskSE3Equality::acceleration_ref() const
+    {
+      return m_ref.acc;
     }
 
     const Vector & TaskSE3Equality::getDesiredAcceleration() const
@@ -184,14 +196,24 @@ namespace tsid
       // Transformation from local to world
       m_wMl.rotation(oMi.rotation());
 
+      // Matrix Jpinv, Lambda, Lambda_inv;
       if (m_local_frame) {
+        // Jpinv.setZero(m_J.cols(), m_J.rows());
+        // pseudoInverse(m_J, Jpinv, 1e-6);
+        // Lambda = Jpinv.transpose() * m_robot.mass(data) * Jpinv;
+        // Lambda_inv.setZero(Lambda.cols(), Lambda.rows());
+        // pseudoInverse(Lambda, Lambda_inv, 1e-6);
+        // Matrix LKP = (Lambda_inv * m_Kp).cwiseAbs();
+        // Matrix LKD = (Lambda_inv * m_Kd).cwiseAbs();
+        // //std::cout << "##################### Lambda_inv se3: "<<  Lambda_inv << "################################" << std::endl;        
+        // std::cout << "##################### Lambda_inv * m_Kp se3: "<<  LKP << "################################" << std::endl;
+        // std::cout << "##################### Lambda_inv * m_Kd se3: "<<  LKD << "################################" << std::endl;
+        
         m_p_error_vec = m_p_error.toVector();
         m_v_error =  m_wMl.actInv(m_v_ref) - v_frame;  // vel err in local frame
 
         // desired acc in local frame
-        m_a_des = m_Kp.cwiseProduct(m_p_error_vec)
-                  + m_Kd.cwiseProduct(m_v_error.toVector())
-                  + m_wMl.actInv(m_a_ref).toVector();
+        m_a_des = m_Kp.cwiseProduct(m_p_error_vec) + m_Kd.cwiseProduct(m_v_error.toVector()) + m_wMl.actInv(m_a_ref).toVector();
       } else {
         m_p_error_vec = m_wMl.toActionMatrix() *   // pos err in local world-oriented frame
             m_p_error.toVector();
@@ -203,15 +225,24 @@ namespace tsid
 
         m_drift = m_wMl.act(m_drift);
 
-        // desired acc in local world-oriented frame
-        m_a_des = m_Kp.cwiseProduct(m_p_error_vec)
-                  + m_Kd.cwiseProduct(m_v_error.toVector())
-                  + m_a_ref.toVector();
-
         // Use an explicit temporary `m_J_rotated` here to avoid allocations.
         m_J_rotated.noalias() = m_wMl.toActionMatrix() * m_J;
         m_J = m_J_rotated;
+        // Jpinv.setZero(m_J.cols(), m_J.rows());
+        // pseudoInverse(m_J, Jpinv, 1e-6);
+        // Lambda = Jpinv.transpose() * m_robot.mass(data) * Jpinv;
+        // Lambda_inv.setZero(Lambda.cols(), Lambda.rows());
+        // pseudoInverse(Lambda, Lambda_inv, 1e-6);
+        // Matrix LKP = (Lambda_inv * m_Kp).cwiseAbs();
+        // Matrix LKD = (Lambda_inv * m_Kd).cwiseAbs();
+        // //std::cout << "##################### Lambda_inv se3: "<<  Lambda_inv << "################################" << std::endl;        
+        // std::cout << "##################### Lambda_inv * m_Kp se3: "<<  LKP << "################################" << std::endl;
+        // std::cout << "##################### Lambda_inv * m_Kd se3: "<<  LKD << "################################" << std::endl;
+
+        // desired acc in local world-oriented frame
+        m_a_des = m_Kp.cwiseProduct(m_p_error_vec) + m_Kd.cwiseProduct(m_v_error.toVector()) + m_a_ref.toVector();
       }
+      m_J_dyn = m_J;
 
       m_v_error_vec = m_v_error.toVector();
       m_v_ref_vec = m_v_ref.toVector();

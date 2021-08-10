@@ -19,6 +19,7 @@
 #include "tsid/robots/robot-wrapper.hpp"
 #include <pinocchio/algorithm/joint-configuration.hpp>
 #include <pinocchio/algorithm/centroidal.hpp>
+#include "tsid/math/utils.hpp"
 
 namespace tsid
 {
@@ -41,17 +42,20 @@ namespace tsid
       m_dL.setZero(3);
       m_dL_des.setZero(3);
       m_ref.resize(3);
+      m_J_am.setZero(3, robot.nv());
+      m_mask.resize(3);
+      m_mask.fill(1.);
     }
 
     int TaskAMEquality::dim() const
     {
       //return self._mask.sum ()
-      return 3;
+      return (int)m_mask.sum();
     }
 
-    const Vector3 & TaskAMEquality::Kp(){ return m_Kp; }
+    const Vector & TaskAMEquality::Kp(){ return m_Kp; }
 
-    const Vector3 & TaskAMEquality::Kd(){ return m_Kd; }
+    const Vector & TaskAMEquality::Kd(){ return m_Kd; }
 
     void TaskAMEquality::Kp(ConstRefVector Kp)
     {
@@ -75,6 +79,11 @@ namespace tsid
       return m_ref;
     }
 
+    const Matrix & TaskAMEquality::getJacobian() const 
+    {
+      return m_J_am;
+    }
+
     const Vector3 & TaskAMEquality::getDesiredMomentumDerivative() const
     {
       return m_dL_des;
@@ -85,12 +94,12 @@ namespace tsid
       return m_constraint.matrix()*dv - m_drift;
     }
 
-    const Vector3 & TaskAMEquality::momentum_error() const
+    const Vector & TaskAMEquality::momentum_error() const
     {
       return m_L_error;
     }
 
-    const Vector3 & TaskAMEquality::momentum() const
+    const Vector & TaskAMEquality::momentum() const
     {
       return m_L;
     }
@@ -117,8 +126,19 @@ namespace tsid
       // Compute errors
       // Get momentum jacobian
       const Matrix6x & J_am = m_robot.momentumJacobian(data);
-      m_L = J_am.bottomRows(3) * v;
+      m_J_am = J_am.bottomRows(3);
+      m_L = m_J_am * v;
       m_L_error = m_L - m_ref.vel;
+
+      // Matrix Lambda_inv, Lambda, Jpinv;
+      // Jpinv.setZero(m_J_am.cols(), m_J_am.rows());
+      // pseudoInverse(m_J_am, Jpinv, 1e-6);
+      // Lambda = Jpinv.transpose() * m_robot.mass(data) * Jpinv;
+      // Lambda_inv.setZero(Lambda.cols(), Lambda.rows());
+      // pseudoInverse(Lambda, Lambda_inv, 1e-6);
+      // //std::cout << "##################### Minv am: "<<  Minv << "################################" << std::endl;
+      // //std::cout << "##################### Lambda_inv am: "<<  Lambda_inv << "################################" << std::endl;
+      // std::cout << "##################### Lambda_inv * m_Kp am: "<<  Lambda_inv * m_Kp << "################################" << std::endl;
 
       m_dL_des = - m_Kp.cwiseProduct(m_L_error)
                 + m_ref.acc;
@@ -129,7 +149,7 @@ namespace tsid
 #endif
 
       m_drift = m_robot.angularMomentumTimeVariation(data);
-      m_constraint.setMatrix(J_am.bottomRows(3));
+      m_constraint.setMatrix(m_J_am);
       m_constraint.setVector(m_dL_des - m_drift);
 
       return m_constraint;
