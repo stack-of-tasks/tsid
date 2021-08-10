@@ -85,7 +85,7 @@ namespace tsid
       ConstraintEquality m_constraint;
       TrajectorySample m_ref;  // reference Force in world frame
       TrajectorySample m_fext;     // external force in the world frame
-      Vector3 m_forceIntegralError;
+      Vector m_forceIntegralError;
 	    Vector m_Kp;
       Vector m_Kd;
       Vector m_Ki;
