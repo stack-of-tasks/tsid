@@ -227,7 +227,7 @@ void Contact6d::setForceReference(ConstRefVector & f_ref)
 void Contact6d::setReference(const SE3 & ref)
 {
   TrajectorySample s(12, 6);
-  SE3ToVector(ref, s.value);
+  s.setValue(ref);
   m_motionTask.setReference(s);
 }
 

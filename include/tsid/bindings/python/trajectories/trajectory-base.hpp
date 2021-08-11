@@ -78,20 +78,20 @@ namespace tsid
       }
 
       static void setvalue_vec(TrajSample & self, const Eigen::VectorXd value){
-        assert (self.value.size() == value.size());
-        self.value = value;
+        assert (self.getValue().size() == value.size());
+        self.setValue(value);
       }
       static void setvalue_se3(TrajSample & self, const pinocchio::SE3 & value){
-        assert (self.value.size() == 12);
-        tsid::math::SE3ToVector(value, self.value);
+        assert (self.getValue().size() == 12);
+        self.setValue(value);
       }
       static void setderivative(TrajSample & self, const Eigen::VectorXd derivative){
-        assert (self.derivative.size() == derivative.size());
-        self.derivative = derivative;
+        assert (self.getDerivative().size() == derivative.size());
+        self.setDerivative(derivative);
       }
       static void setsecond_derivative(TrajSample & self, const Eigen::VectorXd second_derivative){
-        assert (self.second_derivative.size() == second_derivative.size());
-        self.second_derivative = second_derivative;
+        assert (self.getSecondDerivative().size() == second_derivative.size());
+        self.setSecondDerivative(second_derivative);
       }
       static void resize(TrajSample & self, const unsigned int & size){
           self.resize(size, size);
@@ -100,13 +100,13 @@ namespace tsid
           self.resize(value_size, derivative_size);
       }
       static Eigen::VectorXd value(const TrajSample & self){
-          return self.value;
+          return self.getValue();
       }
       static Eigen::VectorXd derivative(const TrajSample & self){
-          return self.derivative;
+          return self.getDerivative();
       }
       static Eigen::VectorXd second_derivative(const TrajSample & self){
-          return self.second_derivative;
+          return self.getSecondDerivative();
       }
 
       static void expose(const std::string & class_name)

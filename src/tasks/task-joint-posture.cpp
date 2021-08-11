@@ -92,9 +92,9 @@ namespace tsid
 
     void TaskJointPosture::setReference(const TrajectorySample & ref)
     {
-      assert(ref.value.size()==m_robot.na());
-      assert(ref.derivative.size()==m_robot.na());
-      assert(ref.second_derivative.size()==m_robot.na());
+      assert(ref.getValue().size()==m_robot.na());
+      assert(ref.getDerivative().size()==m_robot.na());
+      assert(ref.getSecondDerivative().size()==m_robot.na());
       m_ref = ref;
     }
 
@@ -135,12 +135,12 @@ namespace tsid
 
     const Vector & TaskJointPosture::position_ref() const
     {
-      return m_ref.value;
+      return m_ref.getValue();
     }
 
     const Vector & TaskJointPosture::velocity_ref() const
     {
-      return m_ref.derivative;
+      return m_ref.getDerivative();
     }
 
     const ConstraintBase & TaskJointPosture::getConstraint() const
@@ -156,16 +156,16 @@ namespace tsid
       // Compute errors
       m_p = q.tail(m_robot.na());
       m_v = v.tail(m_robot.na());
-      m_p_error = m_p - m_ref.value;
-      m_v_error = m_v - m_ref.derivative;
+      m_p_error = m_p - m_ref.getValue();
+      m_v_error = m_v - m_ref.getDerivative();
       m_a_des = - m_Kp.cwiseProduct(m_p_error)
                 - m_Kd.cwiseProduct(m_v_error)
-                + m_ref.second_derivative;
+                + m_ref.getSecondDerivative();
 
       for(unsigned int i=0; i<m_activeAxes.size(); i++)
         m_constraint.vector()(i) = m_a_des(m_activeAxes(i));
       return m_constraint;
     }
-    
+
   }
 }

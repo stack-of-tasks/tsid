@@ -97,9 +97,9 @@ namespace tsid
     void TaskSE3Equality::setReference(TrajectorySample & ref)
     {
       m_ref = ref;
-      vectorToSE3(ref.value, m_M_ref);
-      m_v_ref = Motion(ref.derivative);
-      m_a_ref = Motion(ref.second_derivative);
+      ref.getValue(m_M_ref);
+      m_v_ref = Motion(ref.getDerivative());
+      m_a_ref = Motion(ref.getSecondDerivative());
     }
 
     const TrajectorySample & TaskSE3Equality::getReference() const
@@ -230,7 +230,7 @@ namespace tsid
 
         idx += 1;
       }
-      
+
       return m_constraint;
     }
   }
