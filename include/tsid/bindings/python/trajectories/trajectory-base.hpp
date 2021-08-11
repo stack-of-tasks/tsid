@@ -20,8 +20,11 @@
 
 #include "tsid/bindings/python/fwd.hpp"
 
+
 #include <tsid/math/utils.hpp>
 #include "tsid/trajectories/trajectory-base.hpp"
+
+#include <pinocchio/bindings/python/utils/deprecation.hpp>
 #include <assert.h>
 namespace tsid
 {
@@ -56,14 +59,21 @@ namespace tsid
         .def("second_derivative", &TrajectorySamplePythonVisitor::setsecond_derivative)
 
         // Deprecated methods:
-        .def("pos", &TrajectorySamplePythonVisitor::value)
-        .def("vel", &TrajectorySamplePythonVisitor::derivative)
-        .def("acc", &TrajectorySamplePythonVisitor::second_derivative)
+        .def("pos", &TrajectorySamplePythonVisitor::value,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .value"))
+        .def("vel", &TrajectorySamplePythonVisitor::derivative,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .derivative"))
+        .def("acc", &TrajectorySamplePythonVisitor::second_derivative,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .second_derivative"))
 
-        .def("pos", &TrajectorySamplePythonVisitor::setvalue_vec)
-        .def("pos", &TrajectorySamplePythonVisitor::setvalue_se3)
-        .def("vel", &TrajectorySamplePythonVisitor::setderivative)
-        .def("acc", &TrajectorySamplePythonVisitor::setsecond_derivative)
+        .def("pos", &TrajectorySamplePythonVisitor::setvalue_vec,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .value"))
+        .def("pos", &TrajectorySamplePythonVisitor::setvalue_se3,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .value"))
+        .def("vel", &TrajectorySamplePythonVisitor::setderivative,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .derivative"))
+        .def("acc", &TrajectorySamplePythonVisitor::setsecond_derivative,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .second_derivative"))
         ;
       }
 
