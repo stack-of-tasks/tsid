@@ -101,7 +101,7 @@ namespace tsid
 
     const Vector & TaskAMEquality::dmomentum_ref() const
     {
-      return m_ref.getSecondDerivative();
+      return m_ref.getDerivative();
     }
 
     const ConstraintBase & TaskAMEquality::getConstraint() const
@@ -121,7 +121,7 @@ namespace tsid
       m_L_error = m_L - m_ref.getValue();
 
       m_dL_des = - m_Kp.cwiseProduct(m_L_error)
-                + m_ref.getSecondDerivative();
+                + m_ref.getDerivative();
 
 #ifndef NDEBUG
 //      std::cout<<m_name<<" errors: "<<m_L_error.norm()<<" "
