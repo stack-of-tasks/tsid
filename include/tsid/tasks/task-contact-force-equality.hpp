@@ -43,8 +43,9 @@ namespace tsid
       typedef pinocchio::SE3 SE3;
 
       TaskContactForceEquality(const std::string & name,
-                      		   RobotWrapper & robot,
-                      		   const std::string & contactName="");
+                      		     RobotWrapper & robot,
+                               const double dt,
+                      		     const std::string & contactName="");
 
       void setContactList(const std::vector<std::shared_ptr<ContactLevel> >  *contacts);
 

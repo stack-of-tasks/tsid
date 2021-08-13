@@ -19,22 +19,21 @@
 #include <pinocchio/multibody/model.hpp>
 #include "tsid/tasks/task-contact-force-equality.hpp"
 
-using namespace tsid::math;
-using namespace std;
-
 namespace tsid {
 namespace tasks {
 
+using namespace tsid::math;
+using namespace std;
 
 TaskContactForceEquality::TaskContactForceEquality(const std::string & name, RobotWrapper & robot,
-                                                   const std::string & contactName):
+                                                   const double dt, const std::string & contactName):
   TaskContactForce(name, robot),
   m_contact_name(contactName),
-  m_constraint(name, 6, 38),
+  m_constraint(name, 6, 12),
   m_ref(6,6),
   m_fext(6,6) {
   m_forceIntegralError = Vector::Zero(6);
-  m_dt = 0.001;
+  m_dt = dt;
 }
 
 void TaskContactForceEquality::setContactList(const std::vector<std::shared_ptr<ContactLevel> >  *contacts) {
@@ -118,14 +117,13 @@ const ConstraintBase & TaskContactForceEquality::compute(const double,
     std::cout << "################### ERROR CONTACT NAME NOT FOUND ###################" << std::endl;
     return m_constraint;
   }
-  int n = cl->contact.n_force(); //3
   auto& M = m_constraint.matrix();
-  M = cl->contact.getForceGeneratorMatrix(); // e.g., 6x12 for a 6d contact
+  M = cl->contact.getForceGeneratorMatrix(); // 6x12 for a 6d contact
 
   Vector forceError = m_ref.pos - m_fext.pos;
-  Vector a_ref = m_Kp.cwiseProduct(forceError) + m_Kd.cwiseProduct(m_ref.vel- m_fext.vel) 
+  Vector f_ref = m_ref.pos + m_Kp.cwiseProduct(forceError) + m_Kd.cwiseProduct(m_ref.vel- m_fext.vel) 
                  + m_Ki.cwiseProduct(m_forceIntegralError);
-  m_constraint.vector() = a_ref;
+  m_constraint.vector() = f_ref;
 
   m_forceIntegralError += (forceError - 0.05 * m_forceIntegralError) * m_dt;
 
