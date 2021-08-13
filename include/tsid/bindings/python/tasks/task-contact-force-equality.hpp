@@ -42,7 +42,7 @@ namespace tsid
       void visit(PyClass& cl) const
       {
         cl
-        .def(bp::init<std::string, robots::RobotWrapper &, std::string> ((bp::arg("name"), bp::arg("robot"), bp::arg("contact_name")), "Default Constructor"))
+        .def(bp::init<std::string, robots::RobotWrapper &, double, std::string> ((bp::arg("name"), bp::arg("robot"), bp::arg("dt"), bp::arg("contact_name")), "Default Constructor"))
         .add_property("dim", &TaskContactForceEquality::dim, "return dimension size")
         .def("setReference", &TaskContactForceEqualityPythonVisitor::setReference, bp::arg("ref"))
         .def("setExternalForce", &TaskContactForceEqualityPythonVisitor::setExternalForce, bp::arg("f_ext"))
