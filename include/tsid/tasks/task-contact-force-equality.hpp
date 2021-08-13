@@ -54,6 +54,7 @@ namespace tsid
       virtual const std::string& getAssociatedContactName();
       virtual void setAssociatedContactName(const std::string & contactName);
 
+      // Task expressed as a PID between the reference force and the external one
       const ConstraintBase & compute(const double t,
                                      ConstRefVector q,
                                      ConstRefVector v,
@@ -81,12 +82,13 @@ namespace tsid
       void Ki(ConstRefVector Ki);
 
     protected:
+      // list of contacts in the problem used to retreive the one associated to the force task
       const std::vector<std::shared_ptr<ContactLevel> > *m_contacts;
-      std::string m_contact_name; // an empty string
+      std::string m_contact_name; // the associated contact name or an empty string
       ConstraintEquality m_constraint;
-      TrajectorySample m_ref;  // reference Force in world frame
-      TrajectorySample m_fext;     // external force in the world frame
-      Vector m_forceIntegralError;
+      TrajectorySample m_ref;      // reference Force 6D to follow 
+      TrajectorySample m_fext;     // external Force 6D in the same frame than the ref
+      Vector m_forceIntegralError; // Integral error of the PID
 	    Vector m_Kp;
       Vector m_Kd;
       Vector m_Ki;
