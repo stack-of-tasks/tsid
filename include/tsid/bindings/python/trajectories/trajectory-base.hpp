@@ -83,7 +83,10 @@ namespace tsid
       }
       static void setvalue_se3(TrajSample & self, const pinocchio::SE3 & value){
         assert (self.getValue().size() == 12);
-        self.setValue(value);
+TSID_DISABLE_WARNING_PUSH
+TSID_DISABLE_WARNING_DEPRECATED
+        tsid::math::SE3ToVector(value, self.pos);
+TSID_DISABLE_WARNING_POP
       }
       static void setderivative(TrajSample & self, const Eigen::VectorXd derivative){
         assert (self.getDerivative().size() == derivative.size());

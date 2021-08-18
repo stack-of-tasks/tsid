@@ -202,9 +202,7 @@ void ContactPoint::setForceReference(ConstRefVector & f_ref)
 
 void ContactPoint::setReference(const SE3 & ref)
 {
-  TrajectorySample s(12, 6);
-  s.setValue(ref);
-  m_motionTask.setReference(s);
+  m_motionTask.setReference(ref);
 }
 
 const ConstraintBase & ContactPoint::computeMotionTask(const double t,

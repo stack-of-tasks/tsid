@@ -18,8 +18,6 @@
 #ifndef __invdyn_trajectory_base_hpp__
 #define __invdyn_trajectory_base_hpp__
 
-#include <pinocchio/spatial/se3.hpp>
-
 #include "tsid/deprecation.hpp"
 #include "tsid/macros.hpp"
 #include "tsid/math/fwd.hpp"
@@ -51,38 +49,6 @@ TSID_DISABLE_WARNING_DEPRECATED
       void setValue(const math::Vector & value) { pos = value; }
       void setDerivative(const math::Vector & derivative) { vel = derivative; }
       void setSecondDerivative(const math::Vector & second_derivative) { acc = second_derivative; }
-
-      // getters / setters with updated names for pinocchio::SE3
-      void getValue(pinocchio::SE3 & value) const
-      {
-        assert(pos.size() == 12);
-        value.translation( pos.head<3>());
-        value.rotation(MapMatrix3(&pos(3), 3, 3));
-      }
-      void getDerivative(pinocchio::SE3 & derivative) const
-      {
-        assert(vel.size() == 12);
-        derivative.translation(vel.head<3>());
-        derivative.rotation(MapMatrix3(&vel(3), 3, 3));
-      }
-      void getSecondDerivative(pinocchio::SE3 & second_derivative) const
-      {
-        assert(acc.size() == 12);
-        second_derivative.translation(acc.head<3>());
-        second_derivative.rotation(MapMatrix3(&acc(3), 3, 3));
-      }
-      void setValue(const pinocchio::SE3 & value)
-      {
-        tsid::math::SE3ToVector(value, pos);
-      }
-      void setDerivative(const pinocchio::SE3 & derivative)
-      {
-        tsid::math::SE3ToVector(derivative, vel);
-      }
-      void setSecondDerivative(const pinocchio::SE3 & second_derivative)
-      {
-        tsid::math::SE3ToVector(second_derivative, acc);
-      }
 
       TrajectorySample(unsigned int size=0)
       {
