@@ -41,7 +41,7 @@ namespace tsid
       m_ref.resize(3);
       m_mask.resize(3);
       m_mask.fill(1.);
-      setMask(m_mask);      
+      setMask(m_mask);
     }
 
 
@@ -120,12 +120,12 @@ namespace tsid
 
     const Vector & TaskComEquality::position_ref() const
     {
-      return m_ref.pos;
+      return m_ref.getValue();
     }
 
     const Vector & TaskComEquality::velocity_ref() const
     {
-      return m_ref.vel;
+      return m_ref.getDerivative();
     }
 
     const ConstraintBase & TaskComEquality::getConstraint() const
@@ -141,11 +141,11 @@ namespace tsid
       m_robot.com(data, m_p_com, m_v_com, m_drift);
 
       // Compute errors
-      m_p_error = m_p_com - m_ref.pos;
-      m_v_error = m_v_com - m_ref.vel;
+      m_p_error = m_p_com - m_ref.getValue();
+      m_v_error = m_v_com - m_ref.getDerivative();
       m_a_des = - m_Kp.cwiseProduct(m_p_error)
                 - m_Kd.cwiseProduct(m_v_error)
-                + m_ref.acc;
+                + m_ref.getSecondDerivative();
 
       m_p_error_vec = m_p_error;
       m_v_error_vec = m_v_error;
@@ -164,7 +164,7 @@ namespace tsid
 
         m_constraint.matrix().row(idx) = Jcom.row(i);
         m_constraint.vector().row(idx) = (m_a_des - m_drift).row(i);
-       
+
         m_a_des_masked(idx)            = m_a_des(i);
         m_drift_masked(idx)            = m_drift(i);
         m_p_error_masked_vec(idx)      = m_p_error_vec(i);
