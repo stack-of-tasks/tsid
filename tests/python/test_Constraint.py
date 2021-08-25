@@ -26,12 +26,12 @@ assert lb.all() == ConstBound.lowerBound.all()
 assert ub.all() == ConstBound.upperBound.all()
 
 lb *= 2.0
-assert np.linalg.norm(lb - ConstBound.lowerBound, 2) is not 0
+assert np.linalg.norm(lb - ConstBound.lowerBound, 2) != 0
 ConstBound.setLowerBound(lb)
 assert lb.all() == ConstBound.lowerBound.all()
 
 ub *= 2.0
-assert np.linalg.norm(ub - ConstBound.upperBound, 2) is not 0
+assert np.linalg.norm(ub - ConstBound.upperBound, 2) != 0
 ConstBound.setUpperBound(ub)
 assert ub.all() == ConstBound.upperBound.all()
 assert np.linalg.norm(ub - ConstBound.upperBound, 2) < tol
@@ -56,12 +56,12 @@ assert np.linalg.norm(A - equality.matrix, 2) < tol
 assert np.linalg.norm(b - equality.vector, 2) < tol
 
 b *= 2.0
-assert np.linalg.norm(b - equality.vector, 2) is not 0
+assert np.linalg.norm(b - equality.vector, 2) != 0
 equality.setVector(b)
 assert np.linalg.norm(b - equality.vector, 2) < tol
 
 A *= 2.0
-assert np.linalg.norm(A - equality.matrix, 2) is not 0
+assert np.linalg.norm(A - equality.matrix, 2) != 0
 equality.setMatrix(A)
 assert np.linalg.norm(A - equality.matrix, 2) < tol
 
@@ -84,12 +84,12 @@ assert inequality.rows == m
 assert inequality.cols == n
 
 lb *= 2.0
-assert np.linalg.norm(lb - inequality.lowerBound, 2) is not 0
+assert np.linalg.norm(lb - inequality.lowerBound, 2) != 0
 inequality.setLowerBound(lb)
 assert np.linalg.norm(lb - inequality.lowerBound, 2) < tol
 
 A *= 2.0
-assert np.linalg.norm(A - inequality.matrix, 2) is not 0
+assert np.linalg.norm(A - inequality.matrix, 2) != 0
 inequality.setMatrix(A)
 assert np.linalg.norm(A - inequality.matrix, 2) < tol
 
