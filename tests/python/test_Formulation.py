@@ -103,7 +103,7 @@ H_rf_ref_vec = np.matrix(np.zeros(12)).transpose()
 H_rf_ref_vec[0:3] = H_rf_ref.translation
 for i in range(0, 3):
     H_rf_ref_vec[3 * i + 3:3 * i + 6] = H_rf_ref.rotation[:, i]
-s.pos(H_rf_ref_vec)
+s.value(H_rf_ref_vec)
 rightFootTask.setReference(s)
 
 com_ref = robot.com(data)

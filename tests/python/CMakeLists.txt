@@ -8,6 +8,7 @@ SET(${PYWRAP}_TESTS
   #Solvers
   Tasks
   Trajectories
+  Deprecations
   )
 
 FOREACH(test ${${PYWRAP}_TESTS})

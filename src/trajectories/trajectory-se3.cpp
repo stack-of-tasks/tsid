@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017-2021 CNRS
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -36,7 +36,10 @@ namespace tsid
       :TrajectoryBase(name)
     {
       m_sample.resize(12, 6);
-      SE3ToVector(M, m_sample.pos);
+TSID_DISABLE_WARNING_PUSH
+TSID_DISABLE_WARNING_DEPRECATED
+      tsid::math::SE3ToVector(M, m_sample.pos);
+TSID_DISABLE_WARNING_POP
     }
 
     unsigned int TrajectorySE3Constant::size() const
@@ -47,7 +50,10 @@ namespace tsid
     void TrajectorySE3Constant::setReference(const pinocchio::SE3 & ref)
     {
       m_sample.resize(12, 6);
-      SE3ToVector(ref, m_sample.pos);
+TSID_DISABLE_WARNING_PUSH
+TSID_DISABLE_WARNING_DEPRECATED
+      tsid::math::SE3ToVector(ref, m_sample.pos);
+TSID_DISABLE_WARNING_POP
     }
 
     const TrajectorySample & TrajectorySE3Constant::operator()(double )

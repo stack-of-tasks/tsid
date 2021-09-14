@@ -2,6 +2,7 @@
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![Pipeline status](https://gitlab.laas.fr/stack-of-tasks/tsid/badges/master/pipeline.svg)](https://gitlab.laas.fr/stack-of-tasks/tsid/commits/master)
 [![Coverage report](https://gitlab.laas.fr/stack-of-tasks/tsid/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/stack-of-tasks/tsid/master/coverage/)
+[![PyPI version](https://badge.fury.io/py/tsid.svg)](https://badge.fury.io/py/tsid)
 
 TSID is a C++ library for optimization-based inverse-dynamics control based on the rigid multi-body dynamics library [Pinocchio](https://github.com/stack-of-tasks/pinocchio).
 
