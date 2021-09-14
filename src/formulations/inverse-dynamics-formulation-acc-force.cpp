@@ -216,25 +216,15 @@ bool InverseDynamicsFormulationAccForce::addEnergyTask(TaskEnergy & task,
 
   auto tel = std::make_shared<TaskEnergyLevel>(task, priorityLevel);
   m_taskEnergies.push_back(tel);
-  //addTask(tl, weight, priorityLevel);
   
-  // if(priorityLevel > m_hqpData.size())
-  //   m_hqpData.resize(priorityLevel);
+  if(priorityLevel > m_hqpData.size())
+    m_hqpData.resize(priorityLevel);
 
-  const ConstraintBase & lyapunovConstr = task.getLyapunovConstraint();
-  tel->lyapunovConstraint = std::make_shared<ConstraintInequality>(task.name()+"_lyapunov_constraint", lyapunovConstr.rows(), m_v+m_k);
-  // m_hqpData[priorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tel->lyapunovConstraint));
+  const ConstraintBase & passivityConstr = task.getConstraint();
+  tel->passivityConstraint = std::make_shared<ConstraintInequality>(task.name()+"_passivity_constraint", passivityConstr.rows(), m_v+m_k);
+  m_hqpData[priorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tel->passivityConstraint));
 
-  // const ConstraintInequality & maxEnergyConstr = task.getMaxEnergyConstraint();
-  // tel->maxEnergyConstraint = std::make_shared<ConstraintInequality>(task.name()+"_max_energy_constraint", maxEnergyConstr.rows(), m_v+m_k);
-  // m_hqpData[priorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tel->maxEnergyConstraint));
-
-  // const ConstraintEquality & energyConst = task.getEnergyTask();
-  // tel->energyTask = std::make_shared<ConstraintEquality>(task.name()+"_energy_task", energyConst.rows(), m_v+m_k);
-  // m_hqpData[priorityLevel].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(weight, tel->energyTask));
-
-  // m_in += lyapunovConstr.rows();
-  // m_in += maxEnergyConstr.rows();
+  m_in += passivityConstr.rows();
 
   return true;
 }
@@ -391,31 +381,20 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   m_baseDynamics->matrix().rightCols(m_k) = -J_u.transpose();
   m_baseDynamics->vector() = -h_u;
   std::vector<const math::ConstraintBase *> constraintMotions(m_taskMotions.size());
+  std::vector<const math::ConstraintBase *> constraintContactForces(m_taskContactForces.size());
 
   int j = 0;
   for (auto& it : m_taskMotions)
   {
-    // if (m_first_iter) {
-    //   std::string frame_name = it->task.getFrameName();
-    //   Matrix Lambda_inv;
-    //   if (frame_name == "posture"){
-    //     Matrix Lambda = m_robot.mass(m_data).block(5,5,32,32);
-    //     Lambda_inv = Lambda.inverse();
-    //   } else {
-    //     Matrix Minv = (m_robot.mass(m_data)).inverse();
-    //     Matrix J = it->task.getJacobian();
-    //     Lambda_inv = J * Minv * J.transpose();
-    //   }
-
-    //   // Change K_p, K_d for Lambda^{-1} K_p, Lambda^{-1} K_d
-    //   it->task.Kp(Lambda_inv * it->task.Kp());
-    //   it->task.Kd(Lambda_inv * it->task.Kd());
-    //   m_first_iter = false;
-    // }
-
-    // std::cout << "##################### set KP/KD ok ################################" << std::endl;
     const ConstraintBase & c = it->task.compute(time, q, v, m_data);
     constraintMotions[j] = &c;
+    j++;
+  }
+  j = 0;
+  for (auto& it : m_taskContactForces)
+  {
+    const ConstraintBase & c = it->task.compute(time, q, v, m_data, &m_contacts);
+    constraintContactForces[j] = &c;
     j++;
   }
 
@@ -424,99 +403,29 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   gamma = 1.0;
   for (auto& it : m_taskEnergies)
   {
-    // std::cout << "##################### TASK_ENERGY ################################" << std::endl;
-    // std::cout << "##################### size taskMotions: " << m_taskMotions.size() << "################################" << std::endl;
-    it->task.setTasks(m_taskMotions, m_contacts, m_data);
-    // std::cout << "##################### setTasks ok ################################" << std::endl;
+    it->task.setTasks(m_taskMotions, m_contacts, m_taskContactForces, m_data);
     const ConstraintBase & c_energy = it->task.compute(time, q, v, m_data);
-    // std::cout << "##################### it->task.compute ok ################################" << std::endl;
     beta = it->task.get_beta();
-    // std::cout << "##################### it->task.get_beta ok ################################" << std::endl;   
-    // std::cout << "##################### beta : " << beta << " ################################" << std::endl;
     gamma = it->task.get_gamma();
-    // std::cout << "##################### it->task.get_gamma ok ################################" << std::endl;
-    // std::cout << "##################### gamma : " << gamma << " ################################" << std::endl;
 
-    // const Matrix & M = m_robot.mass(m_data);
-    // const Vector & h = m_robot.nonLinearEffects(m_data);
-    // if (m_first_iter) {
-    //   m_first_iter = false;
-    // } else {
-    // it->lyapunovConstraint->matrix().leftCols(m_v).noalias() = c_energy.matrix() * M;
-    // // std::cout << "##################### lyapunovConstraint matrix().leftCols ################################" << std::endl;
-    // it->lyapunovConstraint->matrix().rightCols(m_k).noalias() = - c_energy.matrix() * m_Jc.transpose();
-    // // std::cout << "##################### lyapunovConstraint matrix().rightCols ################################" << std::endl;
-    // it->lyapunovConstraint->lowerBound() = c_energy.lowerBound();
-    // it->lyapunovConstraint->lowerBound().noalias() -= c_energy.matrix() * h;
-    // // std::cout << "##################### lyapunovConstraint lowerBound ###############################" << std::endl;
-    // it->lyapunovConstraint->upperBound() = c_energy.upperBound();
-    // it->lyapunovConstraint->upperBound().noalias() -= c_energy.matrix() * h;
-    // std::cout << "##################### lyapunovConstraint ok ################################" << std::endl;
-    // }
-
-    // const ConstraintInequality & c_max_energy = it->task.getMaxEnergyConstraint();
-    // const ConstraintEquality & c_energy = it->task.getEnergyTask();
-
-
-
-    // // ENERGY MAX CONSTRAINT
-    // it->maxEnergyConstraint->matrix().leftCols(m_v) = c_max_energy.matrix(); // + c_max_energy.lowerBound();
-    // it->maxEnergyConstraint->lowerBound() = c_max_energy.lowerBound(); //c_max_energy.upperBound() - 20* Vector::Ones(1);
-    // it->maxEnergyConstraint->upperBound() = c_max_energy.upperBound();
-
-    // // ENERGY TASK
-    // it->energyTask->matrix().leftCols(m_v) = c_energy.matrix(); // + c_max_energy.lowerBound();
-    // it->energyTask->vector() = c_energy.vector();
-
-    // ENERGY DERIVATIVE (LYAPUNOV) CONSTRAINT
-    // Matrix AM = c_lyapunov.matrix().block(0, m_u, 1, m_v-m_u) * M_a;
-    // Matrix BKJ = c_lyapunov.matrix().block(0, m_v, 1, m_v-m_u) * J_a.transpose(); 
-    // std::cout << "size c_lyapunov.matrix().rightCols(m_v): "  << (c_lyapunov.matrix().rightCols(m_v)).rows() << "x" << (c_lyapunov.matrix().rightCols(m_v)).cols() << std::endl;
-    // std::cout << "size h: "  << h.rows() << "x" << h.cols() << std::endl;
-    // std::cout << "size c_lyapunov.matrix().rightCols(m_v) * h: "  << (c_lyapunov.matrix().rightCols(m_v) * h).rows() << "x" << (c_lyapunov.matrix().rightCols(m_v) * h).cols() << std::endl;
-    // std::cout << "size it->lyapunovConstraint->matrix() : " << (it->lyapunovConstraint->matrix()).rows() << "x" << (it->lyapunovConstraint->matrix()).cols() << std::endl;
-    // it->lyapunovConstraint->matrix().leftCols(m_v) = c_lyapunov.matrix().leftCols(m_v); // * M + it->task.get_BK_vector().transpose(); //AM + c_lyapunov.lowerBound().block(0, m_u, 1, m_v-m_u);
-    // it->lyapunovConstraint->matrix().rightCols(m_k) =  c_lyapunov.matrix().rightCols(m_v) * m_Jc.transpose(); //BKJ; 
-    // Vector bound = c_lyapunov.upperBound() + c_lyapunov.matrix().rightCols(m_v) * h;
-    // if (bound[0] >= 0.0) {
-    //   it->lyapunovConstraint->upperBound() = bound;
-    //   it->lyapunovConstraint->lowerBound() = -1e10 * Vector::Ones(1);
-    // } else {
-    //   it->lyapunovConstraint->lowerBound() = bound;
-    //   it->lyapunovConstraint->upperBound() = 1e10 * Vector::Ones(1);
-    // }
-    // it->lyapunovConstraint->lowerBound() = c_lyapunov.lowerBound(); //
-    // it->lyapunovConstraint->upperBound() = c_lyapunov.upperBound() + c_lyapunov.matrix().rightCols(m_v) * h; //+ c_lyapunov.matrix().block(0, m_v, 1, m_v-m_u)* h_a;
-    // std::cout << "size it->lyapunovConstraint->upperBound(): "  << (it->lyapunovConstraint->upperBound()).rows() << "x" << (it->lyapunovConstraint->upperBound()).cols() << std::endl;
-    // it->task.setLyapunovMatrix(it->lyapunovConstraint->matrix());
-    // Vector E_c = 0.5 * v.tail(m_v).transpose() * M_u * v.tail(m_v);
-    // Vector upBound = - c.upperBound() + c.matrix().rightCols(m_v) * h;
-    // it->constraint->upperBound() = upBound[0] * Vector::Ones(1);
-    
-    // it->constraint->upperBound() = c.upperBound();
-    // it->constraint->lowerBound() = c.lowerBound();
-    // it->constraint->lowerBound() = c.upperBound() + c.matrix().rightCols(m_v) * h;
-    // std::cout << "##################### TASK_ENERGY ################################" << std::endl;
-    // std::cout << "it->lyapunovConstraint->matrix().leftCols(m_v): "  << it->lyapunovConstraint->matrix().leftCols(m_v) << std::endl;
-    // std::cout << "it->lyapunovConstraint->matrix().rightCols(m_v): "  << it->lyapunovConstraint->matrix().rightCols(m_k) << std::endl;
-    // std::cout << "it->lyapunovConstraint->upperBound(): "  << it->lyapunovConstraint->upperBound() << std::endl;
-    // std::cout << "it->lyapunovConstraint->lowerBound(): "  << it->lyapunovConstraint->lowerBound() << std::endl;
+    const Matrix & M = m_robot.mass(m_data);
+    const Vector & h = m_robot.nonLinearEffects(m_data);
+    it->passivityConstraint->matrix().leftCols(m_v).noalias() = c_energy.matrix() * M;
+    it->passivityConstraint->matrix().rightCols(m_k).noalias() = - c_energy.matrix() * m_Jc.transpose();
+    it->passivityConstraint->lowerBound() = c_energy.lowerBound();
+    it->passivityConstraint->lowerBound().noalias() -= c_energy.matrix() * h;
+    it->passivityConstraint->upperBound() = c_energy.upperBound();
+    it->passivityConstraint->upperBound().noalias() -= c_energy.matrix() * h;
   }
-//  std::vector<TaskLevel*>::iterator it;
-//  for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
+
   int i = 0;
   for (auto& it : m_taskMotions)
   {
-    const ConstraintBase & c = *constraintMotions[i]; //it->task.compute(time, q, v, m_data);
+    const ConstraintBase & c = *constraintMotions[i];
     if(c.isEquality())
     {
       it->constraint->matrix().leftCols(m_v) = c.matrix();
-      if (it->task.getFrameName() != "posture"){
-        it->constraint->vector() = beta * gamma * c.vector();
-      } else {
-        it->constraint->vector() = c.vector();
-      }
-      
+      it->constraint->vector() = beta* gamma* c.vector();     
     }
     else if(c.isInequality())
     {
@@ -532,7 +441,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     }
     i++;
   }
-
+  i = 0;
   for (auto& it : m_taskContactForces)
   {
     // cout<<"Task "<<it->task.name()<<endl;
@@ -556,7 +465,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
       }
     }
 
-    const ConstraintBase & c = it->task.compute(time, q, v, m_data, &m_contacts);
+    const ConstraintBase & c = *constraintContactForces[i]; //it->task.compute(time, q, v, m_data, &m_contacts);
     // cout<<"matrix"<<endl<<c.matrix()<<endl;
     // cout<<"vector"<<endl<<c.vector().transpose()<<endl;
     // cout<<"i0 "<<i0<<" c_size "<<c_size<<endl;
@@ -565,7 +474,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     if(c.isEquality())
     {
       it->constraint->matrix().middleCols(i0, c_size) = c.matrix();
-      it->constraint->vector() = c.vector();
+      it->constraint->vector() = beta*gamma*c.vector();
     }
     else if(c.isInequality())
     {
@@ -579,6 +488,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
       it->constraint->lowerBound() = c.lowerBound();
       it->constraint->upperBound() = c.upperBound();
     }
+    i++;
   }
 
   for (auto& it : m_taskActuations)
@@ -629,16 +539,6 @@ bool InverseDynamicsFormulationAccForce::decodeSolution(const HQPOutput & sol)
   m_tau = h_a;
   m_tau.noalias() += M_a*m_dv;
   m_tau.noalias() -= J_a.transpose()*m_f;
-  for (auto& it : m_taskEnergies)
-  { 
-    Vector velocity = it->task.get_v();
-    double dt = it->task.get_dt();
-    double E_mech_ctrl, tmp_acc_tau;
-    E_mech_ctrl = (velocity.transpose()).tail(m_v-m_u) * m_tau;
-    tmp_acc_tau = (m_dv.transpose()).tail(m_v-m_u) * m_tau;
-    E_mech_ctrl = E_mech_ctrl * dt + tmp_acc_tau * dt * dt;
-    it->task.setE_m_ctrl(E_mech_ctrl);
-  }
   m_solutionDecoded = true;
   return true;
 }
@@ -754,20 +654,13 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
   {
     if((*it)->task.name()==taskName)
     {
-      // bool first_constraint_found = removeFromHqpData(taskName+"_lyapunov_constraint");
-      // assert(first_constraint_found);
+      bool first_constraint_found = removeFromHqpData(taskName+"_passivity_constraint");
+      assert(first_constraint_found);
 
-      // bool second_constraint_found = removeFromHqpData(taskName+"_max_energy_constraint");
-      // assert(second_constraint_found);
-
-      // bool third_constraint_found = removeFromHqpData(taskName+"_energy_task");
-      // assert(third_constraint_found);
-
-      // m_in -= (*it)->lyapunovConstraint->rows();
-      // m_in -= (*it)->maxEnergyConstraint->rows();
+      m_in -= (*it)->passivityConstraint->rows();
       m_taskEnergies.erase(it);
 
-      return true; //first_constraint_found; //&& second_constraint_found && third_constraint_found
+      return first_constraint_found;
     }
   }
   return false;

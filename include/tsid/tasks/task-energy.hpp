@@ -22,6 +22,7 @@
 #include "tsid/trajectories/trajectory-base.hpp"
 #include "tsid/math/constraint-inequality.hpp"
 #include "tsid/math/constraint-equality.hpp"
+#include "tsid/formulations/inverse-dynamics-formulation-base.hpp"
 #include "tsid/formulations/task-motion-level.hpp"
 #include "tsid/formulations/contact-level.hpp"
 
@@ -45,7 +46,7 @@ namespace tsid
       typedef math::Index Index;
       typedef trajectories::TrajectorySample TrajectorySample;
       typedef math::Vector Vector;
-      typedef math::Matrix Matrix;     
+      typedef math::Matrix Matrix; 
       typedef math::ConstraintInequality ConstraintInequality;
       typedef math::ConstraintEquality ConstraintEquality;
       typedef pinocchio::Data Data;
@@ -60,10 +61,7 @@ namespace tsid
 
       TaskEnergy(const std::string & name,
                  RobotWrapper & robot,
-                 const Vector & q,
-                 const Vector & v,
-                 const double dt,
-                 const double timePreview);
+                 const double dt);
 
       int dim() const;
 
@@ -73,9 +71,6 @@ namespace tsid
                                      Data & data);
 
       const ConstraintBase & getConstraint() const;
-      const ConstraintBase & getLyapunovConstraint() const;
-      const ConstraintInequality & getMaxEnergyConstraint() const;
-      const ConstraintEquality & getEnergyTask() const;
 
       void setReference(const TrajectorySample & ref);
       const TrajectorySample & getReference() const;
@@ -93,30 +88,16 @@ namespace tsid
       const Vector & get_S() const;
       const Vector & get_dS() const;
       const double & get_dt() const;
-      const Vector & get_v() const;
       const double & get_alpha() const;
       const double & get_beta() const;
       const double & get_gamma() const;
-      const double & get_upperBoundMaxEnergyCst() const;
-      const double & get_lowerBoundMaxEnergyCst() const;
-      const double & get_vectorEnergyTask() const;
-      const Matrix & get_matrixEnergyTask() const;
-      const Matrix & get_LyapunovMatrix() const;
-      const Vector & K() const;
-      void K(ConstRefVector K);
-      const double & E_d() const;
-      void setE_d(const double E);
-      void setLyapunovMatrix(const Matrix M);
-      void setE_m_ctrl(const double E_m);
 
       void setTasks(const std::vector<std::shared_ptr<TaskLevelMotion> >  taskMotions, 
-                    const std::vector<std::shared_ptr<ContactLevel> >  taskContacts, Data & data);
+                    const std::vector<std::shared_ptr<ContactLevel> >  taskContacts, 
+                    const std::vector<std::shared_ptr<TaskLevelForce> > taskForces, Data & data);
 
     protected:
-      Vector m_q_init;
-      Vector m_v; //m_q_prev, 
       double m_dt;
-      double m_time_preview;
       double m_alpha;
       double m_beta;
       double m_gamma;
@@ -130,28 +111,20 @@ namespace tsid
       Vector m_dS;
       Vector m_S;
       Vector m_S_prev;
-      Vector m_K;
       std::vector<Vector> m_maked_Kp_prev;
       int m_dim;
-      Matrix m_LyapMat;
       double m_E_tank;
       double m_dE_tank;
-      double m_E_max;
-      double m_E_d;
-      double m_E_m_ctrl;
       double m_E_max_tank;
       double m_E_min_tank;
-      Vector m_q_error; //, m_q_prev_error;
-      Vector m_a_des;
-      Vector m_BK;
-      ConstraintInequality m_lyapunovConstraint;
-      ConstraintInequality m_maxEnergyConstraint;
-      ConstraintEquality m_energyTask;
+      //double m_prev_signal_filter;
+      ConstraintInequality m_passivityConstraint;
       TrajectorySample m_ref;
       Vector m_b_lower;
       Vector m_b_upper;
       std::vector<std::shared_ptr<TaskLevelMotion> > m_taskMotions;
       std::vector<std::shared_ptr<ContactLevel> >   m_taskContacts;
+      std::vector<std::shared_ptr<TaskLevelForce> > m_taskForces;
       bool m_first_iter;
     };
 

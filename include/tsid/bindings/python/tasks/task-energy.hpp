@@ -27,7 +27,7 @@
 #include "tsid/tasks/task-energy.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
 #include "tsid/trajectories/trajectory-base.hpp"
-#include "tsid/math/constraint-equality.hpp"
+#include "tsid/math/constraint-inequality.hpp"
 #include "tsid/math/constraint-base.hpp"
 namespace tsid
 {
@@ -46,7 +46,7 @@ namespace tsid
       void visit(PyClass& cl) const
       {
         cl
-        .def(bp::init<std::string, robots::RobotWrapper &, Eigen::VectorXd , Eigen::VectorXd , double, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("position"), bp::arg("velocity"), bp::arg("dt"), bp::arg("timePreview")), "Default Constructor"))
+        .def(bp::init<std::string, robots::RobotWrapper &, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("dt")), "Default Constructor"))
         .add_property("dim", &TaskEnergy::dim, "return dimension size")
         .def("setReference", &TaskEnergyPythonVisitor::setReference, bp::arg("ref"))
         .def("set_E_tank", &TaskEnergyPythonVisitor::set_E_tank, bp::arg("E_tank"))
@@ -64,16 +64,7 @@ namespace tsid
         .add_property("get_beta", bp::make_function(&TaskEnergyPythonVisitor::get_beta, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_gamma", bp::make_function(&TaskEnergyPythonVisitor::get_gamma, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_dS", bp::make_function(&TaskEnergyPythonVisitor::get_dS, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("get_upperBoundMaxEnergyCst", bp::make_function(&TaskEnergyPythonVisitor::get_upperBoundMaxEnergyCst, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("get_lowerBoundMaxEnergyCst", bp::make_function(&TaskEnergyPythonVisitor::get_lowerBoundMaxEnergyCst, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("get_vectorEnergyTask", bp::make_function(&TaskEnergyPythonVisitor::get_vectorEnergyTask, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("get_matrixEnergyTask", bp::make_function(&TaskEnergyPythonVisitor::get_matrixEnergyTask, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("get_LyapunovMatrix", bp::make_function(&TaskEnergyPythonVisitor::get_LyapunovMatrix, bp::return_value_policy<bp::copy_const_reference>()))
-        .add_property("K", bp::make_function(&TaskEnergyPythonVisitor::K, bp::return_value_policy<bp::copy_const_reference>()))
-        .def("setK", &TaskEnergyPythonVisitor::setK, bp::arg("K"))
-        .add_property("E_d", bp::make_function(&TaskEnergyPythonVisitor::E_d, bp::return_value_policy<bp::copy_const_reference>()))
-        .def("setE_d", &TaskEnergyPythonVisitor::setE_d, bp::arg("E"))
-        .def("computeLyapunovTask", &TaskEnergyPythonVisitor::computeLyapunovTask, bp::args("t", "q", "v", "data"))
+        .def("computeConstraint", &TaskEnergyPythonVisitor::computeConstraint, bp::args("t", "q", "v", "data"))
         .add_property("name", &TaskEnergyPythonVisitor::name)
         ;
       }
@@ -81,9 +72,9 @@ namespace tsid
         std::string name = self.name();
         return name;
       }
-      static math::ConstraintEquality computeLyapunovTask(TaskEnergy & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, pinocchio::Data & data){
+      static math::ConstraintInequality computeConstraint(TaskEnergy & self, const double t, const Eigen::VectorXd & q, const Eigen::VectorXd & v, pinocchio::Data & data){
         self.compute(t, q, v, data);
-        math::ConstraintEquality cons(self.getLyapunovConstraint().name(), self.getLyapunovConstraint().matrix(), self.getLyapunovConstraint().vector());
+        math::ConstraintInequality cons(self.getConstraint().name(), self.getConstraint().matrix(), self.getConstraint().lowerBound(),  self.getConstraint().upperBound());
         return cons;
       }
       static void setReference(TaskEnergy & self, const trajectories::TrajectorySample & ref){
@@ -133,33 +124,6 @@ namespace tsid
       }
       static const double & get_beta (const TaskEnergy & self){
         return self.get_beta();
-      }
-      static const double & get_upperBoundMaxEnergyCst (const TaskEnergy & self){
-        return self.get_upperBoundMaxEnergyCst();
-      } 
-      static const double & get_lowerBoundMaxEnergyCst (const TaskEnergy & self){
-        return self.get_lowerBoundMaxEnergyCst();
-      } 
-      static const double & get_vectorEnergyTask (const TaskEnergy & self){
-        return self.get_vectorEnergyTask();
-      } 
-      static const Eigen::Matrix<double, Eigen::Dynamic,Eigen::Dynamic> & get_matrixEnergyTask (const TaskEnergy & self){
-        return self.get_matrixEnergyTask();
-      }
-      static const Eigen::Matrix<double, Eigen::Dynamic,Eigen::Dynamic> & get_LyapunovMatrix (const TaskEnergy & self){
-        return self.get_LyapunovMatrix();
-      } 
-      static const Eigen::VectorXd & K (TaskEnergy & self){
-        return self.K();
-      }   
-      static void setK (TaskEnergy & self, const::Eigen::VectorXd K){
-        return self.K(K);
-      }
-      static const double & E_d (TaskEnergy & self){
-        return self.E_d();
-      }   
-      static void setE_d (TaskEnergy & self, const double E){
-        return self.setE_d(E);
       }
       static void expose(const std::string & class_name)
       {

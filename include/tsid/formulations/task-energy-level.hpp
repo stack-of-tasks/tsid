@@ -24,17 +24,14 @@ namespace tsid
 {
 
   /** Data structure collecting information regarding an energy task.
-   * In particular, this structure contains the lyapunov constraint (on the energy derivative),
-   * a constraint on a maximal energy and a task on the desired energy to achieve. 
+   * In particular, this structure contains the passivity constraint (on the energy derivative).
    */
   struct TaskEnergyLevel
   {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     
     tasks::TaskEnergy & task;
-    std::shared_ptr<math::ConstraintBase> lyapunovConstraint;
-    std::shared_ptr<math::ConstraintInequality> maxEnergyConstraint;
-    std::shared_ptr<math::ConstraintEquality> energyTask;
+    std::shared_ptr<math::ConstraintBase> passivityConstraint;
     unsigned int priority;
 
     TaskEnergyLevel(tasks::TaskEnergy & task, unsigned int priority);

@@ -23,7 +23,6 @@
 #include "tsid/robots/robot-wrapper.hpp"
 #include "tsid/tasks/task-actuation.hpp"
 #include "tsid/tasks/task-motion.hpp"
-#include "tsid/tasks/task-energy.hpp"
 #include "tsid/tasks/task-contact-force.hpp"
 #include "tsid/contacts/contact-base.hpp"
 #include "tsid/solvers/solver-HQP-base.hpp"
