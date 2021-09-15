@@ -26,18 +26,16 @@ using namespace tsid::math;
 using namespace std;
 
 TaskContactForceEquality::TaskContactForceEquality(const std::string & name, RobotWrapper & robot,
-                                                   const double dt, const std::string & contactName):
+                                                   const double dt, contacts::ContactBase & contact):
   TaskContactForce(name, robot),
-  m_contact_name(contactName),
-  m_constraint(name, 6, 12),
+  m_contact(&contact),
+  m_constraint(name, 6, 12),  
   m_ref(6,6),
   m_fext(6,6) {
   m_forceIntegralError = Vector::Zero(6);
   m_dt = dt;
-}
-
-void TaskContactForceEquality::setContactList(const std::vector<std::shared_ptr<ContactLevel> >  *contacts) {
-  m_contacts = contacts;
+  m_leak_rate = 0.05;
+  m_contact_name = m_contact->name();
 }
 
 int TaskContactForceEquality::dim() const {
@@ -47,6 +45,7 @@ int TaskContactForceEquality::dim() const {
 const Vector & TaskContactForceEquality::Kp() const { return m_Kp; }
 const Vector & TaskContactForceEquality::Kd() const { return m_Kd; }
 const Vector & TaskContactForceEquality::Ki() const { return m_Ki; }
+const double & TaskContactForceEquality::getLeakRate() const { return m_leak_rate; }
 
 void TaskContactForceEquality::Kp(ConstRefVector Kp)
 {
@@ -66,12 +65,22 @@ void TaskContactForceEquality::Ki(ConstRefVector Ki)
   m_Ki = Ki;
 }
 
+void TaskContactForceEquality::setLeakRate(double leak)
+{
+  m_leak_rate = leak;
+}
+
 const std::string& TaskContactForceEquality::getAssociatedContactName() {
   return m_contact_name;
 }
 
-void TaskContactForceEquality::setAssociatedContactName(const std::string & contactName) {
-  m_contact_name = contactName;
+const contacts::ContactBase& TaskContactForceEquality::getAssociatedContact() {
+  return *m_contact;
+}
+
+void TaskContactForceEquality::setAssociatedContact(contacts::ContactBase & contact) {
+  m_contact = &contact;
+  m_contact_name = m_contact->name();
 }
 
 void TaskContactForceEquality::setReference(TrajectorySample & ref) {
@@ -96,36 +105,40 @@ const ConstraintBase & TaskContactForceEquality::compute(const double t,
                                                          ConstRefVector v,
                                                          Data & data,
                                                          const std::vector<std::shared_ptr<ContactLevel> >  *contacts) {
-  setContactList(contacts);
+  bool contactFound = false;
+  if (m_contact_name != "") {
+    // look if the associated contact is in the list of contact
+    for(auto cl : *contacts) {
+      if (m_contact_name == cl->contact.name()) {
+        contactFound = true;
+        break;
+      }
+    }
+  } else {
+    std::cout << "[TaskContactForceEquality] ERROR: Contact name empty" << std::endl;
+    return m_constraint;
+  }
+  if (!contactFound) {
+    std::cout << "[TaskContactForceEquality] ERROR: Contact name not in the list of contact in the formulation pb" << std::endl;
+    return m_constraint;
+  }
   return compute(t, q, v, data);
 }
+
 const ConstraintBase & TaskContactForceEquality::compute(const double,
                                                          ConstRefVector,
                                                          ConstRefVector,
                                                          Data & data) {
 
-  std::shared_ptr<ContactLevel> cl;
-  bool contactNotFound = true;
-  for(auto it : *m_contacts) {
-    if (m_contact_name == it->contact.name()) {
-      cl = it;
-      contactNotFound = false;
-      break;
-    }
-  }
-  if (contactNotFound) {
-    std::cout << "################### ERROR CONTACT NAME NOT FOUND ###################" << std::endl;
-    return m_constraint;
-  }
   auto& M = m_constraint.matrix();
-  M = cl->contact.getForceGeneratorMatrix(); // 6x12 for a 6d contact
+  M = m_contact->getForceGeneratorMatrix(); // 6x12 for a 6d contact
 
-  Vector forceError = m_ref.pos - m_fext.pos;
-  Vector f_ref = m_ref.pos + m_Kp.cwiseProduct(forceError) + m_Kd.cwiseProduct(m_ref.vel- m_fext.vel) 
+  Vector forceError = m_ref.getValue() - m_fext.getValue();
+  Vector f_ref = m_ref.getValue() + m_Kp.cwiseProduct(forceError) + m_Kd.cwiseProduct(m_ref.getDerivative() - m_fext.getDerivative()) 
                  + m_Ki.cwiseProduct(m_forceIntegralError);
   m_constraint.vector() = f_ref;
 
-  m_forceIntegralError += (forceError - 0.05 * m_forceIntegralError) * m_dt;
+  m_forceIntegralError += (forceError - m_leak_rate * m_forceIntegralError) * m_dt;
 
   return m_constraint;
 }

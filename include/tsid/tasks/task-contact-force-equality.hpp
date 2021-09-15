@@ -22,7 +22,7 @@
 #include "tsid/tasks/task-contact-force.hpp"
 #include "tsid/trajectories/trajectory-base.hpp"
 #include "tsid/math/constraint-equality.hpp"
-#include "tsid/formulations/inverse-dynamics-formulation-base.hpp"
+#include "tsid/contacts/contact-base.hpp"
 
 namespace tsid
 {
@@ -45,14 +45,13 @@ namespace tsid
       TaskContactForceEquality(const std::string & name,
                       		     RobotWrapper & robot,
                                const double dt,
-                      		     const std::string & contactName="");
-
-      void setContactList(const std::vector<std::shared_ptr<ContactLevel> >  *contacts);
+                      		     contacts::ContactBase & contact);
 
       int dim() const;
 
       virtual const std::string& getAssociatedContactName();
-      virtual void setAssociatedContactName(const std::string & contactName);
+      virtual const contacts::ContactBase& getAssociatedContact();
+      void setAssociatedContact(contacts::ContactBase & contact);
 
       // Task expressed as a PID between the reference force and the external one
       const ConstraintBase & compute(const double t,
@@ -77,13 +76,15 @@ namespace tsid
       const Vector & Kp() const;
       const Vector & Kd() const;
       const Vector & Ki() const;
+      const double & getLeakRate() const;
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
       void Ki(ConstRefVector Ki);
+      void setLeakRate(double leak);
 
     protected:
-      // list of contacts in the problem used to retreive the one associated to the force task
-      const std::vector<std::shared_ptr<ContactLevel> > *m_contacts;
+      // contact associated to the force task
+      contacts::ContactBase * m_contact;
       std::string m_contact_name; // the associated contact name or an empty string
       ConstraintEquality m_constraint;
       TrajectorySample m_ref;      // reference Force 6D to follow 
@@ -93,6 +94,7 @@ namespace tsid
       Vector m_Kd;
       Vector m_Ki;
       double m_dt;
+      double m_leak_rate;
     };
 
   }

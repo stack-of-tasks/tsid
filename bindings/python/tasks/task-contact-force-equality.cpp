@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 University of Trento
+// Copyright (c) 2021 LAAS-CNRS, University of Trento
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
