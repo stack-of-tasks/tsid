@@ -1,6 +1,4 @@
-import pinocchio as se3
 import pinocchio as pin
-#from pinocchio import libpinocchio_pywrap as pin
 import tsid
 import numpy as np
 from numpy import nan
@@ -43,12 +41,12 @@ N_SIMULATION = 6000             # number of time steps simulated
 filename = str(os.path.dirname(os.path.abspath(__file__)))
 path = filename + '/../models'
 urdf = path + '/quadruped/urdf/quadruped.urdf'
-vector = se3.StdVec_StdString()
+vector = pin.StdVec_StdString()
 vector.extend(item for item in path)
-robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
+robot = tsid.RobotWrapper(urdf, vector, pin.JointModelFreeFlyer(), False)
 
 # for gepetto viewer
-robot_display = se3.RobotWrapper.BuildFromURDF(urdf, [path, ], se3.JointModelFreeFlyer())
+robot_display = pin.RobotWrapper.BuildFromURDF(urdf, [path, ], pin.JointModelFreeFlyer())
 l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
 if int(l[1]) == 0:
     os.system('gepetto-gui &')
@@ -60,7 +58,7 @@ robot_display.initViewer(loadModel=True)
 #model = robot.model()
 #pin.loadReferenceConfigurations(model, srdf, False)
 #q = model.referenceConfigurations["half_sitting"]
-#q = se3.getNeutralConfigurationFromSrdf(robot.model(), srdf, False)
+#q = pin.getNeutralConfigurationFromSrdf(robot.model(), srdf, False)
 #q = robot_display.model.neutralConfiguration #np.zeros(robot.nq)
 q = np.zeros(robot.nq)
 q[6] = 1.0
@@ -113,7 +111,7 @@ sampleCom = trajCom.computeNext()
 q_ref = q[7:]
 trajPosture = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
 
-print("Create QP solver with ", invdyn.nVar, " variables, ", invdyn.nEq, 
+print("Create QP solver with ", invdyn.nVar, " variables, ", invdyn.nEq,
       " equality and ", invdyn.nIn, " inequality constraints")
 solver = tsid.SolverHQuadProgFast("qp solver")
 solver.resize(invdyn.nVar, invdyn.nEq, invdyn.nIn)
@@ -176,7 +174,7 @@ for i in range(0, N_SIMULATION):
 
     v_mean = v + 0.5*dt*dv
     v += dt*dv
-    q = se3.integrate(robot.model(), q, dt*v_mean)
+    q = pin.integrate(robot.model(), q, dt*v_mean)
     t += dt
     
     if i%DISPLAY_N == 0: robot_display.display(q)
