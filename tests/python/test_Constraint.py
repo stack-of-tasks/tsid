@@ -7,12 +7,12 @@ print("")
 print("Test Constraint Bound")
 print("")
 
-se3.switchToNumpyMatrix()
+#se3.switchToNumpyMatrix()
 
 tol = 1e-5
 n = 5
-lb = np.matrix(-1.0 * np.ones(n)).transpose()
-ub = np.matrix(np.ones(n)).transpose()
+lb = -1.0 * np.ones(n)
+ub = np.ones(n)
 ConstBound = tsid.ConstraintBound("bounds", lb, ub)
 
 assert ConstBound.isBound
@@ -41,8 +41,8 @@ print("Test Constraint Equality")
 print("")
 n = 5
 m = 2
-A = np.matrix(np.ones((m, n)))
-b = np.matrix(np.ones(m)).transpose()
+A = np.ones((m, n))
+b = np.ones(m)
 equality = tsid.ConstraintEquality("equality", A, b)
 
 assert not equality.isBound
@@ -71,9 +71,9 @@ print("")
 
 n = 5
 m = 2
-A = np.matrix(np.ones((m, n)))
-lb = np.matrix(-np.ones(m)).transpose()
-ub = np.matrix(np.ones(m)).transpose()
+A = np.ones((m, n))
+lb = -np.ones(m)
+ub = np.ones(m)
 inequality = tsid.ConstraintInequality("inequality", A, lb, ub)
 
 assert not inequality.isBound
