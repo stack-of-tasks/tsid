@@ -239,7 +239,8 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact,
   cl->forceRegTask = std::make_shared<ConstraintEquality>(contact.name()+"_force_reg_task", forceRegConstr.rows(), m_v+m_k);
   m_hqpData[1].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(force_regularization_weight, cl->forceRegTask));
 
-  m_eq += motionConstr.rows();
+  if(motionPriorityLevel==0)
+    m_eq += motionConstr.rows();
   m_in += forceConstr.rows();
 
   return true;

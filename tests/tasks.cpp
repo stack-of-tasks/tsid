@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE ( test_task_se3_equality )
     BOOST_REQUIRE(isFinite(constraint.vector()));
 
     pseudoInverse(constraint.matrix(), Jpinv, 1e-4);
-    Vector dv = Jpinv * constraint.vector();
+    ConstRefVector dv = Jpinv * constraint.vector();
     BOOST_REQUIRE(isFinite(Jpinv));
     BOOST_CHECK(MatrixXd::Identity(6,6).isApprox(constraint.matrix()*Jpinv));
     if(!isFinite(dv))
@@ -159,7 +159,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
   BOOST_CHECK(task.Kp().isApprox(Kp));
   BOOST_CHECK(task.Kd().isApprox(Kd));
 
-  Vector3 com_ref = data.com[0] + pinocchio::SE3::Vector3(0.02,0.02,0.02);
+  math::Vector3 com_ref = data.com[0] + pinocchio::SE3::Vector3(0.02,0.02,0.02);
   TrajectoryBase *traj = new TrajectoryEuclidianConstant("traj_com", com_ref);
   TrajectorySample sample;
 
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE ( test_task_com_equality )
     BOOST_REQUIRE(isFinite(constraint.vector()));
 
     pseudoInverse(constraint.matrix(), Jpinv, 1e-5);
-    Vector dv = Jpinv * constraint.vector();
+    ConstRefVector dv = Jpinv * constraint.vector();
     BOOST_REQUIRE(isFinite(Jpinv));
     BOOST_CHECK(MatrixXd::Identity(constraint.rows(),constraint.rows()).isApprox(constraint.matrix()*Jpinv));
     BOOST_REQUIRE(isFinite(dv));
@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
   BOOST_CHECK(task.Kd().isApprox(Kd));
 
   cout<<"Gonna create reference trajectory\n";
-  Vector q_ref = Vector::Random(na);
+  ConstRefVector q_ref = math::Vector::Random(na);
   TrajectoryBase *traj = new TrajectoryEuclidianConstant("traj_joint", q_ref);
   TrajectorySample sample;
 
@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE ( test_task_joint_posture )
     BOOST_REQUIRE(isFinite(constraint.vector()));
 
     pseudoInverse(constraint.matrix(), Jpinv, 1e-5);
-    Vector dv = Jpinv * constraint.vector();
+    ConstRefVector dv = Jpinv * constraint.vector();
     BOOST_REQUIRE(isFinite(Jpinv));
     BOOST_CHECK(MatrixXd::Identity(na,na).isApprox(constraint.matrix()*Jpinv));
     BOOST_REQUIRE(isFinite(dv));

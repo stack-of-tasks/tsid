@@ -2,6 +2,7 @@
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![Pipeline status](https://gitlab.laas.fr/stack-of-tasks/tsid/badges/master/pipeline.svg)](https://gitlab.laas.fr/stack-of-tasks/tsid/commits/master)
 [![Coverage report](https://gitlab.laas.fr/stack-of-tasks/tsid/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/stack-of-tasks/tsid/master/coverage/)
+[![PyPI version](https://badge.fury.io/py/tsid.svg)](https://badge.fury.io/py/tsid)
 
 TSID is a C++ library for optimization-based inverse-dynamics control based on the rigid multi-body dynamics library [Pinocchio](https://github.com/stack-of-tasks/pinocchio).
 
@@ -10,6 +11,15 @@ TSID is a C++ library for optimization-based inverse-dynamics control based on t
 * In the exercises folder you can find several examples of how to use TSID in Python with robot manipulators, humanoids, or quadrupeds.
 * On the [website of Andrea Del Prete](https://andreadelprete.github.io/#teaching) you can find slides and video lessons on TSID.
 * [Memmo 2020 summer school](https://memory-of-motion.github.io/summer-school/)
+
+## Installation with Conda
+
+If you want to directly dive into TSID in Python, only one single line is sufficient (assuming you have Conda installed):
+
+<p align="center">
+conda install tsid -c conda-forge
+</p>
+
 
 ## Installation from Debian/Ubuntu packages, with robotpkg
 If you have never added robotpkg's software repository you can do it with the following commands:
@@ -85,6 +95,7 @@ It includes key contributions from:
 - [Noelie Ramuzat](https://github.com/NoelieRamuzat) (LAAS, CNRS)
 - [Pierre Fernbach](https://github.com/pFernbach) (LAAS, CNRS)
 - [Aurelie Bonnefoy](https://github.com/ABonnefoy) (LAAS, CNRS)
+- [Etienne Arlaud](https://github.com/EtienneAr) (INRIA)
 
 And is maintained by:
 

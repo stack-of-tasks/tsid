@@ -114,11 +114,11 @@ class StandardRomeoInvDynCtrl
     package_dirs.push_back(romeo_model_path);
     const string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
     robot = std::make_shared<RobotWrapper>(urdfFileName, package_dirs, pinocchio::JointModelFreeFlyer());
-    
+
     const string srdfFileName = package_dirs[0] + "/srdf/romeo_collision.srdf";
 
     pinocchio::srdf::loadReferenceConfigurations(robot->model(),srdfFileName,false);
-    
+
     const unsigned int nv = robot->nv();
     q = neutral(robot->model());
     std::cout << "q: " << q.transpose() << std::endl;
@@ -226,9 +226,7 @@ BOOST_AUTO_TEST_CASE ( test_invdyn_formulation_acc_force_remove_contact )
                                      robot.model().getJointId(romeo_inv_dyn.rf_frame_name));
   tsid->addMotionTask(*rightFootTask, w_RF, 1);
 
-  TrajectorySample s(12, 6);
-  SE3ToVector(H_rf_ref, s.pos);
-  rightFootTask->setReference(s);
+  rightFootTask->setReference(H_rf_ref);
 
   Vector3 com_ref = robot.com(tsid->data());
   com_ref(1) += 0.1;
@@ -642,7 +640,7 @@ BOOST_AUTO_TEST_CASE ( test_contact_point_invdyn_formulation_acc_force )
   }
 
   delete solver;
-  
+
   cout<<"\n### TEST FINISHED ###\n";
   PRINT_VECTOR(v);
   cout<<"Final   CoM position: "<<robot.com(tsid->data()).transpose()<<endl;

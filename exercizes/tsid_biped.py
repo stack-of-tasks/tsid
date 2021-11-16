@@ -174,7 +174,8 @@ class TsidBiped:
                 self.viz.display(q)
                 
     def display(self, q):
-        self.viz.display(q)
+        if hasattr(self, 'viz'):
+            self.viz.display(q)
 
     def integrate_dv(self, q, v, dv, dt):
         v_mean = v + 0.5 * dt * dv
