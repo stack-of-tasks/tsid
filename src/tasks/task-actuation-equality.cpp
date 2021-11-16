@@ -79,7 +79,7 @@ namespace tsid
       return m_ref;
     }
 
-    // Reference should be the same size as robot.na(), even if a mask is used (masked dof values will just be ignored)
+    // Normalization vector should be the same size as robot.na(), even if a mask is used (masked dof values will just be ignored)
     void TaskActuationEquality::setNormalizationVector(ConstRefVector norm)
     {
       assert(norm.size()==m_robot.na());

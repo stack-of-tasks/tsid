@@ -48,11 +48,7 @@ namespace tsid
 
       const ConstraintBase & getConstraint() const;
 
-      // TODO: For now, the reference is just a vector of the desired torque.
-      // Maybe use some TrajectorySample-like object, but Trajectories (trajectory_base) include pos/vel/acc.
-      // Or use TrajectoryEuclidian with pos for torque (since vel and acc seem to be set to zero, to be checked that they are not computer afterward), but ugly
-      // Or define a new trajectory-like object for torques
-      void setReference(math::ConstRefVector ref); // RefVector or Vector ?
+      void setReference(math::ConstRefVector ref); 
       const Vector & getReference() const;
 
       void setNormalizationVector(math::ConstRefVector norm);
