@@ -116,7 +116,7 @@ bool InverseDynamicsFormulationAccForce::addMotionTask(TaskMotion & task,
 {
   assert(weight>=0.0);
   assert(transition_duration>=0.0);
-
+  
   // This part is not used frequently so we can do some tests.
   if (weight<0.0)
     std::cerr << __FILE__ <<  " " << __LINE__ << " "
@@ -216,7 +216,7 @@ bool InverseDynamicsFormulationAccForce::updateTaskWeight(const std::string & ta
 }
 
 
-bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact,
+bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact, 
                                                          double force_regularization_weight,
                                                          double motion_weight,
                                                          unsigned int motionPriorityLevel)
@@ -533,7 +533,7 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
 #else
   removeFromHqpData(taskName);
 #endif
-
+  
   for(auto it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
   {
     if((*it)->task.name()==taskName)
