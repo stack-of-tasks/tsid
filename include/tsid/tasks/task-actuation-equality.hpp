@@ -48,11 +48,11 @@ namespace tsid
 
       const ConstraintBase & getConstraint() const;
 
-      void setReference(math::ConstRefVector ref); 
+      void setReference(math::ConstRefVector ref);
       const Vector & getReference() const;
 
-      void setNormalizationVector(math::ConstRefVector norm);
-      const Vector & getNormalizationVector() const;
+      void setWeightVector(math::ConstRefVector weights);
+      const Vector & getWeightVector() const;
 
       const Vector & mask() const;
       void mask(const Vector & mask);
@@ -61,7 +61,7 @@ namespace tsid
       Vector m_mask;
       VectorXi m_activeAxes;
       Vector m_ref;
-      Vector m_norm;
+      Vector m_weights;
       ConstraintEquality m_constraint;
     };
   }
