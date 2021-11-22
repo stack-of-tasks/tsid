@@ -167,7 +167,6 @@ FILE(GLOB ${PYWRAP}_HEADERS
   )
 
 SET(${PROJECT_NAME}_HEADERS
-  include/tsid/config.hpp
   include/tsid/macros.hpp
   include/tsid/utils/statistics.hpp
   include/tsid/utils/stop-watch.hpp
