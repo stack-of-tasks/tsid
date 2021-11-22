@@ -20,7 +20,7 @@
 
 #include <memory>
 
-#include "tsid/config.hpp"
+#include "tsid/config.hh"
 #include "tsid/math/fwd.hpp"
 #include <pinocchio/container/aligned-vector.hpp>
 

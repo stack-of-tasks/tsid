@@ -18,7 +18,7 @@
 #ifndef __invdyn_trajectory_base_hpp__
 #define __invdyn_trajectory_base_hpp__
 
-#include "tsid/deprecation.hpp"
+#include "tsid/deprecated.hh"
 #include "tsid/macros.hpp"
 #include "tsid/math/fwd.hpp"
 #include "tsid/math/utils.hpp"
@@ -38,7 +38,7 @@ namespace tsid
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       // TODO rename pos, vel, acc → value, derivative, second_derivative
-      DEPRECATED math::Vector pos, vel, acc;
+      TSID_DEPRECATED math::Vector pos, vel, acc;
 
 TSID_DISABLE_WARNING_PUSH
 TSID_DISABLE_WARNING_DEPRECATED
