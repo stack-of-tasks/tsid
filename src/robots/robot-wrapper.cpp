@@ -44,18 +44,6 @@ namespace tsid
       init();
     }
 
-    RobotWrapper::RobotWrapper(const pinocchio::Model& m, bool verbose, bool floating_base)
-      : m_verbose(verbose)
-    {
-      m_model = m;
-      m_model_filename = "";
-      m_na = m_model.nv;
-      if(floating_base) {
-        m_na -= 6;
-      }
-      init();
-    }
-    
     RobotWrapper::RobotWrapper(const std::string & filename,
                                const std::vector<std::string> & ,
                                const pinocchio::JointModelVariant & rootJoint,
@@ -64,6 +52,27 @@ namespace tsid
     {
       pinocchio::urdf::buildModel(filename, rootJoint, m_model, m_verbose);
       m_model_filename = filename;
+      m_na = m_model.nv-6;
+      init();
+    }
+
+    RobotWrapper::RobotWrapper(const pinocchio::Model& m,
+                               bool verbose)
+      : m_verbose(verbose)
+    {
+      m_model = m;
+      m_model_filename = "";
+      m_na = m_model.nv;
+      init();
+    }
+
+    RobotWrapper::RobotWrapper(const pinocchio::Model& m,
+                               const pinocchio::JointModelVariant & rootJoint,
+                               bool verbose)
+      : m_verbose(verbose)
+    {
+      m_model = m;
+      m_model_filename = "";
       m_na = m_model.nv-6;
       init();
     }
