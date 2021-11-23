@@ -60,7 +60,7 @@ namespace tsid
                    const std::vector<std::string> & package_dirs,
                    bool verbose=false);
 
-      RobotWrapper(const Model & m, bool verbose=false);
+      RobotWrapper(const Model & m, bool verbose=false, bool floating_base=true);
 
       RobotWrapper(const std::string & filename,
                    const std::vector<std::string> & package_dirs,

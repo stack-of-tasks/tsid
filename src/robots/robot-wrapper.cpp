@@ -44,12 +44,15 @@ namespace tsid
       init();
     }
 
-    RobotWrapper::RobotWrapper(const pinocchio::Model& m, bool verbose)
+    RobotWrapper::RobotWrapper(const pinocchio::Model& m, bool verbose, bool floating_base)
       : m_verbose(verbose)
     {
       m_model = m;
       m_model_filename = "";
-      m_na = m_model.nv-6;  // for backward compatibility assume the robot has a floating base
+      m_na = m_model.nv;
+      if(floating_base) {
+        m_na -= 6;
+      }
       init();
     }
     
