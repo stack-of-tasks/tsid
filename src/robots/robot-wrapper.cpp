@@ -60,20 +60,29 @@ namespace tsid
                                bool verbose)
       : m_verbose(verbose)
     {
+      std::cout<<"[RobotWrapper] Constructor RobotWrapper(const pinocchio::Model&, bool) is deprecated. You should use RobotWrapper(const pinocchio::Model&, const pinocchio::JointModelVariant&, bool) instead.\n";
       m_model = m;
       m_model_filename = "";
-      m_na = m_model.nv;
+      m_na = m_model.nv-6;
       init();
     }
 
     RobotWrapper::RobotWrapper(const pinocchio::Model& m,
-                               const pinocchio::JointModelVariant & rootJoint,
+                               RootJointType rootJoint,
                                bool verbose)
       : m_verbose(verbose)
     {
       m_model = m;
       m_model_filename = "";
-      m_na = m_model.nv-6;
+      m_na = m_model.nv;
+      switch(rootJoint) {
+        case FIXED_BASE_SYSTEM:
+          break;
+        case FLOATING_BASE_SYSTEM:
+          m_na -= 6;
+        default:
+          break;
+      }
       init();
     }
 

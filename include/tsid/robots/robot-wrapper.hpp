@@ -18,6 +18,7 @@
 #ifndef __invdyn_robot_wrapper_hpp__
 #define __invdyn_robot_wrapper_hpp__
 
+#include "tsid/deprecated.hh"
 #include "tsid/math/fwd.hpp"
 #include "tsid/robots/fwd.hpp"
 
@@ -54,22 +55,28 @@ namespace tsid
       typedef math::Matrix3x Matrix3x;
       typedef math::RefVector RefVector;
       typedef math::ConstRefVector ConstRefVector;
-      
-      
-      RobotWrapper(const std::string & filename,
-                   const std::vector<std::string> & package_dirs,
-                   bool verbose=false);
+
+      /* Possible root joints */
+      typedef enum e_RootJointType
+      {
+        FIXED_BASE_SYSTEM=0,
+        FLOATING_BASE_SYSTEM=1,
+      } RootJointType;
 
       RobotWrapper(const std::string & filename,
-                   const std::vector<std::string> & package_dirs,
-                   const pinocchio::JointModelVariant & rootJoint,
-                   bool verbose=false);
+                                   const std::vector<std::string> & package_dirs,
+                                   bool verbose=false);
+
+      RobotWrapper(const std::string & filename,
+                                   const std::vector<std::string> & package_dirs,
+                                   const pinocchio::JointModelVariant & rootJoint,
+                                   bool verbose=false);
+
+      TSID_DEPRECATED RobotWrapper(const Model & m,
+                                   bool verbose=false);
 
       RobotWrapper(const Model & m,
-                   bool verbose=false);
-
-      RobotWrapper(const Model & m,
-                   const pinocchio::JointModelVariant & rootJoint,
+                   RootJointType rootJoint,
                    bool verbose=false);
       
       virtual int nq() const;
