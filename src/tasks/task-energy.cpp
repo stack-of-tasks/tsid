@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
+// Copyright (c) 2022 CNRS, Noelie Ramuzat
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -68,7 +68,7 @@ namespace tsid
       m_dim = 1;
       m_E_max_tank = 5.0;
       m_E_min_tank = 0.1;
-      m_E_tank = 5.0;
+      m_E_tank = 5.0;     // Set the energy tank first value at its maximum
       m_dE_tank = 0.0;
       m_H = m_E_tank;
       m_dH = 0.0;
@@ -81,7 +81,7 @@ namespace tsid
       m_beta = 1.0;
       m_gamma = 1.0;
       m_Plow = -5.0; 
-      m_test_semi_def_pos = false;
+      m_test_semi_def_pos = false;  // No test on the positivity of S
       m_Lambda_Kp_pos_def = true;
     }
 
@@ -95,22 +95,25 @@ namespace tsid
                               const std::vector<std::shared_ptr<TaskLevelForce> >& taskForces, Data & data)
     {
       auto newTaskMotions = taskMotions;
+      // Add the motion tasks of the contact tasks in the vector of newTaskMotions (same handling)
       for (auto cl : taskContacts){
         TaskSE3Equality& contact_motion = cl->contact.getMotionTask();
         auto tl = std::make_shared<TaskLevelMotion>(contact_motion, 1);
         newTaskMotions.push_back(tl);
       }
 
+      // In case of modification of the number of tasks in the QP
+      // update accordingly the vectors to keep them sorted in function of the tasks
       auto ds = m_dS;
       auto A = m_A;
       auto S_prev = m_S_prev;
       auto S = m_S;
-      auto maked_Kp_prev = m_maked_Kp_prev;
+      auto maked_Kp_prev = m_masked_Kp_prev;
       m_dS.setZero(newTaskMotions.size());
       m_A.setZero(newTaskMotions.size());
       m_S.setZero(newTaskMotions.size());
       m_S_prev.setZero(newTaskMotions.size());
-      m_maked_Kp_prev = std::vector<Matrix>(newTaskMotions.size());
+      m_masked_Kp_prev = std::vector<Matrix>(newTaskMotions.size());
 
       for(auto i = 0u; i < newTaskMotions.size(); i++) {
         const auto& name = newTaskMotions[i]->task.name();
@@ -124,7 +127,7 @@ namespace tsid
           m_A[i] = A[idx];
           m_S[i] = S[idx];
           m_S_prev[i] = S_prev[idx];
-          m_maked_Kp_prev[i] = maked_Kp_prev[idx];
+          m_masked_Kp_prev[i] = maked_Kp_prev[idx];
         }
       }
 
@@ -226,13 +229,16 @@ namespace tsid
                                                ConstRefVector v,
                                                Data & data)
     {
-
+      // Here is computed the energy tank and the regulating coefficients
+      // For more details see the RA-L paper "Passive Inverse Dynamics Control using a Global Energy Tank for Torque-Controlled 
+      // Humanoid Robots in Multi-Contact", by Noelie Ramuzat, Sébastien BORIA, Olivier Stasse.
       if (m_taskMotions.size() <= 0){
         std::cerr << "No motion tasks for energy calculation !" << std::endl;
         return m_passivityConstraint;
       }
       double E_c = 0.0;
-      double non_linear_effect_term;
+      // Here is the computation of the eq (22) of the paper
+      double non_linear_effect_term; // called v^T C v in the paper
       non_linear_effect_term = v.transpose() * m_robot.nonLinearEffects(data);
       double contact_forces_term = 0.0;
       double task_force_term = 0.0;
@@ -253,6 +259,7 @@ namespace tsid
         task_force_term += v.transpose() * J_f.transpose() * f_des;
       }
       
+      // Here is computed the B^sigma term of the equation (21) of the paper
       int i = 0;
       for (auto& it : m_taskMotions){
         std::string frame_name = it->task.getFrameName();
@@ -289,17 +296,18 @@ namespace tsid
         Matrix task_Kp = m_Lambda * (it->task.Kp()).asDiagonal();
         Matrix task_Kd = m_Lambda * (it->task.Kd()).asDiagonal();
 
+        /// TEST of the semi-positive definite matrix Lambda*K_p (for the positivity of S)
         if (m_test_semi_def_pos){
-          /// TEST semi-positive definitie matrix
           Matrix U = (task_Kp + task_Kp.transpose())*0.5;
           Eigen::LLT<Eigen::MatrixXd> lltOfU(U); // compute the Cholesky decomposition of U
           if(lltOfU.info() == Eigen::NumericalIssue)
           {
-            std::cerr << "U non semi-positive definitie matrix!" << std::endl;
+            std::cerr << "Lambda*K_p is not a semi-positive definite matrix, S may be non positive !" << std::endl;
             m_Lambda_Kp_pos_def = false;
           } 
-        }        
+        }
 
+        // Take into account the masks of the tasks in TSID 
         int idx = 0, idx_col=0;
         for (int k = 0; k < mask.size(); k++) {
           if (mask(k) != 1.) continue;
@@ -314,24 +322,25 @@ namespace tsid
           idx_col = 0;        
           idx ++;
         }
-        damping_term = masked_vel.transpose() * masked_Kd * it->task.velocity_error();
+        damping_term = masked_vel.transpose() * masked_Kd * it->task.velocity_error(); // first term of eq (21)
         Vector Lambda_acc;
         Lambda_acc = m_Lambda * acc_error;
-        acc_term = (it->task.velocity()).transpose() * Lambda_acc;
+        acc_term = (it->task.velocity()).transpose() * Lambda_acc; // fourth term of eq (21)
 
-        Matrix dot_Lambda_Kp;
-        if (m_maked_Kp_prev[i].size() == 0){
+        Matrix dot_Lambda_Kp; // derivative of Lambda * Kp
+        if (m_masked_Kp_prev[i].size() == 0){
           dot_Lambda_Kp = Matrix::Zero(masked_Kp.rows(), masked_Kp.cols());
         } else {
-          dot_Lambda_Kp = (masked_Kp - m_maked_Kp_prev[i])/m_dt;
+          dot_Lambda_Kp = (masked_Kp - m_masked_Kp_prev[i])/m_dt;
         } 
         double Lambda_dot_term;
         double vel_ref_term;
         if (frame_name != "am"){
+          // Computation of S and dS of eq (16)
           m_S[i] = 0.5 * it->task.position_error().transpose() * masked_Kp * it->task.position_error();          
           m_dS[i] = it->task.velocity_error().transpose() * masked_Kp * it->task.position_error();
-          Lambda_dot_term = 0.5 * it->task.position_error().transpose() * dot_Lambda_Kp * it->task.position_error();
-          vel_ref_term = masked_vel_ref.transpose() * masked_Kp * it->task.position_error();
+          Lambda_dot_term = 0.5 * it->task.position_error().transpose() * dot_Lambda_Kp * it->task.position_error(); // third term of eq (21)
+          vel_ref_term = masked_vel_ref.transpose() * masked_Kp * it->task.position_error(); // second term of eq (21)
           m_dS[i] += Lambda_dot_term;
         } else {
           m_dS[i] = 0.0;
@@ -340,33 +349,39 @@ namespace tsid
           vel_ref_term = 0.0;
         }
         
+        // Update the previous terms
         m_S_prev[i] = m_S[i];
-        m_maked_Kp_prev[i].resize(masked_Kp.rows(), masked_Kp.cols());
-        m_maked_Kp_prev[i] = masked_Kp;
+        m_masked_Kp_prev[i].resize(masked_Kp.rows(), masked_Kp.cols());
+        m_masked_Kp_prev[i] = masked_Kp;
         
-        double A = damping_term - acc_term - Lambda_dot_term + vel_ref_term;
+        double A = damping_term - acc_term - Lambda_dot_term + vel_ref_term; // B^sigma for one task
         m_A[i] = A;
-        E_c += 0.5 * (it->task.velocity()).transpose() * m_Lambda * (it->task.velocity());
+        E_c += 0.5 * (it->task.velocity()).transpose() * m_Lambda * (it->task.velocity()); // Kinetic energy
 
         i++;
       }
+      // Sum of the term along the tasks
       double A = m_A.sum();
-      double B = non_linear_effect_term - contact_forces_term;
-      double A_tot = A + task_force_term;
+      double B = non_linear_effect_term - contact_forces_term; // B^phi of eq (22)
+      double A_tot = A + task_force_term; // B^sigma total of eq (22)
 
+      // Smooth funtion on the gamma coefficient: eq(24) of the paper
       m_gamma = gammaFunction(A_tot, m_Plow, -m_Plow + .5);
 
+      // Computation of beta in eq(25)
       if ((m_E_tank <= m_E_min_tank) && ((m_gamma * (A_tot) - B) < 0)) {
         m_beta = 0.0;
       } else {
         m_beta = 1.0;
       }
 
+      // Smooth funtion on the alpha coefficient: eq(26) of the paper
       m_alpha = alphaFunction(0.0, m_E_max_tank, m_E_tank, m_beta * m_gamma * A_tot - B);
 
       m_dE_tank = (1-m_alpha) * (m_beta * m_gamma * A_tot);
       m_dE_tank -= (1-m_alpha) * B;
 
+      // Compute the derivative of E_tank and check the bounds
       m_E_tank += m_dE_tank * m_dt;
       if (m_E_tank < m_E_min_tank){
         m_E_tank = m_E_min_tank;
@@ -374,26 +389,26 @@ namespace tsid
         m_E_tank = m_E_max_tank;
       }
 
+      // Multiply S by beta and gamma (as it will be done in the QP formulation in inverse-dynamics-formulation-acc-force.cpp)
       m_S = m_beta * m_gamma* m_S;
       m_dS = m_beta * m_gamma* m_dS;
       double S = m_S.sum();
       double dS = m_dS.sum();
-      m_H = S + m_E_tank;
 
+      // Compute H and d_H finally
+      m_H = S + m_E_tank;
       m_dH = dS + m_dE_tank;
       
+      // Compute H_tot, H with the kinetic energy of the tasks and the gravity potential, eq(31) of the paper
       double V_g_i = data.potential_energy;
-
       m_H_tot = m_H + E_c + V_g_i;
-
       m_dH_tot = (m_H_tot - m_H_tot_prev)/m_dt;
-
       m_H_tot_prev = m_H_tot;
 
       // ENERGY DERIVATIVE PASSIVITY CONSTRAINT
       Matrix matrix = Matrix::Zero(1, m_robot.nv());
       matrix = - v.transpose();
-      m_passivityConstraint.setMatrix(matrix);
+      m_passivityConstraint.setMatrix(matrix); // multiplied by "tau" in the QP formulation (Ma - J^TF)
       m_b_lower = m_dH * Vector::Ones(m_dim);
       m_passivityConstraint.upperBound() = m_b_upper;
       m_passivityConstraint.lowerBound() = m_b_lower;

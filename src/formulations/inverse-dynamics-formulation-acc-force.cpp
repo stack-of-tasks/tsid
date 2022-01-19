@@ -383,6 +383,9 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   std::vector<const math::ConstraintBase *> constraintMotions(m_taskMotions.size());
   std::vector<const math::ConstraintBase *> constraintContactForces(m_taskContactForces.size());
 
+  // ENERGY TASK modifications: 
+  // Compute the motion and contactForce tasks to use the computed errors and refs in the energy task
+  // Add the tasks/constraint in the QP after the computation of the energy tank
   int j = 0;
   for (auto& it : m_taskMotions)
   {
@@ -398,6 +401,9 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     j++;
   }
 
+  // HANDLING OF THE ENERGY TASK: 
+  // Retreive the coefficients beta and gamma to multiply the task vectors by them
+  // Add the passivity constraint in the QP: d_H <= -v^T * tau
   double beta, gamma;
   beta = 1.0;
   gamma = 1.0;
@@ -650,6 +656,7 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
       return true;
     }
   }
+  // Removing of the energy task constraint
   for(auto it=m_taskEnergies.begin(); it!=m_taskEnergies.end(); it++)
   {
     if((*it)->task.name()==taskName)
