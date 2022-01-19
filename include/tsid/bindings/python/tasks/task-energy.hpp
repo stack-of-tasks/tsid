@@ -48,9 +48,8 @@ namespace tsid
         cl
         .def(bp::init<std::string, robots::RobotWrapper &, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("dt")), "Default Constructor"))
         .add_property("dim", &TaskEnergy::dim, "return dimension size")
-        .def("setReference", &TaskEnergyPythonVisitor::setReference, bp::arg("ref"))
         .def("set_E_tank", &TaskEnergyPythonVisitor::set_E_tank, bp::arg("E_tank"))
-        .add_property("position_ref", bp::make_function(&TaskEnergyPythonVisitor::position_ref, bp::return_value_policy<bp::copy_const_reference>()))
+        .def("enable_test_positive_def", &TaskEnergyPythonVisitor::enable_test_positive_def, bp::arg("isEnabled"))
         .add_property("get_A_vector", bp::make_function(&TaskEnergyPythonVisitor::get_A_vector, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_lowerBound", bp::make_function(&TaskEnergyPythonVisitor::get_lowerBound, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_H", bp::make_function(&TaskEnergyPythonVisitor::get_H, bp::return_value_policy<bp::copy_const_reference>()))
@@ -64,6 +63,8 @@ namespace tsid
         .add_property("get_beta", bp::make_function(&TaskEnergyPythonVisitor::get_beta, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_gamma", bp::make_function(&TaskEnergyPythonVisitor::get_gamma, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("get_dS", bp::make_function(&TaskEnergyPythonVisitor::get_dS, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("get_Lambda", bp::make_function(&TaskEnergyPythonVisitor::get_Lambda, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("is_S_positive_definite", bp::make_function(&TaskEnergyPythonVisitor::is_S_positive_definite, bp::return_value_policy<bp::copy_const_reference>()))
         .def("computeConstraint", &TaskEnergyPythonVisitor::computeConstraint, bp::args("t", "q", "v", "data"))
         .add_property("name", &TaskEnergyPythonVisitor::name)
         ;
@@ -76,12 +77,6 @@ namespace tsid
         self.compute(t, q, v, data);
         math::ConstraintInequality cons(self.getConstraint().name(), self.getConstraint().matrix(), self.getConstraint().lowerBound(),  self.getConstraint().upperBound());
         return cons;
-      }
-      static void setReference(TaskEnergy & self, const trajectories::TrajectorySample & ref){
-        self.setReference(ref);
-      }
-      static const Eigen::VectorXd & position_ref (const TaskEnergy & self){
-        return self.position_ref();
       }
       static const Eigen::VectorXd & get_A_vector (const TaskEnergy & self){
         return self.get_A_vector();
@@ -124,6 +119,15 @@ namespace tsid
       }
       static const double & get_beta (const TaskEnergy & self){
         return self.get_beta();
+      }
+      static const Eigen::MatrixXd & get_Lambda (const TaskEnergy & self){
+        return self.get_Lambda();
+      }
+      static const bool & is_S_positive_definite(const TaskEnergy & self){
+        return self.is_S_positive_definite();
+      }
+      static void enable_test_positive_def(TaskEnergy & self, const bool & isEnabled){
+        self.enable_test_positive_def(isEnabled);
       }
       static void expose(const std::string & class_name)
       {

@@ -51,13 +51,8 @@ namespace tsid
       typedef math::ConstraintEquality ConstraintEquality;
       typedef pinocchio::Data Data;
 
-      Vector qQuatToRPY(const Vector & q);
-      double H_min(const double a, const double b, const double x, const double e_val);
-      double H_max(const double a, const double b, const double x, const double e_val);
-      double gammaFunction(const double A, const double P,
-                           const double delta, const double gamma_prev);
-      double lowPassFilter(const double& frequency, const double& signal,
-                           double& previous_signal);
+      double alphaFunction(const double a, const double b, const double x, const double e_val);
+      double gammaFunction(const double A, const double P, const double delta);
 
       TaskEnergy(const std::string & name,
                  RobotWrapper & robot,
@@ -72,10 +67,6 @@ namespace tsid
 
       const ConstraintBase & getConstraint() const;
 
-      void setReference(const TrajectorySample & ref);
-      const TrajectorySample & getReference() const;
-
-      const Vector & position_ref() const;
       const Vector & get_A_vector() const;
       const double & get_lowerBound() const;
       const double & get_H() const;
@@ -91,10 +82,13 @@ namespace tsid
       const double & get_alpha() const;
       const double & get_beta() const;
       const double & get_gamma() const;
+      const Matrix & get_Lambda() const;
+      const bool & is_S_positive_definite() const;
+      void enable_test_positive_def(const bool & isEnabled);
 
-      void setTasks(const std::vector<std::shared_ptr<TaskLevelMotion> >  taskMotions, 
-                    const std::vector<std::shared_ptr<ContactLevel> >  taskContacts, 
-                    const std::vector<std::shared_ptr<TaskLevelForce> > taskForces, Data & data);
+      void setTasks(const std::vector<std::shared_ptr<TaskLevelMotion> >&  taskMotions, 
+                    const std::vector<std::shared_ptr<ContactLevel> >&  taskContacts, 
+                    const std::vector<std::shared_ptr<TaskLevelForce> >& taskForces, Data & data);
 
     protected:
       double m_dt;
@@ -111,21 +105,22 @@ namespace tsid
       Vector m_dS;
       Vector m_S;
       Vector m_S_prev;
-      std::vector<Vector> m_maked_Kp_prev;
+      std::vector<Matrix> m_maked_Kp_prev;
+      Matrix m_Lambda;
       int m_dim;
       double m_E_tank;
       double m_dE_tank;
       double m_E_max_tank;
       double m_E_min_tank;
-      //double m_prev_signal_filter;
       ConstraintInequality m_passivityConstraint;
-      TrajectorySample m_ref;
       Vector m_b_lower;
       Vector m_b_upper;
       std::vector<std::shared_ptr<TaskLevelMotion> > m_taskMotions;
       std::vector<std::shared_ptr<ContactLevel> >   m_taskContacts;
       std::vector<std::shared_ptr<TaskLevelForce> > m_taskForces;
       bool m_first_iter;
+      bool m_test_semi_def_pos;
+      bool m_Lambda_Kp_pos_def;
     };
 
   }

@@ -29,28 +29,7 @@ namespace tsid
     using namespace trajectories;
     using namespace pinocchio;
 
-    Vector TaskEnergy::qQuatToRPY(const Vector & q){
-      Vector q_rpy(m_robot.nv());
-      Eigen::Quaterniond quat(q.segment<4>(3));
-      Vector rpy = (quat.toRotationMatrix().eulerAngles(2, 1, 0)).reverse();
-      q_rpy.head<3>() = q.head<3>();
-      q_rpy.segment<3>(3) = rpy;
-      q_rpy.tail(m_robot.nv()-6) = q.tail(m_robot.nv()-6);
-      return q_rpy;
-    }
-
-    double TaskEnergy::H_min(const double a, const double b, const double x, const double e_val){
-      if ((x<a) && (e_val < 0)){
-        return 0;
-      } else if ((a <= x) && (x <= b)){
-        double q = (x-a)/(b-a);
-        double value = 6*pow(q,5) - 15*pow(q,4) + 10*pow(q,3);
-        return value;
-      } else {
-        return 1;
-      }
-    }
-    double TaskEnergy::H_max(const double a, const double b, const double x, const double e_val){
+    double TaskEnergy::alphaFunction(const double a, const double b, const double x, const double e_val){
       if ((x>=b) && (e_val>0)){
         return 1;
       } else if ((a <= x) && (x < b) && (e_val>0)) {
@@ -63,7 +42,7 @@ namespace tsid
     }
 
     double TaskEnergy::gammaFunction(const double A, const double P,
-                                     const double delta, const double gamma_prev){
+                                     const double delta){
       if (A < P) {
         return P/A;
       } else if (A <= P + delta) {
@@ -79,33 +58,31 @@ namespace tsid
       }
     }
 
-    double TaskEnergy::lowPassFilter(const double& frequency, const double& signal,
-                                     double& previous_signal) {
-      // signal = alpha * previous_signal + (1-alpha) * signal_des
-      double alpha = exp(-m_dt * 2 * M_PI * frequency);
-      double output = alpha * previous_signal + signal * (1 - alpha);
-      return output;
-    }
-
     TaskEnergy::TaskEnergy(const std::string & name,
                            RobotWrapper & robot,
                            const double dt):
       TaskBase(name, robot),
       m_dt(dt),
-      m_passivityConstraint(name, 1, robot.nv()),
-      m_ref(robot.na())
+      m_passivityConstraint(name, 1, robot.nv())
     {
       m_dim = 1;
       m_E_max_tank = 5.0;
       m_E_min_tank = 0.1;
-      m_E_tank = 3.0;
+      m_E_tank = 5.0;
+      m_dE_tank = 0.0;
+      m_H = m_E_tank;
+      m_dH = 0.0;
+      m_H_tot = 0.0;
+      m_dH_tot = 0.0;
       m_b_lower = -1e10 * Vector::Ones(m_dim);
       m_b_upper = 1e10 * Vector::Ones(m_dim);
       m_first_iter = true;
-      m_alpha = 0.0;
+      m_alpha = 1.0;
       m_beta = 1.0;
       m_gamma = 1.0;
-      //m_prev_signal_filter = 0.0;
+      m_Plow = -5.0; 
+      m_test_semi_def_pos = false;
+      m_Lambda_Kp_pos_def = true;
     }
 
     int TaskEnergy::dim() const
@@ -113,66 +90,52 @@ namespace tsid
       return m_dim;
     }
 
-    void TaskEnergy::setTasks(const std::vector<std::shared_ptr<TaskLevelMotion> >  taskMotions, 
-                              const std::vector<std::shared_ptr<ContactLevel> >  taskContacts, 
-                              const std::vector<std::shared_ptr<TaskLevelForce> > taskForces, Data & data)
+    void TaskEnergy::setTasks(const std::vector<std::shared_ptr<TaskLevelMotion> >&  taskMotions, 
+                              const std::vector<std::shared_ptr<ContactLevel> >&  taskContacts, 
+                              const std::vector<std::shared_ptr<TaskLevelForce> >& taskForces, Data & data)
     {
-      // TODO: Use dictionary instead of vector to keep track of tasks 
-      // Then when adding/removing task reshape properly instead of setting all to 0.
-      bool reshape = false;
-      if (!m_first_iter) {
-        if ((taskMotions.size() != m_taskMotions.size()) || (taskContacts.size() != m_taskContacts.size())){
-          reshape = true;
-        }
-      }
-      m_taskMotions = taskMotions;
-      m_taskContacts = taskContacts;
-      m_taskForces = taskForces;
-      for (auto cl : m_taskContacts){
+      auto newTaskMotions = taskMotions;
+      for (auto cl : taskContacts){
         TaskSE3Equality& contact_motion = cl->contact.getMotionTask();
         auto tl = std::make_shared<TaskLevelMotion>(contact_motion, 1);
-        m_taskMotions.push_back(tl);
+        newTaskMotions.push_back(tl);
       }
+
+      auto ds = m_dS;
+      auto A = m_A;
+      auto S_prev = m_S_prev;
+      auto S = m_S;
+      auto maked_Kp_prev = m_maked_Kp_prev;
+      m_dS.setZero(newTaskMotions.size());
+      m_A.setZero(newTaskMotions.size());
+      m_S.setZero(newTaskMotions.size());
+      m_S_prev.setZero(newTaskMotions.size());
+      m_maked_Kp_prev = std::vector<Matrix>(newTaskMotions.size());
+
+      for(auto i = 0u; i < newTaskMotions.size(); i++) {
+        const auto& name = newTaskMotions[i]->task.name();
+        const auto it = std::find_if(std::begin(m_taskMotions), std::end(m_taskMotions), [&name](const auto& task){
+          return name == task->task.name();
+        });
+        // Task was already there, copy the gain to the new vector
+        if(it != std::end(m_taskMotions)) {
+          const auto idx = std::distance(std::begin(m_taskMotions), it);
+          m_dS[i] = ds[idx];
+          m_A[i] = A[idx];
+          m_S[i] = S[idx];
+          m_S_prev[i] = S_prev[idx];
+          m_maked_Kp_prev[i] = maked_Kp_prev[idx];
+        }
+      }
+
+      m_taskMotions = newTaskMotions;
+      m_taskContacts = taskContacts;
+      m_taskForces = taskForces;
+
       if (m_first_iter){
-        m_alpha = 1.0;
-        m_beta = 1.0;
-        m_gamma = 1.0;
-        m_Plow = -5.0; 
-        m_E_tank = 3.0;
-        m_dE_tank = 0.0;
-        m_H = m_E_tank;
-        m_dH = 0.0;
-        m_H_tot = 0.0;
-        double V_g = data.potential_energy;
-        m_H_tot_prev = V_g;
-        m_dH_tot = 0.0;
-      } 
-      if ((m_first_iter) || (reshape)) {
-        m_dS.setZero(m_taskMotions.size());
-        m_A.setZero(m_taskMotions.size());
-        m_S.setZero(m_taskMotions.size());
-        m_S_prev.setZero(m_taskMotions.size());
-        m_maked_Kp_prev.resize(m_taskMotions.size());
+        m_H_tot_prev = data.potential_energy;
         m_first_iter = false;
-      }
-    }
-
-    void TaskEnergy::setReference(const TrajectorySample & ref)
-    {
-      assert(ref.pos.size()==m_robot.nv());
-      assert(ref.vel.size()==m_robot.nv());
-      assert(ref.acc.size()==m_robot.nv());
-      m_ref = ref;
-    }
-
-    const TrajectorySample & TaskEnergy::getReference() const
-    {
-      return m_ref;
-    }
-
-    const Vector & TaskEnergy::position_ref() const
-    {
-      return m_ref.pos;
+      } 
     }
 
     const Vector & TaskEnergy::get_A_vector() const
@@ -238,6 +201,21 @@ namespace tsid
       return m_gamma;
     }
 
+    const Matrix & TaskEnergy::get_Lambda() const
+    {
+      return m_Lambda;
+    }
+
+    const bool & TaskEnergy::is_S_positive_definite() const
+    {
+      return m_Lambda_Kp_pos_def;
+    }
+
+    void TaskEnergy::enable_test_positive_def(const bool & isEnabled)
+    {
+      m_test_semi_def_pos = isEnabled;
+    }
+
     const ConstraintBase & TaskEnergy::getConstraint() const
     {
       return m_passivityConstraint;
@@ -248,18 +226,12 @@ namespace tsid
                                                ConstRefVector v,
                                                Data & data)
     {
-      // Compute q
-      Vector q_rpy = qQuatToRPY(q);
 
       if (m_taskMotions.size() <= 0){
         std::cerr << "No motion tasks for energy calculation !" << std::endl;
         return m_passivityConstraint;
       }
       double E_c = 0.0;
-      double A_posture = 0.0;
-      double S_posture = 0.0;
-      double dS_posture = 0.0;
-
       double non_linear_effect_term;
       non_linear_effect_term = v.transpose() * m_robot.nonLinearEffects(data);
       double contact_forces_term = 0.0;
@@ -291,9 +263,8 @@ namespace tsid
         dJ.setZero(6, m_robot.nv());
         pseudoInverse(J, Jpinv, 1e-6);
 
-        Matrix Lambda;
         Vector acc_error;
-        Lambda = Jpinv.transpose() * m_robot.mass(data) * Jpinv;
+        m_Lambda = Jpinv.transpose() * m_robot.mass(data) * Jpinv;        
         if (frame_name == "com"){
           dJ = data.dAg.topRows(3);
           acc_error = it->task.acceleration_ref() - dJ * v;    
@@ -310,39 +281,57 @@ namespace tsid
         }
 
         Vector mask = it->task.getMask();
-        Vector masked_vel((int)mask.sum()), masked_Kd((int)mask.sum()), masked_Kp((int)mask.sum());
+        int mask_size = (int)mask.sum();
+        Vector masked_vel(mask_size), masked_vel_ref(mask_size);
+        Matrix masked_Kd(mask_size, mask_size), masked_Kp(mask_size, mask_size);
         Vector vel_ref = it->task.velocity_ref();
-        Vector masked_vel_ref((int)mask.sum());
         Vector task_vel = it->task.velocity();
-        Vector task_Kp = Lambda * it->task.Kp();
-        Vector task_Kd = Lambda * it->task.Kd();
-        int idx = 0;
+        Matrix task_Kp = m_Lambda * (it->task.Kp()).asDiagonal();
+        Matrix task_Kd = m_Lambda * (it->task.Kd()).asDiagonal();
+
+        if (m_test_semi_def_pos){
+          /// TEST semi-positive definitie matrix
+          Matrix U = (task_Kp + task_Kp.transpose())*0.5;
+          Eigen::LLT<Eigen::MatrixXd> lltOfU(U); // compute the Cholesky decomposition of U
+          if(lltOfU.info() == Eigen::NumericalIssue)
+          {
+            std::cerr << "U non semi-positive definitie matrix!" << std::endl;
+            m_Lambda_Kp_pos_def = false;
+          } 
+        }        
+
+        int idx = 0, idx_col=0;
         for (int k = 0; k < mask.size(); k++) {
           if (mask(k) != 1.) continue;
           masked_vel[idx] = task_vel[k];
           masked_vel_ref[idx] = vel_ref[k];
-          masked_Kp[idx] = task_Kp[k];
-          masked_Kd[idx] = task_Kd[k];
+          for (int l=0; l < mask.size(); l++) {
+            if (mask(l) != 1.) continue;
+            masked_Kp(idx,idx_col) = task_Kp(k,l);
+            masked_Kd(idx,idx_col) = task_Kd(k,l);
+            idx_col ++;
+          }
+          idx_col = 0;        
           idx ++;
         }
-        damping_term = masked_vel.transpose() * masked_Kd.cwiseProduct(it->task.velocity_error());
+        damping_term = masked_vel.transpose() * masked_Kd * it->task.velocity_error();
         Vector Lambda_acc;
-        Lambda_acc = Lambda * acc_error;
+        Lambda_acc = m_Lambda * acc_error;
         acc_term = (it->task.velocity()).transpose() * Lambda_acc;
 
-        Vector dot_Lambda_Kp;
+        Matrix dot_Lambda_Kp;
         if (m_maked_Kp_prev[i].size() == 0){
-          dot_Lambda_Kp = Vector::Zero(masked_Kp.size());
+          dot_Lambda_Kp = Matrix::Zero(masked_Kp.rows(), masked_Kp.cols());
         } else {
           dot_Lambda_Kp = (masked_Kp - m_maked_Kp_prev[i])/m_dt;
         } 
         double Lambda_dot_term;
         double vel_ref_term;
         if (frame_name != "am"){
-          m_S[i] = 0.5 * it->task.position_error().transpose() * masked_Kp.cwiseProduct(it->task.position_error());          
-          m_dS[i] = it->task.velocity_error().transpose() * masked_Kp.cwiseProduct(it->task.position_error());
-          Lambda_dot_term = 0.5 * it->task.position_error().transpose() * dot_Lambda_Kp.cwiseProduct(it->task.position_error());
-          vel_ref_term = masked_vel_ref.transpose() * masked_Kp.cwiseProduct(it->task.position_error());
+          m_S[i] = 0.5 * it->task.position_error().transpose() * masked_Kp * it->task.position_error();          
+          m_dS[i] = it->task.velocity_error().transpose() * masked_Kp * it->task.position_error();
+          Lambda_dot_term = 0.5 * it->task.position_error().transpose() * dot_Lambda_Kp * it->task.position_error();
+          vel_ref_term = masked_vel_ref.transpose() * masked_Kp * it->task.position_error();
           m_dS[i] += Lambda_dot_term;
         } else {
           m_dS[i] = 0.0;
@@ -352,41 +341,30 @@ namespace tsid
         }
         
         m_S_prev[i] = m_S[i];
-        m_maked_Kp_prev[i].resize(masked_Kp.size());
+        m_maked_Kp_prev[i].resize(masked_Kp.rows(), masked_Kp.cols());
         m_maked_Kp_prev[i] = masked_Kp;
         
         double A = damping_term - acc_term - Lambda_dot_term + vel_ref_term;
-        if (frame_name == "posture"){
-          A_posture = A;
-          S_posture = m_S[i];
-          dS_posture = m_dS[i];
-          m_dS[i] = 0.0;
-          m_S[i] = 0.0;
-        } else {
-          m_A[i] = A;
-        }
-
-        E_c += 0.5 * (it->task.velocity()).transpose() * Lambda * (it->task.velocity());
+        m_A[i] = A;
+        E_c += 0.5 * (it->task.velocity()).transpose() * m_Lambda * (it->task.velocity());
 
         i++;
       }
       double A = m_A.sum();
       double B = non_linear_effect_term - contact_forces_term;
-      double signal_to_filter = A + A_posture + task_force_term;
-      //double signal_filter = lowPassFilter(1.0, signal_to_filter, m_prev_signal_filter);
-      //m_prev_signal_filter = signal_filter;
+      double A_tot = A + task_force_term;
 
-      m_gamma = gammaFunction(signal_to_filter, m_Plow, 4.0, m_gamma);
+      m_gamma = gammaFunction(A_tot, m_Plow, -m_Plow + .5);
 
-      if ((m_E_tank <= m_E_min_tank) && ((m_gamma * (signal_to_filter) - B) < 0)) {
+      if ((m_E_tank <= m_E_min_tank) && ((m_gamma * (A_tot) - B) < 0)) {
         m_beta = 0.0;
       } else {
         m_beta = 1.0;
       }
 
-      m_alpha = H_max(0.0, m_E_max_tank, m_E_tank, m_beta * m_gamma * signal_to_filter - B);
+      m_alpha = alphaFunction(0.0, m_E_max_tank, m_E_tank, m_beta * m_gamma * A_tot - B);
 
-      m_dE_tank = (1-m_alpha) * (m_beta * m_gamma * signal_to_filter);
+      m_dE_tank = (1-m_alpha) * (m_beta * m_gamma * A_tot);
       m_dE_tank -= (1-m_alpha) * B;
 
       m_E_tank += m_dE_tank * m_dt;
@@ -398,8 +376,8 @@ namespace tsid
 
       m_S = m_beta * m_gamma* m_S;
       m_dS = m_beta * m_gamma* m_dS;
-      double S = m_S.sum() + m_beta *m_gamma* S_posture;
-      double dS = m_dS.sum() + m_beta *m_gamma*dS_posture;
+      double S = m_S.sum();
+      double dS = m_dS.sum();
       m_H = S + m_E_tank;
 
       m_dH = dS + m_dE_tank;
