@@ -127,17 +127,17 @@ namespace tsid
 
     const Vector & TaskComEquality::position_ref() const
     {
-      return m_ref.pos;
+      return m_ref.getValue();
     }
 
     const Vector & TaskComEquality::velocity_ref() const
     {
-      return m_ref.vel;
+      return m_ref.getDerivative();
     }
 
     const Vector & TaskComEquality::acceleration_ref() const
     {
-      return m_ref.acc;
+      return m_ref.getSecondDerivative();
     }
 
     const ConstraintBase & TaskComEquality::getConstraint() const
@@ -155,23 +155,12 @@ namespace tsid
       // Get CoM jacobian
       m_Jcom = m_robot.Jcom(data);
 
-      // Matrix Lambda_inv, Lambda, Jpinv;
-      // Jpinv.setZero(m_Jcom.cols(), m_Jcom.rows());
-      // pseudoInverse(m_Jcom, Jpinv, 1e-6);
-      // Lambda = Jpinv.transpose() * m_robot.mass(data) * Jpinv;
-      // Lambda_inv.setZero(Lambda.cols(), Lambda.rows());
-      // pseudoInverse(Lambda, Lambda_inv, 1e-6);
-      // Matrix LKP = (Lambda_inv * m_Kp).cwiseAbs();
-      // Matrix LKD = (Lambda_inv * m_Kd).cwiseAbs();
-      // // std::cout << "##################### Minv com: "<<  Minv << "################################" << std::endl;
-      // // std::cout << "##################### Lambda_inv com: "<<  Lambda_inv << "################################" << std::endl;
-      // std::cout << "##################### Lambda_inv * m_Kp com: "<<  LKP << "################################" << std::endl;
-      // std::cout << "##################### Lambda_inv * m_Kd com: "<<  LKD << "################################" << std::endl;
-
       // Compute errors
-      m_p_error = m_p_com - m_ref.pos;
-      m_v_error = m_v_com - m_ref.vel;
-      m_a_des = - m_Kp.cwiseProduct(m_p_error) - m_Kd.cwiseProduct(m_v_error) + m_ref.acc;
+      m_p_error = m_p_com - m_ref.getValue();
+      m_v_error = m_v_com - m_ref.getDerivative();
+      m_a_des = - m_Kp.cwiseProduct(m_p_error)
+                - m_Kd.cwiseProduct(m_v_error)
+                + m_ref.getSecondDerivative();
 
       m_p_error_vec = m_p_error;
       m_v_error_vec = m_v_error;
@@ -188,7 +177,7 @@ namespace tsid
 
         m_constraint.matrix().row(idx) = m_Jcom.row(i);
         m_constraint.vector().row(idx) = (m_a_des - m_drift).row(i);
-       
+
         m_a_des_masked(idx)            = m_a_des(i);
         m_drift_masked(idx)            = m_drift(i);
         m_p_error_masked_vec(idx)      = m_p_error_vec(i);

@@ -20,8 +20,11 @@
 
 #include "tsid/bindings/python/fwd.hpp"
 
+
 #include <tsid/math/utils.hpp>
 #include "tsid/trajectories/trajectory-base.hpp"
+
+#include <pinocchio/bindings/python/utils/deprecation.hpp>
 #include <assert.h>
 namespace tsid
 {
@@ -41,52 +44,72 @@ namespace tsid
       {
         cl
         .def(bp::init<unsigned int>((bp::arg("size")), "Default Constructor with size"))
-        .def(bp::init<unsigned int, unsigned int>((bp::arg("pos_size"), bp::arg("vel_size")), "Default Constructor with pos and vel size"))
+        .def(bp::init<unsigned int, unsigned int>((bp::arg("value_size"), bp::arg("derivative_size")), "Default Constructor with value and derivative size"))
 
         .def("resize", &TrajectorySamplePythonVisitor::resize, bp::arg("size"))
-        .def("resize", &TrajectorySamplePythonVisitor::resize2, bp::args("pos_size", "vel_size"))
+        .def("resize", &TrajectorySamplePythonVisitor::resize2, bp::args("value_size", "derivative_size"))
 
-        .def("pos", &TrajectorySamplePythonVisitor::pos)
-        .def("vel", &TrajectorySamplePythonVisitor::vel)
-        .def("acc", &TrajectorySamplePythonVisitor::acc)
+        .def("value", &TrajectorySamplePythonVisitor::value)
+        .def("derivative", &TrajectorySamplePythonVisitor::derivative)
+        .def("second_derivative", &TrajectorySamplePythonVisitor::second_derivative)
 
-        .def("pos", &TrajectorySamplePythonVisitor::setpos_vec)
-        .def("pos", &TrajectorySamplePythonVisitor::setpos_se3)
-        .def("vel", &TrajectorySamplePythonVisitor::setvel)
-        .def("acc", &TrajectorySamplePythonVisitor::setacc)
+        .def("value", &TrajectorySamplePythonVisitor::setvalue_vec)
+        .def("value", &TrajectorySamplePythonVisitor::setvalue_se3)
+        .def("derivative", &TrajectorySamplePythonVisitor::setderivative)
+        .def("second_derivative", &TrajectorySamplePythonVisitor::setsecond_derivative)
+
+        // Deprecated methods:
+        .def("pos", &TrajectorySamplePythonVisitor::value,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .value"))
+        .def("vel", &TrajectorySamplePythonVisitor::derivative,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .derivative"))
+        .def("acc", &TrajectorySamplePythonVisitor::second_derivative,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .second_derivative"))
+
+        .def("pos", &TrajectorySamplePythonVisitor::setvalue_vec,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .value"))
+        .def("pos", &TrajectorySamplePythonVisitor::setvalue_se3,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .value"))
+        .def("vel", &TrajectorySamplePythonVisitor::setderivative,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .derivative"))
+        .def("acc", &TrajectorySamplePythonVisitor::setsecond_derivative,
+            pinocchio::python::deprecated_function<>("This method is now deprecated. Please use .second_derivative"))
         ;
       }
 
-      static void setpos_vec(TrajSample & self, const Eigen::VectorXd pos){
-        assert (self.pos.size() == pos.size());
-        self.pos = pos;
+      static void setvalue_vec(TrajSample & self, const Eigen::VectorXd value){
+        assert (self.getValue().size() == value.size());
+        self.setValue(value);
       }
-      static void setpos_se3(TrajSample & self, const pinocchio::SE3 & pos){
-        assert (self.pos.size() == 12);
-        tsid::math::SE3ToVector(pos, self.pos);
+      static void setvalue_se3(TrajSample & self, const pinocchio::SE3 & value){
+        assert (self.getValue().size() == 12);
+TSID_DISABLE_WARNING_PUSH
+TSID_DISABLE_WARNING_DEPRECATED
+        tsid::math::SE3ToVector(value, self.pos);
+TSID_DISABLE_WARNING_POP
       }
-      static void setvel(TrajSample & self, const Eigen::VectorXd vel){
-        assert (self.vel.size() == vel.size());
-        self.vel = vel;
+      static void setderivative(TrajSample & self, const Eigen::VectorXd derivative){
+        assert (self.getDerivative().size() == derivative.size());
+        self.setDerivative(derivative);
       }
-      static void setacc(TrajSample & self, const Eigen::VectorXd acc){
-        assert (self.acc.size() == acc.size());
-        self.acc = acc;
+      static void setsecond_derivative(TrajSample & self, const Eigen::VectorXd second_derivative){
+        assert (self.getSecondDerivative().size() == second_derivative.size());
+        self.setSecondDerivative(second_derivative);
       }
       static void resize(TrajSample & self, const unsigned int & size){
           self.resize(size, size);
       }
-      static void resize2(TrajSample & self, const unsigned int & pos_size, const unsigned int & vel_size){
-          self.resize(pos_size, vel_size);
+      static void resize2(TrajSample & self, const unsigned int & value_size, const unsigned int & derivative_size){
+          self.resize(value_size, derivative_size);
       }
-      static Eigen::VectorXd pos(const TrajSample & self){
-          return self.pos;
+      static Eigen::VectorXd value(const TrajSample & self){
+          return self.getValue();
       }
-      static Eigen::VectorXd vel(const TrajSample & self){
-          return self.vel;
+      static Eigen::VectorXd derivative(const TrajSample & self){
+          return self.getDerivative();
       }
-      static Eigen::VectorXd acc(const TrajSample & self){
-          return self.acc;
+      static Eigen::VectorXd second_derivative(const TrajSample & self){
+          return self.getSecondDerivative();
       }
 
       static void expose(const std::string & class_name)

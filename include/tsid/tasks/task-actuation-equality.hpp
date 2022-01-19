@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2021 CNRS INRIA LORIA
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -15,15 +15,56 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_tasks_fwd_hpp__
-#define __invdyn_tasks_fwd_hpp__
+#ifndef __invdyn_task_actuation_equality_hpp__
+#define __invdyn_task_actuation_equality_hpp__
+
+#include <tsid/tasks/task-actuation.hpp>
+#include <tsid/math/constraint-equality.hpp>
 
 namespace tsid
 {
   namespace tasks
   {
-    
+    class TaskActuationEquality : public TaskActuation
+    {
+    public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+      typedef math::Index Index;
+      typedef math::Vector Vector;
+      typedef math::VectorXi VectorXi;
+      typedef math::ConstraintEquality ConstraintEquality;
+      typedef pinocchio::Data Data;
+
+      TaskActuationEquality(const std::string & name,
+                            RobotWrapper & robot);
+
+      int dim() const;
+
+      const ConstraintBase & compute(const double t,
+                                     ConstRefVector q,
+                                     ConstRefVector v,
+                                     Data & data);
+
+      const ConstraintBase & getConstraint() const;
+
+      void setReference(math::ConstRefVector ref);
+      const Vector & getReference() const;
+
+      void setWeightVector(math::ConstRefVector weights);
+      const Vector & getWeightVector() const;
+
+      const Vector & mask() const;
+      void mask(const Vector & mask);
+
+    protected:
+      Vector m_mask;
+      VectorXi m_activeAxes;
+      Vector m_ref;
+      Vector m_weights;
+      ConstraintEquality m_constraint;
+    };
   }
 }
 
-#endif // ifndef __invdyn_tasks_fwd_hpp__
+#endif // ifndef __invdyn_task_actuation_equality_hpp__

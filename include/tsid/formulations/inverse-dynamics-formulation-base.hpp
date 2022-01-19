@@ -18,7 +18,7 @@
 #ifndef __invdyn_inverse_dynamics_formulation_base_hpp__
 #define __invdyn_inverse_dynamics_formulation_base_hpp__
 
-#include "tsid/deprecation.hpp"
+#include "tsid/deprecated.hh"
 #include "tsid/math/fwd.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
 #include "tsid/tasks/task-actuation.hpp"
@@ -118,7 +118,7 @@ namespace tsid
     virtual bool addRigidContact(ContactBase & contact, double force_regularization_weight,
                                  double motion_weight=1.0, unsigned int motion_priority_level=0) = 0;
 
-    DEPRECATED virtual bool addRigidContact(ContactBase & contact);
+    TSID_DEPRECATED virtual bool addRigidContact(ContactBase & contact);
 
     /**
      * @brief Update the weights associated to the specified contact

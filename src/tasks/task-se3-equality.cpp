@@ -97,10 +97,26 @@ namespace tsid
     void TaskSE3Equality::setReference(TrajectorySample & ref)
     {
       m_ref = ref;
-      vectorToSE3(ref.pos, m_M_ref);
-      m_v_ref = Motion(ref.vel);
-      m_a_ref = Motion(ref.acc);
+TSID_DISABLE_WARNING_PUSH
+TSID_DISABLE_WARNING_DEPRECATED
+      assert(ref.pos.size() == 12);
+      m_M_ref.translation( ref.pos.head<3>());
+      m_M_ref.rotation(MapMatrix3(&ref.pos(3), 3, 3));
+TSID_DISABLE_WARNING_POP
+      m_v_ref = Motion(ref.getDerivative());
+      m_a_ref = Motion(ref.getSecondDerivative());
     }
+
+    void TaskSE3Equality::setReference(const SE3 & ref)
+    {
+      TrajectorySample s(12, 6);
+TSID_DISABLE_WARNING_PUSH
+TSID_DISABLE_WARNING_DEPRECATED
+      tsid::math::SE3ToVector(ref, s.pos);
+TSID_DISABLE_WARNING_POP
+      setReference(s);
+    }
+
 
     const TrajectorySample & TaskSE3Equality::getReference() const
     {
@@ -146,7 +162,7 @@ namespace tsid
 
     const Vector & TaskSE3Equality::acceleration_ref() const
     {
-      return m_ref.acc;
+      return m_ref.getSecondDerivative();
     }
 
     const Vector & TaskSE3Equality::getDesiredAcceleration() const
@@ -196,19 +212,7 @@ namespace tsid
       // Transformation from local to world
       m_wMl.rotation(oMi.rotation());
 
-      // Matrix Jpinv, Lambda, Lambda_inv;
       if (m_local_frame) {
-        // Jpinv.setZero(m_J.cols(), m_J.rows());
-        // pseudoInverse(m_J, Jpinv, 1e-6);
-        // Lambda = Jpinv.transpose() * m_robot.mass(data) * Jpinv;
-        // Lambda_inv.setZero(Lambda.cols(), Lambda.rows());
-        // pseudoInverse(Lambda, Lambda_inv, 1e-6);
-        // Matrix LKP = (Lambda_inv * m_Kp).cwiseAbs();
-        // Matrix LKD = (Lambda_inv * m_Kd).cwiseAbs();
-        // //std::cout << "##################### Lambda_inv se3: "<<  Lambda_inv << "################################" << std::endl;        
-        // std::cout << "##################### Lambda_inv * m_Kp se3: "<<  LKP << "################################" << std::endl;
-        // std::cout << "##################### Lambda_inv * m_Kd se3: "<<  LKD << "################################" << std::endl;
-        
         m_p_error_vec = m_p_error.toVector();
         m_v_error =  m_wMl.actInv(m_v_ref) - v_frame;  // vel err in local frame
 
@@ -228,16 +232,6 @@ namespace tsid
         // Use an explicit temporary `m_J_rotated` here to avoid allocations.
         m_J_rotated.noalias() = m_wMl.toActionMatrix() * m_J;
         m_J = m_J_rotated;
-        // Jpinv.setZero(m_J.cols(), m_J.rows());
-        // pseudoInverse(m_J, Jpinv, 1e-6);
-        // Lambda = Jpinv.transpose() * m_robot.mass(data) * Jpinv;
-        // Lambda_inv.setZero(Lambda.cols(), Lambda.rows());
-        // pseudoInverse(Lambda, Lambda_inv, 1e-6);
-        // Matrix LKP = (Lambda_inv * m_Kp).cwiseAbs();
-        // Matrix LKD = (Lambda_inv * m_Kd).cwiseAbs();
-        // //std::cout << "##################### Lambda_inv se3: "<<  Lambda_inv << "################################" << std::endl;        
-        // std::cout << "##################### Lambda_inv * m_Kp se3: "<<  LKP << "################################" << std::endl;
-        // std::cout << "##################### Lambda_inv * m_Kd se3: "<<  LKD << "################################" << std::endl;
 
         // desired acc in local world-oriented frame
         m_a_des = m_Kp.cwiseProduct(m_p_error_vec) + m_Kd.cwiseProduct(m_v_error.toVector()) + m_a_ref.toVector();
@@ -261,7 +255,7 @@ namespace tsid
 
         idx += 1;
       }
-      
+
       return m_constraint;
     }
   }

@@ -105,12 +105,12 @@ namespace tsid
     }
     const Vector & TaskAMEquality::momentum_ref() const
     {
-      return m_ref.vel;
+      return m_ref.getValue();
     }
 
     const Vector & TaskAMEquality::dmomentum_ref() const
     {
-      return m_ref.acc;
+      return m_ref.getDerivative();
     }
 
     const ConstraintBase & TaskAMEquality::getConstraint() const
@@ -128,20 +128,10 @@ namespace tsid
       const Matrix6x & J_am = m_robot.momentumJacobian(data);
       m_J_am = J_am.bottomRows(3);
       m_L = m_J_am * v;
-      m_L_error = m_L - m_ref.vel;
-
-      // Matrix Lambda_inv, Lambda, Jpinv;
-      // Jpinv.setZero(m_J_am.cols(), m_J_am.rows());
-      // pseudoInverse(m_J_am, Jpinv, 1e-6);
-      // Lambda = Jpinv.transpose() * m_robot.mass(data) * Jpinv;
-      // Lambda_inv.setZero(Lambda.cols(), Lambda.rows());
-      // pseudoInverse(Lambda, Lambda_inv, 1e-6);
-      // //std::cout << "##################### Minv am: "<<  Minv << "################################" << std::endl;
-      // //std::cout << "##################### Lambda_inv am: "<<  Lambda_inv << "################################" << std::endl;
-      // std::cout << "##################### Lambda_inv * m_Kp am: "<<  Lambda_inv * m_Kp << "################################" << std::endl;
+      m_L_error = m_L - m_ref.getValue();
 
       m_dL_des = - m_Kp.cwiseProduct(m_L_error)
-                + m_ref.acc;
+                + m_ref.getDerivative();
 
 #ifndef NDEBUG
 //      std::cout<<m_name<<" errors: "<<m_L_error.norm()<<" "
@@ -154,6 +144,6 @@ namespace tsid
 
       return m_constraint;
     }
-    
+
   }
 }

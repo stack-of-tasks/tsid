@@ -1,15 +1,9 @@
-import copy
-
 import numpy as np
-import pinocchio as se3
-
 import tsid
 
 print("")
 print("Test Solvers")
 print("")
-
-se3.switchToNumpyMatrix()
 
 EPS = 1e-3
 nTest = 100
@@ -29,15 +23,15 @@ solver = tsid.SolverHQuadProg("qp solver")
 solver.resize(n, neq, nin)
 
 HQPData = tsid.HQPData()
-A1 = np.matrix(np.random.rand(n, n)) + 0.001 * np.matrix(np.eye(n))
-b1 = np.matrix(np.random.rand(n)).transpose()
+A1 = np.random.rand(n, n) + 0.001 * np.eye(n)
+b1 = np.random.rand(n)
 cost = tsid.ConstraintEquality("c1", A1, b1)
 
-x = np.linalg.inv(A1) * b1
-A_in = np.matrix(np.random.rand(nin, n))
-A_lb = np.matrix(np.random.rand(nin)).transpose() * NORMAL_DISTR_VAR
-A_ub = np.matrix(np.random.rand(nin)).transpose() * NORMAL_DISTR_VAR
-constrVal = A_in * x
+x = np.linalg.inv(A1) @ b1
+A_in = np.random.rand(nin, n)
+A_lb = np.random.rand(nin) * NORMAL_DISTR_VAR
+A_ub = np.random.rand(nin) * NORMAL_DISTR_VAR
+constrVal = A_in @ x
 
 for i in range(0, nin):
     if A_ub[i] <= A_lb[i]:
@@ -50,8 +44,8 @@ for i in range(0, nin):
         A_lb[i] = constrVal[i] - MARGIN_PERC * np.abs(constrVal[i])
 
 in_const = tsid.ConstraintInequality("ini1", A_in, A_lb, A_ub)
-A_eq = np.matrix(np.random.rand(neq, n))
-b_eq = A_eq * x
+A_eq = np.random.rand(neq, n)
+b_eq = A_eq @ x
 eq_const = tsid.ConstraintEquality("eq1", A_eq, b_eq)
 
 const1 = tsid.ConstraintLevel()
@@ -73,8 +67,8 @@ HQPData.print_all()
 gradientPerturbations = []
 hessianPerturbations = []
 for i in range(0, nTest):
-    gradientPerturbations.append(np.matrix(np.random.rand(n) * GRADIENT_PERTURBATION_VARIANCE).transpose())
-    hessianPerturbations.append(np.matrix(np.random.rand(n, n) * HESSIAN_PERTURBATION_VARIANCE))
+    gradientPerturbations.append(np.random.rand(n) * GRADIENT_PERTURBATION_VARIANCE)
+    hessianPerturbations.append(np.random.rand(n, n) * HESSIAN_PERTURBATION_VARIANCE)
 
 for i in range(0, nTest):
     cost.setMatrix(cost.matrix + hessianPerturbations[i])
@@ -82,6 +76,6 @@ for i in range(0, nTest):
 
     HQPoutput = solver.solve(HQPData)
 
-    assert np.linalg.norm(A_eq * HQPoutput.x - b_eq, 2) < EPS
-    # assert (A_in * HQPoutput.x <= A_ub + EPS).all()
-    # assert (A_in * HQPoutput.x > A_lb - EPS).all()
+    assert np.linalg.norm(A_eq @ HQPoutput.x - b_eq, 2) < EPS
+    # assert (A_in @ HQPoutput.x <= A_ub + EPS).all()
+    # assert (A_in @ HQPoutput.x > A_lb - EPS).all()

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 University of Trento
+// Copyright (c) 2021 LAAS-CNRS, University of Trento
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -42,7 +42,7 @@ namespace tsid
       void visit(PyClass& cl) const
       {
         cl
-        .def(bp::init<std::string, robots::RobotWrapper &, double, std::string> ((bp::arg("name"), bp::arg("robot"), bp::arg("dt"), bp::arg("contact_name")), "Default Constructor"))
+        .def(bp::init<std::string, robots::RobotWrapper &, double, contacts::ContactBase &> ((bp::arg("name"), bp::arg("robot"), bp::arg("dt"), bp::arg("contact")), "Default Constructor"))
         .add_property("dim", &TaskContactForceEquality::dim, "return dimension size")
         .def("setReference", &TaskContactForceEqualityPythonVisitor::setReference, bp::arg("ref"))
         .def("setExternalForce", &TaskContactForceEqualityPythonVisitor::setExternalForce, bp::arg("f_ext"))
@@ -52,6 +52,11 @@ namespace tsid
         .add_property("Kp", bp::make_function(&TaskContactForceEqualityPythonVisitor::Kp, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("Kd", bp::make_function(&TaskContactForceEqualityPythonVisitor::Kd, bp::return_value_policy<bp::copy_const_reference>()))
         .add_property("Ki", bp::make_function(&TaskContactForceEqualityPythonVisitor::Kd, bp::return_value_policy<bp::copy_const_reference>()))
+        .add_property("getLeakRate", bp::make_function(&TaskContactForceEqualityPythonVisitor::getLeakRate, bp::return_value_policy<bp::copy_const_reference>()))
+        .def("setKp", &TaskContactForceEqualityPythonVisitor::setKp, bp::arg("Kp"))
+        .def("setKd", &TaskContactForceEqualityPythonVisitor::setKd, bp::arg("Kd"))
+        .def("setKi", &TaskContactForceEqualityPythonVisitor::setKi, bp::arg("Ki"))
+        .def("setLeakRate", &TaskContactForceEqualityPythonVisitor::setLeakRate, bp::arg("leak"))
         ;
       }
       static std::string name(TaskContactForceEquality & self){
@@ -81,6 +86,21 @@ namespace tsid
       }
       static const Eigen::VectorXd & Ki (TaskContactForceEquality & self){
         return self.Ki();
+      }
+      static const double & getLeakRate (TaskContactForceEquality & self){
+        return self.getLeakRate();
+      }
+      static void setKp (TaskContactForceEquality & self, const::Eigen::VectorXd Kp){
+        return self.Kp(Kp);
+      }
+      static void setKd (TaskContactForceEquality & self, const::Eigen::VectorXd Kd){
+        return self.Kd(Kd);
+      }
+      static void setKi (TaskContactForceEquality & self, const::Eigen::VectorXd Ki){
+        return self.Ki(Ki);
+      }
+      static void setLeakRate (TaskContactForceEquality & self, const double leak){
+        return self.setLeakRate(leak);
       }
       static void expose(const std::string & class_name)
       {

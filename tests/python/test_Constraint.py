@@ -7,12 +7,12 @@ print("")
 print("Test Constraint Bound")
 print("")
 
-se3.switchToNumpyMatrix()
+#se3.switchToNumpyMatrix()
 
 tol = 1e-5
 n = 5
-lb = np.matrix(-1.0 * np.ones(n)).transpose()
-ub = np.matrix(np.ones(n)).transpose()
+lb = -1.0 * np.ones(n)
+ub = np.ones(n)
 ConstBound = tsid.ConstraintBound("bounds", lb, ub)
 
 assert ConstBound.isBound
@@ -26,12 +26,12 @@ assert lb.all() == ConstBound.lowerBound.all()
 assert ub.all() == ConstBound.upperBound.all()
 
 lb *= 2.0
-assert np.linalg.norm(lb - ConstBound.lowerBound, 2) is not 0
+assert np.linalg.norm(lb - ConstBound.lowerBound, 2) != 0
 ConstBound.setLowerBound(lb)
 assert lb.all() == ConstBound.lowerBound.all()
 
 ub *= 2.0
-assert np.linalg.norm(ub - ConstBound.upperBound, 2) is not 0
+assert np.linalg.norm(ub - ConstBound.upperBound, 2) != 0
 ConstBound.setUpperBound(ub)
 assert ub.all() == ConstBound.upperBound.all()
 assert np.linalg.norm(ub - ConstBound.upperBound, 2) < tol
@@ -41,8 +41,8 @@ print("Test Constraint Equality")
 print("")
 n = 5
 m = 2
-A = np.matrix(np.ones((m, n)))
-b = np.matrix(np.ones(m)).transpose()
+A = np.ones((m, n))
+b = np.ones(m)
 equality = tsid.ConstraintEquality("equality", A, b)
 
 assert not equality.isBound
@@ -56,12 +56,12 @@ assert np.linalg.norm(A - equality.matrix, 2) < tol
 assert np.linalg.norm(b - equality.vector, 2) < tol
 
 b *= 2.0
-assert np.linalg.norm(b - equality.vector, 2) is not 0
+assert np.linalg.norm(b - equality.vector, 2) != 0
 equality.setVector(b)
 assert np.linalg.norm(b - equality.vector, 2) < tol
 
 A *= 2.0
-assert np.linalg.norm(A - equality.matrix, 2) is not 0
+assert np.linalg.norm(A - equality.matrix, 2) != 0
 equality.setMatrix(A)
 assert np.linalg.norm(A - equality.matrix, 2) < tol
 
@@ -71,9 +71,9 @@ print("")
 
 n = 5
 m = 2
-A = np.matrix(np.ones((m, n)))
-lb = np.matrix(-np.ones(m)).transpose()
-ub = np.matrix(np.ones(m)).transpose()
+A = np.ones((m, n))
+lb = -np.ones(m)
+ub = np.ones(m)
 inequality = tsid.ConstraintInequality("inequality", A, lb, ub)
 
 assert not inequality.isBound
@@ -84,12 +84,12 @@ assert inequality.rows == m
 assert inequality.cols == n
 
 lb *= 2.0
-assert np.linalg.norm(lb - inequality.lowerBound, 2) is not 0
+assert np.linalg.norm(lb - inequality.lowerBound, 2) != 0
 inequality.setLowerBound(lb)
 assert np.linalg.norm(lb - inequality.lowerBound, 2) < tol
 
 A *= 2.0
-assert np.linalg.norm(A - inequality.matrix, 2) is not 0
+assert np.linalg.norm(A - inequality.matrix, 2) != 0
 inequality.setMatrix(A)
 assert np.linalg.norm(A - inequality.matrix, 2) < tol
 

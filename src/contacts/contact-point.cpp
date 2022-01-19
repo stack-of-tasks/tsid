@@ -124,16 +124,16 @@ void ContactPoint:: updateForceGeneratorMatrix()
 unsigned int ContactPoint::n_motion() const { return m_motionTask.dim(); }
 unsigned int ContactPoint::n_force() const { return 3; }
 
-const Vector & ContactPoint::Kp() 
-{ 
-  m_Kp3 = m_motionTask.Kp().head<3>(); 
-  return m_Kp3; 
+const Vector & ContactPoint::Kp()
+{
+  m_Kp3 = m_motionTask.Kp().head<3>();
+  return m_Kp3;
 }
 
-const Vector & ContactPoint::Kd() 
-{ 
-  m_Kd3 = m_motionTask.Kd().head<3>(); 
-  return m_Kd3; 
+const Vector & ContactPoint::Kd()
+{
+  m_Kd3 = m_motionTask.Kd().head<3>();
+  return m_Kd3;
 }
 
 void ContactPoint::Kp(ConstRefVector Kp)
@@ -202,9 +202,7 @@ void ContactPoint::setForceReference(ConstRefVector & f_ref)
 
 void ContactPoint::setReference(const SE3 & ref)
 {
-  TrajectorySample s(12, 6);
-  SE3ToVector(ref, s.pos);
-  m_motionTask.setReference(s);
+  m_motionTask.setReference(ref);
 }
 
 const ConstraintBase & ContactPoint::computeMotionTask(const double t,

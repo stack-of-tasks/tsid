@@ -59,6 +59,7 @@ namespace tsid
       const ConstraintBase & getConstraint() const;
 
       void setReference(TrajectorySample & ref);
+      void setReference(const SE3 & ref);
       const TrajectorySample & getReference() const;
       const Matrix & getJacobian() const;
 
