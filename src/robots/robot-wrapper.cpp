@@ -60,7 +60,6 @@ namespace tsid
                                bool verbose)
       : m_verbose(verbose)
     {
-      std::cout<<"[RobotWrapper] Constructor RobotWrapper(const pinocchio::Model&, bool) is deprecated. You should use RobotWrapper(const pinocchio::Model&, const pinocchio::JointModelVariant&, bool) instead.\n";
       m_model = m;
       m_model_filename = "";
       m_na = m_model.nv-6;
