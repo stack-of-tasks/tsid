@@ -334,7 +334,7 @@ const ConstraintBase & TaskEnergy::compute(const double ,
 
     i++;
   }
-  // Sum of the term along the tasks
+  // Sum of the terms along the tasks
   double A = m_A.sum();
   double B = non_linear_effect_term - contact_forces_term; // B^phi of eq (22)
   double A_tot = A + task_force_term; // B^sigma total of eq (22)

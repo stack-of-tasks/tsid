@@ -431,7 +431,7 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     if(c.isEquality())
     {
       it->constraint->matrix().leftCols(m_v) = c.matrix();
-      it->constraint->vector() = beta* gamma* c.vector();     
+      it->constraint->vector() = beta* gamma* c.vector();
     }
     else if(c.isInequality())
     {

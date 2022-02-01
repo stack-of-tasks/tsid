@@ -94,8 +94,8 @@ namespace tsid
       const Vector & position_ref() const;
       const Vector & velocity_ref() const;
       const Vector & acceleration_ref() const;
-      const Vector & Kp() override;
-      const Vector & Kd() override;
+      const Vector & Kp();
+      const Vector & Kd();
       void Kp(ConstRefVector Kp);
       void Kd(ConstRefVector Kp);
 
