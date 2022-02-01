@@ -217,8 +217,8 @@ TSID_DISABLE_WARNING_POP
         m_v_error =  m_wMl.actInv(m_v_ref) - v_frame;  // vel err in local frame
 
         // desired acc in local frame
-        m_a_des = m_Kp.cwiseProduct(m_p_error_vec) 
-                  + m_Kd.cwiseProduct(m_v_error.toVector()) 
+        m_a_des = m_Kp.cwiseProduct(m_p_error_vec)
+                  + m_Kd.cwiseProduct(m_v_error.toVector())
                   + m_wMl.actInv(m_a_ref).toVector();
       } else {
         m_p_error_vec = m_wMl.toActionMatrix() *   // pos err in local world-oriented frame
@@ -232,8 +232,8 @@ TSID_DISABLE_WARNING_POP
         m_drift = m_wMl.act(m_drift);
 
         // desired acc in local world-oriented frame
-        m_a_des = m_Kp.cwiseProduct(m_p_error_vec) 
-                  + m_Kd.cwiseProduct(m_v_error.toVector()) 
+        m_a_des = m_Kp.cwiseProduct(m_p_error_vec)
+                  + m_Kd.cwiseProduct(m_v_error.toVector())
                   + m_a_ref.toVector();
 
         // Use an explicit temporary `m_J_rotated` here to avoid allocations.
