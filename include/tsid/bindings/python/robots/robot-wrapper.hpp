@@ -41,8 +41,9 @@ namespace tsid
       {
         cl
         .def(bp::init<std::string, std_vec, bool>((bp::arg("filename"), bp::arg("package_dir"), bp::arg("verbose")), "Default constructor without RootJoint."))
-        .def(bp::init<pinocchio::Model, bool>((bp::arg("Pinocchio Model"), bp::arg("verbose")), "Default constructor from pinocchio model"))
-        .def(bp::init<std::string, std_vec, pinocchio::JointModelVariant &, bool>((bp::arg("filename"), bp::arg("package_dir"), bp::arg("roottype"), bp::arg("verbose")), "Default constructor without RootJoint."))
+        .def(bp::init<std::string, std_vec, pinocchio::JointModelVariant &, bool>((bp::arg("filename"), bp::arg("package_dir"), bp::arg("roottype"), bp::arg("verbose")), "Default constructor with RootJoint."))
+        .def(bp::init<pinocchio::Model, bool>((bp::arg("Pinocchio Model"), bp::arg("verbose")), "Default constructor from pinocchio model without RootJoint."))
+        .def(bp::init<pinocchio::Model, robots::RobotWrapper::RootJointType, bool>((bp::arg("Pinocchio Model"), bp::arg("rootJoint"), bp::arg("verbose")), "Default constructor from pinocchio model with RootJoint."))
         .def("__init__",bp::make_constructor(RobotPythonVisitor<Robot> ::makeClass))
         .add_property("nq", &Robot::nq)
         .add_property("nv", &Robot::nv)
@@ -179,6 +180,11 @@ namespace tsid
                           bp::no_init)
         .def(RobotPythonVisitor<Robot>());
         ;
+        bp::enum_<robots::RobotWrapper::RootJointType>("RootJointType")
+            .value("FIXED_BASE_SYSTEM", robots::RobotWrapper::FIXED_BASE_SYSTEM)
+            .value("FLOATING_BASE_SYSTEM", robots::RobotWrapper::FLOATING_BASE_SYSTEM)
+            .export_values()
+            ;
       }
     };
   }
