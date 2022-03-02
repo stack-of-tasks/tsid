@@ -20,7 +20,7 @@
 // #include <tsid/utils/stop-watch.hpp>
 
 /** This class has been implemented following :
-* Andrea del Prete. Joint Position and Velocity Bounds in Discrete-Time 
+* Andrea del Prete. Joint Position and Velocity Bounds in Discrete-Time
 * Acceleration/Torque Control of Robot Manipulators. IEEE Robotics and Automation
 * Letters, IEEE 2018, 3 (1), pp.281-288.￿10.1109/LRA.2017.2738321￿. hal-01356989v3
 * And
@@ -47,8 +47,8 @@ namespace tsid
     {
       assert(dt>0.0);
       m_eps = 1e-10;
-      m_qMin=Vector::Constant(m_na,1,1e10);
-      m_qMax=Vector::Constant(m_na,1,-1e10);
+      m_qMin=Vector::Constant(m_na,1,-1e10);
+      m_qMax=Vector::Constant(m_na,1,1e10);
       m_dqMax=Vector::Constant(m_na,1,1e10);
       m_ddqMax=Vector::Constant(m_na,1,1e10);
       m_impose_position_bounds=false;
@@ -207,7 +207,7 @@ namespace tsid
       computeAccLimits(q,v,m_verbose);
       m_constraint.upperBound()= m_ddqUB;
       m_constraint.lowerBound()= m_ddqLB;
-      // Eigen::internal::set_is_malloc_allowed(true); 
+      // Eigen::internal::set_is_malloc_allowed(true);
       // getProfiler().stop("TaskJointPosVelAccBounds");
       // getProfiler().report_all(9, std::cout);
       return m_constraint;
@@ -374,7 +374,7 @@ namespace tsid
           m_ddq_1[i] = m_minus_dq_over_dt[i];
           if(verbose==true)
           {
-            std::cout << "Error: state (" << qa[i] <<"," << dqa[i] <<") of joint "<< 
+            std::cout << "Error: state (" << qa[i] <<"," << dqa[i] <<") of joint "<<
             i <<  "not viable because delta is negative: "<< m_delta_1 << std::endl;
           }
         }
@@ -387,7 +387,7 @@ namespace tsid
           m_ddq_2[i] = m_minus_dq_over_dt[i];
           if(verbose==true)
           {
-            std::cout << "Error: state (" << qa[i] <<"," << dqa[i] <<") of joint "<< 
+            std::cout << "Error: state (" << qa[i] <<"," << dqa[i] <<") of joint "<<
               i <<  "not viable because delta is negative: "<< m_delta_2 << std::endl;
           }
         }
@@ -461,7 +461,7 @@ namespace tsid
 
         m_ddqLB[i]=m_lb.maxCoeff();
         m_ddqUB[i]=m_ub.minCoeff();
-        
+
         if(m_ddqUB[i] < m_ddqLB[i])
         {
           if(verbose==true)
