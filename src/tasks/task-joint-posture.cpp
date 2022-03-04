@@ -17,6 +17,7 @@
 
 #include <tsid/tasks/task-joint-posture.hpp>
 #include "tsid/robots/robot-wrapper.hpp"
+#include <pinocchio/algorithm/joint-configuration.hpp>
 
 namespace tsid
 {
@@ -29,7 +30,7 @@ namespace tsid
     TaskJointPosture::TaskJointPosture(const std::string & name,
                                      RobotWrapper & robot):
       TaskMotion(name, robot),
-      m_ref(robot.na()),
+      m_ref(robot.nq(), robot.na()),
       m_constraint(name, robot.na(), robot.nv())
     {
       m_Kp.setZero(robot.na());
@@ -92,7 +93,7 @@ namespace tsid
 
     void TaskJointPosture::setReference(const TrajectorySample & ref)
     {
-      assert(ref.getValue().size()==m_robot.na());
+      assert(ref.getValue().size()==m_robot.nq());
       assert(ref.getDerivative().size()==m_robot.na());
       assert(ref.getSecondDerivative().size()==m_robot.na());
       m_ref = ref;
@@ -154,9 +155,10 @@ namespace tsid
                                                     Data & )
     {
       // Compute errors
-      m_p = q.tail(m_robot.na());
+      m_p_error = pinocchio::difference(m_robot.model(), m_ref.getValue(), q);
+      m_p_error = m_p_error.tail(m_robot.na());
+
       m_v = v.tail(m_robot.na());
-      m_p_error = m_p - m_ref.getValue();
       m_v_error = m_v - m_ref.getDerivative();
       m_a_des = - m_Kp.cwiseProduct(m_p_error)
                 - m_Kd.cwiseProduct(m_v_error)
