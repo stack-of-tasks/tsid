@@ -146,6 +146,16 @@ palm_obj = pin.GeometryObject(
                                )
 geom_model.addGeometryObject(palm_obj)
 
+finger1_obj = pin.GeometryObject(
+                                "finger1Geom",
+                                id_hand,
+                                fcl.Cylinder(0.02, 0.1),
+                                pin.SE3(np.identity(3), np.array([0,0.05, 0.05])),
+                                "", np.ones(3), False, # Default values
+                                color_hand
+                               )
+geom_model.addGeometryObject(finger1_obj)
+
 
 # Main
 from pinocchio.visualize import GepettoVisualizer as Visualizer
