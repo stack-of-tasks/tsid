@@ -24,24 +24,23 @@ id_base = 0
 
 color_base = np.array([1.,0.1,0.1,1.])
 
-geom_base = pin.GeometryObject("base",
-                               id_base, # parent
-                               fcl.Box(0.5,0.5,0.02),
-                               pin.SE3(np.identity(3), np.array([0,0,-0.01-radius])),
-                               "", np.ones(3), False, # Default values
-                               color_base
-                              )
-geom_model.addGeometryObject(geom_base)
+geom_model.addGeometryObject(pin.GeometryObject(
+                                                "base",
+                                                id_base, # parent
+                                                fcl.Box(0.5,0.5,0.02),
+                                                pin.SE3(np.identity(3), np.array([0,0,-0.01-radius])),
+                                                "", np.ones(3), False, # Default values
+                                                color_base
+                                                ))
 
-geom_shoulder = pin.GeometryObject(
-                                    "shoulderGeom",
-                                    id_base,
-                                    fcl.Sphere(radius),
-                                    pin.SE3.Identity(),
-                                    "", np.ones(3), False, # Default values
-                                    color_base
-                                  )
-geom_model.addGeometryObject(geom_shoulder)
+geom_model.addGeometryObject(pin.GeometryObject(
+                                                "shoulderGeom",
+                                                id_base,
+                                                fcl.Sphere(radius),
+                                                pin.SE3.Identity(),
+                                                "", np.ones(3), False, # Default values
+                                                color_base
+                                                ))
 
 
 # Upper arm
@@ -61,25 +60,23 @@ set_limit(model, id_upper, pi)
 
 color_upper = np.array([0.1,0.8,0.1,.8])
 
-elbow_obj = pin.GeometryObject(
-                                "elbowGeom",
-                                id_upper,
-                                fcl.Sphere(radius),
-                                pin.SE3(np.identity(3), np.array([0,0, 0.66])),
-                                "", np.ones(3), False, # Default values
-                                color_upper
-                               )
-geom_model.addGeometryObject(elbow_obj)
+geom_model.addGeometryObject(pin.GeometryObject(
+                                                "elbowGeom",
+                                                id_upper,
+                                                fcl.Sphere(radius),
+                                                pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                                                "", np.ones(3), False, # Default values
+                                                color_upper
+                                                ))
 
-upper_obj = pin.GeometryObject(
-                                "upperGeom",
-                                id_upper,
-                                fcl.Cylinder(radius, 0.66),
-                                placement_upper,
-                                "", np.ones(3), False, # Default values
-                                color_upper
-                               )
-geom_model.addGeometryObject(upper_obj)
+geom_model.addGeometryObject(pin.GeometryObject(
+                                                "upperGeom",
+                                                id_upper,
+                                                fcl.Cylinder(radius, 0.66),
+                                                placement_upper,
+                                                "", np.ones(3), False, # Default values
+                                                color_upper
+                                                ))
 
 # Lower arm
 placement_lower = pin.SE3(np.identity(3), np.array([0,0, 0.33]))
@@ -98,25 +95,23 @@ set_limit(model, id_lower, pi)
 
 color_lower = np.array([0.1,0.1,0.8,.8])
 
-wrist_obj = pin.GeometryObject(
-                                "wristGeom",
-                                id_lower,
-                                fcl.Sphere(radius),
-                                pin.SE3(np.identity(3), np.array([0,0, 0.66])),
-                                "", np.ones(3), False, # Default values
-                                color_lower
-                               )
-geom_model.addGeometryObject(wrist_obj)
+geom_model.addGeometryObject(pin.GeometryObject(
+                                                "wristGeom",
+                                                id_lower,
+                                                fcl.Sphere(radius),
+                                                pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                                                "", np.ones(3), False, # Default values
+                                                color_lower
+                                                ))
 
-upper_obj = pin.GeometryObject(
-                                "lowerGeom",
-                                id_lower,
-                                fcl.Cylinder(radius, 0.66),
-                                placement_lower,
-                                "", np.ones(3), False, # Default values
-                                color_lower
-                               )
-geom_model.addGeometryObject(upper_obj)
+geom_model.addGeometryObject(pin.GeometryObject(
+                                                "lowerGeom",
+                                                id_lower,
+                                                fcl.Cylinder(radius, 0.66),
+                                                placement_lower,
+                                                "", np.ones(3), False, # Default values
+                                                color_lower
+                                                ))
 
 
 # Hand
@@ -136,55 +131,49 @@ set_limit(model, id_hand, pi)
 
 color_hand = np.array([0.7,0.7,0.7,.8])
 
-palm_obj = pin.GeometryObject(
-                                "palmGeom",
-                                id_hand,
-                                fcl.Sphere(radius),
-                                pin.SE3(np.identity(3), np.array([0,0, 2*radius])),
-                                "", np.ones(3), False, # Default values
-                                color_hand
-                               )
-geom_model.addGeometryObject(palm_obj)
+geom_model.addGeometryObject(pin.GeometryObject(
+                                                "palmGeom",
+                                                id_hand,
+                                                fcl.Sphere(radius),
+                                                pin.SE3(np.identity(3), np.array([0,0, 2*radius])),
+                                                "", np.ones(3), False, # Default values
+                                                color_hand
+                                                ))
+geom_model.addGeometryObject(pin.GeometryObject(
+                                                "finger1Geom",
+                                                id_hand,
+                                                fcl.Cylinder(0.02, 0.1),
+                                                pin.SE3(np.identity(3), np.array([0.05, 0, 3*radius])),
+                                                "", np.ones(3), False, # Default values
+                                                color_hand
+                                                ))
 
-finger1_obj = pin.GeometryObject(
-                                "finger1Geom",
-                                id_hand,
-                                fcl.Cylinder(0.02, 0.1),
-                                pin.SE3(np.identity(3), np.array([0.05, 0, 3*radius])),
-                                "", np.ones(3), False, # Default values
-                                color_hand
-                               )
-geom_model.addGeometryObject(finger1_obj)
+geom_model.addGeometryObject(pin.GeometryObject(
+                                                "finger2Geom",
+                                                id_hand,
+                                                fcl.Cylinder(0.02, 0.1),
+                                                pin.SE3(np.identity(3), np.array([0, 0, 3*radius])),
+                                                "", np.ones(3), False, # Default values
+                                                color_hand
+                                                ))
 
-finger2_obj = pin.GeometryObject(
-                                "finger2Geom",
-                                id_hand,
-                                fcl.Cylinder(0.02, 0.1),
-                                pin.SE3(np.identity(3), np.array([0, 0, 3*radius])),
-                                "", np.ones(3), False, # Default values
-                                color_hand
-                               )
-geom_model.addGeometryObject(finger2_obj)
+geom_model.addGeometryObject(pin.GeometryObject(
+                                                "finger3Geom",
+                                                id_hand,
+                                                fcl.Cylinder(0.02, 0.1),
+                                                pin.SE3(np.identity(3), np.array([-0.05, 0, 3*radius])),
+                                                "", np.ones(3), False, # Default values
+                                                color_hand
+                                                ))
 
-finger3_obj = pin.GeometryObject(
-                                "finger3Geom",
-                                id_hand,
-                                fcl.Cylinder(0.02, 0.1),
-                                pin.SE3(np.identity(3), np.array([-0.05, 0, 3*radius])),
-                                "", np.ones(3), False, # Default values
-                                color_hand
-                               )
-geom_model.addGeometryObject(finger3_obj)
-
-thumb_obj = pin.GeometryObject(
-                                "thumbGeom",
-                                id_hand,
-                                fcl.Cylinder(0.02, 0.1),
-                                pin.XYZQUATToSE3(np.array([radius, 0, 2*radius] + [0,.707,0,.707])),
-                                "", np.ones(3), False, # Default values
-                                color_hand
-                               )
-geom_model.addGeometryObject(thumb_obj)
+geom_model.addGeometryObject(pin.GeometryObject(
+                                                "thumbGeom",
+                                                id_hand,
+                                                fcl.Cylinder(0.02, 0.1),
+                                                pin.XYZQUATToSE3(np.array([radius, 0, 2*radius] + [0,.707,0,.707])),
+                                                "", np.ones(3), False, # Default values
+                                                color_hand
+                                                ))
 
 
 
