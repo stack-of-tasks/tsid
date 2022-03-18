@@ -3,7 +3,7 @@ import hppfcl as fcl
 import numpy as np
 from math import pi
 from pinocchio.visualize import GepettoVisualizer as Visualizer
-
+import time
 
 def create_simple_robot():
     '''
@@ -199,9 +199,67 @@ viz = Visualizer(model, geom_model, visual_model)
 viz.initViewer()
 viz.loadViewerModel("pinocchio")
 
-# Display a robot configuration.
+# TSID test
+
+import tsid
+robot = tsid.RobotWrapper(model, tsid.FIXED_BASE_SYSTEM, False)
+formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
+
+DT = 0.01
+K_ee = 1.0
+W_ee = 1.0
+
+goal_pose = pin.SE3(np.identity(3), np.array([0.5,0.5, 0.5]))
+
 q0 = pin.neutral(model)
+v0 = np.zeros(robot.nv)
+a0 = np.zeros(robot.na)
+
 viz.display(q0)
-while True:
-    viz.display(pin.randomConfiguration(model))
-    input()
+
+# Solver
+solver = tsid.SolverHQuadProgFast("qp solver")
+solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
+
+## End-effector task
+eeIndex = model.getFrameId("palm")
+
+eeTask = tsid.TaskSE3Equality("ee-task-palm" , robot, "palm")
+eeTask.setKp(K_ee* np.ones(6))
+eeTask.setKd(2.0 * np.sqrt(K_ee) * np.ones(6))
+eeTask.useLocalFrame(True) # Represent jacobian in local frame
+
+eeSample = tsid.TrajectorySample(12, 6)
+eeSample.value(np.concatenate((goal_pose.translation, goal_pose.rotation.flatten('F'))))
+eeSample.derivative(np.zeros(6))
+eeSample.second_derivative(np.zeros(6))
+
+eeTask.setReference(eeSample)
+
+formulation.addMotionTask(eeTask, 1.0, 1, 0.0)
+
+# Resize problem
+solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
+
+# Solve / simulate
+i_print = 0
+t = 0
+q, v = q0, v0
+while t < 10.0: #s
+    # Solve
+    HQPData = formulation.computeProblemData(t, q, v)
+    sol = solver.solve(HQPData)
+    if(sol.status!=0):
+        print(F"Time  {t}  QP problem could not be solved! Error code: {sol.status}")
+
+    dv_next = formulation.getAccelerations(sol)
+
+    # numerical integration
+    v_next = v + DT*dv_next
+    v_mean = (v_next + v) / 2
+    q_next = pin.integrate(model, q, v_mean * DT)
+
+    t += DT
+    q, v = q_next, v_next
+    viz.display(q)
+    time.sleep(DT)
