@@ -5,6 +5,14 @@ from math import pi
 import time
 import sys
 
+
+def set_limit(model, joint_id, val):
+    idx_q = model.joints[joint_id].idx_q
+    nq =  model.joints[joint_id].nq
+    for idx in range(idx_q, idx_q+nq):
+        model.upperPositionLimit[idx] = val
+        model.lowerPositionLimit[idx] = -val
+
 # Create models
 model = pin.Model()
 geom_model = pin.GeometryModel()
@@ -12,101 +20,134 @@ geom_model = pin.GeometryModel()
 radius = 0.1
 
 # Base
-geom_base = pin.GeometryObject("base", 0, fcl.Box(0.5,0.5,0.02), pin.SE3(np.identity(3), np.array([0,0,-0.01])))
-geom_base.meshColor = np.array([1.,0.1,0.1,1.])
+id_base = 0
+
+color_base = np.array([1.,0.1,0.1,1.])
+
+geom_base = pin.GeometryObject("base",
+                               id_base, # parent
+                               fcl.Box(0.5,0.5,0.02),
+                               pin.SE3(np.identity(3), np.array([0,0,-0.01-radius])),
+                               "", np.ones(3), False, # Default values
+                               color_base
+                              )
 geom_model.addGeometryObject(geom_base)
 
-parent_id = 0
+geom_shoulder = pin.GeometryObject(
+                                    "shoulderGeom",
+                                    id_base,
+                                    fcl.Sphere(radius),
+                                    pin.SE3.Identity(),
+                                    "", np.ones(3), False, # Default values
+                                    color_base
+                                  )
+geom_model.addGeometryObject(geom_shoulder)
+
 
 # Upper arm
-joint_placement = pin.SE3.Identity()
-joint_id = model.addJoint(parent_id, pin.JointModelRX(), joint_placement, "shoulder")
-body_inertia = pin.Inertia.FromCylinder(1.0 , radius, 0.66)
-body_placement = joint_placement.copy()
-body_placement.translation[2] = +0.33
-model.appendBodyToJoint(joint_id, body_inertia, body_placement)
+placement_upper = pin.SE3(np.identity(3), np.array([0,0, 0.33]))
+id_upper = model.addJoint(
+                           id_base,
+                           pin.JointModelRX(),
+                           pin.SE3.Identity(),
+                           "shoulder"
+                          )
+model.appendBodyToJoint(
+                         id_upper,
+                         pin.Inertia.FromCylinder(1.0 , radius, 0.66),
+                         placement_upper
+                        )
+set_limit(model, id_upper, pi)
 
-idx_q = model.joints[joint_id].idx_q
-model.upperPositionLimit[idx_q] = pi
-model.lowerPositionLimit[idx_q] = -pi
+color_upper = np.array([0.1,0.8,0.1,.8])
 
-# geom1_name = "UpperArm"
-# shape1 = fcl.Sphere(body_radius)
-# geom1_obj = pin.GeometryObject(geom1_name, joint_id, shape1, body_placement)
-# geom1_obj.meshColor = np.ones((4))
-# geom_model.addGeometryObject(geom1_obj)
+elbow_obj = pin.GeometryObject(
+                                "elbowGeom",
+                                id_upper,
+                                fcl.Sphere(radius),
+                                pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                                "", np.ones(3), False, # Default values
+                                color_upper
+                               )
+geom_model.addGeometryObject(elbow_obj)
 
-geom2_name = "UpperArm"
-shape2 = fcl.Cylinder(radius, 0.66)
-shape2_placement = body_placement.copy()
-
-geom2_obj = pin.GeometryObject(geom2_name, joint_id, shape2, shape2_placement)
-geom2_obj.meshColor = np.array([0.1,0.8,0.1,.8])
-geom_model.addGeometryObject(geom2_obj)
-
-# Update
-parent_id = joint_id
-# joint_placement = body_placement.copy()
+upper_obj = pin.GeometryObject(
+                                "upperGeom",
+                                id_upper,
+                                fcl.Cylinder(radius, 0.66),
+                                placement_upper,
+                                "", np.ones(3), False, # Default values
+                                color_upper
+                               )
+geom_model.addGeometryObject(upper_obj)
 
 # Lower arm
-joint_placement = pin.SE3(np.identity(3), np.array([0,0, 0.66]))
-joint_id = model.addJoint(parent_id, pin.JointModelRX(), joint_placement, "elbow")
+placement_lower = pin.SE3(np.identity(3), np.array([0,0, 0.33]))
+id_lower = model.addJoint(
+                           id_upper,
+                           pin.JointModelRX(),
+                           pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                           "elbow"
+                          )
+model.appendBodyToJoint(
+                         id_lower,
+                         pin.Inertia.FromCylinder(1.0 , radius, 0.66),
+                         placement_lower
+                        )
+set_limit(model, id_lower, pi)
 
-body_inertia = pin.Inertia.FromCylinder(1.0 , radius, 0.66)
+color_lower = np.array([0.1,0.1,0.8,.8])
 
-body_placement = joint_placement = pin.SE3(np.identity(3), np.array([0,0, 0.33]))
-model.appendBodyToJoint(joint_id, body_inertia, body_placement)
+wrist_obj = pin.GeometryObject(
+                                "wristGeom",
+                                id_lower,
+                                fcl.Sphere(radius),
+                                pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                                "", np.ones(3), False, # Default values
+                                color_lower
+                               )
+geom_model.addGeometryObject(wrist_obj)
 
-idx_q = model.joints[joint_id].idx_q
-model.upperPositionLimit[idx_q] = pi
-model.lowerPositionLimit[idx_q] = -pi
+upper_obj = pin.GeometryObject(
+                                "lowerGeom",
+                                id_lower,
+                                fcl.Cylinder(radius, 0.66),
+                                placement_lower,
+                                "", np.ones(3), False, # Default values
+                                color_lower
+                               )
+geom_model.addGeometryObject(upper_obj)
 
-# geom1_name = "UpperArm"
-# shape1 = fcl.Sphere(body_radius)
-# geom1_obj = pin.GeometryObject(geom1_name, joint_id, shape1, body_placement)
-# geom1_obj.meshColor = np.ones((4))
-# geom_model.addGeometryObject(geom1_obj)
-
-geom2_name = "LowerArm"
-shape2 = fcl.Cylinder(radius, 0.66)
-shape2_placement = body_placement.copy()
-
-geom2_obj = pin.GeometryObject(geom2_name, joint_id, shape2, shape2_placement)
-geom2_obj.meshColor = np.array([0.1,0.1,0.8,.8])
-geom_model.addGeometryObject(geom2_obj)
-
-
-# Update
-parent_id = joint_id
-# joint_placement = body_placement.copy()
 
 # Hand
-joint_placement = pin.SE3(np.identity(3), np.array([0,0,0.66]))
-joint_id = model.addJoint(parent_id, pin.JointModelRX(), joint_placement, "wrist")
+placement_hand = pin.SE3(np.identity(3), np.array([0,0, 0.66]))
+id_hand = model.addJoint(
+                           id_lower,
+                           pin.JointModelRX(),
+                           pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                           "elbow"
+                          )
+model.appendBodyToJoint(
+                         id_hand,
+                         pin.Inertia.FromSphere(1.0 , radius),
+                         placement_hand
+                        )
+set_limit(model, id_hand, pi)
 
-body_inertia = pin.Inertia.FromCylinder(1.0 , radius, 0.2)
-body_placement = joint_placement = pin.SE3(np.identity(3), np.array([0,0, 0.1]))
-model.appendBodyToJoint(joint_id, body_inertia, body_placement)
+color_hand = np.array([0.7,0.7,0.7,.8])
 
-idx_q = model.joints[joint_id].idx_q
-model.upperPositionLimit[idx_q] = pi
-model.lowerPositionLimit[idx_q] = -pi
-
-# geom1_name = "UpperArm"
-# shape1 = fcl.Sphere(body_radius)
-# geom1_obj = pin.GeometryObject(geom1_name, joint_id, shape1, body_placement)
-# geom1_obj.meshColor = np.ones((4))
-# geom_model.addGeometryObject(geom1_obj)
-
-geom2_name = "Wrist"
-shape2 = fcl.Cylinder(radius, 0.2)
-shape2_placement = body_placement.copy()
-
-geom2_obj = pin.GeometryObject(geom2_name, joint_id, shape2, shape2_placement)
-geom2_obj.meshColor = np.array([0.7,0.7,0.7,0.8])
-geom_model.addGeometryObject(geom2_obj)
+palm_obj = pin.GeometryObject(
+                                "palmGeom",
+                                id_hand,
+                                fcl.Sphere(radius),
+                                pin.SE3(np.identity(3), np.array([0,0, 2*radius])),
+                                "", np.ones(3), False, # Default values
+                                color_hand
+                               )
+geom_model.addGeometryObject(palm_obj)
 
 
+# Main
 from pinocchio.visualize import GepettoVisualizer as Visualizer
 
 visual_model = geom_model
