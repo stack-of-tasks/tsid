@@ -150,11 +150,42 @@ finger1_obj = pin.GeometryObject(
                                 "finger1Geom",
                                 id_hand,
                                 fcl.Cylinder(0.02, 0.1),
-                                pin.SE3(np.identity(3), np.array([0,0.05, 0.05])),
+                                pin.SE3(np.identity(3), np.array([0.05, 0, 3*radius])),
                                 "", np.ones(3), False, # Default values
                                 color_hand
                                )
 geom_model.addGeometryObject(finger1_obj)
+
+finger2_obj = pin.GeometryObject(
+                                "finger2Geom",
+                                id_hand,
+                                fcl.Cylinder(0.02, 0.1),
+                                pin.SE3(np.identity(3), np.array([0, 0, 3*radius])),
+                                "", np.ones(3), False, # Default values
+                                color_hand
+                               )
+geom_model.addGeometryObject(finger2_obj)
+
+finger3_obj = pin.GeometryObject(
+                                "finger3Geom",
+                                id_hand,
+                                fcl.Cylinder(0.02, 0.1),
+                                pin.SE3(np.identity(3), np.array([-0.05, 0, 3*radius])),
+                                "", np.ones(3), False, # Default values
+                                color_hand
+                               )
+geom_model.addGeometryObject(finger3_obj)
+
+thumb_obj = pin.GeometryObject(
+                                "thumbGeom",
+                                id_hand,
+                                fcl.Cylinder(0.02, 0.1),
+                                pin.XYZQUATToSE3(np.array([radius, 0, 2*radius] + [0,.707,0,.707])),
+                                "", np.ones(3), False, # Default values
+                                color_hand
+                               )
+geom_model.addGeometryObject(thumb_obj)
+
 
 
 # Main
