@@ -252,66 +252,26 @@ viz.initViewer()
 viz.loadViewerModel("pinocchio")
 
 # TSID test
-
-# while True:
-#     q = pin.randomConfiguration(model)
-#     viz.display(q)
-#     input("...")
-
-
 import tsid
 robot = tsid.RobotWrapper(model, tsid.FIXED_BASE_SYSTEM, False)
 formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
 
 DT = 0.01# s
 T_SIM = 30.0 #s
-PRINT_DT = 1.0 #s
+PRINT_DT = 3.0 #s
 
-K_ee = 1.0
-W_ee = 1.0
-
-K_post = 0.02
-W_post = 0.01
-
-goal_pose = pin.SE3(np.identity(3), np.array([0.5,0.5, 0.5]))
+K_post = 1.0
+W_post = 1.0
 
 q0 = pin.neutral(model)
 v0 = np.zeros(robot.nv)
 a0 = np.zeros(robot.na)
 
+q_goal = pin.randomConfiguration(model)
+
 # Solver
 solver = tsid.SolverHQuadProgFast("qp solver")
 solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
-
-## End-effector task
-eeIndex = model.getFrameId("palm")
-
-eeTask = tsid.TaskSE3Equality("ee-task-palm" , robot, "palm")
-eeTask.setKp(K_ee* np.ones(6))
-eeTask.setKd(2.0 * np.sqrt(K_ee) * np.ones(6))
-eeTask.useLocalFrame(True) # Represent jacobian in local frame
-
-eeSample = tsid.TrajectorySample(12, 6)
-eeSample.value(np.concatenate((goal_pose.translation, goal_pose.rotation.flatten('F'))))
-eeSample.derivative(np.zeros(6))
-eeSample.second_derivative(np.zeros(6))
-
-eeTask.setReference(eeSample)
-
-formulation.addMotionTask(eeTask, 1.0, 1, 0.0)
-
-## Bounds and limit tasks
-actuationBoundsTask = tsid.TaskActuationBounds("task-actuation-bounds", robot)
-formulation.addActuationTask(actuationBoundsTask, 1, 0, 0.0)
-tau_max = 10.0 * robot.model().effortLimit
-tau_min = - tau_max
-actuationBoundsTask.setBounds(tau_min, tau_max)
-
-jointBoundsTask = tsid.TaskJointBounds("task-joint-bounds", robot, DT) # dt will be re-set before executing
-formulation.addMotionTask(jointBoundsTask, 1, 0, 0.0)
-v_max = robot.model().velocityLimit
-v_min = - v_max
-jointBoundsTask.setVelocityBounds(v_min, v_max)
 
 ## Posture task
 postureTask = tsid.TaskJointPosture("task-posture", robot)
@@ -319,7 +279,7 @@ postureTask.setKp(K_post * np.ones(robot.na))
 postureTask.setKd(2.0 * np.sqrt(K_post) * np.ones(robot.na))
 
 postureSample = tsid.TrajectorySample(len(q0), len(v0))
-postureSample.value(q0)
+postureSample.value(q_goal)
 postureSample.derivative(v0)
 postureSample.second_derivative(a0)
 
@@ -330,7 +290,6 @@ formulation.addMotionTask(postureTask, W_post, 1, 0.0)
 solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
 
 # Solve / simulate
-i_print = 0
 t = 0
 q, v = q0, v0
 while t < T_SIM: #s
@@ -345,9 +304,9 @@ while t < T_SIM: #s
 
     if( (t//DT)%(1+PRINT_DT//DT) == 0 ):
         print(F"\n{t}s :")
-        print(F"eeTask pos_error : {np.linalg.norm(eeTask.position_error)}")
-        print(F"eeTask vel_error : {np.linalg.norm(eeTask.velocity_error)}")
-        print(F"eeTask acc norm  : {np.linalg.norm(eeTask.getDesiredAcceleration)}")
+        print(F"task-posture pos_error : {np.linalg.norm(postureTask.position_error)}")
+        print(F"task-posture vel_error : {np.linalg.norm(postureTask.velocity_error)}")
+        print(F"task-posture acc_des   : {np.linalg.norm(postureTask.getDesiredAcceleration)}")
 
     # numerical integration
     v_next = v + DT*dv_next
@@ -357,3 +316,8 @@ while t < T_SIM: #s
     t += DT
     q, v = q_next, v_next
     time.sleep(DT/10)
+
+err_pos_norm = np.linalg.norm(pin.difference(model, q, q_goal))
+err_vel_norm = np.linalg.norm(v)
+assert err_pos_norm < 1e-6, F"Final configuration is not close to the goal! Error: {err_pos_norm} > 1e-6"
+assert err_vel_norm < 1e-6, F"Final velocity is not close to zero! Norm: {err_vel_norm} > 1e-6"
