@@ -3,7 +3,7 @@ import hppfcl as fcl
 import numpy as np
 from math import pi
 
-def create_simple_robot(revoluteOnly = False):
+def create_7dof_arm(revoluteOnly = False):
     '''
         Create a 7 DoF robot arm (with spherical joint for shoulder and wrist and revolute joint for elbow)
         return the robot model and geometry_model
@@ -230,8 +230,8 @@ def create_simple_robot(revoluteOnly = False):
                                                     color_hand
                                                     ))
 
-    # Add tip frame (palm)
-    model.addFrame( pin.Frame('palm',
+    # Add end-effector frame
+    model.addFrame( pin.Frame('eeFrame',
                                 id_hand,
                                 0,
                                 pin.SE3(np.identity(3), np.array([0, 0, 2*radius]))
@@ -239,75 +239,3 @@ def create_simple_robot(revoluteOnly = False):
                                 )
 
     return model, geom_model
-
-
-# Main
-model, geom_model = create_simple_robot()
-
-# TSID test
-import tsid
-robot = tsid.RobotWrapper(model, tsid.FIXED_BASE_SYSTEM, False)
-formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
-
-DT = 0.01# s
-T_SIM = 30.01 #s
-PRINT_DT = 3.0 #s
-
-K_post = 1.0
-W_post = 1.0
-
-q0 = pin.neutral(model)
-v0 = np.zeros(robot.nv)
-a0 = np.zeros(robot.na)
-
-q_goal = pin.randomConfiguration(model)
-
-# Solver
-solver = tsid.SolverHQuadProgFast("qp solver")
-solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
-
-## Posture task
-postureTask = tsid.TaskJointPosture("task-posture", robot)
-postureTask.setKp(K_post * np.ones(robot.na))
-postureTask.setKd(2.0 * np.sqrt(K_post) * np.ones(robot.na))
-
-postureSample = tsid.TrajectorySample(len(q0), len(v0))
-postureSample.value(q_goal)
-postureSample.derivative(v0)
-postureSample.second_derivative(a0)
-
-postureTask.setReference(postureSample)
-formulation.addMotionTask(postureTask, W_post, 1, 0.0)
-
-# Resize problem
-solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
-
-# Solve / simulate
-t = 0
-q, v = q0, v0
-while t <= T_SIM: #s
-    # Solve
-    HQPData = formulation.computeProblemData(t, q, v)
-    sol = solver.solve(HQPData)
-    assert sol.status==0, F"Time  {t}  QP problem could not be solved! Error code: {sol.status}"
-
-    dv_next = formulation.getAccelerations(sol)
-
-    if( round(t/DT)%round(PRINT_DT/DT) == 0 ):
-        print(F"\n{t}s :")
-        print(F"task-posture pos_error : {np.linalg.norm(postureTask.position_error)}")
-        print(F"task-posture vel_error : {np.linalg.norm(postureTask.velocity_error)}")
-        print(F"task-posture acc_des   : {np.linalg.norm(postureTask.getDesiredAcceleration)}")
-
-    # numerical integration
-    v_next = v + DT*dv_next
-    v_mean = (v_next + v) / 2
-    q_next = pin.integrate(model, q, v_mean * DT)
-
-    t += DT
-    q, v = q_next, v_next
-
-err_pos_norm = np.linalg.norm(pin.difference(model, q, q_goal))
-err_vel_norm = np.linalg.norm(v)
-assert err_pos_norm < 1e-6, F"Final configuration is not close to the goal! Error: {err_pos_norm} > 1e-6"
-assert err_vel_norm < 1e-6, F"Final velocity is not close to zero! Norm: {err_vel_norm} > 1e-6"
