@@ -245,7 +245,10 @@ import tsid
 robot = tsid.RobotWrapper(model, tsid.FIXED_BASE_SYSTEM, False)
 formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
 
-DT = 0.01
+DT = 0.01# s
+T_SIM = 30.0 #s
+PRINT_DT = 1.0 #s
+
 K_ee = 1.0
 W_ee = 1.0
 
@@ -312,7 +315,7 @@ solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
 i_print = 0
 t = 0
 q, v = q0, v0
-while t < 30.0: #s
+while t < T_SIM: #s
     viz.display(q)
 
     # Solve
@@ -322,11 +325,11 @@ while t < 30.0: #s
 
     dv_next = formulation.getAccelerations(sol)
 
-    if( (t//DT)%(1.0//DT) < 1e-3 ):
+    if( (t//DT)%(1+PRINT_DT//DT) == 0 ):
         print(F"\n{t}s :")
-        print(F"eeTask pos_error : {eeTask.position_error}")
-        print(F"eeTask vel_error : {eeTask.velocity_error}")
-        print(F"eeTask acc       : {eeTask.getDesiredAcceleration}")
+        print(F"eeTask pos_error : {np.linalg.norm(eeTask.position_error)}")
+        print(F"eeTask vel_error : {np.linalg.norm(eeTask.velocity_error)}")
+        print(F"eeTask acc norm  : {np.linalg.norm(eeTask.getDesiredAcceleration)}")
 
     # numerical integration
     v_next = v + DT*dv_next
