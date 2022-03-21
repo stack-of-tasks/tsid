@@ -250,7 +250,7 @@ robot = tsid.RobotWrapper(model, tsid.FIXED_BASE_SYSTEM, False)
 formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
 
 DT = 0.01# s
-T_SIM = 30.0 #s
+T_SIM = 30.01 #s
 PRINT_DT = 3.0 #s
 
 K_post = 1.0
@@ -285,7 +285,7 @@ solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
 # Solve / simulate
 t = 0
 q, v = q0, v0
-while t < T_SIM: #s
+while t <= T_SIM: #s
     # Solve
     HQPData = formulation.computeProblemData(t, q, v)
     sol = solver.solve(HQPData)
@@ -293,7 +293,7 @@ while t < T_SIM: #s
 
     dv_next = formulation.getAccelerations(sol)
 
-    if( (t//DT)%(1+PRINT_DT//DT) == 0 ):
+    if( round(t/DT)%round(PRINT_DT/DT) == 0 ):
         print(F"\n{t}s :")
         print(F"task-posture pos_error : {np.linalg.norm(postureTask.position_error)}")
         print(F"task-posture vel_error : {np.linalg.norm(postureTask.velocity_error)}")
