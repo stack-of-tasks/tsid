@@ -61,21 +61,21 @@ def create_simple_robot():
                             pin.SE3.Identity(),
                             "shoulderX"
                             )
-    set_limit(model, id_upper, pi, 3.0, 10.)
+    set_limit(model, id_upper, pi, 3.0, 100.)
     id_upper = model.addJoint(
                             id_upper,
                             pin.JointModelRY(),
                             pin.SE3.Identity(),
                             "shoulderY"
                             )
-    set_limit(model, id_upper, pi, 3.0, 10.)
+    set_limit(model, id_upper, pi, 3.0, 100.)
     id_upper = model.addJoint(
                             id_upper,
                             pin.JointModelRZ(),
                             pin.SE3.Identity(),
                             "shoulderZ"
                             )
-    set_limit(model, id_upper, pi, 3.0, 10.)
+    set_limit(model, id_upper, pi, 3.0, 100.)
     model.appendBodyToJoint(
                             id_upper,
                             pin.Inertia.FromCylinder(1.0 , radius, 0.66),
@@ -115,7 +115,7 @@ def create_simple_robot():
                             pin.Inertia.FromCylinder(1.0 , radius, 0.66),
                             placement_lower
                             )
-    set_limit(model, id_lower, pi, 3.0, 10.)
+    set_limit(model, id_lower, pi, 3.0, 100.)
 
     color_lower = np.array([0.1,0.1,0.8,.8])
 
@@ -146,21 +146,21 @@ def create_simple_robot():
                             pin.SE3(np.identity(3), np.array([0,0, 0.66])),
                             "elbowX"
                             )
-    set_limit(model, id_hand, pi, 3.0, 10.)
+    set_limit(model, id_hand, pi, 3.0, 100.)
     id_hand = model.addJoint(
                             id_hand,
                             pin.JointModelRY(),
                             pin.SE3.Identity(),
                             "elbowY"
                             )
-    set_limit(model, id_hand, pi, 3.0, 10.)
+    set_limit(model, id_hand, pi, 3.0, 100.)
     id_hand = model.addJoint(
                             id_hand,
                             pin.JointModelRZ(),
                             pin.SE3.Identity(),
                             "elbowZ"
                             )
-    set_limit(model, id_hand, pi, 3.0, 10.)
+    set_limit(model, id_hand, pi, 3.0, 100.)
     model.appendBodyToJoint(
                             id_hand,
                             pin.Inertia.FromSphere(1.0 , radius),
@@ -246,8 +246,11 @@ robot = tsid.RobotWrapper(model, tsid.FIXED_BASE_SYSTEM, False)
 formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
 
 DT = 0.01
-K_ee = 0.2
+K_ee = 1.0
 W_ee = 1.0
+
+K_post = 0.02
+W_post = 0.01
 
 goal_pose = pin.SE3(np.identity(3), np.array([0.5,0.5, 0.5]))
 
@@ -276,18 +279,31 @@ eeTask.setReference(eeSample)
 
 formulation.addMotionTask(eeTask, 1.0, 1, 0.0)
 
-# Bounds and limit tasks
+## Bounds and limit tasks
 actuationBoundsTask = tsid.TaskActuationBounds("task-actuation-bounds", robot)
 formulation.addActuationTask(actuationBoundsTask, 1, 0, 0.0)
-tau_max = 1.0 * robot.model().effortLimit
+tau_max = 10.0 * robot.model().effortLimit
 tau_min = - tau_max
 actuationBoundsTask.setBounds(tau_min, tau_max)
 
 jointBoundsTask = tsid.TaskJointBounds("task-joint-bounds", robot, DT) # dt will be re-set before executing
 formulation.addMotionTask(jointBoundsTask, 1, 0, 0.0)
-v_max = 1.0 * robot.model().velocityLimit
+v_max = robot.model().velocityLimit
 v_min = - v_max
 jointBoundsTask.setVelocityBounds(v_min, v_max)
+
+## Posture task
+postureTask = tsid.TaskJointPosture("task-posture", robot)
+postureTask.setKp(K_post * np.ones(robot.na))
+postureTask.setKd(2.0 * np.sqrt(K_post) * np.ones(robot.na))
+
+postureSample = tsid.TrajectorySample(len(q0), len(v0))
+postureSample.value(q0)
+postureSample.derivative(v0)
+postureSample.second_derivative(a0)
+
+postureTask.setReference(postureSample)
+formulation.addMotionTask(postureTask, W_post, 1, 0.0)
 
 # Resize problem
 solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
@@ -296,7 +312,7 @@ solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
 i_print = 0
 t = 0
 q, v = q0, v0
-while t < 10.0: #s
+while t < 30.0: #s
     viz.display(q)
 
     # Solve
@@ -306,6 +322,12 @@ while t < 10.0: #s
 
     dv_next = formulation.getAccelerations(sol)
 
+    if( (t//DT)%(1.0//DT) < 1e-3 ):
+        print(F"\n{t}s :")
+        print(F"eeTask pos_error : {eeTask.position_error}")
+        print(F"eeTask vel_error : {eeTask.velocity_error}")
+        print(F"eeTask acc       : {eeTask.getDesiredAcceleration}")
+
     # numerical integration
     v_next = v + DT*dv_next
     v_mean = (v_next + v) / 2
@@ -313,4 +335,4 @@ while t < 10.0: #s
 
     t += DT
     q, v = q_next, v_next
-    time.sleep(DT)
+    time.sleep(DT/10)
