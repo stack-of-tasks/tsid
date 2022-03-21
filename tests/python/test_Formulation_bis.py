@@ -2,8 +2,6 @@ import pinocchio as pin
 import hppfcl as fcl
 import numpy as np
 from math import pi
-from pinocchio.visualize import GepettoVisualizer as Visualizer
-import time
 
 def create_simple_robot(revoluteOnly = False):
     '''
@@ -244,12 +242,7 @@ def create_simple_robot(revoluteOnly = False):
 
 
 # Main
-model, geom_model = create_simple_robot(revoluteOnly=True)
-visual_model = geom_model
-
-viz = Visualizer(model, geom_model, visual_model)
-viz.initViewer()
-viz.loadViewerModel("pinocchio")
+model, geom_model = create_simple_robot()
 
 # TSID test
 import tsid
@@ -293,8 +286,6 @@ solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
 t = 0
 q, v = q0, v0
 while t < T_SIM: #s
-    viz.display(q)
-
     # Solve
     HQPData = formulation.computeProblemData(t, q, v)
     sol = solver.solve(HQPData)
@@ -315,7 +306,6 @@ while t < T_SIM: #s
 
     t += DT
     q, v = q_next, v_next
-    time.sleep(DT/10)
 
 err_pos_norm = np.linalg.norm(pin.difference(model, q, q_goal))
 err_vel_norm = np.linalg.norm(v)
