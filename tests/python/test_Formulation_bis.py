@@ -5,7 +5,7 @@ from math import pi
 from pinocchio.visualize import GepettoVisualizer as Visualizer
 import time
 
-def create_simple_robot():
+def create_simple_robot(revoluteOnly = False):
     '''
         Create a 7 DoF robot arm (with spherical joint for shoulder and wrist and revolute joint for elbow)
         return the robot model and geometry_model
@@ -55,27 +55,36 @@ def create_simple_robot():
 
     # Upper arm
     placement_upper = pin.SE3(np.identity(3), np.array([0,0, 0.33]))
-    id_upper = model.addJoint(
-                            id_base,
-                            pin.JointModelRX(),
-                            pin.SE3.Identity(),
-                            "shoulderX"
-                            )
-    set_limit(model, id_upper, pi, 3.0, 100.)
-    id_upper = model.addJoint(
-                            id_upper,
-                            pin.JointModelRY(),
-                            pin.SE3.Identity(),
-                            "shoulderY"
-                            )
-    set_limit(model, id_upper, pi, 3.0, 100.)
-    id_upper = model.addJoint(
-                            id_upper,
-                            pin.JointModelRZ(),
-                            pin.SE3.Identity(),
-                            "shoulderZ"
-                            )
-    set_limit(model, id_upper, pi, 3.0, 100.)
+    if(not revoluteOnly):
+        id_upper = model.addJoint(
+                                id_base,
+                                pin.JointModelSpherical(),
+                                pin.SE3.Identity(),
+                                "shoulder"
+                                )
+        set_limit(model, id_upper, pi, 3.0, 100.)
+    else:
+        id_upper = model.addJoint(
+                                id_base,
+                                pin.JointModelRX(),
+                                pin.SE3.Identity(),
+                                "shoulderX"
+                                )
+        set_limit(model, id_upper, pi, 3.0, 100.)
+        id_upper = model.addJoint(
+                                id_upper,
+                                pin.JointModelRY(),
+                                pin.SE3.Identity(),
+                                "shoulderY"
+                                )
+        set_limit(model, id_upper, pi, 3.0, 100.)
+        id_upper = model.addJoint(
+                                id_upper,
+                                pin.JointModelRZ(),
+                                pin.SE3.Identity(),
+                                "shoulderZ"
+                                )
+        set_limit(model, id_upper, pi, 3.0, 100.)
     model.appendBodyToJoint(
                             id_upper,
                             pin.Inertia.FromCylinder(1.0 , radius, 0.66),
@@ -140,32 +149,41 @@ def create_simple_robot():
 
     # Hand
     placement_hand = pin.SE3(np.identity(3), np.array([0,0, 0.66]))
-    id_hand = model.addJoint(
-                            id_lower,
-                            pin.JointModelRX(),
-                            pin.SE3(np.identity(3), np.array([0,0, 0.66])),
-                            "elbowX"
-                            )
-    set_limit(model, id_hand, pi, 3.0, 100.)
-    id_hand = model.addJoint(
-                            id_hand,
-                            pin.JointModelRY(),
-                            pin.SE3.Identity(),
-                            "elbowY"
-                            )
-    set_limit(model, id_hand, pi, 3.0, 100.)
-    id_hand = model.addJoint(
-                            id_hand,
-                            pin.JointModelRZ(),
-                            pin.SE3.Identity(),
-                            "elbowZ"
-                            )
-    set_limit(model, id_hand, pi, 3.0, 100.)
-    model.appendBodyToJoint(
-                            id_hand,
-                            pin.Inertia.FromSphere(1.0 , radius),
-                            placement_hand
-                            )
+    if(not revoluteOnly):
+        id_hand = model.addJoint(
+                                id_lower,
+                                pin.JointModelSpherical(),
+                                pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                                "wrist"
+                                )
+        set_limit(model, id_hand, pi, 3.0, 100.)
+    else:
+        id_hand = model.addJoint(
+                                id_lower,
+                                pin.JointModelRX(),
+                                pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                                "wristX"
+                                )
+        set_limit(model, id_hand, pi, 3.0, 100.)
+        id_hand = model.addJoint(
+                                id_hand,
+                                pin.JointModelRY(),
+                                pin.SE3.Identity(),
+                                "wristY"
+                                )
+        set_limit(model, id_hand, pi, 3.0, 100.)
+        id_hand = model.addJoint(
+                                id_hand,
+                                pin.JointModelRZ(),
+                                pin.SE3.Identity(),
+                                "wristZ"
+                                )
+        set_limit(model, id_hand, pi, 3.0, 100.)
+        model.appendBodyToJoint(
+                                id_hand,
+                                pin.Inertia.FromSphere(1.0 , radius),
+                                placement_hand
+                                )
 
     color_hand = np.array([0.7,0.7,0.7,.8])
 
@@ -226,7 +244,7 @@ def create_simple_robot():
 
 
 # Main
-model, geom_model = create_simple_robot()
+model, geom_model = create_simple_robot(revoluteOnly=True)
 visual_model = geom_model
 
 viz = Visualizer(model, geom_model, visual_model)
