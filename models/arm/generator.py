@@ -5,9 +5,19 @@ from math import pi
 
 def create_7dof_arm(revoluteOnly = False):
     '''
-        Create a 7 DoF robot arm (with spherical joint for shoulder and wrist and revolute joint for elbow)
-        return the robot model and geometry_model
+    Create a 7 DoF robot arm (with spherical joint for shoulder and wrist and revolute joint for elbow)
+
+    Optionnal parameters:
+        revoluteOnly (default=False): if True, the arm is created with only revolute joints. (Spherical joints are replaced by 3 revolute joints)
+
+    Return:
+        model: pinocchio model of the robot
+        geom_model: pinocchio geometric model of the robot
     '''
+    # Some useful values
+    geom_radius = 0.1 # radius of the arm geometries
+    geom_length = 0.66 # length of the lower or upper arm geometries
+
     def set_limit(model, joint_id, pos_absmax, vel_absmax, eff_absmax):
         idx_q = model.joints[joint_id].idx_q
         nq =  model.joints[joint_id].nq
@@ -25,8 +35,6 @@ def create_7dof_arm(revoluteOnly = False):
     model = pin.Model()
     geom_model = pin.GeometryModel()
 
-    radius = 0.1
-
     # Base
     id_base = 0
 
@@ -36,7 +44,7 @@ def create_7dof_arm(revoluteOnly = False):
                                                     "base",
                                                     id_base, # parent
                                                     fcl.Box(0.5,0.5,0.02),
-                                                    pin.SE3(np.identity(3), np.array([0,0,-0.01-radius])),
+                                                    pin.SE3(np.identity(3), np.array([0,0,-0.01-geom_radius])),
                                                     "", np.ones(3), False, # Default values
                                                     color_base
                                                     ))
@@ -44,7 +52,7 @@ def create_7dof_arm(revoluteOnly = False):
     geom_model.addGeometryObject(pin.GeometryObject(
                                                     "shoulderGeom",
                                                     id_base,
-                                                    fcl.Sphere(radius),
+                                                    fcl.Sphere(geom_radius),
                                                     pin.SE3.Identity(),
                                                     "", np.ones(3), False, # Default values
                                                     color_base
@@ -52,7 +60,7 @@ def create_7dof_arm(revoluteOnly = False):
 
 
     # Upper arm
-    placement_upper = pin.SE3(np.identity(3), np.array([0,0, 0.33]))
+    placement_upper = pin.SE3(np.identity(3), np.array([0,0, geom_length/2.]))
     if(not revoluteOnly):
         id_upper = model.addJoint(
                                 id_base,
@@ -85,7 +93,7 @@ def create_7dof_arm(revoluteOnly = False):
         set_limit(model, id_upper, pi, 3.0, 100.)
     model.appendBodyToJoint(
                             id_upper,
-                            pin.Inertia.FromCylinder(1.0 , radius, 0.66),
+                            pin.Inertia.FromCylinder(1.0 , geom_radius, geom_length),
                             placement_upper
                             )
 
@@ -94,8 +102,8 @@ def create_7dof_arm(revoluteOnly = False):
     geom_model.addGeometryObject(pin.GeometryObject(
                                                     "elbowGeom",
                                                     id_upper,
-                                                    fcl.Sphere(radius),
-                                                    pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                                                    fcl.Sphere(geom_radius),
+                                                    pin.SE3(np.identity(3), np.array([0,0, geom_length])),
                                                     "", np.ones(3), False, # Default values
                                                     color_upper
                                                     ))
@@ -103,23 +111,23 @@ def create_7dof_arm(revoluteOnly = False):
     geom_model.addGeometryObject(pin.GeometryObject(
                                                     "upperGeom",
                                                     id_upper,
-                                                    fcl.Cylinder(radius, 0.66),
+                                                    fcl.Cylinder(geom_radius, geom_length),
                                                     placement_upper,
                                                     "", np.ones(3), False, # Default values
                                                     color_upper
                                                     ))
 
     # Lower arm
-    placement_lower = pin.SE3(np.identity(3), np.array([0,0, 0.33]))
+    placement_lower = pin.SE3(np.identity(3), np.array([0,0, geom_length/2.]))
     id_lower = model.addJoint(
                             id_upper,
                             pin.JointModelRX(),
-                            pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                            pin.SE3(np.identity(3), np.array([0,0, geom_length])),
                             "elbow"
                             )
     model.appendBodyToJoint(
                             id_lower,
-                            pin.Inertia.FromCylinder(1.0 , radius, 0.66),
+                            pin.Inertia.FromCylinder(1.0 , geom_radius, geom_length),
                             placement_lower
                             )
     set_limit(model, id_lower, pi, 3.0, 100.)
@@ -129,8 +137,8 @@ def create_7dof_arm(revoluteOnly = False):
     geom_model.addGeometryObject(pin.GeometryObject(
                                                     "wristGeom",
                                                     id_lower,
-                                                    fcl.Sphere(radius),
-                                                    pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                                                    fcl.Sphere(geom_radius),
+                                                    pin.SE3(np.identity(3), np.array([0,0, geom_length])),
                                                     "", np.ones(3), False, # Default values
                                                     color_lower
                                                     ))
@@ -138,7 +146,7 @@ def create_7dof_arm(revoluteOnly = False):
     geom_model.addGeometryObject(pin.GeometryObject(
                                                     "lowerGeom",
                                                     id_lower,
-                                                    fcl.Cylinder(radius, 0.66),
+                                                    fcl.Cylinder(geom_radius, geom_length),
                                                     placement_lower,
                                                     "", np.ones(3), False, # Default values
                                                     color_lower
@@ -146,12 +154,12 @@ def create_7dof_arm(revoluteOnly = False):
 
 
     # Hand
-    placement_hand = pin.SE3(np.identity(3), np.array([0,0, 0.66]))
+    placement_hand = pin.SE3(np.identity(3), np.array([0,0, geom_length]))
     if(not revoluteOnly):
         id_hand = model.addJoint(
                                 id_lower,
                                 pin.JointModelSpherical(),
-                                pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                                pin.SE3(np.identity(3), np.array([0,0, geom_length])),
                                 "wrist"
                                 )
         set_limit(model, id_hand, pi, 3.0, 100.)
@@ -159,7 +167,7 @@ def create_7dof_arm(revoluteOnly = False):
         id_hand = model.addJoint(
                                 id_lower,
                                 pin.JointModelRX(),
-                                pin.SE3(np.identity(3), np.array([0,0, 0.66])),
+                                pin.SE3(np.identity(3), np.array([0,0, geom_length])),
                                 "wristX"
                                 )
         set_limit(model, id_hand, pi, 3.0, 100.)
@@ -179,7 +187,7 @@ def create_7dof_arm(revoluteOnly = False):
         set_limit(model, id_hand, pi, 3.0, 100.)
         model.appendBodyToJoint(
                                 id_hand,
-                                pin.Inertia.FromSphere(1.0 , radius),
+                                pin.Inertia.FromSphere(1.0 , geom_radius),
                                 placement_hand
                                 )
 
@@ -188,8 +196,8 @@ def create_7dof_arm(revoluteOnly = False):
     geom_model.addGeometryObject(pin.GeometryObject(
                                                     "palmGeom",
                                                     id_hand,
-                                                    fcl.Sphere(radius),
-                                                    pin.SE3(np.identity(3), np.array([0,0, 2*radius])),
+                                                    fcl.Sphere(geom_radius),
+                                                    pin.SE3(np.identity(3), np.array([0,0, 2*geom_radius])),
                                                     "", np.ones(3), False, # Default values
                                                     color_hand
                                                     ))
@@ -198,7 +206,7 @@ def create_7dof_arm(revoluteOnly = False):
                                                     "finger1Geom",
                                                     id_hand,
                                                     fcl.Cylinder(0.02, 0.1),
-                                                    pin.SE3(np.identity(3), np.array([0.05, 0, 3*radius])),
+                                                    pin.SE3(np.identity(3), np.array([0.05, 0, 3*geom_radius])),
                                                     "", np.ones(3), False, # Default values
                                                     color_hand
                                                     ))
@@ -207,7 +215,7 @@ def create_7dof_arm(revoluteOnly = False):
                                                     "finger2Geom",
                                                     id_hand,
                                                     fcl.Cylinder(0.02, 0.1),
-                                                    pin.SE3(np.identity(3), np.array([0, 0, 3*radius])),
+                                                    pin.SE3(np.identity(3), np.array([0, 0, 3*geom_radius])),
                                                     "", np.ones(3), False, # Default values
                                                     color_hand
                                                     ))
@@ -216,7 +224,7 @@ def create_7dof_arm(revoluteOnly = False):
                                                     "finger3Geom",
                                                     id_hand,
                                                     fcl.Cylinder(0.02, 0.1),
-                                                    pin.SE3(np.identity(3), np.array([-0.05, 0, 3*radius])),
+                                                    pin.SE3(np.identity(3), np.array([-0.05, 0, 3*geom_radius])),
                                                     "", np.ones(3), False, # Default values
                                                     color_hand
                                                     ))
@@ -225,7 +233,7 @@ def create_7dof_arm(revoluteOnly = False):
                                                     "thumbGeom",
                                                     id_hand,
                                                     fcl.Cylinder(0.02, 0.1),
-                                                    pin.XYZQUATToSE3(np.array([radius, 0, 2*radius] + [0,.707,0,.707])),
+                                                    pin.XYZQUATToSE3(np.array([geom_radius, 0, 2*geom_radius] + [0,.707,0,.707])),
                                                     "", np.ones(3), False, # Default values
                                                     color_hand
                                                     ))
@@ -234,7 +242,7 @@ def create_7dof_arm(revoluteOnly = False):
     model.addFrame( pin.Frame('eeFrame',
                                 id_hand,
                                 0,
-                                pin.SE3(np.identity(3), np.array([0, 0, 2*radius]))
+                                pin.SE3(np.identity(3), np.array([0, 0, 2*geom_radius]))
                                 ,pin.FrameType.OP_FRAME)
                                 )
 

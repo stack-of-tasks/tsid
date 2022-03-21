@@ -262,7 +262,8 @@ print("Test Task Joint Posture (Uncommon joints)")
 print("")
 
 from models.arm.generator import create_7dof_arm
-model, geom_model = create_7dof_arm()
+model, geom_model = create_7dof_arm() # A robot containing sperical joints where nq != nv
+
 robot = tsid.RobotWrapper(model, tsid.FIXED_BASE_SYSTEM, False)
 data = robot.data()
 
@@ -312,6 +313,5 @@ for i in range(0, max_it):
     if i % 100 == 0:
         print("Time :", t, "Joint pos error :", error, "Joint vel error :",
               np.linalg.norm(task_joint.velocity_error, 2))
-
 
 print("All test is done")
