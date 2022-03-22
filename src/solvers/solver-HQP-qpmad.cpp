@@ -161,16 +161,10 @@ namespace tsid
 
       qpmad::Solver::ReturnStatus solve_status;
 
-      qpmad::SolverParameters params; 
-      // params.hessian_type_ = qpmad::SolverParameters::HESSIAN_LOWER_TRIANGULAR;
-      // params.tolerance_ = 1e-12;
-      // params.max_iter_ = -1;
-      // params.return_inverted_cholesky_factor_ = false;
-
       if(m_has_bounds)
-        solve_status = m_solver.solve(m_output.x, m_H, m_g, m_lb, m_ub, m_C, m_cl, m_cu, params);
+        solve_status = m_solver.solve(m_output.x, m_H, m_g, m_lb, m_ub, m_C, m_cl, m_cu, m_settings);
       else
-        solve_status = m_solver.solve(m_output.x, m_H, m_g, Eigen::VectorXd(), Eigen::VectorXd(), m_C, m_cl, m_cu, params);
+        solve_status = m_solver.solve(m_output.x, m_H, m_g, Eigen::VectorXd(), Eigen::VectorXd(), m_C, m_cl, m_cu, m_settings);
 
       if(solve_status != qpmad::Solver::OK)
         m_output.status = HQP_STATUS_INFEASIBLE;

@@ -41,6 +41,8 @@ namespace tsid
       typedef math::ConstRefVector ConstRefVector;
       typedef math::ConstRefMatrix ConstRefMatrix;
 
+      typedef qpmad::SolverParameters Settings;
+
       SolverHQpmad(const std::string & name);
 
       void resize(unsigned int n, unsigned int neq, unsigned int nin);
@@ -52,11 +54,14 @@ namespace tsid
       /** Get the objective value of the last solved problem. */
       double getObjectiveValue();
 
+      Settings& settings() { return m_settings; }
+
     protected:
 
       void sendMsg(const std::string & s);
 
       qpmad::Solver m_solver;
+      Settings m_settings;
 
       bool m_has_bounds;
       
