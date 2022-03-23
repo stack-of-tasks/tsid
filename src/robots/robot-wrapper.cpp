@@ -80,7 +80,7 @@ namespace tsid
       m_model = m;
       m_model_filename = "";
       m_na = m_model.nv;
-      m_nq_actuated = m_model.nq-7;
+      m_nq_actuated = m_model.nq;
       m_is_fixed_base = true;
       switch(rootJoint) {
         case FIXED_BASE_SYSTEM:
