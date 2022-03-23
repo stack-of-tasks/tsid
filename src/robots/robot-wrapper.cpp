@@ -107,7 +107,7 @@ namespace tsid
     int RobotWrapper::nv() const { return m_model.nv; }
     int RobotWrapper::na() const { return m_na; }
     int RobotWrapper::nq_actuated() const { return m_nq_actuated; }
-    int RobotWrapper::is_fixed_base() const { return m_is_fixed_base; }
+    bool RobotWrapper::is_fixed_base() const { return m_is_fixed_base; }
     
     const Model & RobotWrapper::model() const { return m_model; }
     Model & RobotWrapper::model() { return m_model; }

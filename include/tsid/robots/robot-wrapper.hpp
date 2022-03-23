@@ -83,7 +83,7 @@ namespace tsid
       virtual int nq_actuated() const;
       virtual int nv() const;
       virtual int na() const;
-      virtual int is_fixed_base() const;
+      virtual bool is_fixed_base() const;
       
       ///
       /// \brief Accessor to model.
