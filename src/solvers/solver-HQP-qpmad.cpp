@@ -19,6 +19,8 @@
 #include "tsid/math/utils.hpp"
 #include "tsid/utils/stop-watch.hpp"
 
+#include <limits>
+
 using namespace tsid::math;
 using namespace tsid::solvers;
 using namespace Eigen;
@@ -105,6 +107,12 @@ namespace tsid
         // If necessary, resize the constraint matrices
         resize(n, neq, nin);
 
+        if(m_has_bounds)
+        {
+          m_lb.setConstant(std::numeric_limits<double>::min());
+          m_ub.setConstant(std::numeric_limits<double>::max());
+        }
+
         int i_eq_in=0;
         for(ConstraintLevel::const_iterator it=cl0.begin(); it!=cl0.end(); it++)
         {
@@ -126,10 +134,8 @@ namespace tsid
           else if(constr->isBound())
           {
             // not considering masks
-            // considering a single bound constraint
-
-            m_lb = constr->lowerBound();
-            m_ub = constr->upperBound();
+            m_lb = m_lb.cwiseMax(constr->lowerBound());
+            m_ub = m_ub.cwiseMin(constr->upperBound());
           }
         }
       }
@@ -148,10 +154,10 @@ namespace tsid
           if(!constr->isEquality())
             assert(false && "Inequalities in the cost function are not implemented yet");
 
-          m_H += w*constr->matrix().transpose()*constr->matrix();
-          m_g -= w*(constr->matrix().transpose()*constr->vector());
+          m_H.noalias() += w*constr->matrix().transpose()*constr->matrix();
+          m_g.noalias() -= w*(constr->matrix().transpose()*constr->vector());
         }
-        m_H.diagonal() += m_hessian_regularization * Vector::Ones(m_n);
+        m_H.diagonal().array() += m_hessian_regularization;
       }
 
       //  min 0.5 * x H x + g x
@@ -210,7 +216,8 @@ namespace tsid
 
     double SolverHQpmad::getObjectiveValue()
     {
-      return 0;
+      // objective values is not stored by qpmad
+      return std::numeric_limits<double>::infinity();
     }
 
   } // namespace solvers

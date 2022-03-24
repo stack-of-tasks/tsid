@@ -23,7 +23,11 @@
 #include <tsid/solvers/solver-HQP-factory.hxx>
 #include <tsid/solvers/solver-HQP-eiquadprog.hpp>
 #include <tsid/solvers/solver-HQP-eiquadprog-rt.hpp>
-#include <tsid/solvers/solver-HQP-qpmad.hpp>
+
+#ifdef TSID_QPMAD_FOUND
+  #include <tsid/solvers/solver-HQP-qpmad.hpp>
+#endif
+
 #include <tsid/math/utils.hpp>
 #include <tsid/math/constraint-equality.hpp>
 #include <tsid/math/constraint-inequality.hpp>
