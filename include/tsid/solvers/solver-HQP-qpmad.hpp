@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2022 Inria
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -27,7 +27,7 @@ namespace tsid
   namespace solvers
   {
     /**
-     * @brief Abstract interface for a Quadratic Program (HQP) solver.
+     * @brief Implementation of Quadratic Program (HQP) solver using qpmad.
      */
     class TSID_DLLAPI SolverHQpmad:
         public SolverHQPBase
@@ -75,7 +75,7 @@ namespace tsid
 
       double m_hessian_regularization;
 
-      unsigned int m_nc;  /// number of equaloty-inequality constraints
+      unsigned int m_nc;  /// number of equality-inequality constraints
       unsigned int m_n;    /// number of variables
     };
   }
