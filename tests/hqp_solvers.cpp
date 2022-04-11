@@ -23,6 +23,11 @@
 #include <tsid/solvers/solver-HQP-factory.hxx>
 #include <tsid/solvers/solver-HQP-eiquadprog.hpp>
 #include <tsid/solvers/solver-HQP-eiquadprog-rt.hpp>
+
+#ifdef TSID_QPMAD_FOUND
+  #include <tsid/solvers/solver-HQP-qpmad.hpp>
+#endif
+
 #include <tsid/math/utils.hpp>
 #include <tsid/math/constraint-equality.hpp>
 #include <tsid/math/constraint-inequality.hpp>
@@ -164,6 +169,7 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 #define PROFILE_EIQUADPROG "Eiquadprog"
 #define PROFILE_EIQUADPROG_RT "Eiquadprog Real Time"
 #define PROFILE_EIQUADPROG_FAST "Eiquadprog Fast"
+#define PROFILE_QPMAD "QPMAD"
 
 BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
 {
@@ -207,6 +213,12 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   SolverHQPBase * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
                                                              "eiquadprog");
   solver->resize(n, neq, nin);
+
+#ifdef TSID_QPMAD_FOUND
+  SolverHQPBase * solver_qpmad = SolverHQPFactory::createNewSolver(SOLVER_HQP_QPMAD,
+                                                             "qpmad");
+  solver_qpmad->resize(n, neq, nin);
+#endif
 
   // CREATE PROBLEM DATA
   HQPData HQPData(2);
@@ -274,6 +286,12 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
     const HQPOutput & output    = solver->solve(HQPData);
     getProfiler().stop(PROFILE_EIQUADPROG);
 
+  #ifdef TSID_QPMAD_FOUND
+    getProfiler().start(PROFILE_QPMAD);
+    const HQPOutput & output_qpmad = solver_qpmad->solve(HQPData);
+    getProfiler().stop(PROFILE_QPMAD);
+  #endif
+
     getStatistics().store("active inequalities", (double)output_rt.activeSet.size());
     getStatistics().store("solver iterations", output_rt.iterations);
 
@@ -303,6 +321,11 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   //                        "Sol RT"+toString(output_rt.x.transpose())+
   //                        "\nSol FAST "+toString(output_fast.x.transpose())+
                           "\nDiff FAST: "+toString((output_rt.x-output_fast.x).norm()));
+
+    #ifdef TSID_QPMAD_FOUND
+      BOOST_CHECK_MESSAGE(output.x.isApprox(output_qpmad.x, EPS),
+                          "\nDiff QPMAD: "+toString((output.x-output_qpmad.x).norm()));
+    #endif
     }
   }
 

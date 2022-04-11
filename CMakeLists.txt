@@ -75,6 +75,11 @@ CHECK_MINIMAL_CXX_STANDARD(11 ENFORCE)
 ADD_PROJECT_DEPENDENCY(pinocchio 2.3.1 REQUIRED)
 ADD_PROJECT_DEPENDENCY(eiquadprog 1.1.3 REQUIRED)
 
+FIND_PACKAGE(qpmad QUIET) # optional
+if(qpmad_FOUND)
+  ADD_PROJECT_DEPENDENCY(qpmad QUIET)
+endif()
+
 IF(BUILD_TESTING)
   FIND_PACKAGE(Boost REQUIRED COMPONENTS unit_test_framework)
 ENDIF(BUILD_TESTING)
@@ -142,6 +147,10 @@ SET(${PROJECT_NAME}_SOLVERS_HEADERS
   include/tsid/solvers/solver-HQP-eiquadprog-rt.hxx
   include/tsid/solvers/solver-HQP-eiquadprog-fast.hpp
   )
+
+if(qpmad_FOUND)
+  LIST(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS include/tsid/solvers/solver-HQP-qpmad.hpp)
+endif()
 
 SET(${PROJECT_NAME}_ROBOTS_HEADERS
   include/tsid/robots/fwd.hpp
@@ -228,6 +237,10 @@ SET(${PROJECT_NAME}_SOLVERS_SOURCES
   src/solvers/utils.cpp
   )
 
+if(qpmad_FOUND)
+  LIST(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-HQP-qpmad.cpp)
+endif()
+
 SET(${PROJECT_NAME}_ROBOTS_SOURCES
   src/robots/robot-wrapper.cpp
   )
@@ -258,6 +271,11 @@ ADD_LIBRARY(${PROJECT_NAME} SHARED
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC
   pinocchio::pinocchio eiquadprog::eiquadprog)
+
+if(qpmad_FOUND)
+  TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC ${qpmad_INCLUDE_DIRS})
+  TARGET_COMPILE_DEFINITIONS(${PROJECT_NAME} PUBLIC -DTSID_QPMAD_FOUND)
+endif()
 
 
 IF(SUFFIX_SO_VERSION)

@@ -19,6 +19,10 @@
 #include <tsid/solvers/solver-HQP-eiquadprog.hpp>
 #include <tsid/solvers/solver-HQP-eiquadprog-fast.hpp>
 
+#ifdef TSID_QPMAD_FOUND
+  #include <tsid/solvers/solver-HQP-qpmad.hpp>
+#endif
+
 #ifdef QPOASES_FOUND
   #include <tsid/solvers/solver-HQP-qpoases.hh>
 #endif
@@ -36,7 +40,12 @@ namespace tsid
       
       if(solverType==SOLVER_HQP_EIQUADPROG_FAST)
         return new SolverHQuadProgFast(name);
-      
+
+#ifdef TSID_QPMAD_FOUND
+      if(solverType==SOLVER_HQP_QPMAD)
+        return new SolverHQpmad(name);
+#endif
+
 #ifdef QPOASES_FOUND
       if(solverType==SOLVER_HQP_QPOASES)
         return new Solver_HQP_qpoases(name);
