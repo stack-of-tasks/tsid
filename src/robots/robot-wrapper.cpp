@@ -41,6 +41,8 @@ namespace tsid
       pinocchio::urdf::buildModel(filename, m_model, m_verbose);
       m_model_filename = filename;
       m_na = m_model.nv;
+      m_nq_actuated = m_model.nq;
+      m_is_fixed_base = true;
       init();
     }
 
@@ -53,6 +55,8 @@ namespace tsid
       pinocchio::urdf::buildModel(filename, rootJoint, m_model, m_verbose);
       m_model_filename = filename;
       m_na = m_model.nv-6;
+      m_nq_actuated = m_model.nq-7;
+      m_is_fixed_base = false;
       init();
     }
 
@@ -63,6 +67,8 @@ namespace tsid
       m_model = m;
       m_model_filename = "";
       m_na = m_model.nv-6;
+      m_nq_actuated = m_model.nq-7;
+      m_is_fixed_base = false;
       init();
     }
 
@@ -74,11 +80,15 @@ namespace tsid
       m_model = m;
       m_model_filename = "";
       m_na = m_model.nv;
+      m_nq_actuated = m_model.nq;
+      m_is_fixed_base = true;
       switch(rootJoint) {
         case FIXED_BASE_SYSTEM:
           break;
         case FLOATING_BASE_SYSTEM:
           m_na -= 6;
+          m_nq_actuated = m_model.nq-7;
+          m_is_fixed_base = false;
         default:
           break;
       }
@@ -96,6 +106,8 @@ namespace tsid
     int RobotWrapper::nq() const { return m_model.nq; }
     int RobotWrapper::nv() const { return m_model.nv; }
     int RobotWrapper::na() const { return m_na; }
+    int RobotWrapper::nq_actuated() const { return m_nq_actuated; }
+    bool RobotWrapper::is_fixed_base() const { return m_is_fixed_base; }
     
     const Model & RobotWrapper::model() const { return m_model; }
     Model & RobotWrapper::model() { return m_model; }

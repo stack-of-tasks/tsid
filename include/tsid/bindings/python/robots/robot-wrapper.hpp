@@ -48,6 +48,8 @@ namespace tsid
         .add_property("nq", &Robot::nq)
         .add_property("nv", &Robot::nv)
         .add_property("na", &Robot::na)
+        .add_property("nq_actuated", &Robot::nq_actuated)
+        .add_property("is_fixed_base", &Robot::is_fixed_base)
 
         .def("model", &RobotPythonVisitor::model)
         .def("data", &RobotPythonVisitor::data)

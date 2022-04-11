@@ -82,6 +82,7 @@ namespace tsid
       Vector m_a_des;
       VectorXi m_activeAxes;
       TrajectorySample m_ref;
+      Vector m_ref_q_augmented;
       ConstraintEquality m_constraint;
     };
     
