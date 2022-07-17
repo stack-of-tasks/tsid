@@ -1,0 +1,18 @@
+[project]
+name = "tsid"
+version = "1.6.2"
+description = "A fast and flexible implementation of Rigid Body Dynamics algorithms and their analytical derivatives"
+readme = "README.md"
+license= "BSD-3-Clause"
+dependencies = ["pin", "eiquadprog"]
+
+[project.urls]
+homepage = "https://github.com/stack-of-tasks/tsid"
+
+[build-system]
+requires = [
+    "cmeel[build]",
+    "eiquadprog",
+    "pin",
+    ]
+build-backend = "cmeel.build"
