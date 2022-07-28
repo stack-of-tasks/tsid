@@ -158,8 +158,7 @@ namespace tsid
       m_ref_q_augmented.tail(m_robot.nq_actuated()) = m_ref.getValue();
 
       // Compute errors
-      m_p_error = pinocchio::difference(m_robot.model(), m_ref_q_augmented, q);
-      m_p_error = m_p_error.tail(m_robot.na());
+      m_p_error = pinocchio::difference(m_robot.model(), m_ref_q_augmented, q).tail(m_robot.na());
 
       m_v = v.tail(m_robot.na());
       m_v_error = m_v - m_ref.getDerivative();
