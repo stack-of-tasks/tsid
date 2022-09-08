@@ -69,7 +69,7 @@ if(EIGEN_NO_AUTOMATIC_RESIZING)
   add_definitions(-DEIGEN_NO_AUTOMATIC_RESIZING)
 endif(EIGEN_NO_AUTOMATIC_RESIZING)
 
-check_minimal_cxx_standard(11 ENFORCE)
+check_minimal_cxx_standard(17 ENFORCE)
 
 # Project dependencies
 if(BUILD_PYTHON_INTERFACE)
