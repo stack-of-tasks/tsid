@@ -34,5 +34,12 @@ namespace tsid
       SolverProxQPPythonVisitor<tsid::solvers::SolverProxQP>::expose("SolverProxQP");
 #endif
     }
+
+    void exposeSolverOSQP()
+    {
+#ifdef TSID_OSQP_FOUND
+      SolverOSQPPythonVisitor<tsid::solvers::SolverOSQP>::expose("SolverOSQP");
+#endif
+    }
   }
 }
