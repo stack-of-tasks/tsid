@@ -130,6 +130,7 @@ set(${PROJECT_NAME}_TRAJECTORIES_HEADERS
 set(${PROJECT_NAME}_SOLVERS_HEADERS
     include/tsid/solvers/fwd.hpp
     include/tsid/solvers/utils.hpp
+    include/tsid/solvers/solver-qpData.hpp
     include/tsid/solvers/solver-HQP-output.hpp
     include/tsid/solvers/solver-HQP-base.hpp
     include/tsid/solvers/solver-HQP-factory.hpp

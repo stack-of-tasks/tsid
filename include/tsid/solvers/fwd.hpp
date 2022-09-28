@@ -22,6 +22,7 @@
 
 #include "tsid/config.hh"
 #include "tsid/math/fwd.hpp"
+#include "tsid/solvers/solver-qpData.hpp"
 #include <pinocchio/container/aligned-vector.hpp>
 
 #define DEFAULT_HESSIAN_REGULARIZATION 1e-8
@@ -91,6 +92,9 @@ namespace tsid
     typedef pinocchio::container::aligned_vector<ConstraintLevel> HQPData;
     typedef pinocchio::container::aligned_vector<ConstConstraintLevel> ConstHQPData;
     
+    typedef QPDataTpl<double> QPData;
+    typedef QPDataBaseTpl<double> QPDataBase;
+    typedef QPDataQuadProgTpl<double> QPDataQuadProg;
     
   }
 }
