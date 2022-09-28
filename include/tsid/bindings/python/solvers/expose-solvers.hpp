@@ -20,6 +20,7 @@
 
 
 #include "tsid/bindings/python/solvers/solver-HQP-eiquadprog.hpp"
+#include "tsid/bindings/python/solvers/solver-proxqp.hpp"
 #include "tsid/bindings/python/solvers/HQPData.hpp"
 #include "tsid/bindings/python/solvers/HQPOutput.hpp"
 namespace tsid
@@ -27,12 +28,14 @@ namespace tsid
   namespace python
   {
     void exposeSolverHQuadProg();
+    void exposeSolverProxQP();
     void exposeConstraintLevel();
     void exposeHQPData();
     void exposeHQPOutput();
     inline void exposeSolvers()
     {
       exposeSolverHQuadProg();
+      exposeSolverProxQP();
       exposeConstraintLevel();
       exposeHQPData();
       exposeHQPOutput();
