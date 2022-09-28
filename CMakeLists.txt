@@ -32,6 +32,7 @@ option(EIGEN_NO_AUTOMATIC_RESIZING
        "If ON, it forbids automatic resizing of dynamics arrays and matrices"
        OFF)
 option(PROXQP_SUPPORT "Support using the proxqp solver" ON)
+option(OSQP_SUPPORT "Support using the osqp solver" ON)
 
 # Project configuration
 if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
@@ -146,6 +147,13 @@ if(PROXQP_SUPPORT)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
        include/tsid/solvers/solver-proxqp.hpp)
 endif()
+
+if(OSQP_SUPPORT)
+  find_package(OsqpEigen REQUIRED)
+  list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
+       include/tsid/solvers/solver-osqp.hpp)
+endif()
+
 if(qpmad_FOUND)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
        include/tsid/solvers/solver-HQP-qpmad.hpp)
@@ -228,6 +236,11 @@ set(${PROJECT_NAME}_SOLVERS_SOURCES
 if(PROXQP_SUPPORT)
   list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-proxqp.cpp)
 endif()
+
+if(OSQP_SUPPORT)
+  list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-osqp.cpp)
+endif()
+
 if(qpmad_FOUND)
   list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-HQP-qpmad.cpp)
 endif()
@@ -263,6 +276,12 @@ if(PROXQP_SUPPORT)
   target_include_directories(${PROJECT_NAME} PUBLIC ${proxsuite_INCLUDE_DIRS})
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_PROXSUITE_FOUND)
 endif()
+
+if(OSQP_SUPPORT)
+  target_link_libraries(${PROJECT_NAME} PUBLIC OsqpEigen::OsqpEigen)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_OSQP_FOUND)
+endif()
+
 if(qpmad_FOUND)
   target_include_directories(${PROJECT_NAME} PUBLIC ${qpmad_INCLUDE_DIRS})
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_QPMAD_FOUND)
