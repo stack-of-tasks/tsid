@@ -48,13 +48,17 @@ namespace tsid
       SolverHQPBase(const std::string & name);
       virtual ~SolverHQPBase() {};
 
-      virtual const std::string & name() { return m_name; }
+      virtual const std::string & name() const { return m_name; }
 
       virtual void resize(unsigned int n, unsigned int neq, unsigned int nin) = 0;
 
       /** Solve the specified Hierarchical Quadratic Program.
        */
       virtual const HQPOutput & solve(const HQPData & problemData) = 0;
+
+      /** Retrieve the matrices describing a QP problem from the problem data. */
+      virtual void retrieveQPData(const HQPData & problemData, 
+                                  const bool hessianRegularization) = 0;
 
       /** Get the objective value of the last solved problem. */
       virtual double getObjectiveValue() = 0;
@@ -79,7 +83,7 @@ namespace tsid
 
       std::string           m_name;
       bool                  m_useWarmStart;   // true if the solver is allowed to warm start
-      int                   m_maxIter;        // max number of iterations
+      unsigned int          m_maxIter;        // max number of iterations
       double                m_maxTime;        // max time to solve the HQP [s]
       HQPOutput             m_output;
     };

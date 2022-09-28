@@ -47,6 +47,13 @@ namespace tsid
        */
       const HQPOutput & solve(const HQPData & problemData);
 
+      /** Retrieve the matrices describing a QP problem from the problem data. */
+      void retrieveQPData(const HQPData & problemData, 
+                          const bool hessianRegularization = true);
+
+      /** Return the QP data object. */
+      const QPDataQuadProg getQPData() const { return m_qpData; }
+
       /** Get the objective value of the last solved problem. */
       double getObjectiveValue();
 
@@ -60,14 +67,7 @@ namespace tsid
       // <nVars, nEqCon, 2*nIneqCon>
       eiquadprog::solvers::EiquadprogFast m_solver; 
 
-      Matrix m_H;
-      Vector m_g;
-      Matrix m_CE;
-      Vector m_ce0;
-      Matrix m_CI;  /// twice the rows because inequality constraints are bilateral
-      Vector m_ci0;
       double m_objValue;
-
       double m_hessian_regularization;
 
       Eigen::VectorXi m_activeSet;  /// vector containing the indexes of the active inequalities
@@ -76,6 +76,8 @@ namespace tsid
       unsigned int m_neq;  /// number of equality constraints
       unsigned int m_nin;  /// number of inequality constraints
       unsigned int m_n;    /// number of variables
+      
+      QPDataQuadProgTpl<double> m_qpData;
     };
   }
 }

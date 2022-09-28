@@ -49,24 +49,24 @@ void SolverHQuadProg::resize(unsigned int n, unsigned int neq, unsigned int nin)
 #ifndef NDEBUG
     sendMsg("Resizing equality constraints from "+toString(m_neq)+" to "+toString(neq));
 #endif
-    m_CE.resize(neq, n);
-    m_ce0.resize(neq);
+    m_qpData.CE.resize(neq, n);
+    m_qpData.ce0.resize(neq);
   }
   if(resizeIn)
   {
 #ifndef NDEBUG
     sendMsg("Resizing inequality constraints from "+toString(m_nin)+" to "+toString(nin));
 #endif
-    m_CI.resize(2*nin, n);
-    m_ci0.resize(2*nin);
+    m_qpData.CI.resize(2*nin, n);
+    m_qpData.ci0.resize(2*nin);
   }
   if(resizeVar)
   {
 #ifndef NDEBUG
     sendMsg("Resizing Hessian from "+toString(m_n)+" to "+toString(n));
 #endif
-    m_H.resize(n, n);
-    m_g.resize(n);
+    m_qpData.H.resize(n, n);
+    m_qpData.g.resize(n);
     m_output.x.resize(n);
   }
 
@@ -75,7 +75,7 @@ void SolverHQuadProg::resize(unsigned int n, unsigned int neq, unsigned int nin)
   m_nin = nin;
 }
 
-const HQPOutput & SolverHQuadProg::solve(const HQPData & problemData)
+void SolverHQuadProg::retrieveQPData(const HQPData & problemData, const bool hessianRegularization)
 {
   if(problemData.size()>2)
   {
@@ -106,26 +106,26 @@ const HQPOutput & SolverHQuadProg::solve(const HQPData & problemData)
       auto constr = it->second;
       if(constr->isEquality())
       {
-        m_CE.middleRows(i_eq, constr->rows()) = constr->matrix();
-        m_ce0.segment(i_eq, constr->rows())   = -constr->vector();
+        m_qpData.CE.middleRows(i_eq, constr->rows()) = constr->matrix();
+        m_qpData.ce0.segment(i_eq, constr->rows())   = -constr->vector();
         i_eq += constr->rows();
       }
       else if(constr->isInequality())
       {
-        m_CI.middleRows(i_in, constr->rows()) = constr->matrix();
-        m_ci0.segment(i_in, constr->rows())   = -constr->lowerBound();
+        m_qpData.CI.middleRows(i_in, constr->rows()) = constr->matrix();
+        m_qpData.ci0.segment(i_in, constr->rows())   = -constr->lowerBound();
         i_in += constr->rows();
-        m_CI.middleRows(i_in, constr->rows()) = -constr->matrix();
-        m_ci0.segment(i_in, constr->rows())   = constr->upperBound();
+        m_qpData.CI.middleRows(i_in, constr->rows()) = -constr->matrix();
+        m_qpData.ci0.segment(i_in, constr->rows())   = constr->upperBound();
         i_in += constr->rows();
       }
       else if(constr->isBound())
       {
-        m_CI.middleRows(i_in, constr->rows()).setIdentity();
-        m_ci0.segment(i_in, constr->rows())   = -constr->lowerBound();
+        m_qpData.CI.middleRows(i_in, constr->rows()).setIdentity();
+        m_qpData.ci0.segment(i_in, constr->rows())   = -constr->lowerBound();
         i_in += constr->rows();
-        m_CI.middleRows(i_in, constr->rows()) = -Matrix::Identity(m_n, m_n);
-        m_ci0.segment(i_in, constr->rows())   = constr->upperBound();
+        m_qpData.CI.middleRows(i_in, constr->rows()) = -Matrix::Identity(m_n, m_n);
+        m_qpData.ci0.segment(i_in, constr->rows())   = constr->upperBound();
         i_in += constr->rows();
       }
     }
@@ -136,8 +136,8 @@ const HQPOutput & SolverHQuadProg::solve(const HQPData & problemData)
   if(problemData.size()>1)
   {
     const ConstraintLevel & cl1 = problemData[1];
-    m_H.setZero();
-    m_g.setZero();
+    m_qpData.H.setZero();
+    m_qpData.g.setZero();
     for(ConstraintLevel::const_iterator it=cl1.begin(); it!=cl1.end(); it++)
     {
       const double & w = it->first;
@@ -145,10 +145,10 @@ const HQPOutput & SolverHQuadProg::solve(const HQPData & problemData)
       if(!constr->isEquality())
         assert(false && "Inequalities in the cost function are not implemented yet");
 
-      m_H += w*constr->matrix().transpose()*constr->matrix();
-      m_g -= w*(constr->matrix().transpose()*constr->vector());
+      m_qpData.H += w*constr->matrix().transpose()*constr->matrix();
+      m_qpData.g -= w*(constr->matrix().transpose()*constr->vector());
     }
-    m_H.diagonal() += m_hessian_regularization*Vector::Ones(m_n);
+    m_qpData.H.diagonal() += m_hessian_regularization*Vector::Ones(m_n);
   }
 
 #ifdef ELIMINATE_EQUALITY_CONSTRAINTS
@@ -163,53 +163,53 @@ const HQPOutput & SolverHQuadProg::solve(const HQPData & problemData)
   if(m_neq>0)
   {
 	START_PROFILER("Eiquadprog CE decomposition");
-//    m_CE_dec.compute(m_CE, ComputeThinU | ComputeThinV);
-	m_CE_dec.compute(m_CE);
+//    m_qpData.CE_dec.compute(m_qpData.CE, ComputeThinU | ComputeThinV);
+	m_qpData.CE_dec.compute(m_qpData.CE);
 	STOP_PROFILER("Eiquadprog CE decomposition");
 
 	START_PROFILER("Eiquadprog get CE null-space basis");
 // get nullspace basis from SVD	
-//    const int r = m_CE_dec.nonzeroSingularValues();
-//    const Matrix Z = m_CE_dec.matrixV().rightCols(m_n-r);
+//    const int r = m_qpData.CE_dec.nonzeroSingularValues();
+//    const Matrix Z = m_qpData.CE_dec.matrixV().rightCols(m_n-r);
 
 	// get null space basis from ColPivHouseholderQR
-//	Matrix Z = m_CE_dec.householderQ();
+//	Matrix Z = m_qpData.CE_dec.householderQ();
 //	Z = Z.rightCols(m_n-r);
 	
 	// get null space basis from COD
 	// P^{-1} * y => colsPermutation() * y;
-//	Z = m_CE_dec.matrixZ(); // * m_CE_dec.colsPermutation();
+//	Z = m_qpData.CE_dec.matrixZ(); // * m_qpData.CE_dec.colsPermutation();
 	ZT.setIdentity();
-	//m_CE_dec.applyZAdjointOnTheLeftInPlace(ZT);
+	//m_qpData.CE_dec.applyZAdjointOnTheLeftInPlace(ZT);
 	typedef tsid::math::Index Index;
-        const Index rank = m_CE_dec.rank();
-        Vector temp(m_n);
-        for (Index k = 0; k < rank; ++k)
-        {
-          if (k != rank - 1)
-            ZT.row(k).swap(ZT.row(rank - 1));
-          ZT.middleRows(rank - 1, m_n - rank + 1)
-              .applyHouseholderOnTheLeft(
-                m_CE_dec.matrixQTZ().row(k).tail(m_n - rank).adjoint(),
-                m_CE_dec.zCoeffs()(k),
-                &temp(0));
-          if (k != rank - 1)
-            ZT.row(k).swap(ZT.row(rank - 1));
-        }
+  const Index rank = m_qpData.CE_dec.rank();
+  Vector temp(m_n);
+  for (Index k = 0; k < rank; ++k)
+  {
+    if (k != rank - 1)
+      ZT.row(k).swap(ZT.row(rank - 1));
+    ZT.middleRows(rank - 1, m_n - rank + 1)
+        .applyHouseholderOnTheLeft(
+          m_qpData.CE_dec.matrixQTZ().row(k).tail(m_n - rank).adjoint(),
+          m_qpData.CE_dec.zCoeffs()(k),
+          &temp(0));
+    if (k != rank - 1)
+      ZT.row(k).swap(ZT.row(rank - 1));
+  }
 	STOP_PROFILER("Eiquadprog get CE null-space basis");
 		
 	// find a solution for the equalities
-    Vector x0 = m_CE_dec.solve(m_ce0);
+  Vector x0 = m_qpData.CE_dec.solve(m_qpData.ce0);
 	x0 = -x0;
 
 //    START_PROFILER("Eiquadprog project Hessian full");
-//    m_ZT_H_Z.noalias() = Z.transpose()*m_H*Z; // this is too slow
+//    m_ZT_H_Z.noalias() = Z.transpose()*m_qpData.H*Z; // this is too slow
 //	STOP_PROFILER("Eiquadprog project Hessian full");
 	
 	START_PROFILER("Eiquadprog project Hessian incremental");
-    const ConstraintLevel & cl1 = problemData[1];
-    m_ZT_H_Z.setZero();
-    //m_g.setZero();
+  const ConstraintLevel & cl1 = problemData[1];
+  m_ZT_H_Z.setZero();
+    //m_qpData.g.setZero();
 	Matrix AZ;
     for(ConstraintLevel::const_iterator it=cl1.begin(); it!=cl1.end(); it++)
     {
@@ -220,32 +220,37 @@ const HQPOutput & SolverHQuadProg::solve(const HQPData & problemData)
 
 	  AZ.noalias() = constr->matrix()*Z.rightCols(m_n-r);
       m_ZT_H_Z += w*AZ.transpose()*AZ;
-      //m_g -= w*(constr->matrix().transpose()*constr->vector());
+      //m_qpData.g -= w*(constr->matrix().transpose()*constr->vector());
     }
     //m_ZT_H_Z.diagonal() += 1e-8*Vector::Ones(m_n);
-    m_CI_Z.noalias() = m_CI*Z.rightCols(m_n-r);
+    m_qpData.CI_Z.noalias() = m_qpData.CI*Z.rightCols(m_n-r);
     STOP_PROFILER("Eiquadprog project Hessian incremental");
 
   }
   STOP_PROFILER("Eiquadprog eliminate equalities");
 #endif
+}
 
+const HQPOutput & SolverHQuadProg::solve(const HQPData & problemData)
+{
 //#ifndef NDEBUG
-//  PRINT_MATRIX(m_H);
-//  PRINT_VECTOR(m_g);
-//  PRINT_MATRIX(m_CE);
-//  PRINT_VECTOR(m_ce0);
-//  PRINT_MATRIX(m_CI);
-//  PRINT_VECTOR(m_ci0);
+//  PRINT_MATRIX(m_qpData.H);
+//  PRINT_VECTOR(m_qpData.g);
+//  PRINT_MATRIX(m_qpData.CE);
+//  PRINT_VECTOR(m_qpData.ce0);
+//  PRINT_MATRIX(m_qpData.CI);
+//  PRINT_VECTOR(m_qpData.ci0);
 //#endif
+  SolverHQuadProg::retrieveQPData(problemData);
+
 
   //  min 0.5 * x G x + g0 x
   //  s.t.
   //  CE^T x + ce0 = 0
   //  CI^T x + ci0 >= 0
   m_objValue = eiquadprog::solvers::
-               solve_quadprog(m_H, m_g, m_CE.transpose(), m_ce0,
-                              m_CI.transpose(), m_ci0,
+               solve_quadprog(m_qpData.H, m_qpData.g, m_qpData.CE.transpose(), m_qpData.ce0,
+                              m_qpData.CI.transpose(), m_qpData.ci0,
                               m_output.x, m_activeSet, m_activeSetSize);
 
   if(m_objValue==std::numeric_limits<double>::infinity())
