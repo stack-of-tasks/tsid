@@ -47,7 +47,9 @@ namespace tsid
         .add_property("ObjVal", &Solver::getObjectiveValue, "return obj value")
         .def("solve", &SolverHQuadProgPythonVisitor::solve, bp::args("HQPData"))
         .def("solve", &SolverHQuadProgPythonVisitor::solver_helper, bp::args("HQPData for Python"))
-
+        .add_property("qpData", &Solver::getQPData, "return QP Data object")
+        .def("retrieveQPData", &Solver::retrieveQPData, bp::args("HQPData"))
+        .def("retrieveQPData", &SolverHQuadProgPythonVisitor::retrieveQPData, bp::args("HQPData for Python"))
         ;
       }
        
@@ -66,6 +68,12 @@ namespace tsid
           output = self.solve(data);
          
           return output;
+      }
+
+      static solvers::QPDataQuadProg retrieveQPData(Solver & self, HQPDatas & HQPDatas){
+          solvers::HQPData data = HQPDatas.get();
+          self.retrieveQPData(data);
+          return self.getQPData();
       }
 
       static void expose(const std::string & class_name)
