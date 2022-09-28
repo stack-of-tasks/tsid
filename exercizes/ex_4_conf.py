@@ -78,7 +78,7 @@ masks_posture = np.ones(nv-6)
 
 # configuration for viewer
 # ----------------------------------------------
-viewer = pin.visualize.GepettoVisualizer
+viewer = pin.visualize.MeshcatVisualizer
 PRINT_N = 500                   # print every PRINT_N time steps
 DISPLAY_N = 20                  # update robot configuration in viwewer every DISPLAY_N time steps
 CAMERA_TRANSFORM = [3.578777551651001, 1.2937744855880737, 0.8885031342506409, 0.4116811454296112, 0.5468055009841919, 0.6109083890914917, 0.3978860676288605]

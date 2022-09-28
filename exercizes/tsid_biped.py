@@ -170,7 +170,7 @@ class TsidBiped:
             elif viewer == pin.visualize.MeshcatVisualizer:
                 self.viz = viewer(self.robot_display.model, self.robot_display.collision_model,
                                   self.robot_display.visual_model)
-                self.viz.initViewer(loadModel=True)
+                self.viz.initViewer(loadModel=True, open=True)
                 self.viz.display(q)
                 
     def display(self, q):
