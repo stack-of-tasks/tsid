@@ -31,6 +31,7 @@ option(EIGEN_RUNTIME_NO_MALLOC
 option(EIGEN_NO_AUTOMATIC_RESIZING
        "If ON, it forbids automatic resizing of dynamics arrays and matrices"
        OFF)
+option(PROXQP_SUPPORT "Support using the proxqp solver" ON)
 
 # Project configuration
 if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
@@ -141,6 +142,10 @@ set(${PROJECT_NAME}_SOLVERS_HEADERS
     include/tsid/solvers/solver-HQP-eiquadprog-rt.hxx
     include/tsid/solvers/solver-HQP-eiquadprog-fast.hpp)
 
+if(PROXQP_SUPPORT)
+  list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
+       include/tsid/solvers/solver-proxqp.hpp)
+endif()
 if(qpmad_FOUND)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
        include/tsid/solvers/solver-HQP-qpmad.hpp)
@@ -220,6 +225,9 @@ set(${PROJECT_NAME}_SOLVERS_SOURCES
     src/solvers/solver-HQP-qpoases.cpp
     src/solvers/utils.cpp)
 
+if(PROXQP_SUPPORT)
+  list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-proxqp.cpp)
+endif()
 if(qpmad_FOUND)
   list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-HQP-qpmad.cpp)
 endif()
@@ -251,6 +259,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
 target_link_libraries(${PROJECT_NAME} PUBLIC pinocchio::pinocchio
                                              eiquadprog::eiquadprog)
 
+if(PROXQP_SUPPORT)
+  target_include_directories(${PROJECT_NAME} PUBLIC ${proxsuite_INCLUDE_DIRS})
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_PROXSUITE_FOUND)
+endif()
 if(qpmad_FOUND)
   target_include_directories(${PROJECT_NAME} PUBLIC ${qpmad_INCLUDE_DIRS})
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_QPMAD_FOUND)

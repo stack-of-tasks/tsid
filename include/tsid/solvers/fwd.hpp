@@ -43,6 +43,9 @@ namespace tsid
 #ifdef TSID_QPMAD_FOUND
       ,SOLVER_HQP_QPMAD
 #endif
+#ifdef TSID_PROXSUITE_FOUND
+      ,SOLVER_HQP_PROXSUITE
+#endif
 #ifdef QPOASES_FOUND
       ,SOLVER_HQP_OASES
 #endif

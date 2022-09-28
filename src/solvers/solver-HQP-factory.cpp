@@ -23,6 +23,9 @@
   #include <tsid/solvers/solver-HQP-qpmad.hpp>
 #endif
 
+#ifdef TSID_PROXSUITE_FOUND
+  #include <tsid/solvers/solver-proxqp.hpp>
+#endif
 #ifdef QPOASES_FOUND
   #include <tsid/solvers/solver-HQP-qpoases.hh>
 #endif
@@ -46,6 +49,10 @@ namespace tsid
         return new SolverHQpmad(name);
 #endif
 
+#ifdef TSID_PROXSUITE_FOUND
+      if(solverType==SOLVER_HQP_PROXSUITE)
+        return new SolverProxQP(name);
+#endif
 #ifdef QPOASES_FOUND
       if(solverType==SOLVER_HQP_QPOASES)
         return new Solver_HQP_qpoases(name);
