@@ -23,6 +23,7 @@ file(
   solvers/*.cpp
   tasks/*.cpp
   trajectories/*.cpp
+  math/*.cpp
   utils/*.cpp)
 
 add_library(${PYWRAP} SHARED ${${PYWRAP}_SOURCES} ${${PYWRAP}_HEADERS})
