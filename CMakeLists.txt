@@ -31,8 +31,8 @@ option(EIGEN_RUNTIME_NO_MALLOC
 option(EIGEN_NO_AUTOMATIC_RESIZING
        "If ON, it forbids automatic resizing of dynamics arrays and matrices"
        OFF)
-option(PROXQP_SUPPORT "Support using the proxqp solver" ON)
-option(OSQP_SUPPORT "Support using the osqp solver" ON)
+option(PROXQP_SUPPORT "Support using the proxqp solver" OFF)
+option(OSQP_SUPPORT "Support using the osqp solver" OFF)
 
 # Project configuration
 if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
@@ -144,6 +144,7 @@ set(${PROJECT_NAME}_SOLVERS_HEADERS
     include/tsid/solvers/solver-HQP-eiquadprog-fast.hpp)
 
 if(PROXQP_SUPPORT)
+  find_package(proxsuite REQUIRED)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
        include/tsid/solvers/solver-proxqp.hpp)
 endif()

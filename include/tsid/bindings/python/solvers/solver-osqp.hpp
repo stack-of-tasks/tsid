@@ -41,7 +41,7 @@ namespace tsid
       void visit(PyClass& cl) const
       {
         cl
-        .def(bp::init<std::string>((bp::arg("name")), "Default Constructor with name"))
+        .def(bp::init<const std::string &>((bp::arg("name")), "Default Constructor with name"))
         .def("resize", &SolverOSQPPythonVisitor::resize, bp::args("n", "neq", "nin"))
         .add_property("ObjVal", &Solver::getObjectiveValue, "return obj value")
         .def("solve", &SolverOSQPPythonVisitor::solve, bp::args("HQPData"))
@@ -68,7 +68,7 @@ namespace tsid
       }
       static solvers::HQPOutput solver_helper(Solver & self, HQPDatas & HQPDatas){
           solvers::HQPOutput output;
-          solvers::HQPData data = HQPDatas.get();
+          solvers::HQPData &data = HQPDatas.get();
 
           output = self.solve(data);
          
@@ -76,7 +76,7 @@ namespace tsid
       }
 
       static solvers::QPData retrieveQPData(Solver & self, HQPDatas & HQPDatas){
-          solvers::HQPData data = HQPDatas.get();
+          solvers::HQPData &data = HQPDatas.get();
           self.retrieveQPData(data);
           return self.getQPData();
       }

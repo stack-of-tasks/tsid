@@ -20,8 +20,12 @@
 
 
 #include "tsid/bindings/python/solvers/solver-HQP-eiquadprog.hpp"
-#include "tsid/bindings/python/solvers/solver-proxqp.hpp"
-#include "tsid/bindings/python/solvers/solver-osqp.hpp"
+#ifdef TSID_PROXSUITE_FOUND
+  #include "tsid/bindings/python/solvers/solver-proxqp.hpp"
+#endif
+#ifdef TSID_OSQP_FOUND
+  #include "tsid/bindings/python/solvers/solver-osqp.hpp"
+#endif
 #include "tsid/bindings/python/solvers/HQPData.hpp"
 #include "tsid/bindings/python/solvers/HQPOutput.hpp"
 namespace tsid

@@ -44,7 +44,7 @@ if USE_EIQUADPROG:
 elif USE_PROXQP:
     print("Using proxqp")
     tsid_biped.solver = tsid.SolverProxQP("qp solver")
-    tsid_biped.solver.set_epsilon_absolute(1e-8)
+    tsid_biped.solver.set_epsilon_absolute(1e-5)
     tsid_biped.solver.set_maximum_iterations(int(1e6))
     tsid_biped.solver.set_verbose(VERBOSE)
 

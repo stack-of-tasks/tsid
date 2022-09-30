@@ -203,7 +203,7 @@ namespace tsid
 
       m_solver.init(m_qpData.H, m_qpData.g,
                      m_qpData.CE, m_qpData.ce0,
-                     m_qpData.CI, m_qpData.ci_ub, m_qpData.ci_lb);
+                     m_qpData.CI, m_qpData.ci_lb, m_qpData.ci_ub);
 
       m_solver.solve();
       STOP_PROFILER_PROXQP("PROFILE_PROXQP_SOLUTION");
