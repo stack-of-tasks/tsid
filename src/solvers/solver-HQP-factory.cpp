@@ -55,7 +55,7 @@ namespace tsid
 #endif
 
 #ifdef TSID_PROXSUITE_FOUND
-      if(solverType==SOLVER_HQP_PROXSUITE)
+      if(solverType==SOLVER_HQP_PROXQP)
         return new SolverProxQP(name);
 #endif
 

@@ -193,7 +193,7 @@ namespace tsid
 
       SolverProxQP::retrieveQPData(problemData);
 
-      START_PROFILER("PROFILE_PROXQP_SOLUTION");
+      START_PROFILER_PROXQP("PROFILE_PROXQP_SOLUTION");
       //  min 0.5 * x^T H x + g^T x
       //  s.t.
       //  CE x + ce0 = 0
@@ -206,7 +206,7 @@ namespace tsid
                      m_qpData.CI, m_qpData.ci_ub, m_qpData.ci_lb);
 
       m_solver.solve();
-      STOP_PROFILER("PROFILE_PROXQP_SOLUTION");
+      STOP_PROFILER_PROXQP("PROFILE_PROXQP_SOLUTION");
       
       QPSolverOutput status = m_solver.results.info.status;
       

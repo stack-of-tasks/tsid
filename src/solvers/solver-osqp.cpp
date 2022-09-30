@@ -210,7 +210,7 @@ namespace tsid
 
       SolverOSQP::retrieveQPData(problemData);
 
-      START_PROFILER("PROFILE_OSQP_SOLUTION");
+      START_PROFILER_OSQP("PROFILE_OSQP_SOLUTION");
       //  min 0.5 * x G x + g0 x
       //  s.t.
       //  lb <= CI x <= ub (including equality constraints)
@@ -238,7 +238,7 @@ namespace tsid
         m_solver.initSolver();
       }
       m_solver.solveProblem();
-      STOP_PROFILER("PROFILE_OSQP_SOLUTION");
+      STOP_PROFILER_OSQP("PROFILE_OSQP_SOLUTION");
       
       OsqpEigen::Status status = m_solver.getStatus();
 

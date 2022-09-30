@@ -23,6 +23,15 @@
 #include <proxsuite/proxqp/sparse/sparse.hpp>
 #include <proxsuite/proxqp/results.hpp>
 
+
+#ifdef PROFILE_PROXQP
+#define START_PROFILER_PROXQP(x) START_PROFILER(x)
+#define STOP_PROFILER_PROXQP(x) STOP_PROFILER(x)
+#else
+#define START_PROFILER_PROXQP(x)
+#define STOP_PROFILER_PROXQP(x)
+#endif
+
 using namespace proxsuite;
 using namespace proxsuite::proxqp;
 

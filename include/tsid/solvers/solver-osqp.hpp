@@ -22,6 +22,15 @@
 #include "OsqpEigen/OsqpEigen.h"
 #include <Eigen/Sparse>
 
+
+#ifdef PROFILE_OSQP
+#define START_PROFILER_OSQP(x) START_PROFILER(x)
+#define STOP_PROFILER_OSQP(x) STOP_PROFILER(x)
+#else
+#define START_PROFILER_OSQP(x)
+#define STOP_PROFILER_OSQP(x)
+#endif
+
 namespace tsid
 {
   namespace solvers
