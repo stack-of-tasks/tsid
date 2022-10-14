@@ -1,0 +1,78 @@
+name: Release on PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build_wheels:
+    name: "Build ${{ matrix.build }} wheels on ${{ matrix.os }} ${{ matrix.arch }}"
+    runs-on: "${{ matrix.os }}-latest"
+    strategy:
+      matrix:
+        os: ["ubuntu", "macos"]
+        arch: ["x86_64"]
+        build: ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "pp38-*", "pp39-*"]
+        include:
+          - arch: "universal2"
+            os: "macos"
+            build: "cp38-*"
+          - arch: "universal2"
+            os: "macos"
+            build: "cp39-*"
+          - arch: "universal2"
+            os: "macos"
+            build: "cp310-*"
+          - arch: "universal2"
+            os: "macos"
+            build: "cp311-*"
+          #- arch: "aarch64"
+            #os: "ubuntu"
+            #build: "cp38-manylinux*"
+          #- arch: "aarch64"
+            #os: "ubuntu"
+            #build: "cp39-manylinux*"
+          #- arch: "aarch64"
+            #os: "ubuntu"
+            #build: "cp310-manylinux*"
+          #- arch: "aarch64"
+            #os: "ubuntu"
+            #build: "cp311-manylinux*"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Set up QEMU
+        if: matrix.arch == 'aarch64'
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - run: python -m pip install -U pip
+      - run: python -m pip install cibuildwheel
+      - run: touch setup.py
+      - run: python -m cibuildwheel --output-dir wh
+        env:
+          CIBW_BUILD: ${{ matrix.build }}
+          CIBW_ARCHS: ${{ matrix.arch }}
+          CIBW_MANYLINUX_X86_64_IMAGE: "quay.io/pypa/manylinux_2_28_x86_64"
+          CIBW_MANYLINUX_PYPY_X86_64_IMAGE: "quay.io/pypa/manylinux_2_28_x86_64"
+          CIBW_MANYLINUX_AARCH64_IMAGE: "quay.io/pypa/manylinux_2_28_aarch64"
+          CIBW_REPAIR_WHEEL_COMMAND: ""
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wh
+  release:
+    needs: ["build_wheels"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - uses: actions/download-artifact@v3
+      - run: python -m pip install twine
+      - run: python -m twine upload -u __token__ -p "${{ secrets.PYPI_TOKEN }}" artifact/*
