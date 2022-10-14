@@ -12,6 +12,7 @@ homepage = "https://github.com/stack-of-tasks/tsid"
 [build-system]
 requires = [
     "cmeel[build]",
+    "cmeel-urdfdom-headers",
     "eiquadprog",
     "pin",
     ]
