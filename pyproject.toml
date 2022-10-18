@@ -17,3 +17,4 @@ requires = [
     "pin",
     ]
 build-backend = "cmeel.build"
+build-number = 1
