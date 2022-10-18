@@ -250,6 +250,12 @@ target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
 target_link_libraries(${PROJECT_NAME} PUBLIC pinocchio::pinocchio
                                              eiquadprog::eiquadprog)
 
+if(APPLE)
+  set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "@loader_path")
+elseif(UNIX)
+  set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+endif()
+
 if(qpmad_FOUND)
   target_include_directories(${PROJECT_NAME} PUBLIC ${qpmad_INCLUDE_DIRS})
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_QPMAD_FOUND)
