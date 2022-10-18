@@ -42,7 +42,9 @@ endif(APPLE)
 set_target_properties(${PYWRAP} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
                                            ${PROJECT_NAME})
 
-if(UNIX AND NOT APPLE)
+if(APPLE)
+  set_target_properties(${PYWRAP} PROPERTIES INSTALL_RPATH "@loader_path/../../..")
+elseif(UNIX)
   set_target_properties(${PYWRAP} PROPERTIES INSTALL_RPATH "\$ORIGIN/../../..")
 endif()
 
