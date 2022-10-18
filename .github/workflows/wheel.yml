@@ -1,0 +1,57 @@
+name: Test Wheel packaging
+
+on: ["push", "pull_request"]
+
+env:
+  CMEEL_JOBS: 1
+  CMEEL_TEST_JOBS: 1
+
+jobs:
+  build:
+    name: "Build python ${{ matrix.python }} on ${{ matrix.os }}"
+    runs-on: "${{ matrix.os }}-latest"
+    strategy:
+      matrix:
+        os: ["ubuntu", "macos"]
+        python: ["3.8", "3.10"]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+      - name: setup
+        run: |
+          python -m pip install -U pip
+          python -m pip install -U wheel
+      - name: build cmeel wheel
+        run: python -m pip wheel -w wh .
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wh
+
+  test:
+    needs: ["build"]
+    name: "Test python ${{ matrix.python }} on ${{ matrix.os }}"
+    runs-on: "${{ matrix.os }}-latest"
+    strategy:
+      matrix:
+        os: ["ubuntu", "macos"]
+        python: ["3.8", "3.10"]
+    steps:
+      - uses: actions/download-artifact@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+      - name: setup
+        run: |
+          python -m pip install -U pip
+          python -m pip install -U wheel simple503
+          python -m simple503 --sort --base-url "${{ github.workspace }}/artifact" artifact
+      - name: install wheel
+        run: python -m pip install -i "file://${{ github.workspace }}/artifact" tsid
+      - name: test
+        run: python -c "import tsid"
+        env:
+          PYTHONWARNINGS: error
