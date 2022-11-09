@@ -17,5 +17,5 @@ requires = [
     "pin",
     ]
 build-backend = "cmeel.build"
-build-number = 2
+build-number = 3
 configure-args = ["-DSUFFIX_SO_VERSION=OFF"]
