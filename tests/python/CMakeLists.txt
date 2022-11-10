@@ -2,9 +2,13 @@ set(${PYWRAP}_TESTS
     # Constraint
     # ContactPoint
     # Contact
-    Formulation Gravity RobotWrapper
+    Formulation
+    Gravity
+    RobotWrapper
     Solvers
-    Tasks Trajectories Deprecations)
+    Tasks
+    Trajectories
+    Deprecations)
 
 foreach(test ${${PYWRAP}_TESTS})
   add_python_unit_test("py-${test}" "tests/python/test_${test}.py"
