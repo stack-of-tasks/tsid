@@ -18,6 +18,7 @@
 #ifndef __invdyn_solvers_hqp_eiquadprog_hpp__
 #define __invdyn_solvers_hqp_eiquadprog_hpp__
 
+#include "tsid/deprecated.hh"
 #include <tsid/solvers/solver-HQP-base.hpp>
 
 namespace tsid
@@ -61,6 +62,12 @@ namespace tsid
 
       void sendMsg(const std::string & s);
 
+      TSID_DEPRECATED Matrix m_H;
+      TSID_DEPRECATED Vector m_g;
+      TSID_DEPRECATED Matrix m_CE;
+      TSID_DEPRECATED Vector m_ce0;
+      TSID_DEPRECATED Matrix m_CI;
+      TSID_DEPRECATED Vector m_ci0;
       double m_objValue;
       double m_hessian_regularization;
 

@@ -18,6 +18,7 @@
 #ifndef __invdyn_solvers_hqp_eiquadprog_fast_hpp__
 #define __invdyn_solvers_hqp_eiquadprog_fast_hpp__
 
+#include "tsid/deprecated.hh"
 #include "tsid/solvers/solver-HQP-base.hpp"
 #include "eiquadprog/eiquadprog-fast.hpp"
 
@@ -67,6 +68,12 @@ namespace tsid
       // <nVars, nEqCon, 2*nIneqCon>
       eiquadprog::solvers::EiquadprogFast m_solver; 
 
+      TSID_DEPRECATED Matrix m_H;
+      TSID_DEPRECATED Vector m_g;
+      TSID_DEPRECATED Matrix m_CE;
+      TSID_DEPRECATED Vector m_ce0;
+      TSID_DEPRECATED Matrix m_CI;  /// twice the rows because inequality constraints are bilateral
+      TSID_DEPRECATED Vector m_ci0;
       double m_objValue;
       double m_hessian_regularization;
 
