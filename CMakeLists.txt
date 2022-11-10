@@ -31,8 +31,8 @@ option(EIGEN_RUNTIME_NO_MALLOC
 option(EIGEN_NO_AUTOMATIC_RESIZING
        "If ON, it forbids automatic resizing of dynamics arrays and matrices"
        OFF)
-option(PROXQP_SUPPORT "Support using the proxqp solver" OFF)
-option(OSQP_SUPPORT "Support using the osqp solver" OFF)
+option(BUILD_WITH_PROXQP "Support using the proxqp solver" OFF)
+option(BUILD_WITH_OSQP "Support using the osqp solver" OFF)
 
 # Project configuration
 if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
@@ -143,13 +143,13 @@ set(${PROJECT_NAME}_SOLVERS_HEADERS
     include/tsid/solvers/solver-HQP-eiquadprog-rt.hxx
     include/tsid/solvers/solver-HQP-eiquadprog-fast.hpp)
 
-if(PROXQP_SUPPORT)
+if(BUILD_WITH_PROXQP)
   find_package(proxsuite REQUIRED)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
        include/tsid/solvers/solver-proxqp.hpp)
 endif()
 
-if(OSQP_SUPPORT)
+if(BUILD_WITH_OSQP)
   find_package(OsqpEigen REQUIRED)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
        include/tsid/solvers/solver-osqp.hpp)
@@ -234,11 +234,11 @@ set(${PROJECT_NAME}_SOLVERS_SOURCES
     src/solvers/solver-HQP-qpoases.cpp
     src/solvers/utils.cpp)
 
-if(PROXQP_SUPPORT)
+if(BUILD_WITH_PROXQP)
   list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-proxqp.cpp)
 endif()
 
-if(OSQP_SUPPORT)
+if(BUILD_WITH_OSQP)
   list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-osqp.cpp)
 endif()
 
@@ -273,14 +273,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
 target_link_libraries(${PROJECT_NAME} PUBLIC pinocchio::pinocchio
                                              eiquadprog::eiquadprog)
 
-if(PROXQP_SUPPORT)
-  target_include_directories(${PROJECT_NAME} PUBLIC ${proxsuite_INCLUDE_DIRS})
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_PROXSUITE_FOUND)
+if(BUILD_WITH_PROXQP)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_PROXSUITE)
+  target_link_libraries(${PROJECT_NAME} PUBLIC proxsuite::proxsuite-vectorized)
 endif()
 
-if(OSQP_SUPPORT)
+if(BUILD_WITH_OSQP)
   target_link_libraries(${PROJECT_NAME} PUBLIC OsqpEigen::OsqpEigen)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_OSQP_FOUND)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_OSQP)
 endif()
 
 if(qpmad_FOUND)

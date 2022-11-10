@@ -24,10 +24,10 @@
 #include <tsid/solvers/solver-HQP-eiquadprog.hpp>
 #include <tsid/solvers/solver-HQP-eiquadprog-rt.hpp>
 
-#ifdef TSID_PROXSUITE_FOUND
+#ifdef TSID_WITH_PROXSUITE
   #include <tsid/solvers/solver-proxqp.hpp>
 #endif
-#ifdef TSID_OSQP_FOUND
+#ifdef TSID_WITH_OSQP
   #include <tsid/solvers/solver-osqp.hpp>
 #endif
 #ifdef TSID_QPMAD_FOUND
@@ -224,12 +224,12 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast_vs_proxqp)
                                                              "eiquadprog");
   solver->resize(n, neq, nin);
 
-#ifdef TSID_PROXSUITE_FOUND
+#ifdef TSID_WITH_PROXSUITE
   SolverHQPBase * solver_proxqp = SolverHQPFactory::createNewSolver(SOLVER_HQP_PROXQP,
                                                              "proxqp");
 #endif
 
-#ifdef TSID_OSQP_FOUND
+#ifdef TSID_WITH_OSQP
   SolverHQPBase * solver_osqp = SolverHQPFactory::createNewSolver(SOLVER_HQP_OSQP,
                                                              "osqp");
 #endif
@@ -306,13 +306,13 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast_vs_proxqp)
     const HQPOutput & output    = solver->solve(HQPData);
     getProfiler().stop(PROFILE_EIQUADPROG);
 
-  #ifdef TSID_PROXSUITE_FOUND
+  #ifdef TSID_WITH_PROXSUITE
     getProfiler().start(PROFILE_PROXQP);
     const HQPOutput & output_proxqp = solver_proxqp->solve(HQPData);
     getProfiler().stop(PROFILE_PROXQP);
   #endif
 
-  #ifdef TSID_OSQP_FOUND
+  #ifdef TSID_WITH_OSQP
     getProfiler().start(PROFILE_OSQP);
     const HQPOutput & output_osqp = solver_osqp->solve(HQPData);
     getProfiler().stop(PROFILE_OSQP);
@@ -338,13 +338,13 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast_vs_proxqp)
       const HQPOutput & output    = solver->solve(HQPData);
       getProfiler().stop(PROFILE_EIQUADPROG);
 
-    #ifdef TSID_PROXSUITE_FOUND
+    #ifdef TSID_WITH_PROXSUITE
       getProfiler().start(PROFILE_PROXQP);
       const HQPOutput & output_proxqp = solver_proxqp->solve(HQPData);
       getProfiler().stop(PROFILE_PROXQP);
     #endif
 
-    #ifdef TSID_OSQP_FOUND
+    #ifdef TSID_WITH_OSQP
       getProfiler().start(PROFILE_OSQP);
       const HQPOutput & output_osqp = solver_osqp->solve(HQPData);
       getProfiler().stop(PROFILE_OSQP);
@@ -367,12 +367,12 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast_vs_proxqp)
                           "Status "+SolverHQPBase::HQP_status_string[output.status]+
                           " Status FAST "+SolverHQPBase::HQP_status_string[output_fast.status]);
 
-  #ifdef TSID_PROXSUITE_FOUND
+  #ifdef TSID_WITH_PROXSUITE
     BOOST_REQUIRE_MESSAGE(output.status==output_proxqp.status,
                           "Status "+SolverHQPBase::HQP_status_string[output.status]+
                           " Status Proxqp "+SolverHQPBase::HQP_status_string[output_proxqp.status]);
   #endif
-  #ifdef TSID_OSQP_FOUND
+  #ifdef TSID_WITH_OSQP
     BOOST_REQUIRE_MESSAGE(output.status==output_osqp.status,
                           "Status "+SolverHQPBase::HQP_status_string[output.status]+
                           " Status Proxqp "+SolverHQPBase::HQP_status_string[output_osqp.status]);
@@ -398,11 +398,11 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast_vs_proxqp)
   //                        "\nSol FAST "+toString(output_fast.x.transpose())+
                           "\nDiff FAST: "+toString((output_rt.x-output_fast.x).norm()));
 
-    #ifdef TSID_PROXSUITE_FOUND
+    #ifdef TSID_WITH_PROXSUITE
       BOOST_CHECK_MESSAGE(output.x.isApprox(output_proxqp.x, 1e-4),
                 "\nDiff PROXQP: "+toString((output.x-output_proxqp.x).norm()));
     #endif
-    #ifdef TSID_OSQP_FOUND
+    #ifdef TSID_WITH_OSQP
       BOOST_CHECK_MESSAGE(output.x.isApprox(output_osqp.x, 1e-4),
                 "\nDiff OSQP: "+toString((output.x-output_osqp.x).norm()));
     #endif
@@ -422,11 +422,11 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast_vs_proxqp)
   delete solver_rt;
   delete solver_fast;
 
-#ifdef TSID_PROXSUITE_FOUND
+#ifdef TSID_WITH_PROXSUITE
   delete solver_proxqp;
 #endif
 
-#ifdef TSID_OSQP_FOUND
+#ifdef TSID_WITH_OSQP
   delete solver_osqp;
 #endif
 }

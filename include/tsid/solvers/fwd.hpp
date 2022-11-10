@@ -43,10 +43,10 @@ namespace tsid
 #ifdef TSID_QPMAD_FOUND
       ,SOLVER_HQP_QPMAD
 #endif
-#ifdef TSID_PROXSUITE_FOUND
+#ifdef TSID_WITH_PROXSUITE
       ,SOLVER_HQP_PROXQP
 #endif
-#ifdef TSID_OSQP_FOUND
+#ifdef TSID_WITH_OSQP
       ,SOLVER_HQP_OSQP
 #endif
 #ifdef QPOASES_FOUND

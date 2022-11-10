@@ -23,11 +23,11 @@
   #include <tsid/solvers/solver-HQP-qpmad.hpp>
 #endif
 
-#ifdef TSID_PROXSUITE_FOUND
+#ifdef TSID_WITH_PROXSUITE
   #include <tsid/solvers/solver-proxqp.hpp>
 #endif
 
-#ifdef TSID_OSQP_FOUND
+#ifdef TSID_WITH_OSQP
   #include <tsid/solvers/solver-osqp.hpp>
 #endif
 
@@ -54,12 +54,12 @@ namespace tsid
         return new SolverHQpmad(name);
 #endif
 
-#ifdef TSID_PROXSUITE_FOUND
+#ifdef TSID_WITH_PROXSUITE
       if(solverType==SOLVER_HQP_PROXQP)
         return new SolverProxQP(name);
 #endif
 
-#ifdef TSID_OSQP_FOUND
+#ifdef TSID_WITH_OSQP
       if(solverType==SOLVER_HQP_OSQP)
         return new SolverOSQP(name);
 #endif
