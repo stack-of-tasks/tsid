@@ -3,7 +3,7 @@ set(${PYWRAP}_TESTS
     # ContactPoint
     # Contact
     Formulation Gravity RobotWrapper
-    # Solvers
+    Solvers
     Tasks Trajectories Deprecations)
 
 foreach(test ${${PYWRAP}_TESTS})
