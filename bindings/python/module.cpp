@@ -25,6 +25,7 @@
 #include "tsid/bindings/python/tasks/expose-tasks.hpp"
 #include "tsid/bindings/python/solvers/expose-solvers.hpp"
 #include "tsid/bindings/python/formulations/expose-formulations.hpp"
+#include "tsid/bindings/python/math/utils.hpp"
 
 namespace bp = boost::python;
 using namespace tsid::python;
@@ -54,5 +55,6 @@ BOOST_PYTHON_MODULE(libtsid_pywrap)
   exposeTasks();
   exposeSolvers();
   exposeFormulations();
+  exposeMathUtils();
 
 }
