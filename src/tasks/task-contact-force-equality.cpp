@@ -128,7 +128,7 @@ const ConstraintBase & TaskContactForceEquality::compute(const double t,
 const ConstraintBase & TaskContactForceEquality::compute(const double,
                                                          ConstRefVector,
                                                          ConstRefVector,
-                                                         Data & data) {
+                                                         Data & /*data*/) {
 
   auto& M = m_constraint.matrix();
   M = m_contact->getForceGeneratorMatrix(); // 6x12 for a 6d contact
