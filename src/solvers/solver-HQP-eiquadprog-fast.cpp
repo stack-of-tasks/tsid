@@ -91,91 +91,91 @@ namespace tsid
     {
       
       if(problemData.size() > 2)
-          {
-            assert(false && "Solver not implemented for more than 2 hierarchical levels.");
-          }
-      
-          // Compute the constraint matrix sizes
-          unsigned int neq = 0, nin = 0;
-          const ConstraintLevel & cl0 = problemData[0];
-          if(cl0.size()>0)
-          {
-            const unsigned int n = cl0[0].second->cols();
-            for(ConstraintLevel::const_iterator it=cl0.begin(); it!=cl0.end(); it++)
-            {
-              auto constr = it->second;
-              assert(n==constr->cols());
-              if(constr->isEquality())
-                neq += constr->rows();
-              else
-                nin += constr->rows();
-            }
-            // If necessary, resize the constraint matrices
-            resize(n, neq, nin);
-
-            unsigned int i_eq = 0, i_in = 0;
-            for(ConstraintLevel::const_iterator it=cl0.begin(); it!=cl0.end(); it++)
-            {
-              auto constr = it->second;
-              if(constr->isEquality())
-              {
-                m_qpData.CE.middleRows(i_eq, constr->rows()) = constr->matrix();
-                m_qpData.ce0.segment(i_eq, constr->rows())   = -constr->vector();
-                i_eq += constr->rows();
-
-              }
-              else if(constr->isInequality())
-              {
-                m_qpData.CI.middleRows(i_in, constr->rows()) = constr->matrix();
-                m_qpData.ci0.segment(i_in, constr->rows())   = -constr->lowerBound();
-                i_in += constr->rows();
-                m_qpData.CI.middleRows(i_in, constr->rows()) = -constr->matrix();
-                m_qpData.ci0.segment(i_in, constr->rows())   = constr->upperBound();
-                i_in += constr->rows();
-              }
-              else if(constr->isBound())
-              {
-                m_qpData.CI.middleRows(i_in, constr->rows()).setIdentity();
-                m_qpData.ci0.segment(i_in, constr->rows())   = -constr->lowerBound();
-                i_in += constr->rows();
-                m_qpData.CI.middleRows(i_in, constr->rows()) = -Matrix::Identity(m_n, m_n);
-                m_qpData.ci0.segment(i_in, constr->rows())   = constr->upperBound();
-                i_in += constr->rows();
-              }
-            }
-          }
+      {
+        assert(false && "Solver not implemented for more than 2 hierarchical levels.");
+      }
+  
+      // Compute the constraint matrix sizes
+      unsigned int neq = 0, nin = 0;
+      const ConstraintLevel & cl0 = problemData[0];
+      if(cl0.size()>0)
+      {
+        const unsigned int n = cl0[0].second->cols();
+        for(ConstraintLevel::const_iterator it=cl0.begin(); it!=cl0.end(); it++)
+        {
+          auto constr = it->second;
+          assert(n==constr->cols());
+          if(constr->isEquality())
+            neq += constr->rows();
           else
-            resize(m_n, neq, nin);
-      
-          EIGEN_MALLOC_NOT_ALLOWED;
+            nin += constr->rows();
+        }
+        // If necessary, resize the constraint matrices
+        resize(n, neq, nin);
 
-          // Compute the cost 
-          if(problemData.size() > 1)
+        unsigned int i_eq = 0, i_in = 0;
+        for(ConstraintLevel::const_iterator it=cl0.begin(); it!=cl0.end(); it++)
+        {
+          auto constr = it->second;
+          if(constr->isEquality())
           {
-            const ConstraintLevel & cl1 = problemData[1];
-            m_qpData.H.setZero();
-            m_qpData.g.setZero();
-        
-            for(ConstraintLevel::const_iterator it=cl1.begin(); it!=cl1.end(); it++)
-            {
-              const double & w = it->first;
-              auto constr = it->second;
-              if(!constr->isEquality())
-                assert(false && "Inequalities in the cost function are not implemented yet");
-              
-              EIGEN_MALLOC_ALLOWED;
-              m_qpData.H.noalias() += w*constr->matrix().transpose()*constr->matrix();
-              EIGEN_MALLOC_NOT_ALLOWED;
-              
-              m_qpData.g.noalias() -= w*constr->matrix().transpose()*constr->vector();
-            }
-            
-            if (hessianRegularization)
-            {
-              double m_hessian_regularization(DEFAULT_HESSIAN_REGULARIZATION);
-              m_qpData.H.diagonal().array() += m_hessian_regularization;
-            }
+            m_qpData.CE.middleRows(i_eq, constr->rows()) = constr->matrix();
+            m_qpData.ce0.segment(i_eq, constr->rows())   = -constr->vector();
+            i_eq += constr->rows();
+
           }
+          else if(constr->isInequality())
+          {
+            m_qpData.CI.middleRows(i_in, constr->rows()) = constr->matrix();
+            m_qpData.ci0.segment(i_in, constr->rows())   = -constr->lowerBound();
+            i_in += constr->rows();
+            m_qpData.CI.middleRows(i_in, constr->rows()) = -constr->matrix();
+            m_qpData.ci0.segment(i_in, constr->rows())   = constr->upperBound();
+            i_in += constr->rows();
+          }
+          else if(constr->isBound())
+          {
+            m_qpData.CI.middleRows(i_in, constr->rows()).setIdentity();
+            m_qpData.ci0.segment(i_in, constr->rows())   = -constr->lowerBound();
+            i_in += constr->rows();
+            m_qpData.CI.middleRows(i_in, constr->rows()) = -Matrix::Identity(m_n, m_n);
+            m_qpData.ci0.segment(i_in, constr->rows())   = constr->upperBound();
+            i_in += constr->rows();
+          }
+        }
+      }
+      else
+        resize(m_n, neq, nin);
+  
+      EIGEN_MALLOC_NOT_ALLOWED;
+
+      // Compute the cost 
+      if(problemData.size() > 1)
+      {
+        const ConstraintLevel & cl1 = problemData[1];
+        m_qpData.H.setZero();
+        m_qpData.g.setZero();
+    
+        for(ConstraintLevel::const_iterator it=cl1.begin(); it!=cl1.end(); it++)
+        {
+          const double & w = it->first;
+          auto constr = it->second;
+          if(!constr->isEquality())
+            assert(false && "Inequalities in the cost function are not implemented yet");
+          
+          EIGEN_MALLOC_ALLOWED;
+          m_qpData.H.noalias() += w*constr->matrix().transpose()*constr->matrix();
+          EIGEN_MALLOC_NOT_ALLOWED;
+          
+          m_qpData.g.noalias() -= w*constr->matrix().transpose()*constr->vector();
+        }
+        
+        if (hessianRegularization)
+        {
+          double m_hessian_regularization(DEFAULT_HESSIAN_REGULARIZATION);
+          m_qpData.H.diagonal().array() += m_hessian_regularization;
+        }
+      }
     }
 
     const HQPOutput & SolverHQuadProgFast::solve(const HQPData & problemData)
