@@ -1,1 +1,1 @@
-from .libtsid_pywrap import *
+from .tsid_pywrap import *
