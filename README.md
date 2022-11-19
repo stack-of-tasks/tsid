@@ -96,6 +96,7 @@ It includes key contributions from:
 - [Pierre Fernbach](https://github.com/pFernbach) (LAAS, CNRS)
 - [Aurelie Bonnefoy](https://github.com/ABonnefoy) (LAAS, CNRS)
 - [Etienne Arlaud](https://github.com/EtienneAr) (INRIA)
+- [Fabian Schramm](https://github.com/fabinsch) (INRIA)
 
 And is maintained by:
 
