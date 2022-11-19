@@ -29,19 +29,20 @@ file(
 add_library(${PYWRAP} SHARED ${${PYWRAP}_SOURCES} ${${PYWRAP}_HEADERS})
 target_link_libraries(${PYWRAP} PUBLIC ${PROJECT_NAME} eigenpy::eigenpy)
 
+IF(IS_ABSOLUTE ${PYTHON_SITELIB})
+  SET(${PYWRAP}_INSTALL_DIR ${PYTHON_SITELIB}/${PROJECT_NAME})
+ELSE()
+  SET(${PYWRAP}_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/${PYTHON_SITELIB}/${PROJECT_NAME})
+ENDIF()
+
 if(BUILD_WITH_COMMIT_VERSION)
   tag_library_version(${PYWRAP})
 endif(BUILD_WITH_COMMIT_VERSION)
 add_header_group(${PYWRAP}_HEADERS)
 add_source_group(${PYWRAP}_SOURCES)
 
-if(APPLE)
-  # We need to change the extension for python bindings
-  set_target_properties(${PYWRAP} PROPERTIES SUFFIX ".so")
-endif(APPLE)
-
-set_target_properties(${PYWRAP} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
-                                           ${PROJECT_NAME})
+# We need to change the extension for python bindings
+set_target_properties(${PYWRAP} PROPERTIES SUFFIX ${PYTHON_EXT_SUFFIX} PREFIX "" LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bindings/python/${PROJECT_NAME}")
 
 if(UNIX AND NOT APPLE)
   set_target_properties(${PYWRAP} PROPERTIES INSTALL_RPATH "\$ORIGIN/../../..")
@@ -55,5 +56,8 @@ install(
 set(PYTHON_FILES __init__.py)
 
 foreach(python ${PYTHON_FILES})
-  python_install_on_site(${PROJECT_NAME} ${python})
+  PYTHON_BUILD(${PROJECT_NAME} ${python})
+  INSTALL(FILES
+    "${${PROJECT_NAME}_SOURCE_DIR}/bindings/python/tsid/${python}"
+    DESTINATION ${${PYWRAP}_INSTALL_DIR})
 endforeach(python)
