@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2022 INRIA
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -15,12 +15,21 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_solvers_hqp_eiquadprog_fast_hpp__
-#define __invdyn_solvers_hqp_eiquadprog_fast_hpp__
+#ifndef __solvers_osqp_hpp__
+#define __solvers_osqp_hpp__
 
-#include "tsid/deprecated.hh"
 #include "tsid/solvers/solver-HQP-base.hpp"
-#include "eiquadprog/eiquadprog-fast.hpp"
+#include "OsqpEigen/OsqpEigen.h"
+#include <Eigen/Sparse>
+
+
+#ifdef PROFILE_OSQP
+#define START_PROFILER_OSQP(x) START_PROFILER(x)
+#define STOP_PROFILER_OSQP(x) STOP_PROFILER(x)
+#else
+#define START_PROFILER_OSQP(x)
+#define STOP_PROFILER_OSQP(x)
+#endif
 
 namespace tsid
 {
@@ -29,7 +38,7 @@ namespace tsid
     /**
      * @brief
      */
-    class TSID_DLLAPI SolverHQuadProgFast : public SolverHQPBase
+    class TSID_DLLAPI SolverOSQP : public SolverHQPBase
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -40,20 +49,19 @@ namespace tsid
       typedef math::ConstRefVector ConstRefVector;
       typedef math::ConstRefMatrix ConstRefMatrix;
 
-      SolverHQuadProgFast(const std::string & name);
+      SolverOSQP(const std::string & name);
+      SolverOSQP(const SolverOSQP & other);
 
       void resize(unsigned int n, unsigned int neq, unsigned int nin);
 
-      /** Solve the given Hierarchical Quadratic Program
-       */
-      const HQPOutput & solve(const HQPData & problemData);
-
       /** Retrieve the matrices describing a QP problem from the problem data. */
-      void retrieveQPData(const HQPData & problemData, 
-                          const bool hessianRegularization = true);
-
+      void retrieveQPData(const HQPData & problemData, const bool hessianRegularization = false);
+      
       /** Return the QP data object. */
-      const QPDataQuadProg getQPData() const { return m_qpData; }
+      const QPData getQPData() const { return m_qpData; }
+
+      /** Solve the given Hierarchical Quadratic Program. */
+      const HQPOutput & solve(const HQPData & problemData);
 
       /** Get the objective value of the last solved problem. */
       double getObjectiveValue();
@@ -61,32 +69,38 @@ namespace tsid
       /** Set the current maximum number of iterations performed by the solver. */
       bool setMaximumIterations(unsigned int maxIter);
 
+      void setSigma(double sigma);
+      void setAlpha(double alpha);
+      void setRho(double rho);
+      void setEpsilonAbsolute(double epsAbs);
+      void setEpsilonRelative(double epsRel);
+      void setVerbose(bool isVerbose = false);
+
+
     protected:
 
       void sendMsg(const std::string & s);
 
-      // <nVars, nEqCon, 2*nIneqCon>
-      eiquadprog::solvers::EiquadprogFast m_solver; 
-
-      TSID_DEPRECATED Matrix m_H;
-      TSID_DEPRECATED Vector m_g;
-      TSID_DEPRECATED Matrix m_CE;
-      TSID_DEPRECATED Vector m_ce0;
-      TSID_DEPRECATED Matrix m_CI;  /// twice the rows because inequality constraints are bilateral
-      TSID_DEPRECATED Vector m_ci0;
       double m_objValue;
       double m_hessian_regularization;
 
-      Eigen::VectorXi m_activeSet;  /// vector containing the indexes of the active inequalities
-      int m_activeSetSize;
+      OsqpEigen::Solver m_solver;
 
       unsigned int m_neq;  /// number of equality constraints
       unsigned int m_nin;  /// number of inequality constraints
       unsigned int m_n;    /// number of variables
-      
-      QPDataQuadProgTpl<double> m_qpData;
+
+      QPDataTpl<double> m_qpData;
+
+      double m_rho;
+      double m_sigma;
+      double m_alpha;
+      double m_epsAbs;
+      double m_epsRel;
+      bool m_isVerbose;
+      bool m_isDataInitialized;
     };
   }
 }
 
-#endif // ifndef __invdyn_solvers_hqp_eiquadprog_fast_hpp__
+#endif // ifndef __solvers_osqp_hpp__

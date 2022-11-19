@@ -111,10 +111,10 @@ namespace tsid
             m_std_hqp.push_back(cons->get());
         }
 
-        inline HQPData get (){
+        inline HQPData & get (){
             return m_std_hqp;
         }
-        inline bool set (HQPData data){
+        inline bool set (const HQPData & data){
             m_std_hqp = data;
             return true;
         }

@@ -51,6 +51,14 @@ namespace tsid
        */
       const HQPOutput & solve(const HQPData & problemData);
 
+      // TODO: change eiquadprog-rt to new API
+      /** Retrieve the matrices describing a QP problem from the problem data. */
+      void retrieveQPData(const HQPData & /*problemData*/, 
+                          const bool /*hessianRegularization = true*/){};
+
+      // /** Return the QP data object. */
+      // const QPDataQuadProg getQPData() const { return m_qpData; }
+
       /** Get the objective value of the last solved problem. */
       double getObjectiveValue();
 

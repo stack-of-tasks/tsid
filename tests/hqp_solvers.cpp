@@ -24,6 +24,12 @@
 #include <tsid/solvers/solver-HQP-eiquadprog.hpp>
 #include <tsid/solvers/solver-HQP-eiquadprog-rt.hpp>
 
+#ifdef TSID_WITH_PROXSUITE
+  #include <tsid/solvers/solver-proxqp.hpp>
+#endif
+#ifdef TSID_WITH_OSQP
+  #include <tsid/solvers/solver-osqp.hpp>
+#endif
 #ifdef TSID_QPMAD_FOUND
   #include <tsid/solvers/solver-HQP-qpmad.hpp>
 #endif
@@ -169,9 +175,11 @@ BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 #define PROFILE_EIQUADPROG "Eiquadprog"
 #define PROFILE_EIQUADPROG_RT "Eiquadprog Real Time"
 #define PROFILE_EIQUADPROG_FAST "Eiquadprog Fast"
+#define PROFILE_PROXQP "Proxqp"
+#define PROFILE_OSQP "OSQP"
 #define PROFILE_QPMAD "QPMAD"
 
-BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
+BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast_vs_proxqp)
 {
   std::cout << "test_eiquadprog_classic_vs_rt_vs_fast\n";
   using namespace tsid;
@@ -180,9 +188,11 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
 
   const double EPS = 1e-8;
 #ifdef NDEBUG
-  const unsigned int nTest = 1000;
+  const unsigned int nTest = 100;
+  const unsigned int nsmooth = 50;
 #else
   const unsigned int nTest = 100;
+  const unsigned int nsmooth = 5;
 #endif
   const unsigned int n = 60;
   const unsigned int neq = 36;
@@ -198,7 +208,7 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   // min margin of activation of the inequality constraints for the first QP
   const double MARGIN_PERC = 1e-3;
 
-  std::cout<<"Gonna perform "<<nTest<<" tests with "<<n<<" variables, "<<
+  std::cout<<"Gonna perform "<<nTest<<" tests (smooth " << nsmooth << " times) with "<<n<<" variables, "<<
 	  neq<<" equalities, "<<nin<<" inequalities\n";
 
   // CREATE SOLVERS
@@ -213,6 +223,16 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   SolverHQPBase * solver = SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG,
                                                              "eiquadprog");
   solver->resize(n, neq, nin);
+
+#ifdef TSID_WITH_PROXSUITE
+  SolverHQPBase * solver_proxqp = SolverHQPFactory::createNewSolver(SOLVER_HQP_PROXQP,
+                                                             "proxqp");
+#endif
+
+#ifdef TSID_WITH_OSQP
+  SolverHQPBase * solver_osqp = SolverHQPFactory::createNewSolver(SOLVER_HQP_OSQP,
+                                                             "osqp");
+#endif
 
 #ifdef TSID_QPMAD_FOUND
   SolverHQPBase * solver_qpmad = SolverHQPFactory::createNewSolver(SOLVER_HQP_QPMAD,
@@ -273,7 +293,7 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
       cost->matrix() += hessianPerturbations[i];
       cost->vector() += gradientPerturbations[i];
     }
-
+  // First run to init outputs
     getProfiler().start(PROFILE_EIQUADPROG_FAST);
     const HQPOutput & output_fast = solver_fast->solve(HQPData);
     getProfiler().stop(PROFILE_EIQUADPROG_FAST);
@@ -286,11 +306,56 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
     const HQPOutput & output    = solver->solve(HQPData);
     getProfiler().stop(PROFILE_EIQUADPROG);
 
+  #ifdef TSID_WITH_PROXSUITE
+    getProfiler().start(PROFILE_PROXQP);
+    const HQPOutput & output_proxqp = solver_proxqp->solve(HQPData);
+    getProfiler().stop(PROFILE_PROXQP);
+  #endif
+
+  #ifdef TSID_WITH_OSQP
+    getProfiler().start(PROFILE_OSQP);
+    const HQPOutput & output_osqp = solver_osqp->solve(HQPData);
+    getProfiler().stop(PROFILE_OSQP);
+  #endif
+
   #ifdef TSID_QPMAD_FOUND
     getProfiler().start(PROFILE_QPMAD);
     const HQPOutput & output_qpmad = solver_qpmad->solve(HQPData);
     getProfiler().stop(PROFILE_QPMAD);
   #endif
+    // Loop to smooth variance for each problem
+    for(unsigned int j=0; j<nsmooth; j++)
+    {
+      getProfiler().start(PROFILE_EIQUADPROG_FAST);
+      const HQPOutput & output_fast = solver_fast->solve(HQPData);
+      getProfiler().stop(PROFILE_EIQUADPROG_FAST);
+
+      getProfiler().start(PROFILE_EIQUADPROG_RT);
+      const HQPOutput & output_rt = solver_rt->solve(HQPData);
+      getProfiler().stop(PROFILE_EIQUADPROG_RT);
+
+      getProfiler().start(PROFILE_EIQUADPROG);
+      const HQPOutput & output    = solver->solve(HQPData);
+      getProfiler().stop(PROFILE_EIQUADPROG);
+
+    #ifdef TSID_WITH_PROXSUITE
+      getProfiler().start(PROFILE_PROXQP);
+      const HQPOutput & output_proxqp = solver_proxqp->solve(HQPData);
+      getProfiler().stop(PROFILE_PROXQP);
+    #endif
+
+    #ifdef TSID_WITH_OSQP
+      getProfiler().start(PROFILE_OSQP);
+      const HQPOutput & output_osqp = solver_osqp->solve(HQPData);
+      getProfiler().stop(PROFILE_OSQP);
+    #endif
+
+    #ifdef TSID_QPMAD_FOUND
+      getProfiler().start(PROFILE_QPMAD);
+      const HQPOutput & output_qpmad = solver_qpmad->solve(HQPData);
+      getProfiler().stop(PROFILE_QPMAD);
+    #endif
+    }
 
     getStatistics().store("active inequalities", (double)output_rt.activeSet.size());
     getStatistics().store("solver iterations", output_rt.iterations);
@@ -301,6 +366,17 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
     BOOST_REQUIRE_MESSAGE(output.status==output_fast.status,
                           "Status "+SolverHQPBase::HQP_status_string[output.status]+
                           " Status FAST "+SolverHQPBase::HQP_status_string[output_fast.status]);
+
+  #ifdef TSID_WITH_PROXSUITE
+    BOOST_REQUIRE_MESSAGE(output.status==output_proxqp.status,
+                          "Status "+SolverHQPBase::HQP_status_string[output.status]+
+                          " Status Proxqp "+SolverHQPBase::HQP_status_string[output_proxqp.status]);
+  #endif
+  #ifdef TSID_WITH_OSQP
+    BOOST_REQUIRE_MESSAGE(output.status==output_osqp.status,
+                          "Status "+SolverHQPBase::HQP_status_string[output.status]+
+                          " Status Proxqp "+SolverHQPBase::HQP_status_string[output_osqp.status]);
+  #endif
 
     if(output.status==HQP_STATUS_OPTIMAL)
     {
@@ -322,6 +398,15 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   //                        "\nSol FAST "+toString(output_fast.x.transpose())+
                           "\nDiff FAST: "+toString((output_rt.x-output_fast.x).norm()));
 
+    #ifdef TSID_WITH_PROXSUITE
+      BOOST_CHECK_MESSAGE(output.x.isApprox(output_proxqp.x, 1e-4),
+                "\nDiff PROXQP: "+toString((output.x-output_proxqp.x).norm()));
+    #endif
+    #ifdef TSID_WITH_OSQP
+      BOOST_CHECK_MESSAGE(output.x.isApprox(output_osqp.x, 1e-4),
+                "\nDiff OSQP: "+toString((output.x-output_osqp.x).norm()));
+    #endif
+
     #ifdef TSID_QPMAD_FOUND
       BOOST_CHECK_MESSAGE(output.x.isApprox(output_qpmad.x, EPS),
                           "\nDiff QPMAD: "+toString((output.x-output_qpmad.x).norm()));
@@ -336,6 +421,14 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast)
   delete solver;
   delete solver_rt;
   delete solver_fast;
+
+#ifdef TSID_WITH_PROXSUITE
+  delete solver_proxqp;
+#endif
+
+#ifdef TSID_WITH_OSQP
+  delete solver_osqp;
+#endif
 }
 
 

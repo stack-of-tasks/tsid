@@ -37,7 +37,7 @@ namespace tsid
       void visit(PyClass& cl) const
       {
         cl
-        .def(bp::init<>("Defulat Constructor"))
+        .def(bp::init<>("Default Constructor"))
         .def(bp::init<int, int, int>((bp::args("nVars", "nEq", "nInCon"))))
         .add_property("x", &HQPOutputPythonVisitor::x)
         .add_property("status", &HQPOutputPythonVisitor::status)
