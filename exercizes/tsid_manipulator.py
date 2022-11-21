@@ -3,7 +3,7 @@ import tsid
 import numpy as np
 import numpy.matlib as matlib
 import os
-import gepetto.corbaserver
+#import gepetto.corbaserver
 import time
 import subprocess
 
@@ -81,19 +81,25 @@ class TsidManipulator:
         self.v = v
                 
         # for gepetto viewer
-        if(viewer):
-            self.robot_display = se3.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path, ])
-            l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
-            if int(l[1]) == 0:
-                os.system('gepetto-gui &')
-            time.sleep(1)
-            gepetto.corbaserver.Client()
-            self.robot_display.initViewer(loadModel=True)
-            self.robot_display.displayCollisions(False)
-            self.robot_display.displayVisuals(True)
-            self.robot_display.display(q)
-            self.gui = self.robot_display.viewer.gui
+        # if(viewer):
+
+            # l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+            # if int(l[1]) == 0:
+            #     os.system('gepetto-gui &')
+            # time.sleep(1)
+            # gepetto.corbaserver.Client()
+            # self.robot_display.initViewer(loadModel=True)
+            # self.robot_display.displayCollisions(False)
+            # self.robot_display.displayVisuals(True)
+            # self.robot_display.display(q)
+            # self.gui = self.robot_display.viewer.gui
 #            self.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
+
+        if viewer == se3.visualize.MeshcatVisualizer:
+            self.robot_display = se3.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path, ])
+            self.viz = viewer(self.robot_display.model, self.robot_display.collision_model, self.robot_display.visual_model)
+            self.viz.initViewer(loadModel=True)
+            self.viz.display(q)
         
     def integrate_dv(self, q, v, dv, dt):
         v_mean = v + 0.5*dt*dv

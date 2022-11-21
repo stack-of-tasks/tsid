@@ -1,0 +1,14 @@
+<launch>
+<arg name="model" default="$(find example-robot-data)/robots/anymal_b_simple_description/robots/anymal.urdf"/>
+<arg name="gui" default="true"/>
+
+<param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+<param name="use_gui" value="$(arg gui)"/>
+
+<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+<node name="transform_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 world imu_link 100"/>
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find urdf_tutorial)/urdf.rviz" required="true"/>
+
+</launch>

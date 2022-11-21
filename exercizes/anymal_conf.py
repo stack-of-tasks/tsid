@@ -12,7 +12,7 @@ import pinocchio as pin
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 LINE_WIDTH = 60
 
-N_SIMULATION = 4000             # number of time steps simulated
+N_SIMULATION = 12000             # number of time steps simulated
 dt = 0.002                      # controller time step
 nv = 37
 
@@ -24,15 +24,17 @@ lz = 0.07                            # foot sole height with respect to ankle jo
 mu = 0.3                            # friction coefficient
 fMin = 5.0                          # minimum normal force
 fMax = 1000.0                       # maximum normal force
-rf_frame_name = "RAnkleRoll"        # right foot frame name
-lf_frame_name = "LAnkleRoll"        # left foot frame name
+rf_frame_name = "RF_KFE"        # right foot frame name
+lf_frame_name = "LF_KFE"        # left foot frame name
+rh_frame_name = "RH_KFE"        # right foot frame name
+lh_frame_name = "LH_KFE"        # left foot frame name
 contactNormal = np.array([0., 0., 1.])   # direction of the normal to the contact surface
 
 w_com = 1.0                     # weight of center of mass task
 w_cop = 0.0                     # weight of center of pressure task
 w_am = 0.0                      # weight of angular momentum task
 w_foot = 1e-1                   # weight of the foot motion task
-w_contact = -1.0                # weight of foot in contact (negative means infinite weight) 
+w_contact = -1.0                # weight of foot in contact (negative means infinite weight)
 w_posture = 1e-4                # weight of joint posture task
 w_forceRef = 1e-5               # weight of force regularization task
 w_torque_bounds = 1.0           # weight of the torque bounds
@@ -63,7 +65,7 @@ RF_REF_SPHERE_COLOR  = (0, 1, 0.5, 0.5)
 LF_SPHERE_COLOR  = (0, 0, 1, 0.5)
 LF_REF_SPHERE_COLOR  = (0.5, 0, 1, 0.5)
 
-filename = str(os.path.dirname(os.path.abspath(__file__)))
-path = filename + '/../models/romeo'
-urdf = path + '/urdf/romeo.urdf'
-srdf = path + '/srdf/romeo_collision.srdf'
+# filename = str(os.path.dirname(os.path.abspath(__file__)))
+path = '/home/kian/catkin_ws/src/example-robot-data/robots/anymal_b_simple_description'
+urdf = path + '/robots/anymal-kinova.urdf'
+srdf = path + '/srdf/anymal-kinova.srdf'

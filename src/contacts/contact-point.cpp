@@ -33,16 +33,17 @@ ContactPoint::ContactPoint(const std::string & name,
                      const double frictionCoefficient,
                      const double minNormalForce,
                      const double maxNormalForce):
-  ContactBase(name, robot),
-  m_motionTask(name, robot, frameName),
-  m_forceInequality(name, 5, 3),
-  m_forceRegTask(name, 3, 3),
-  m_contactNormal(contactNormal),
-  m_mu(frictionCoefficient),
-  m_fMin(minNormalForce),
-  m_fMax(maxNormalForce)
+  ContactBase(name, robot),             // Base class
+  m_motionTask(name, robot, frameName), // TaskSE3Equality
+  m_forceInequality(name, 5, 3),        // ConstraintInequality
+  m_forceRegTask(name, 3, 3),           // ConstraintEquality
+  m_contactNormal(contactNormal),       // Vector3
+  m_mu(frictionCoefficient),            // Double
+  m_fMin(minNormalForce),               // Double
+  m_fMax(maxNormalForce)                // Double
 {
-  m_weightForceRegTask << 1, 1, 1e-3;
+  m_weightForceRegTask << 1, 1, 1e-3;   // Vector3
+  // m_weightForceRegTask << 1e-3, 1e-3, 1e-3;   // Vector3
   m_forceGenMat.resize(3, 3);
   m_fRef = Vector3::Zero();
   m_contactPoints.resize(3,1);

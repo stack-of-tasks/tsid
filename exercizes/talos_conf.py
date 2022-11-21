@@ -78,7 +78,7 @@ kp_com = 10.0           # proportional gain of center of mass task
 kp_am = 10.0            # proportional gain of angular momentum task
 kp_posture = 1.0        # proportional gain of joint posture task
 
-viewer = pin.visualize.GepettoVisualizer
+viewer = pin.visualize.MeshcatVisualizer
 PRINT_N = 500           # print every PRINT_N time steps
 DISPLAY_N = 20          # update robot configuration in viwewer every DISPLAY_N time steps
 CAMERA_TRANSFORM = [4.0, -0.2, 0.4, 0.5243823528289795, 0.518651008605957, 0.4620114266872406, 0.4925136864185333]

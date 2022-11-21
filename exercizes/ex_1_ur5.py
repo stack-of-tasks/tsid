@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import plot_utils as plut
 import time
 from tsid_manipulator import TsidManipulator
+import pinocchio as pin
 
 #import ur5_conf as conf
 import ur5_reaching_conf as conf
@@ -19,6 +20,8 @@ PLOT_EE_VEL = 0
 PLOT_EE_ACC = 0
 PLOT_JOINT_VEL = 0
 PLOT_TORQUES = 0
+
+USE_VIEWER = 1
 
 tsid = TsidManipulator(conf)
 
@@ -47,8 +50,17 @@ pEE = offset.copy()
 vEE = np.zeros(6)
 aEE = np.zeros(6)
 
-tsid.gui.addSphere('world/ee', conf.SPHERE_RADIUS, conf.EE_SPHERE_COLOR)
-tsid.gui.addSphere('world/ee_ref', conf.REF_SPHERE_RADIUS, conf.EE_REF_SPHERE_COLOR)
+if (USE_VIEWER):
+    robot_display = pin.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path, ])
+    viewer = pin.visualize.MeshcatVisualizer
+    viz = viewer(robot_display.model, robot_display.collision_model,
+                 robot_display.visual_model)
+    viz.initViewer(loadModel=True)
+    viz.display(tsid.q)
+
+
+# tsid.gui.addSphere('world/ee', conf.SPHERE_RADIUS, conf.EE_SPHERE_COLOR)
+# tsid.gui.addSphere('world/ee_ref', conf.REF_SPHERE_RADIUS, conf.EE_REF_SPHERE_COLOR)
 
 t = 0.0
 q[:,0], v[:,0] = tsid.q, tsid.v
@@ -60,8 +72,8 @@ for i in range(0, N):
     vEE[:3] =  two_pi_f_amp * np.cos(conf.two_pi_f*t + conf.phi)
     aEE[:3] = -two_pi_f_squared_amp * np.sin(conf.two_pi_f*t + conf.phi)
     sampleEE.pos(pEE)
-    sampleEE.vel(vEE)
-    sampleEE.acc(aEE)
+    # sampleEE.vel(vEE)
+    # sampleEE.acc(aEE)
     tsid.eeTask.setReference(sampleEE)
 
     HQPData = tsid.formulation.computeProblemData(t, q[:,i], v[:,i])
@@ -91,9 +103,10 @@ for i in range(0, N):
     t += conf.dt
     
     if i%conf.DISPLAY_N == 0: 
-        tsid.robot_display.display(q[:,i])
-        tsid.gui.applyConfiguration('world/ee',     ee_pos[:,i].tolist()+[0,0,0,1.])
-        tsid.gui.applyConfiguration('world/ee_ref', ee_pos_ref[:,i].tolist()+[0,0,0,1.])
+        # tsid.robot_display.display(q[:,i])
+        # tsid.gui.applyConfiguration('world/ee',     ee_pos[:,i].tolist()+[0,0,0,1.])
+        # tsid.gui.applyConfiguration('world/ee_ref', ee_pos_ref[:,i].tolist()+[0,0,0,1.])
+        viz.display(q[:, i])
 
     time_spent = time.time() - time_start
     if(time_spent < conf.dt): time.sleep(conf.dt-time_spent)

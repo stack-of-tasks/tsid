@@ -99,13 +99,13 @@ max_admissible_cop = cop_ref + np.tile([foot_length/2, foot_width/2], (N,1))
 
 # time vs CoP and CoM in x: 'A.K.A run rabbit run !'
 # -------------------------------------------------
-plot_utils.plot_x(True, time, N, min_admissible_CoP, max_admissible_cop, 
+plot_utils.plot_x(time, N, min_admissible_CoP, max_admissible_cop,
                   cop_x, com_state_x, cop_ref)
 
 # time VS CoP and CoM in y: 'A.K.A what goes up must go down'
 # ----------------------------------------------------------
-plot_utils.plot_y(True, time, N, min_admissible_CoP, max_admissible_cop, 
-                  cop_y, com_state_y, cop_ref, 2*max_admissible_cop)
+plot_utils.plot_y(time, N, min_admissible_CoP, max_admissible_cop,
+                  cop_y, com_state_y, cop_ref)
 
 # plot CoP, CoM in x Vs Cop, CoM in y:
 # -----------------------------------

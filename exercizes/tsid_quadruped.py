@@ -7,7 +7,7 @@ import pinocchio as pin
 import tsid
 
 
-class TsidBiped:
+class TsidQuadruped:
     ''' Standard TSID formulation for a biped robot standing on its rectangular feet.
         - Center of mass task
         - Postural task
@@ -21,13 +21,15 @@ class TsidBiped:
         robot = self.robot
         self.model = robot.model()
         pin.loadReferenceConfigurations(self.model, conf.srdf, False)
-        self.q0 = q = self.model.referenceConfigurations["half_sitting"]
+        self.q0 = q = self.model.referenceConfigurations["standing_with_arm_up"]
         v = np.zeros(robot.nv)
 
-        assert self.model.existFrame(conf.rf_frame_name)
-        assert self.model.existFrame(conf.lf_frame_name)
+        # assert self.model.existFrame(conf.rf_frame_name)
+        # assert self.model.existFrame(conf.lf_frame_name)
+        # assert self.model.existFrame(conf.rh_frame_name)
+        # assert self.model.existFrame(conf.lh_frame_name)
 
-        formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
+        formulation = tsid.InverseDynamicsFormulationAccForce("tsid", robot, True)
         formulation.computeProblemData(0.0, q, v)
         data = formulation.data()
         contact_Point = np.ones((3, 4)) * (-conf.lz)
@@ -52,6 +54,18 @@ class TsidBiped:
         else:
             formulation.addRigidContact(contactRF, conf.w_forceRef)
 
+        contactRH = tsid.Contact6d("contact_r_hind_foot", robot, conf.rh_frame_name, contact_Point,
+                                   conf.contactNormal, conf.mu, conf.fMin, conf.fMax)
+        contactRH.setKp(conf.kp_contact * np.ones(6))
+        contactRH.setKd(2.0 * np.sqrt(conf.kp_contact) * np.ones(6))
+        self.RH = robot.model().getFrameId(conf.rh_frame_name)
+        H_rh_ref = robot.framePosition(data, self.RH)
+        contactRH.setReference(H_rh_ref)
+        if conf.w_contact >= 0.0:
+            formulation.addRigidContact(contactRH, conf.w_forceRef, conf.w_contact, 1)
+        else:
+            formulation.addRigidContact(contactRH, conf.w_forceRef)
+
         contactLF = tsid.Contact6d("contact_lfoot", robot, conf.lf_frame_name, contact_Point,
                                    conf.contactNormal, conf.mu, conf.fMin, conf.fMax)
         contactLF.setKp(conf.kp_contact * np.ones(6))
@@ -64,21 +78,32 @@ class TsidBiped:
         else:
             formulation.addRigidContact(contactLF, conf.w_forceRef)
 
+        contactLH = tsid.Contact6d("contact_l_hind_foot", robot, conf.lh_frame_name, contact_Point,
+                                   conf.contactNormal, conf.mu, conf.fMin, conf.fMax)
+        contactLH.setKp(conf.kp_contact * np.ones(6))
+        contactLH.setKd(2.0 * np.sqrt(conf.kp_contact) * np.ones(6))
+        self.LH = robot.model().getFrameId(conf.lh_frame_name)
+        H_lh_ref = robot.framePosition(data, self.LH)
+        contactLH.setReference(H_lh_ref)
+        if conf.w_contact >= 0.0:
+            formulation.addRigidContact(contactLH, conf.w_forceRef, conf.w_contact, 1)
+        else:
+            formulation.addRigidContact(contactLH, conf.w_forceRef)
+
         comTask = tsid.TaskComEquality("task-com", robot)
         comTask.setKp(conf.kp_com * np.ones(3))
         comTask.setKd(2.0 * np.sqrt(conf.kp_com) * np.ones(3))
         formulation.addMotionTask(comTask, conf.w_com, 1, 0.0)
-        
+
         copTask = tsid.TaskCopEquality("task-cop", robot)
         formulation.addForceTask(copTask, conf.w_cop, 1, 0.0)
-        
+
         amTask = tsid.TaskAMEquality("task-am", robot)
         amTask.setKp(conf.kp_am * np.array([1., 1., 0.]))
         amTask.setKd(2.0 * np.sqrt(conf.kp_am * np.array([1., 1., 0.])))
         formulation.addMotionTask(amTask, conf.w_am, 1, 0.)
         sampleAM = tsid.TrajectorySample(3)
         amTask.setReference(sampleAM)
-
 
         postureTask = tsid.TaskJointPosture("task-posture", robot)
         postureTask.setKp(conf.kp_posture * conf.gain_vector)
@@ -98,7 +123,19 @@ class TsidBiped:
         self.trajRF = tsid.TrajectorySE3Constant("traj-right-foot", H_rf_ref)
         formulation.addMotionTask(self.rightFootTask, self.conf.w_foot, 1, 0.0)
 
-        self.tau_max = conf.tau_max_scaling*robot.model().effortLimit[-robot.na:]
+        self.leftHindFootTask = tsid.TaskSE3Equality("task-left-hind-foot", self.robot, self.conf.lh_frame_name)
+        self.leftHindFootTask.setKp(self.conf.kp_foot * np.ones(6))
+        self.leftHindFootTask.setKd(2.0 * np.sqrt(self.conf.kp_foot) * np.ones(6))
+        self.trajLH = tsid.TrajectorySE3Constant("traj-left-hind-foot", H_lh_ref)
+        formulation.addMotionTask(self.leftHindFootTask, self.conf.w_foot, 1, 0.0)
+
+        self.rightHindFootTask = tsid.TaskSE3Equality("task-right-hind-foot", self.robot, self.conf.rh_frame_name)
+        self.rightHindFootTask.setKp(self.conf.kp_foot * np.ones(6))
+        self.rightHindFootTask.setKd(2.0 * np.sqrt(self.conf.kp_foot) * np.ones(6))
+        self.trajRH = tsid.TrajectorySE3Constant("traj-right-hind-foot", H_rh_ref)
+        formulation.addMotionTask(self.rightHindFootTask, self.conf.w_foot, 1, 0.0)
+
+        self.tau_max = conf.tau_max_scaling * robot.model().effortLimit[-robot.na:]
         self.tau_min = -self.tau_max
         actuationBoundsTask = tsid.TaskActuationBounds("task-actuation-bounds", robot)
         actuationBoundsTask.setBounds(self.tau_min, self.tau_max)
@@ -121,14 +158,14 @@ class TsidBiped:
         postureTask.setReference(self.trajPosture.computeNext())
 
         self.sampleLF = self.trajLF.computeNext()
-        self.sample_LF_pos = self.sampleLF.pos()
-        self.sample_LF_vel = self.sampleLF.vel()
-        self.sample_LF_acc = self.sampleLF.acc()
+        self.sample_LF_pos = self.sampleLF.value
+        self.sample_LF_vel = self.sampleLF.derivative
+        self.sample_LF_acc = self.sampleLF.second_derivative
 
         self.sampleRF = self.trajRF.computeNext()
-        self.sample_RF_pos = self.sampleRF.pos()
-        self.sample_RF_vel = self.sampleRF.vel()
-        self.sample_RF_acc = self.sampleRF.acc()
+        self.sample_RF_pos = self.sampleRF.value
+        self.sample_RF_vel = self.sampleRF.derivative
+        self.sample_RF_acc = self.sampleRF.second_derivative
 
         self.solver = tsid.SolverHQuadProgFast("qp solver")
         self.solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
@@ -148,31 +185,13 @@ class TsidBiped:
         self.contact_LF_active = True
         self.contact_RF_active = True
 
-        # if viewer:
-
-            # if viewer == pin.visualize.GepettoVisualizer:
-            #     import gepetto.corbaserver
-            #     launched = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
-            #     if int(launched[1]) == 0:
-            #         os.system('gepetto-gui &')
-            #     time.sleep(1)
-            #     self.viz = viewer(self.robot_display.model, self.robot_display.collision_model,
-            #                       self.robot_display.visual_model)
-            #     self.viz.initViewer(loadModel=True)
-            #     self.viz.displayCollisions(False)
-            #     self.viz.displayVisuals(True)
-            #     self.viz.display(q)
-            #
-            #     self.gui = self.viz.viewer.gui
-            #     # self.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
-            #     self.gui.addFloor('world/floor')
-            #     self.gui.setLightingMode('world/floor', 'OFF')
         if viewer == pin.visualize.MeshcatVisualizer:
             self.robot_display = pin.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path], pin.JointModelFreeFlyer())
-            self.viz = viewer(self.robot_display.model, self.robot_display.collision_model, self.robot_display.visual_model)
+            self.viz = viewer(self.robot_display.model, self.robot_display.collision_model,
+                              self.robot_display.visual_model)
             self.viz.initViewer(loadModel=True)
             self.viz.display(q)
-                
+
     def display(self, q):
         if hasattr(self, 'viz'):
             self.viz.display(q)

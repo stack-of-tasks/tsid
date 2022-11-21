@@ -6,7 +6,7 @@ import plot_utils as plut
 import time
 import pinocchio as pin
 import tsid
-import gepetto.corbaserver
+#import gepetto.corbaserver
 import subprocess
 import os
 
@@ -47,18 +47,24 @@ v_min = -v_max
 solver = tsid.SolverHQuadProgFast("qp solver")
 solver.resize(formulation.nVar, formulation.nEq, formulation.nIn)
 
-if(USE_VIEWER):
+if (USE_VIEWER):
     robot_display = pin.RobotWrapper.BuildFromURDF(conf.urdf, [conf.path, ])
-    l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
-    if int(l[1]) == 0:
-        os.system('gepetto-gui &')
-    time.sleep(1)
-    gepetto.corbaserver.Client()
-    robot_display.initViewer(loadModel=True)
-    robot_display.displayCollisions(False)
-    robot_display.displayVisuals(True)
-    robot_display.display(q0)
-#    robot_display.viewer.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
+    # l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+    # if int(l[1]) == 0:
+    #     os.system('gepetto-gui &')
+    # time.sleep(1)
+    # gepetto.corbaserver.Client()
+    # robot_display.initViewer(loadModel=True)
+    # robot_display.displayCollisions(False)
+    # robot_display.displayVisuals(True)
+    # robot_display.display(q0)
+    #    robot_display.viewer.gui.setCameraTransform(0, conf.CAMERA_TRANSFORM)
+
+    viewer = pin.visualize.MeshcatVisualizer
+    viz = viewer(robot_display.model, robot_display.collision_model,
+                 robot_display.visual_model)
+    viz.initViewer(loadModel=True)
+    viz.display(q0)
 
 N = conf.N_SIMULATION
 tau    = np.empty((robot.na, N))*nan
@@ -114,7 +120,8 @@ for i in range(0, N):
     t += conf.dt
     
     if i%conf.DISPLAY_N == 0: 
-        robot_display.display(q[:,i])
+        # robot_display.display(q[:,i])
+        viz.display(q_ref[:, 1])
 
     time_spent = time.time() - time_start
     if(time_spent < conf.dt): time.sleep(conf.dt-time_spent)
