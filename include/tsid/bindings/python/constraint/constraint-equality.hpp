@@ -55,10 +55,10 @@ namespace tsid
         .add_property("lowerBound", &ConstraintEqPythonVisitor::lowerBound)
         .add_property("upperBound", &ConstraintEqPythonVisitor::upperBound)
 
-        .def("setMatrix", (bool (ConstraintEquality::*)(const Eigen::Ref<Eigen::MatrixXd> &) const) &ConstraintEquality::setMatrix, bp::args("matrix"), "Set Matrix")
-        .def("setVector", (bool (ConstraintEquality::*)(const Eigen::Ref<Eigen::VectorXd> &) const) &ConstraintEquality::setVector, bp::args("vector"), "Set Vector")
-        .def("setLowerBound", (bool (ConstraintEquality::*)(const Eigen::Ref<Eigen::VectorXd> &) const) &ConstraintEquality::setLowerBound, bp::args("lb"), "Set LowerBound")
-        .def("setUpperBound", (bool (ConstraintEquality::*)(const Eigen::Ref<Eigen::VectorXd> &) const) &ConstraintEquality::setUpperBound, bp::args("ub"), "Set UpperBound")
+        .def("setMatrix", (bool (ConstraintEquality::*)(const Eigen::Ref<const Eigen::MatrixXd>)) &ConstraintEquality::setMatrix, bp::args("matrix"), "Set Matrix")
+        .def("setVector", (bool (ConstraintEquality::*)(const Eigen::Ref<const Eigen::VectorXd>)) &ConstraintEquality::setVector, bp::args("vector"), "Set Vector")
+        .def("setLowerBound", (bool (ConstraintEquality::*)(const Eigen::Ref<const Eigen::VectorXd>)) &ConstraintEquality::setLowerBound, bp::args("lb"), "Set LowerBound")
+        .def("setUpperBound", (bool (ConstraintEquality::*)(const Eigen::Ref<const Eigen::VectorXd>)) &ConstraintEquality::setUpperBound, bp::args("ub"), "Set UpperBound")
         
         ;
       }
