@@ -31,7 +31,7 @@ namespace tsid
   {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    
+
     double time_start;
     double time_end;
     double fMax_start;  /// max normal force at time time_start
@@ -53,6 +53,7 @@ namespace tsid
     typedef tasks::TaskMotion TaskMotion;
     typedef tasks::TaskContactForce TaskContactForce;
     typedef tasks::TaskActuation TaskActuation;
+    typedef measuredForces::MeasuredForceBase MeasuredForceBase;
     typedef solvers::HQPOutput HQPOutput;
 
 
@@ -93,6 +94,8 @@ namespace tsid
                                    double force_regularization_weight,
                                    double motion_weight=-1.0);
 
+    bool addMeasuredForce(MeasuredForceBase & measuredForce);
+
     bool removeTask(const std::string & taskName,
                     double transition_duration=0.0);
 
@@ -130,6 +133,7 @@ namespace tsid
     std::vector<std::shared_ptr<TaskLevelForce> >   m_taskContactForces;
     std::vector<std::shared_ptr<TaskLevel> >        m_taskActuations;
     std::vector<std::shared_ptr<ContactLevel> >     m_contacts;
+    std::vector<std::shared_ptr<MeasuredForceLevel> >     m_measuredForces;
     double m_t;         /// time
     unsigned int m_k;   /// number of contact-force variables
     unsigned int m_v;   /// number of acceleration variables

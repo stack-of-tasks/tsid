@@ -25,6 +25,7 @@
 #include "tsid/tasks/task-motion.hpp"
 #include "tsid/tasks/task-contact-force.hpp"
 #include "tsid/contacts/contact-base.hpp"
+#include "tsid/measuredForces/measured-force-base.hpp"
 #include "tsid/solvers/solver-HQP-base.hpp"
 
 #include <string>
@@ -35,7 +36,7 @@ namespace tsid
   struct TaskLevel
   {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    
+
     tasks::TaskBase & task;
     std::shared_ptr<math::ConstraintBase> constraint;
     unsigned int priority;
@@ -47,13 +48,22 @@ namespace tsid
   struct TaskLevelForce
   {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    
+
     tasks::TaskContactForce & task;
     std::shared_ptr<math::ConstraintBase> constraint;
     unsigned int priority;
 
     TaskLevelForce(tasks::TaskContactForce & task,
                     unsigned int priority);
+  };
+
+  struct MeasuredForceLevel
+  {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    measuredForces::MeasuredForceBase & measuredForce;
+
+    MeasuredForceLevel(measuredForces::MeasuredForceBase & measuredForce);
   };
 
   ///
@@ -72,6 +82,7 @@ namespace tsid
     typedef tasks::TaskContactForce TaskContactForce;
     typedef tasks::TaskActuation TaskActuation;
     typedef tasks::TaskBase TaskBase;
+    typedef measuredForces::MeasuredForceBase MeasuredForceBase;
     typedef contacts::ContactBase ContactBase;
     typedef solvers::HQPData HQPData;
     typedef solvers::HQPOutput HQPOutput;
@@ -130,6 +141,8 @@ namespace tsid
     virtual bool updateRigidContactWeights(const std::string & contact_name,
                                            double force_regularization_weight,
                                            double motion_weight=-1.0) = 0;
+
+    virtual bool addMeasuredForce(MeasuredForceBase & measuredForce) = 0;
 
     virtual bool removeTask(const std::string & taskName,
                             double transition_duration=0.0) = 0;

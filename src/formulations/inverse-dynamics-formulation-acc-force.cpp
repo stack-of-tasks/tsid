@@ -23,6 +23,7 @@ using namespace tsid;
 using namespace math;
 using namespace tasks;
 using namespace contacts;
+using namespace measuredForces;
 using namespace solvers;
 using namespace std;
 
@@ -116,7 +117,7 @@ bool InverseDynamicsFormulationAccForce::addMotionTask(TaskMotion & task,
 {
   assert(weight>=0.0);
   assert(transition_duration>=0.0);
-  
+
   // This part is not used frequently so we can do some tests.
   if (weight<0.0)
     std::cerr << __FILE__ <<  " " << __LINE__ << " "
@@ -216,7 +217,7 @@ bool InverseDynamicsFormulationAccForce::updateTaskWeight(const std::string & ta
 }
 
 
-bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact, 
+bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase & contact,
                                                          double force_regularization_weight,
                                                          double motion_weight,
                                                          unsigned int motionPriorityLevel)
@@ -285,6 +286,14 @@ bool InverseDynamicsFormulationAccForce::updateRigidContactWeights(const std::st
     return false;
 }
 
+bool InverseDynamicsFormulationAccForce::addMeasuredForce(MeasuredForceBase & measuredForce)
+{
+  auto tl = std::make_shared<MeasuredForceLevel>(measuredForce);
+  m_measuredForces.push_back(tl);
+
+  return true;
+}
+
 
 const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double time,
                                                                        ConstRefVector q,
@@ -336,6 +345,15 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     cl->forceRegTask->matrix().middleCols(m_v+cl->index, m) = fr.matrix();
     cl->forceRegTask->vector() = fr.vector();
   }
+
+  // Vector h_fext;
+  // h_fext.setZero(m_v);
+  // for (auto& it : m_measuredForces)
+  // {
+  //   h_fext += it->measuredForce.computeJointTorques(time, q, v, m_data);
+  // }
+  // std::cout << h_fext << std::endl;
+  //TODO do we need to split h_fext in root and internal dofs (is there a contribution on root, probably yes)
 
   const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-m_u);
   const Vector & h_a = m_robot.nonLinearEffects(m_data).tail(m_v-m_u);
@@ -533,7 +551,7 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string & taskName
 #else
   removeFromHqpData(taskName);
 #endif
-  
+
   for(auto it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
   {
     if((*it)->task.name()==taskName)

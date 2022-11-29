@@ -33,6 +33,10 @@ namespace tsid
     priority(priority)
   {}
 
+  MeasuredForceLevel::MeasuredForceLevel(measuredForces::MeasuredForceBase & measuredForce):
+    measuredForce(measuredForce)
+  {}
+
   InverseDynamicsFormulationBase::InverseDynamicsFormulationBase(const std::string & name,
                                                                  RobotWrapper & robot,
                                                                  bool verbose)
@@ -40,10 +44,9 @@ namespace tsid
   , m_robot(robot)
   , m_verbose(verbose)
   {}
-  
+
   bool InverseDynamicsFormulationBase::addRigidContact(ContactBase & contact)
   {
     return addRigidContact(contact, 1e-5);
   }
 }
-

@@ -121,6 +121,11 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
   include/tsid/tasks/task-angular-momentum-equality.hpp
   )
 
+SET(${PROJECT_NAME}_MEASUREDFORCES_HEADERS
+  include/tsid/measuredForces/measured-force-base.hpp
+  include/tsid/measuredForces/measured-force-6Dwrench.hpp
+  )
+
 SET(${PROJECT_NAME}_CONTACTS_HEADERS
   include/tsid/contacts/fwd.hpp
   include/tsid/contacts/contact-base.hpp
@@ -184,6 +189,7 @@ SET(${PROJECT_NAME}_HEADERS
   ${${PROJECT_NAME}_MATH_HEADERS}
   ${${PROJECT_NAME}_TASKS_HEADERS}
   ${${PROJECT_NAME}_CONTACTS_HEADERS}
+  ${${PROJECT_NAME}_MEASUREDFORCES_HEADERS}
   ${${PROJECT_NAME}_TRAJECTORIES_HEADERS}
   ${${PROJECT_NAME}_SOLVERS_HEADERS}
   ${${PROJECT_NAME}_ROBOTS_HEADERS}
@@ -217,6 +223,12 @@ SET(${PROJECT_NAME}_TASKS_SOURCES
   src/tasks/task-se3-equality.cpp
   src/tasks/task-angular-momentum-equality.cpp
   )
+
+SET(${PROJECT_NAME}_MEASUREDFORCES_SOURCES
+  src/measuredForces/measured-force-base.cpp
+  src/measuredForces/measured-force-6Dwrench.cpp
+  )
+
 
 SET(${PROJECT_NAME}_CONTACTS_SOURCES
   src/contacts/contact-base.cpp
@@ -258,6 +270,7 @@ SET(${PROJECT_NAME}_SOURCES
   ${${PROJECT_NAME}_MATH_SOURCES}
   ${${PROJECT_NAME}_TASKS_SOURCES}
   ${${PROJECT_NAME}_CONTACTS_SOURCES}
+  ${${PROJECT_NAME}_MEASUREDFORCES_SOURCES}
   ${${PROJECT_NAME}_TRAJECTORIES_SOURCES}
   ${${PROJECT_NAME}_SOLVERS_SOURCES}
   ${${PROJECT_NAME}_ROBOTS_SOURCES}
