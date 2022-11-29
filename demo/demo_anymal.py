@@ -24,7 +24,7 @@ print("".center(LINE_WIDTH,'#'), '\n')
 mu = 0.3                            # friction coefficient
 fMin = 1.0                          # minimum normal force
 fMax = 100.0                       # maximum normal force
-contact_frames = ['BL_contact', 'BR_contact', 'FL_contact', 'FR_contact']
+contact_frames = ['LF_FOOT', 'LH_FOOT', 'RF_FOOT', 'RH_FOOT']
 contactNormal = np.array([0., 0., 1.])   # direction of the normal to the contact surface
 
 w_com = 1.0                     # weight of center of mass task
@@ -41,8 +41,10 @@ DISPLAY_N = 25                  # update robot configuration in viwewer every DI
 N_SIMULATION = 6000             # number of time steps simulated
 
 filename = str(os.path.dirname(os.path.abspath(__file__)))
-path = filename + '/../models'
-urdf = path + '/quadruped/urdf/quadruped.urdf'
+# path = filename + '/../models'
+# urdf = path + '/quadruped/urdf/quadruped.urdf'
+path = '/home/kian/catkin_ws/src/example-robot-data/robots'
+urdf = path + '/anymal_c_simple_description/urdf/anymal.urdf'
 vector = se3.StdVec_StdString()
 vector.extend(item for item in path)
 robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
@@ -67,7 +69,7 @@ viz.initViewer(loadModel=True)
 #q = se3.getNeutralConfigurationFromSrdf(robot.model(), srdf, False)
 #q = robot_display.model.neutralConfiguration #np.zeros(robot.nq)
 q = np.zeros(robot.nq)
-q[6] = 1.0
+q[6] = 0
 q[2] += 0.5
 for i in range(4):
   q[7 + 2*i] = -0.8

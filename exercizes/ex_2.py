@@ -40,7 +40,7 @@ for i in range(0, N):
     time_start = time.time()
     
     sampleCom.pos(offset + amp * np.sin(two_pi_f*t))
-    sampleCom.vel( two_pi_f_amp * np.cos(two_pi_f*t))
+    sampleCom.vel(two_pi_f_amp * np.cos(two_pi_f*t))
     sampleCom.acc(-two_pi_f_squared_amp * np.sin(two_pi_f*t))
     
     tsid.comTask.setReference(sampleCom)

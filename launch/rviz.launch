@@ -1,5 +1,5 @@
 <launch>
-<arg name="model" default="$(find example-robot-data)/robots/anymal_b_simple_description/robots/anymal.urdf"/>
+<arg name="model" default="$(find example-robot-data)/robots/anymal_c_simple_description/urdf/anymal.urdf"/>
 <arg name="gui" default="true"/>
 
 <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />

@@ -2,42 +2,44 @@ from abc import ABCMeta, abstractmethod
 import raisimpy as raisim
 import os
 import numpy as np
+import math
+from eigen import Vector3d, Quaterniond
 
 class RobotSimulator(metaclass=ABCMeta):
     @abstractmethod
     def addRobot(self):
-        print("Robot Added")
+        pass
 
     @abstractmethod
     def kill(self):
-        print("Server Killed")
+        pass
 
     @abstractmethod
     def getForces(self):
-        print("")
+        pass
 
     @abstractmethod
     def getQ(self):
-        print("")
+        pass
 
     @abstractmethod
     def getV(self):
-        print("")
+        pass
 
     def integrate(self):
-        print("")
+        pass
 
     def getFramePos(self):
-        print("")
+        pass
 
     def getFrameOri(self):
-        print("")
+        pass
 
     def updateTau(self):
-        print("")
+        pass
 
     def setTarget(self):
-        print("")
+        pass
 
 class RaiSim(RobotSimulator):
     def __init__(self, time_step):
@@ -53,7 +55,10 @@ class RaiSim(RobotSimulator):
     def addRobot(self, urdf, q, v):
         self.robot = self.world.addArticulatedSystem(urdf)
         self.robot.setState(q, v)
-        # self.robot.setPdGains(np.ones(18) * 50, np.ones(18) * 1)
+        q[0:7] *= 0
+        v[0:6] *= 0
+        # self.robot.setPdTarget(q, v)
+        #self.robot.setPdGains(np.ones(18) * 50, np.ones(18) * 1)
 
     def kill(self):
         self.server.killServer()
@@ -68,11 +73,31 @@ class RaiSim(RobotSimulator):
                 continue
             if(contact.getlocalBodyIndex()):
                 R = self.robot.getFrameOrientation(contact.getlocalBodyIndex())
+                # print(R)
                 force = (contact.getImpulse() / self.dt)
-                # force = np.matmul(R, force)
-                force[1:] *= -1
-                conts.append([contact.getlocalBodyIndex(), force, contact.getContactFrame()])
+                # force = np.matmul(force, R)
+                print(contact.getlocalBodyIndex())
+                print(force)
+                if (force[2] != 0):
+                # if True:
+                    # print(force)
+                    conts.append([contact.getlocalBodyIndex(), force, contact.getContactFrame()])
         return conts
+
+    def getAngularVelTransform(self):
+        ori = self.robot.getBaseOrientation()
+        w_R_B_quat = Quaterniond(ori[1], ori[2], ori[3], ori[0])
+        w_R_B_quat = w_R_B_quat.toRotationMatrix().transpose()
+        return w_R_B_quat
+
+    def untransformAngularVel(self, av):
+        ori = self.robot.getBaseOrientation()
+        w_R_B_quat = Quaterniond(ori[1], ori[2], ori[3], ori[0])
+        w_R_B_quat = w_R_B_quat.toRotationMatrix().transpose()
+        print(av)
+        print(w_R_B_quat)
+        return np.matmul(av, w_R_B_quat)
+
 
     def getQ(self):
         return self.robot.getGeneralizedCoordinate()
