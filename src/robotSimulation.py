@@ -78,6 +78,7 @@ class RaiSim(RobotSimulator):
                 # force = np.matmul(force, R)
                 print(contact.getlocalBodyIndex())
                 print(force)
+                force[1] *= -1
                 if (force[2] != 0):
                 # if True:
                     # print(force)

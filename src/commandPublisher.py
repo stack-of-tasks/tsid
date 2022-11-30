@@ -29,7 +29,7 @@ two_pi_f_amp = two_pi_f * amp  # 2π function times amplitude function
 two_pi_f_squared_amp = two_pi_f * two_pi_f_amp  # 2π function times squared amplitude function
 
 t = 0
-dt = 0.02
+dt = 0.1
 
 while True:
     # q[0:3] = offset + amp*np.sin(two_pi_f*t)

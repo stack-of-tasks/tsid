@@ -11,7 +11,7 @@ rospy.init_node('controller', anonymous=True)
 
 dt = 0.001
 
-anymal = quadruped.Anymal(dt, 0.02)
+anymal = quadruped.Anymal(dt, 0.1)
 
 
 #

@@ -158,7 +158,7 @@ class Anymal():
         self.postureTask.setReference(self.samplePosture)
 
     def contactTaskInit(self):
-        mu = 0.3  # friction coefficient
+        mu = 0.7  # friction coefficient
         fMin = 0.0  # minimum normal force
         fMax = 500.0  # maximum normal force
 
@@ -245,7 +245,7 @@ class Anymal():
         kp = 80
         kd = 1.5
         self.qd, self.vd = self.q_command, self.v_command
-        tau = self.tau*0 + kp*(self.qd - self.q)[7:] + kd*(self.vd - self.v)[6:]
+        tau = self.tau + kp*(self.qd - self.q)[7:] + kd*(self.vd - self.v)[6:]
         tau = np.concatenate((np.zeros(6), tau))
         self.sim.updateTau(tau)
         self.sim.integrate()
