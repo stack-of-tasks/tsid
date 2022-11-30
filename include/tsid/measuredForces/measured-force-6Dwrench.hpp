@@ -31,7 +31,7 @@ namespace tsid
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       typedef math::Index Index;
-      typedef math::Vector Vector;
+      typedef math::Vector6 Vector6;
       typedef math::ConstRefVector ConstRefVector;
       typedef robots::RobotWrapper RobotWrapper;
       typedef pinocchio::Data Data;
@@ -50,9 +50,9 @@ namespace tsid
     /**
      *  Set the value of the external wrench applied by the environment on the robot.
      */
-     void setMeasuredContactForce(Vector & fext);
+     void setMeasuredContactForce(Vector6 & fext);
 
-     const Vector & getMeasuredContactForce() const;
+     const Vector6 & getMeasuredContactForce() const;
 
      /**
       * @brief Specifies if the external force and jacobian is
@@ -66,7 +66,7 @@ namespace tsid
      protected:
        std::string m_frame_name;
        Index m_frame_id;
-       Vector m_fext;
+       Vector6 m_fext;
        Matrix6x m_J;
        Vector m_computedTorques;
        bool m_local_frame;

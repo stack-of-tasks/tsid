@@ -56,13 +56,13 @@ namespace tsid
         return m_computedTorques;
     }
 
-    void MeasuredForce6Dwrench::setMeasuredContactForce(Vector & fext)
+    void MeasuredForce6Dwrench::setMeasuredContactForce(Vector6 & fext)
     {
         assert(fext.size()==6 ); //TODO assert not working
         m_fext = fext;
     }
 
-    const Vector & MeasuredForce6Dwrench::getMeasuredContactForce() const
+    const Vector6 & MeasuredForce6Dwrench::getMeasuredContactForce() const
     {
         return m_fext;
     }

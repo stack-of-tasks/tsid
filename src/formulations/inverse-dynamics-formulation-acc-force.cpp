@@ -346,13 +346,13 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     cl->forceRegTask->vector() = fr.vector();
   }
 
-  // Vector h_fext;
-  // h_fext.setZero(m_v);
-  // for (auto& it : m_measuredForces)
-  // {
-  //   h_fext += it->measuredForce.computeJointTorques(time, q, v, m_data);
-  // }
-  // std::cout << h_fext << std::endl;
+  Vector h_fext;
+  h_fext.setZero(m_v);
+  for (auto& it : m_measuredForces)
+  {
+    h_fext += it->measuredForce.computeJointTorques(time, q, v, m_data);
+  }
+  std::cout << h_fext << std::endl;
   //TODO do we need to split h_fext in root and internal dofs (is there a contribution on root, probably yes)
 
   const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-m_u);
