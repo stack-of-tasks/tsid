@@ -36,7 +36,7 @@ namespace tsid
       assert(m_robot.model().existFrame(frameName));
       m_frame_id = m_robot.model().getFrameId(frameName);
 
-      m_fext.setZero(6);
+      m_fext.setZero();
       m_J.setZero(6, robot.nv());
       m_computedTorques.setZero(robot.nv());
 
@@ -58,7 +58,6 @@ namespace tsid
 
     void MeasuredForce6Dwrench::setMeasuredContactForce(Vector6 & fext)
     {
-        assert(fext.size()==6 ); //TODO assert not working
         m_fext = fext;
     }
 
