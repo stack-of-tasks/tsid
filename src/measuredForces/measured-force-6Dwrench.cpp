@@ -38,6 +38,7 @@ namespace tsid
 
       m_fext.setZero();
       m_J.setZero(6, robot.nv());
+      m_J_rotated.setZero(6, robot.nv());
       m_computedTorques.setZero(robot.nv());
 
       m_local_frame = true;
@@ -50,9 +51,21 @@ namespace tsid
                                             Data & data)
     {
         m_robot.frameJacobianLocal(data, m_frame_id, m_J);
+
+        if(!m_local_frame){
+          // Compute Jacobian in local world-oriented frame
+          SE3 oMi, oMi_local;
+          oMi_local.setIdentity();
+          m_robot.framePosition(data, m_frame_id, oMi);
+          oMi_local.rotation(oMi.rotation());
+
+          // Use an explicit temporary `m_J_rotated` here to avoid allocations.
+          m_J_rotated.noalias() = oMi_local.toActionMatrix() * m_J;
+          m_J = m_J_rotated;
+        }
+
         m_computedTorques = m_J.transpose() * m_fext;
 
-        //@todo handle case where fext is given in the local world-oriented frame
         return m_computedTorques;
     }
 

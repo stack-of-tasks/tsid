@@ -68,9 +68,9 @@ namespace tsid
        Index m_frame_id;
        Vector6 m_fext;
        Matrix6x m_J;
+       Matrix6x m_J_rotated;
        Vector m_computedTorques;
        bool m_local_frame;
-
     };
   }
 }
