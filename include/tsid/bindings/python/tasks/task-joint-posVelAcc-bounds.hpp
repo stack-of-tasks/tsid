@@ -44,7 +44,7 @@ namespace tsid
       void visit(PyClass& cl) const
       {
         cl
-        .def(bp::init<std::string, robots::RobotWrapper &, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("Time step"), bp::arg("verbose")=true), "Default Constructor"))
+        .def(bp::init<std::string, robots::RobotWrapper &, double, bp::optional<bool>> ((bp::arg("name"), bp::arg("robot"), bp::arg("Time step"), bp::arg("verbose")), "Default Constructor"))
         .add_property("dim", &Task::dim, "return dimension size")
         .def("setTimeStep", &TaskJointPosVelAccBoundsPythonVisitor::setTimeStep, bp::args("dt"))
         .def("setPositionBounds", &TaskJointPosVelAccBoundsPythonVisitor::setPositionBounds, bp::args("lower", "upper"))
