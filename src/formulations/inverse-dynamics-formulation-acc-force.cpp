@@ -346,20 +346,15 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     cl->forceRegTask->vector() = fr.vector();
   }
 
-<<<<<<< HEAD
-=======
   // Add all measured external forces to dynamic model
->>>>>>> 7a9e34a7a479177de2f1089931630668d7dedce0
   Vector h_fext;
   h_fext.setZero(m_v);
   for (auto& it : m_measuredForces)
   {
     h_fext += it->measuredForce.computeJointTorques(time, q, v, m_data);
   }
-<<<<<<< HEAD
   std::cout << h_fext << std::endl;
   //TODO do we need to split h_fext in root and internal dofs (is there a contribution on root, probably yes)
-=======
 
   std::cout << "size h_fext : " << h_fext.size() << std::endl;
   std::cout << h_fext << std::endl;
@@ -370,7 +365,6 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   std::cout << "size NL terms : " << m_robot.nonLinearEffects(m_data).tail(m_v-m_u).size() << std::endl;
   std::cout << m_robot.nonLinearEffects(m_data).tail(m_v-m_u) << std::endl;
 
->>>>>>> 7a9e34a7a479177de2f1089931630668d7dedce0
 
   const Matrix & M_a = m_robot.mass(m_data).bottomRows(m_v-m_u);
   const Vector & h_a = m_robot.nonLinearEffects(m_data).tail(m_v-m_u) + h_fext.tail(m_v-m_u);
