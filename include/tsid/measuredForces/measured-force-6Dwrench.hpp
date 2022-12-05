@@ -42,10 +42,7 @@ namespace tsid
                         const std::string & frameName);
 
 
-      const Vector & computeJointTorques(const double t,
-                                             ConstRefVector q,
-                                             ConstRefVector v,
-                                             Data & data);
+      const Vector & computeJointTorques(Data & data);
 
     /**
      *  Set the value of the external wrench applied by the environment on the robot.

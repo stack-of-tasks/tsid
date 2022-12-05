@@ -45,22 +45,19 @@ namespace tsid
     }
 
 
-    const Vector & MeasuredForce6Dwrench::computeJointTorques(const double ,
-                                            ConstRefVector ,
-                                            ConstRefVector ,
-                                            Data & data)
+    const Vector & MeasuredForce6Dwrench::computeJointTorques(Data & data)
     {
         m_robot.frameJacobianLocal(data, m_frame_id, m_J);
 
         if(!m_local_frame){
           // Compute Jacobian in local world-oriented frame
-          SE3 oMi, oMi_local;
-          oMi_local.setIdentity();
+          SE3 oMi, oMi_rotation_only;
+          oMi_rotation_only.setIdentity();
           m_robot.framePosition(data, m_frame_id, oMi);
-          oMi_local.rotation(oMi.rotation());
+          oMi_rotation_only.rotation(oMi.rotation());
 
           // Use an explicit temporary `m_J_rotated` here to avoid allocations.
-          m_J_rotated.noalias() = oMi_local.toActionMatrix() * m_J;
+          m_J_rotated.noalias() = oMi_rotation_only.toActionMatrix() * m_J;
           m_J = m_J_rotated;
         }
 

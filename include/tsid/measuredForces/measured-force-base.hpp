@@ -47,10 +47,7 @@ namespace tsid
        * Compute the bias force (J^t F) associated to the
        * external measured force.
        */
-      virtual const Vector & computeJointTorques(const double t,
-                                             ConstRefVector q,
-                                             ConstRefVector v,
-                                             Data & data) = 0;
+      virtual const Vector & computeJointTorques(Data & data) = 0;
 
      protected:
        std::string m_name;
