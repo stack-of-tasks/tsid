@@ -123,6 +123,7 @@ SET(${PROJECT_NAME}_TASKS_HEADERS
 
 SET(${PROJECT_NAME}_MEASUREDFORCES_HEADERS
   include/tsid/measuredForces/measured-force-base.hpp
+  include/tsid/measuredForces/measured-force-3Dforce.hpp
   include/tsid/measuredForces/measured-force-6Dwrench.hpp
   )
 
@@ -226,6 +227,7 @@ SET(${PROJECT_NAME}_TASKS_SOURCES
 
 SET(${PROJECT_NAME}_MEASUREDFORCES_SOURCES
   src/measuredForces/measured-force-base.cpp
+  src/measuredForces/measured-force-3Dforce.cpp
   src/measuredForces/measured-force-6Dwrench.cpp
   )
 
