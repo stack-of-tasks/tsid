@@ -113,7 +113,6 @@ set(${PROJECT_NAME}_TASKS_HEADERS
     include/tsid/tasks/task-actuation-equality.hpp
     include/tsid/tasks/task-actuation-bounds.hpp
     include/tsid/tasks/task-joint-bounds.hpp
-    include/tsid/tasks/task-joint-posVelAcc-bounds.hpp
     include/tsid/tasks/task-joint-posture.hpp
     include/tsid/tasks/task-joint-posVelAcc-bounds.hpp
     include/tsid/tasks/task-capture-point-inequality.hpp
@@ -213,7 +212,6 @@ set(${PROJECT_NAME}_TASKS_SOURCES
     src/tasks/task-contact-force.cpp
     src/tasks/task-cop-equality.cpp
     src/tasks/task-joint-bounds.cpp
-    src/tasks/task-joint-posVelAcc-bounds.cpp
     src/tasks/task-joint-posture.cpp
     src/tasks/task-joint-posVelAcc-bounds.cpp
     src/tasks/task-capture-point-inequality.cpp
