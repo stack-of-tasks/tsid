@@ -666,6 +666,21 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(const std::string & 
   return contact_found && first_constraint_found && second_constraint_found && third_constraint_found;
 }
 
+
+bool InverseDynamicsFormulationAccForce::removeMeasuredForce(const std::string & measuredForceName)
+{
+  for(auto it=m_measuredForces.begin(); it!=m_measuredForces.end(); it++)
+  {
+    if((*it)->measuredForce.name()==measuredForceName)
+    {
+      m_measuredForces.erase(it);
+      return true;
+    }
+  }
+  return false;
+}
+
+
 bool InverseDynamicsFormulationAccForce::removeFromHqpData(const std::string & name)
 {
   bool found = false;

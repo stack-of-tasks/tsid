@@ -102,6 +102,8 @@ namespace tsid
     bool removeRigidContact(const std::string & contactName,
                             double transition_duration=0.0);
 
+    bool removeMeasuredForce(const std::string & measuredForceName);
+
     const HQPData & computeProblemData(double time,
                                        ConstRefVector q,
                                        ConstRefVector v);
