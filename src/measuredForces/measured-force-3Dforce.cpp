@@ -72,7 +72,7 @@ namespace tsid
         return m_computedTorques;
     }
 
-    void MeasuredForce3Dforce::setMeasuredContactForce(Vector3 & fext)
+    void MeasuredForce3Dforce::setMeasuredContactForce(const Vector3 & fext)
     {
         m_fext = fext;
     }

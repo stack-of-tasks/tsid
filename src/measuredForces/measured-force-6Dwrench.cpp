@@ -66,7 +66,7 @@ namespace tsid
         return m_computedTorques;
     }
 
-    void MeasuredForce6Dwrench::setMeasuredContactForce(Vector6 & fext)
+    void MeasuredForce6Dwrench::setMeasuredContactForce(const Vector6 & fext)
     {
         m_fext = fext;
     }

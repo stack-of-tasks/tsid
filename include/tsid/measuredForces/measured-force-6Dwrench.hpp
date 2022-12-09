@@ -46,7 +46,7 @@ namespace tsid
     /**
      *  Set the value of the external wrench applied by the environment on the robot.
      */
-     void setMeasuredContactForce(Vector6 & fext);
+     void setMeasuredContactForce(const Vector6 & fext);
 
      const Vector6 & getMeasuredContactForce() const;
 
