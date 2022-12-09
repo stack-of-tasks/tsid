@@ -13,32 +13,23 @@ jobs:
       matrix:
         os: ["ubuntu", "macos"]
         arch: ["x86_64"]
-        build: ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "pp38-*", "pp39-*"]
+        build: ["cp37-*", "cp38-*", "cp39-*", "cp310-*", "cp311-*", "pp37-*", "pp38-*", "pp39-*"]
         include:
-          - arch: "universal2"
-            os: "macos"
-            build: "cp38-*"
-          - arch: "universal2"
-            os: "macos"
-            build: "cp39-*"
-          - arch: "universal2"
-            os: "macos"
-            build: "cp310-*"
-          - arch: "universal2"
-            os: "macos"
-            build: "cp311-*"
-          #- arch: "aarch64"
-            #os: "ubuntu"
-            #build: "cp38-manylinux*"
-          #- arch: "aarch64"
-            #os: "ubuntu"
-            #build: "cp39-manylinux*"
-          #- arch: "aarch64"
-            #os: "ubuntu"
-            #build: "cp310-manylinux*"
-          #- arch: "aarch64"
-            #os: "ubuntu"
-            #build: "cp311-manylinux*"
+          - arch: "aarch64"
+            os: "ubuntu"
+            build: "cp37-manylinux*"
+          - arch: "aarch64"
+            os: "ubuntu"
+            build: "cp38-manylinux*"
+          - arch: "aarch64"
+            os: "ubuntu"
+            build: "cp39-manylinux*"
+          - arch: "aarch64"
+            os: "ubuntu"
+            build: "cp310-manylinux*"
+          - arch: "aarch64"
+            os: "ubuntu"
+            build: "cp311-manylinux*"
     steps:
       - uses: actions/checkout@v3
         with:

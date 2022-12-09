@@ -4,7 +4,6 @@ macos_arm64_task:
     image: ghcr.io/cirruslabs/macos-monterey-xcode
   env:
     CIRRUS_CLONE_SUBMODULES: true
-    CIBW_BEFORE_BUILD: "patch -p0 -R -i cmeel.patch || true"
     CIBW_REPAIR_WHEEL_COMMAND: ""
     PATH: /opt/homebrew/opt/python@3.10/bin:$PATH
   install_pre_requirements_script:
