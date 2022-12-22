@@ -104,7 +104,7 @@ namespace tsid
 
       if(problemData.size() > 2)
           {
-            assert(false && "Solver not implemented for more than 2 hierarchical levels.");
+            PINOCCHIO_CHECK_INPUT_ARGUMENT(false, "Solver not implemented for more than 2 hierarchical levels.");
           }
           
           // Compute the constraint matrix sizes
@@ -171,7 +171,7 @@ namespace tsid
               const double & w = it->first;
               auto constr = it->second;
               if(!constr->isEquality())
-                assert(false && "Inequalities in the cost function are not implemented yet");
+                PINOCCHIO_CHECK_INPUT_ARGUMENT(false, "Inequalities in the cost function are not implemented yet");
               
               EIGEN_MALLOC_ALLOWED;
               m_qpData.H.noalias() += w*constr->matrix().transpose()*constr->matrix();

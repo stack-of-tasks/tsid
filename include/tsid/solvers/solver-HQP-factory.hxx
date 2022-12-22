@@ -34,8 +34,8 @@ namespace tsid
       if(solverType==SOLVER_HQP_EIQUADPROG_RT)
         return new SolverHQuadProgRT<nVars, nEqCon, nIneqCon>(name);
       
-      assert(false && "Specified solver type not recognized");
-      return NULL;
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(false, "Specified solver type not recognized");
+      return nullptr;
     }
   }
 }
