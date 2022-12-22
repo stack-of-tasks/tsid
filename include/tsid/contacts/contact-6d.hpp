@@ -63,6 +63,8 @@ namespace tsid
                 const double maxNormalForce,
                 const double forceRegWeight);
 
+      virtual ~Contact6d() {}
+
       /// Return the number of motion constraints
       virtual unsigned int n_motion() const;
 

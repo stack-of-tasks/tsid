@@ -47,6 +47,8 @@ namespace tsid
                                RobotWrapper & robot,
                                const double timeStep);
 
+      virtual ~TaskCapturePointInequality() {}
+
       int dim() const;
 
       const ConstraintBase & compute(const double t,

@@ -39,6 +39,8 @@ namespace tsid
       TaskActuationEquality(const std::string & name,
                             RobotWrapper & robot);
 
+      virtual ~TaskActuationEquality() {}
+
       int dim() const;
 
       const ConstraintBase & compute(const double t,

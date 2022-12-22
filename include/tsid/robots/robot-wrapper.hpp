@@ -78,6 +78,8 @@ namespace tsid
       RobotWrapper(const Model & m,
                    RootJointType rootJoint,
                    bool verbose=false);
+
+      virtual ~RobotWrapper() {}
       
       virtual int nq() const;
       virtual int nq_actuated() const;

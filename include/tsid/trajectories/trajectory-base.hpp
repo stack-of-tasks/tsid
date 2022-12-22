@@ -89,6 +89,8 @@ TSID_DISABLE_WARNING_POP
       TrajectoryBase(const std::string & name):
         m_name(name){}
 
+      virtual ~TrajectoryBase() {}
+
       virtual unsigned int size() const = 0;
 
       virtual const TrajectorySample & operator()(double time) = 0;

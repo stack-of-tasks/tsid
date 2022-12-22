@@ -49,6 +49,8 @@ namespace tsid
       ContactBase(const std::string & name,
                   RobotWrapper & robot);
 
+      virtual ~ContactBase() {}
+
       const std::string & name() const;
 
       void name(const std::string & name);

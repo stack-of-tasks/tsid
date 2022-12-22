@@ -51,6 +51,8 @@ namespace tsid
                 const double minNormalForce,
                 const double maxNormalForce);
 
+      virtual ~ContactPoint() {}
+
       /// Return the number of motion constraints
       virtual unsigned int n_motion() const;
 

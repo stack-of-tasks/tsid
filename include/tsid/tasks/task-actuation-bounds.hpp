@@ -42,6 +42,8 @@ namespace tsid
       TaskActuationBounds(const std::string & name,
                           RobotWrapper & robot);
 
+      virtual ~TaskActuationBounds() {}
+
       int dim() const;
 
       const ConstraintBase & compute(const double t,
