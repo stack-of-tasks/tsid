@@ -46,6 +46,8 @@ namespace tsid
       TaskBase(const std::string & name,
                RobotWrapper & robot);
 
+      virtual ~TaskBase() {}
+
       const std::string & name() const;
 
       void name(const std::string & name);

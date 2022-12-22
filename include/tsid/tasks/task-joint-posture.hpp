@@ -43,6 +43,8 @@ namespace tsid
       TaskJointPosture(const std::string & name,
                       RobotWrapper & robot);
 
+      virtual ~TaskJointPosture() {}
+
       int dim() const;
 
       const ConstraintBase & compute(const double t,

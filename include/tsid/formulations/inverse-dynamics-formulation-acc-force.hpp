@@ -60,6 +60,8 @@ namespace tsid
                                        RobotWrapper & robot,
                                        bool verbose=false);
 
+    virtual ~InverseDynamicsFormulationAccForce() {}
+
     Data & data() ;
 
     unsigned int nVar() const;

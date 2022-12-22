@@ -44,6 +44,8 @@ namespace tsid
       TaskCopEquality(const std::string & name,
                       RobotWrapper & robot);
 
+      virtual ~TaskCopEquality() {}
+
       void setContactList(const std::vector<std::shared_ptr<ContactLevel> >  *contacts);
 
       int dim() const;
