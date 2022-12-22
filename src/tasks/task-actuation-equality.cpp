@@ -43,7 +43,7 @@ namespace tsid
 
     void TaskActuationEquality::mask(const Vector & m)
     {
-      assert(m.size()==m_robot.na());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(m.size() == m_robot.na(), "The size of the mask vector needs to equal " + std::to_string(m_robot.na()));
       m_mask = m;
 
       const Vector::Index dim = static_cast<Vector::Index>(m.sum());
@@ -53,7 +53,7 @@ namespace tsid
       for(unsigned int i=0; i<m.size(); i++)
         if(m(i)!=0.0)
         {
-          assert(m(i)==1.0);
+          PINOCCHIO_CHECK_INPUT_ARGUMENT(m(i) == 1.0, "Entries in the mask vector need to be either 0.0 or 1.0");
           S(j,i) = m_weights(i);
           m_activeAxes(j) = i;
           j++;
@@ -73,7 +73,7 @@ namespace tsid
     // Reference should be the same size as robot.na(), even if a mask is used (masked dof values will just be ignored)
     void TaskActuationEquality::setReference(ConstRefVector ref)
     {
-      assert(ref.size()==m_robot.na());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(ref.size() == m_robot.na(), "The size of the reference vector needs to equal " + std::to_string(m_robot.na()));
       m_ref = ref;
 
       for(unsigned int i=0; i<m_activeAxes.size(); i++)
@@ -88,7 +88,7 @@ namespace tsid
     // Weighting vector should be the same size as robot.na(), even if a mask is used (masked dof values will just be ignored)
     void TaskActuationEquality::setWeightVector(ConstRefVector weights)
     {
-      assert(weights.size()==m_robot.na());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(weights.size() == m_robot.na(), "The size of the weight vector needs to equal " + std::to_string(m_robot.na()));
       m_weights = weights;
 
       for(unsigned int i=0; i<m_activeAxes.size(); i++)

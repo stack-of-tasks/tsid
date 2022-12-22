@@ -53,7 +53,7 @@ namespace tsid
 
     void TaskJointPosture::setMask(ConstRefVector m)
     {
-      assert(m.size()==m_robot.na());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(m.size()==m_robot.na(), "The size of the mask needs to equal " + std::to_string(m_robot.na()));
       m_mask = m;
       const Vector::Index dim = static_cast<Vector::Index>(m.sum());
       Matrix S = Matrix::Zero(dim, m_robot.nv());
@@ -62,7 +62,7 @@ namespace tsid
       for(unsigned int i=0; i<m.size(); i++)
         if(m(i)!=0.0)
         {
-          assert(m(i)==1.0);
+          PINOCCHIO_CHECK_INPUT_ARGUMENT(m(i)==1.0, "Valid mask values are either 0.0 or 1.0 received: " + std::to_string(m(i)));
           S(j,m_robot.nv()-m_robot.na()+i) = 1.0;
           m_activeAxes(j) = i;
           j++;
@@ -82,21 +82,21 @@ namespace tsid
 
     void TaskJointPosture::Kp(ConstRefVector Kp)
     {
-      assert(Kp.size()==m_robot.na());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(Kp.size() == m_robot.na(), "The size of the Kp vector needs to equal " + std::to_string(m_robot.na()));
       m_Kp = Kp;
     }
 
     void TaskJointPosture::Kd(ConstRefVector Kd)
     {
-      assert(Kd.size()==m_robot.na());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(Kd.size() == m_robot.na(), "The size of the Kd vector needs to equal " + std::to_string(m_robot.na()));
       m_Kd = Kd;
     }
 
     void TaskJointPosture::setReference(const TrajectorySample & ref)
     {
-      assert(ref.getValue().size()==m_robot.nq_actuated());
-      assert(ref.getDerivative().size()==m_robot.na());
-      assert(ref.getSecondDerivative().size()==m_robot.na());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(ref.getValue().size() == m_robot.nq_actuated(), "The size of the reference value vector needs to equal " + std::to_string(m_robot.nq_actuated()));
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(ref.getDerivative().size() == m_robot.na(), "The size of the reference value derivative vector needs to equal " + std::to_string(m_robot.na()));
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(ref.getSecondDerivative().size() == m_robot.na(), "The size of the reference value second derivative vector needs to equal " + std::to_string(m_robot.na()));
       m_ref = ref;
     }
 
