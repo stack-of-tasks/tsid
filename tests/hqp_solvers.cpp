@@ -327,32 +327,32 @@ BOOST_AUTO_TEST_CASE ( test_eiquadprog_classic_vs_rt_vs_fast_vs_proxqp)
     for(unsigned int j=0; j<nsmooth; j++)
     {
       getProfiler().start(PROFILE_EIQUADPROG_FAST);
-      const HQPOutput & output_fast = solver_fast->solve(HQPData);
+      (void) solver_fast->solve(HQPData);
       getProfiler().stop(PROFILE_EIQUADPROG_FAST);
 
       getProfiler().start(PROFILE_EIQUADPROG_RT);
-      const HQPOutput & output_rt = solver_rt->solve(HQPData);
+      (void) solver_rt->solve(HQPData);
       getProfiler().stop(PROFILE_EIQUADPROG_RT);
 
       getProfiler().start(PROFILE_EIQUADPROG);
-      const HQPOutput & output    = solver->solve(HQPData);
+      (void) solver->solve(HQPData);
       getProfiler().stop(PROFILE_EIQUADPROG);
 
     #ifdef TSID_WITH_PROXSUITE
       getProfiler().start(PROFILE_PROXQP);
-      const HQPOutput & output_proxqp = solver_proxqp->solve(HQPData);
+      (void) solver_proxqp->solve(HQPData);
       getProfiler().stop(PROFILE_PROXQP);
     #endif
 
     #ifdef TSID_WITH_OSQP
       getProfiler().start(PROFILE_OSQP);
-      const HQPOutput & output_osqp = solver_osqp->solve(HQPData);
+      (void) solver_osqp->solve(HQPData);
       getProfiler().stop(PROFILE_OSQP);
     #endif
 
     #ifdef TSID_QPMAD_FOUND
       getProfiler().start(PROFILE_QPMAD);
-      const HQPOutput & output_qpmad = solver_qpmad->solve(HQPData);
+      (void) solver_qpmad->solve(HQPData);
       getProfiler().stop(PROFILE_QPMAD);
     #endif
     }
