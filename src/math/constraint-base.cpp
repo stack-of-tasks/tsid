@@ -53,8 +53,8 @@ Matrix & ConstraintBase::matrix()
 
 bool ConstraintBase::setMatrix(ConstRefMatrix A)
 {
-  assert(m_A.cols()==A.cols());
-  assert(m_A.rows()==A.rows());
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(m_A.cols() == A.cols(), "cols do not match the constraint dimension");
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(m_A.rows() == A.rows(), "rows do not match the constraint dimension");
   m_A = A;
   return true;
 }

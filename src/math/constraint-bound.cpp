@@ -38,7 +38,7 @@ ConstraintBound::ConstraintBound(const std::string & name,
   m_lb(lb),
   m_ub(ub)
 {
-  assert(lb.size()==ub.size());
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(lb.size() == ub.size(), "The size of the lower and upper bound vectors needs to be match!");
 }
 
 unsigned int ConstraintBound::rows() const
@@ -55,7 +55,7 @@ unsigned int ConstraintBound::cols() const
 
 void ConstraintBound::resize(const unsigned int r, const unsigned int c)
 {
-  assert(r==c);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(r == c, "r and c need to be equal!");
   m_A.setIdentity(r, c);
   m_lb.setZero(r);
   m_ub.setZero(r);

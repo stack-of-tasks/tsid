@@ -39,8 +39,8 @@ ConstraintInequality::ConstraintInequality(const std::string & name,
   m_lb(lb),
   m_ub(ub)
 {
-  assert(A.rows()==lb.rows());
-  assert(A.rows()==ub.rows());
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(A.rows() == lb.rows(), "The number of rows of A and lb do not match");
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(A.rows() == ub.rows(), "The number of rows of A and ub do not match");
 }
 
 unsigned int ConstraintInequality::rows() const

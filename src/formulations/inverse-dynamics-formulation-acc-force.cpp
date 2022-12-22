@@ -114,17 +114,8 @@ bool InverseDynamicsFormulationAccForce::addMotionTask(TaskMotion & task,
                                                        unsigned int priorityLevel,
                                                        double transition_duration)
 {
-  assert(weight>=0.0);
-  assert(transition_duration>=0.0);
-  
-  // This part is not used frequently so we can do some tests.
-  if (weight<0.0)
-    std::cerr << __FILE__ <<  " " << __LINE__ << " "
-      << "weight should be positive" << std::endl;
-
-  // This part is not used frequently so we can do some tests.
-  if (transition_duration<0.0)
-    std::cerr << "transition_duration should be positive" << std::endl;
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(weight >= 0.0, "The weight needs to be positive or equal to 0");
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(transition_duration >= 0.0, "The transition duration needs to be greater than or equal to 0");
 
   auto tl = std::make_shared<TaskLevel>(task, priorityLevel);
   m_taskMotions.push_back(tl);
@@ -139,16 +130,9 @@ bool InverseDynamicsFormulationAccForce::addForceTask(TaskContactForce & task,
                                                       unsigned int priorityLevel,
                                                       double transition_duration)
 {
-  assert(weight>=0.0);
-  assert(transition_duration>=0.0);
-  // This part is not used frequently so we can do some tests.
-  if (weight<0.0)
-    std::cerr << __FILE__ <<  " " << __LINE__ << " "
-      << "weight should be positive" << std::endl;
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(weight >= 0.0, "The weight needs to be positive or equal to 0");
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(transition_duration >= 0.0, "The transition duration needs to be greater than or equal to 0");
 
-  // This part is not used frequently so we can do some tests.
-  if (transition_duration<0.0)
-    std::cerr << "transition_duration should be positive" << std::endl;
   auto tl = std::make_shared<TaskLevelForce>(task, priorityLevel);
   m_taskContactForces.push_back(tl);
   addTask(tl, weight, priorityLevel);
@@ -161,15 +145,8 @@ bool InverseDynamicsFormulationAccForce::addActuationTask(TaskActuation & task,
                                                           unsigned int priorityLevel,
                                                           double transition_duration)
 {
-  assert(weight>=0.0);
-  assert(transition_duration>=0.0);
-  if (weight<0.0)
-    std::cerr << __FILE__ <<  " " << __LINE__ << " "
-	      << "weight should be positive" << std::endl;
-
-  // This part is not used frequently so we can do some tests.
-  if (transition_duration<0.0)
-    std::cerr << "transition_duration should be positive" << std::endl;
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(weight >= 0.0, "The weight needs to be positive or equal to 0");
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(transition_duration >= 0.0, "The transition duration needs to be greater than or equal to 0");
 
   auto tl = std::make_shared<TaskLevel>(task, priorityLevel);
   m_taskActuations.push_back(tl);

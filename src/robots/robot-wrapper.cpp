@@ -136,7 +136,7 @@ namespace tsid
     
     bool RobotWrapper::rotor_inertias(ConstRefVector rotor_inertias)
     {
-      assert(rotor_inertias.size()==m_rotor_inertias.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(rotor_inertias.size() == m_rotor_inertias.size(), "The size of the rotor_inertias vector is incorrect!");
       m_rotor_inertias = rotor_inertias;
       updateMd();
       return true;
@@ -144,7 +144,7 @@ namespace tsid
     
     bool RobotWrapper::gear_ratios(ConstRefVector gear_ratios)
     {
-      assert(gear_ratios.size()==m_gear_ratios.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(gear_ratios.size() == m_gear_ratios.size(), "The size of the gear_ratios vector is incorrect!");
       m_gear_ratios = gear_ratios;
       updateMd();
       return true;
@@ -200,21 +200,21 @@ namespace tsid
     const SE3 & RobotWrapper::position(const Data & data,
                                        const Model::JointIndex index) const
     {
-      assert(index<data.oMi.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < data.oMi.size(), "The index needs to be less than the size of the oMi vector");
       return data.oMi[index];
     }
     
     const Motion & RobotWrapper::velocity(const Data & data,
                                           const Model::JointIndex index) const
     {
-      assert(index<data.v.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < data.v.size(), "The index needs to be less than the size of the v vector");
       return data.v[index];
     }
     
     const Motion & RobotWrapper::acceleration(const Data & data,
                                               const Model::JointIndex index) const
     {
-      assert(index<data.a.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < data.a.size(), "The index needs to be less than the size of the a vector");
       return data.a[index];
     }
     
@@ -222,7 +222,7 @@ namespace tsid
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      assert(index<data.oMi.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < data.oMi.size(), "The index needs to be less than the size of the oMi vector");
       return pinocchio::getJointJacobian(m_model, data, index, pinocchio::WORLD, J);
     }
     
@@ -230,14 +230,14 @@ namespace tsid
                                      const Model::JointIndex index,
                                      Data::Matrix6x & J) const
     {
-      assert(index<data.oMi.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < data.oMi.size(), "The index needs to be less than the size of the oMi vector");
       return pinocchio::getJointJacobian(m_model, data, index, pinocchio::LOCAL, J);
     }
     
     SE3 RobotWrapper::framePosition(const Data & data,
                                     const Model::FrameIndex index) const
     {
-      assert(index<m_model.frames.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < m_model.frames.size(), "Frame index greater than size of frame vector in model - frame may not exist");
       const Frame & f = m_model.frames[index];
       return data.oMi[f.parent].act(f.placement);
     }
@@ -246,7 +246,7 @@ namespace tsid
                                      const Model::FrameIndex index,
                                      SE3 & framePosition) const
     {
-      assert(index<m_model.frames.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < m_model.frames.size(), "Frame index greater than size of frame vector in model - frame may not exist");
       const Frame & f = m_model.frames[index];
       framePosition = data.oMi[f.parent].act(f.placement);
     }
@@ -254,7 +254,7 @@ namespace tsid
     Motion RobotWrapper::frameVelocity(const Data & data,
                                        const Model::FrameIndex index) const
     {
-      assert(index<m_model.frames.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < m_model.frames.size(), "Frame index greater than size of frame vector in model - frame may not exist");
       const Frame & f = m_model.frames[index];
       return f.placement.actInv(data.v[f.parent]);
     }
@@ -263,7 +263,7 @@ namespace tsid
                                      const Model::FrameIndex index,
                                      Motion & frameVelocity) const
     {
-      assert(index<m_model.frames.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < m_model.frames.size(), "Frame index greater than size of frame vector in model - frame may not exist");
       const Frame & f = m_model.frames[index];
       frameVelocity = f.placement.actInv(data.v[f.parent]);
     }
@@ -283,7 +283,7 @@ namespace tsid
     Motion RobotWrapper::frameAcceleration(const Data & data,
                                            const Model::FrameIndex index) const
     {
-      assert(index<m_model.frames.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < m_model.frames.size(), "Frame index greater than size of frame vector in model - frame may not exist");
       const Frame & f = m_model.frames[index];
       return f.placement.actInv(data.a[f.parent]);
     }
@@ -292,7 +292,7 @@ namespace tsid
                                          const Model::FrameIndex index,
                                          Motion & frameAcceleration) const
     {
-      assert(index<m_model.frames.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < m_model.frames.size(), "Frame index greater than size of frame vector in model - frame may not exist");
       const Frame & f = m_model.frames[index];
       frameAcceleration = f.placement.actInv(data.a[f.parent]);
     }
@@ -312,7 +312,7 @@ namespace tsid
     Motion RobotWrapper::frameClassicAcceleration(const Data & data,
                                                   const Model::FrameIndex index) const
     {
-      assert(index<m_model.frames.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < m_model.frames.size(), "Frame index greater than size of frame vector in model - frame may not exist");
       const Frame & f = m_model.frames[index];
       Motion a = f.placement.actInv(data.a[f.parent]);
       Motion v = f.placement.actInv(data.v[f.parent]);
@@ -324,7 +324,7 @@ namespace tsid
                                                 const Model::FrameIndex index,
                                                 Motion & frameAcceleration) const
     {
-      assert(index<m_model.frames.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < m_model.frames.size(), "Frame index greater than size of frame vector in model - frame may not exist");
       const Frame & f = m_model.frames[index];
       frameAcceleration = f.placement.actInv(data.a[f.parent]);
       Motion v = f.placement.actInv(data.v[f.parent]);
@@ -347,7 +347,7 @@ namespace tsid
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      assert(index<m_model.frames.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < m_model.frames.size(), "Frame index greater than size of frame vector in model - frame may not exist");
       return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::WORLD, J);
     }
     
@@ -355,7 +355,7 @@ namespace tsid
                                           const Model::FrameIndex index,
                                           Data::Matrix6x & J) const
     {
-      assert(index<m_model.frames.size());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(index < m_model.frames.size(), "Frame index greater than size of frame vector in model - frame may not exist");
       return pinocchio::getFrameJacobian(m_model, data, index, pinocchio::LOCAL, J);
     }
 
