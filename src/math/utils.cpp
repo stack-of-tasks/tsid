@@ -24,14 +24,14 @@ namespace tsid
     
     void SE3ToXYZQUAT(const pinocchio::SE3 & M, RefVector xyzQuat)
     {
-      assert(xyzQuat.size()==7);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(xyzQuat.size() == 7, "The size of the xyzQuat vector needs to equal 7");
       xyzQuat.head<3>() = M.translation();
       xyzQuat.tail<4>() = Eigen::Quaterniond(M.rotation()).coeffs();
     }
 
     void SE3ToVector(const pinocchio::SE3 & M, RefVector vec)
     {
-      assert(vec.size()==12);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(vec.size() == 12, "The size of the vec vector needs to equal 12");
       vec.head<3>() = M.translation();
       typedef Eigen::Matrix<double,9,1> Vector9;
       vec.tail<9>() = Eigen::Map<const Vector9>(&M.rotation()(0), 9);
@@ -39,7 +39,7 @@ namespace tsid
 
     void vectorToSE3(RefVector vec, pinocchio::SE3 & M)
     {
-      assert(vec.size()==12);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(vec.size() == 12, "vec needs to contain 12 rows");
       M.translation( vec.head<3>() );
       typedef Eigen::Matrix<double,3,3> Matrix3;
       M.rotation( Eigen::Map<const Matrix3>(&vec(3), 3, 3) );
