@@ -47,7 +47,7 @@ namespace tsid
 
     void TaskComEquality::setMask(math::ConstRefVector mask)
     {
-      assert(mask.size() == 3);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(mask.size() == 3, "The size of the mask vector needs to equal 3");
       TaskMotion::setMask(mask);
       int n = dim();
       m_constraint.resize(n, m_robot.nv());
@@ -68,13 +68,13 @@ namespace tsid
 
     void TaskComEquality::Kp(ConstRefVector Kp)
     {
-      assert(Kp.size()==3);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(Kp.size() == 3, "The size of the Kp vector needs to equal 3");
       m_Kp = Kp;
     }
 
     void TaskComEquality::Kd(ConstRefVector Kd)
     {
-      assert(Kd.size()==3);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(Kd.size() == 3, "The size of the Kd vector needs to equal 3");
       m_Kd = Kd;
     }
 

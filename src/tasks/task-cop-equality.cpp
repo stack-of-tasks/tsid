@@ -102,7 +102,7 @@ const ConstraintBase & TaskCopEquality::getConstraint() const
 
 void TaskCopEquality::setReference(const Vector3 & ref)
 {
-  assert(ref.size()==3);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(ref.size() == 3, "The size of the reference needs to equal 3");
   m_ref = ref;
 }
 
