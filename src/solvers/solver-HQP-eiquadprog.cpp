@@ -79,7 +79,7 @@ void SolverHQuadProg::retrieveQPData(const HQPData & problemData, const bool /*h
 {
   if(problemData.size()>2)
   {
-    assert(false && "Solver not implemented for more than 2 hierarchical levels.");
+    PINOCCHIO_CHECK_INPUT_ARGUMENT(false, "Solver not implemented for more than 2 hierarchical levels.");
   }
 
   // Compute the constraint matrix sizes
@@ -143,7 +143,7 @@ void SolverHQuadProg::retrieveQPData(const HQPData & problemData, const bool /*h
       const double & w = it->first;
       auto constr = it->second;
       if(!constr->isEquality())
-        assert(false && "Inequalities in the cost function are not implemented yet");
+        PINOCCHIO_CHECK_INPUT_ARGUMENT(false, "Inequalities in the cost function are not implemented yet");
 
       m_qpData.H += w*constr->matrix().transpose()*constr->matrix();
       m_qpData.g -= w*(constr->matrix().transpose()*constr->vector());
@@ -216,7 +216,7 @@ void SolverHQuadProg::retrieveQPData(const HQPData & problemData, const bool /*h
       const double & w = it->first;
       auto constr = it->second;
       if(!constr->isEquality())
-        assert(false && "Inequalities in the cost function are not implemented yet");
+        PINOCCHIO_CHECK_INPUT_ARGUMENT(false, "Inequalities in the cost function are not implemented yet");
 
 	  AZ.noalias() = constr->matrix()*Z.rightCols(m_n-r);
       m_ZT_H_Z += w*AZ.transpose()*AZ;

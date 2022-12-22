@@ -69,7 +69,7 @@ namespace tsid
         return new Solver_HQP_qpoases(name);
 #endif
       
-      assert(false && "Specified solver type not recognized");
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(false, "Specified solver type not recognized");
       return NULL;
     }
     

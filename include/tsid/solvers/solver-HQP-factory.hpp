@@ -21,6 +21,8 @@
 #include <tsid/solvers/solver-HQP-base.hpp>
 #include <tsid/solvers/solver-HQP-eiquadprog-rt.hpp>
 
+#include <pinocchio/macros.hpp>  // for input argument checking and exceptions
+
 
 namespace tsid
 {
