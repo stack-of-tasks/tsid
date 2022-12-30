@@ -49,8 +49,8 @@ jobs:
         env:
           CIBW_BUILD: ${{ matrix.build }}
           CIBW_ARCHS: ${{ matrix.arch }}
-          CIBW_MANYLINUX_X86_64_IMAGE: "quay.io/pypa/manylinux_2_28_x86_64"
-          CIBW_MANYLINUX_PYPY_X86_64_IMAGE: "quay.io/pypa/manylinux_2_28_x86_64"
+          CIBW_MANYLINUX_X86_64_IMAGE: "quay.io/pypa/manylinux2014_x86_64"
+          CIBW_MANYLINUX_PYPY_X86_64_IMAGE: "quay.io/pypa/manylinux2014_x86_64"
           CIBW_MANYLINUX_AARCH64_IMAGE: "quay.io/pypa/manylinux_2_28_aarch64"
           CIBW_REPAIR_WHEEL_COMMAND: ""
       - uses: actions/upload-artifact@v3
