@@ -1,0 +1,16 @@
+- git:
+    uri: https://github.com/asherikov/qpmad.git
+    version: master
+    local-name: qpmad
+- git:
+    uri: https://github.com/Simple-Robotics/proxsuite.git
+    version: master
+    local-name: proxsuite
+- git:
+    uri: https://github.com/ori-drs/osqp.git # fork for packaging
+    version: master
+    local-name: osqp
+- git:
+    uri: https://github.com/robotology/osqp-eigen.git
+    version: master
+    local-name: osqp-eigen
