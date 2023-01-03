@@ -38,7 +38,7 @@ option(BUILD_WITH_OSQP "Support using the osqp solver" OFF)
 # With pos, vel, acc awaiting renaming (e.g. in trajectory-base), we are
 # producing a ton of deprecation warnings. Ignoring them for now; remove this
 # once pos, vel, acc are renamed.
-add_definitions(-Wno-deprecated)
+add_definitions(-Wno-deprecated-declarations)
 
 # We frequently convert between signed and unsigned integers for Eigen::Index.
 # Ignore them for now.
