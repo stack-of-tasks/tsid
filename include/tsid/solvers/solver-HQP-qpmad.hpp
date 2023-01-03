@@ -51,6 +51,10 @@ namespace tsid
        */
       const HQPOutput & solve(const HQPData & problemData);
 
+      /** Retrieve the matrices describing a QP problem from the problem data. */
+      void retrieveQPData(const HQPData & problemData, 
+                          const bool hessianRegularization = true);
+
       /** Get the objective value of the last solved problem. */
       double getObjectiveValue();
 

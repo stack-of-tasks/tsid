@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2022 Inria
+// Copyright (c) 2022 Inria, University of Oxford
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -79,7 +79,7 @@ namespace tsid
       m_nc = nc;
     }
 
-    const HQPOutput & SolverHQpmad::solve(const HQPData & problemData)
+    void SolverHQpmad::retrieveQPData(const HQPData & problemData, const bool /*hessianRegularization*/)
     {
       if(problemData.size()>2)
       {
@@ -159,6 +159,11 @@ namespace tsid
         }
         m_H.diagonal().array() += m_hessian_regularization;
       }
+    }
+
+    const HQPOutput & SolverHQpmad::solve(const HQPData & problemData)
+    {
+      SolverHQpmad::retrieveQPData(problemData);
 
       //  min 0.5 * x H x + g x
       //  s.t.
