@@ -4,7 +4,7 @@
     local-name: qpmad
 - git:
     uri: https://github.com/Simple-Robotics/proxsuite.git
-    version: master
+    version: main
     local-name: proxsuite
 - git:
     uri: https://github.com/ori-drs/osqp.git # fork for packaging
