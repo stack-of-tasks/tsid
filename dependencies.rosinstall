@@ -3,8 +3,8 @@
     version: master
     local-name: qpmad
 - git:
-    uri: https://github.com/wxmerkt/proxsuite.git #https://github.com/Simple-Robotics/proxsuite.git
-    version: topic/add-ros-ci #main
+    uri: https://github.com/Simple-Robotics/proxsuite.git
+    version: devel
     local-name: proxsuite
 - git:
     uri: https://github.com/ori-drs/osqp.git # fork for packaging
