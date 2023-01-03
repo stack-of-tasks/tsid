@@ -10,7 +10,7 @@ jobs:
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
       UPSTREAM_WORKSPACE: dependencies.rosinstall
-      CMAKE_ARGS: -DBUILD_WITH_PROXQP=ON -BUILD_WITH_OSQP=ON
+      CMAKE_ARGS: -DBUILD_WITH_PROXQP=ON -DBUILD_WITH_OSQP=ON
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
