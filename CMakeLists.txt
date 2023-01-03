@@ -158,6 +158,18 @@ if(BUILD_WITH_PROXQP)
   find_package(proxsuite REQUIRED)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
        include/tsid/solvers/solver-proxqp.hpp)
+
+  # Determine whether ot use the default target or the vectorized target, if
+  # available
+  set(proxsuite_INTERFACE proxsuite::proxsuite)
+  if(NOT TARGET proxsuite::proxsuite-vectorized)
+    message(
+      STATUS
+        "proxsuite::proxsuite-vectorized not available - defaulting to non-vectorized ProxQP"
+    )
+  else()
+    set(proxsuite_INTERFACE proxsuite::proxsuite-vectorized)
+  endif()
 endif()
 
 if(BUILD_WITH_OSQP)
@@ -287,7 +299,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC pinocchio::pinocchio
 
 if(BUILD_WITH_PROXQP)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_PROXSUITE)
-  target_link_libraries(${PROJECT_NAME} PUBLIC proxsuite::proxsuite-vectorized)
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${proxsuite_INTERFACE})
 endif()
 
 if(BUILD_WITH_OSQP)
