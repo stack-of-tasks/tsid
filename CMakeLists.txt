@@ -35,11 +35,13 @@ option(EIGEN_NO_AUTOMATIC_RESIZING
 option(BUILD_WITH_PROXQP "Support using the proxqp solver" OFF)
 option(BUILD_WITH_OSQP "Support using the osqp solver" OFF)
 
-# With pos, vel, acc awaiting renaming (e.g. in trajectory-base), we are producing a ton of deprecation warnings.
-# Ignoring them for now; remove this once pos, vel, acc are renamed.
+# With pos, vel, acc awaiting renaming (e.g. in trajectory-base), we are
+# producing a ton of deprecation warnings. Ignoring them for now; remove this
+# once pos, vel, acc are renamed.
 add_definitions(-Wno-deprecated)
 
-# We frequently convert between signed and unsigned integers for Eigen::Index. Ignore them for now.
+# We frequently convert between signed and unsigned integers for Eigen::Index.
+# Ignore them for now.
 add_definitions(-Wno-sign-conversion)
 
 # Project configuration
