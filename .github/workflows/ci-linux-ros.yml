@@ -1,4 +1,4 @@
-name: ROS-CI
+name: CI - Linux - ROS
 on: [push, pull_request]
 
 jobs:
@@ -10,6 +10,7 @@ jobs:
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
       UPSTREAM_WORKSPACE: dependencies.rosinstall
+      BUILDER: catkin_tools  # to avoid issues with colcon in upstream workspaces
       CMAKE_ARGS: -DBUILD_WITH_PROXQP=ON -BUILD_WITH_OSQP=ON
     runs-on: ubuntu-latest
     steps:
