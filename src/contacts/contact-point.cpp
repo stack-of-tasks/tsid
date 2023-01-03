@@ -109,8 +109,7 @@ void ContactPoint::setRegularizationTaskWeightVector(ConstRefVector & w)
 
 void ContactPoint::updateForceRegularizationTask()
 {
-  typedef Eigen::Matrix<double,3,3> Matrix3;
-  Matrix3 A = Matrix3::Zero();
+  Eigen::Matrix3d A = Eigen::Matrix3d::Zero();
   A.diagonal() = m_weightForceRegTask;
   m_forceRegTask.setMatrix(A);
   m_forceRegTask.setVector(A*m_fRef);
@@ -196,6 +195,7 @@ bool ContactPoint::setMaxNormalForce(const double maxNormalForce)
 
 void ContactPoint::setForceReference(ConstRefVector & f_ref)
 {
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(f_ref.size() == 3, "The size of the force reference needs to equal 3");
   m_fRef = f_ref;
   updateForceRegularizationTask();
 }
