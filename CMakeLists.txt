@@ -94,6 +94,7 @@ add_project_dependency(eiquadprog 1.1.3 REQUIRED)
 
 find_package(qpmad QUIET) # optional
 if(qpmad_FOUND)
+  message(STATUS "qpmad found - building with qpmad support")
   add_project_dependency(qpmad QUIET)
 endif()
 

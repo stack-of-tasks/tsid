@@ -186,6 +186,7 @@ namespace tsid
     #ifndef NDEBUG
         const Vector & x = m_output.x;
 
+        const ConstraintLevel & cl0 = problemData[0];
         if(cl0.size()>0)
         {
           for(ConstraintLevel::const_iterator it=cl0.begin(); it!=cl0.end(); it++)
