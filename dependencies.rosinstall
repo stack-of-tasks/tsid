@@ -14,8 +14,3 @@
     uri: https://github.com/robotology/osqp-eigen.git
     version: master
     local-name: osqp-eigen
-# Meta package to make sure CI can build
-- git:
-    uri: https://github.com/wxmerkt/tsid_dependencies.git
-    version: main
-    local-name: tsid_dependencies
