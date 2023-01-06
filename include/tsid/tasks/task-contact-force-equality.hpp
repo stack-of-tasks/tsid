@@ -47,6 +47,8 @@ namespace tsid
                                const double dt,
                       		     contacts::ContactBase & contact);
 
+      virtual ~TaskContactForceEquality() {}
+
       int dim() const;
 
       virtual const std::string& getAssociatedContactName();

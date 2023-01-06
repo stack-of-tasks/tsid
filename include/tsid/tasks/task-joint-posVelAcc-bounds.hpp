@@ -51,6 +51,8 @@ namespace tsid
                       double dt,
                       bool verbose=true);
 
+      virtual ~TaskJointPosVelAccBounds() {}
+
       int dim() const;
 
       const ConstraintBase & compute(const double t,

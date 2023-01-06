@@ -45,12 +45,12 @@ namespace tsid
       
       HQPOutput(){}
       
-      HQPOutput(int nVars, int nEqCon, int nInCon)
+      HQPOutput(unsigned int nVars, unsigned int nEqCon, unsigned int nInCon)
       {
         resize(nVars, nEqCon, nInCon);
       }
       
-      void resize(int nVars, int nEqCon, int nInCon)
+      void resize(unsigned int nVars, unsigned int nEqCon, unsigned int nInCon)
       {
         x.resize(nVars);
         lambda.resize(nEqCon+nInCon);

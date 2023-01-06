@@ -55,13 +55,13 @@ namespace tsid
 
     void TaskAMEquality::Kp(ConstRefVector Kp)
     {
-      assert(Kp.size()==3);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(Kp.size() == 3, "The size of the Kp vector needs to equal 3");
       m_Kp = Kp;
     }
 
     void TaskAMEquality::Kd(ConstRefVector Kd)
     {
-      assert(Kd.size()==3);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(Kd.size() == 3, "The size of the Kd vector needs to equal 3");
       m_Kd = Kd;
     }
 

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2022 Inria
+// Copyright (c) 2022 Inria, University of Oxford
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -79,11 +79,11 @@ namespace tsid
       m_nc = nc;
     }
 
-    const HQPOutput & SolverHQpmad::solve(const HQPData & problemData)
+    void SolverHQpmad::retrieveQPData(const HQPData & problemData, const bool /*hessianRegularization*/)
     {
       if(problemData.size()>2)
       {
-        assert(false && "Solver not implemented for more than 2 hierarchical levels.");
+        PINOCCHIO_CHECK_INPUT_ARGUMENT(false, "Solver not implemented for more than 2 hierarchical levels.");
       }
 
       // Compute the constraint matrix sizes
@@ -152,13 +152,18 @@ namespace tsid
           const double & w = it->first;
           auto constr = it->second;
           if(!constr->isEquality())
-            assert(false && "Inequalities in the cost function are not implemented yet");
+            PINOCCHIO_CHECK_INPUT_ARGUMENT(false, "Inequalities in the cost function are not implemented yet");
 
           m_H.noalias() += w*constr->matrix().transpose()*constr->matrix();
           m_g.noalias() -= w*(constr->matrix().transpose()*constr->vector());
         }
         m_H.diagonal().array() += m_hessian_regularization;
       }
+    }
+
+    const HQPOutput & SolverHQpmad::solve(const HQPData & problemData)
+    {
+      SolverHQpmad::retrieveQPData(problemData);
 
       //  min 0.5 * x H x + g x
       //  s.t.
@@ -181,6 +186,7 @@ namespace tsid
     #ifndef NDEBUG
         const Vector & x = m_output.x;
 
+        const ConstraintLevel & cl0 = problemData[0];
         if(cl0.size()>0)
         {
           for(ConstraintLevel::const_iterator it=cl0.begin(); it!=cl0.end(); it++)

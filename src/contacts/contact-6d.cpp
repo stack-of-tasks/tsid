@@ -119,7 +119,7 @@ void Contact6d::updateForceInequalityConstraints()
 
 double Contact6d::getNormalForce(ConstRefVector f) const
 {
-  assert(f.size()==n_force());
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(f.size() == n_force(), "f needs to contain " + std::to_string(n_force()) + " rows");
   double n=0.0;
   for(int i=0; i<4; i++)
     n += m_contactNormal.dot(f.segment<3>(i*3));
@@ -162,8 +162,8 @@ void Contact6d::Kd(ConstRefVector Kd){ m_motionTask.Kd(Kd); }
 
 bool Contact6d::setContactPoints(ConstRefMatrix contactPoints)
 {
-  assert(contactPoints.rows()==3);
-  assert(contactPoints.cols()==4);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(contactPoints.rows() == 3, "The number of rows needs to be 3");
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(contactPoints.cols() == 4, "The number of cols needs to be 4");
   if(contactPoints.rows()!=3 || contactPoints.cols()!=4)
     return false;
   m_contactPoints = contactPoints;
@@ -178,7 +178,7 @@ const Matrix3x & Contact6d::getContactPoints() const
 
 bool Contact6d::setContactNormal(ConstRefVector contactNormal)
 {
-  assert(contactNormal.size()==3);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(contactNormal.size() == 3, "The size of the contactNormal vector needs to equal 3");
   if(contactNormal.size()!=3)
     return false;
   m_contactNormal = contactNormal;
@@ -188,7 +188,7 @@ bool Contact6d::setContactNormal(ConstRefVector contactNormal)
 
 bool Contact6d::setFrictionCoefficient(const double frictionCoefficient)
 {
-  assert(frictionCoefficient>0.0);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(frictionCoefficient > 0.0, "The friction coefficient needs to be positive");
   if(frictionCoefficient<=0.0)
     return false;
   m_mu = frictionCoefficient;
@@ -198,7 +198,7 @@ bool Contact6d::setFrictionCoefficient(const double frictionCoefficient)
 
 bool Contact6d::setMinNormalForce(const double minNormalForce)
 {
-  assert(minNormalForce>0.0 && minNormalForce<=m_fMax);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(minNormalForce > 0.0 && minNormalForce <= m_fMax, "The minimal normal force needs to be greater than 0 and less than or equal to the maximal force");
   if(minNormalForce<=0.0 || minNormalForce>m_fMax)
     return false;
   m_fMin = minNormalForce;
@@ -209,7 +209,7 @@ bool Contact6d::setMinNormalForce(const double minNormalForce)
 
 bool Contact6d::setMaxNormalForce(const double maxNormalForce)
 {
-  assert(maxNormalForce>=m_fMin);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(maxNormalForce >= m_fMin, "The maximal force needs to be greater than or equal to the minimal force");
   if(maxNormalForce<m_fMin)
     return false;
   m_fMax = maxNormalForce;

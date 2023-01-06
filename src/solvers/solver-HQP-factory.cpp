@@ -23,6 +23,14 @@
   #include <tsid/solvers/solver-HQP-qpmad.hpp>
 #endif
 
+#ifdef TSID_WITH_PROXSUITE
+  #include <tsid/solvers/solver-proxqp.hpp>
+#endif
+
+#ifdef TSID_WITH_OSQP
+  #include <tsid/solvers/solver-osqp.hpp>
+#endif
+
 #ifdef QPOASES_FOUND
   #include <tsid/solvers/solver-HQP-qpoases.hh>
 #endif
@@ -46,12 +54,22 @@ namespace tsid
         return new SolverHQpmad(name);
 #endif
 
+#ifdef TSID_WITH_PROXSUITE
+      if(solverType==SOLVER_HQP_PROXQP)
+        return new SolverProxQP(name);
+#endif
+
+#ifdef TSID_WITH_OSQP
+      if(solverType==SOLVER_HQP_OSQP)
+        return new SolverOSQP(name);
+#endif
+
 #ifdef QPOASES_FOUND
       if(solverType==SOLVER_HQP_QPOASES)
         return new Solver_HQP_qpoases(name);
 #endif
       
-      assert(false && "Specified solver type not recognized");
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(false, "Specified solver type not recognized");
       return NULL;
     }
     

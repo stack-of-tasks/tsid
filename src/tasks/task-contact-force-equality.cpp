@@ -49,19 +49,19 @@ const double & TaskContactForceEquality::getLeakRate() const { return m_leak_rat
 
 void TaskContactForceEquality::Kp(ConstRefVector Kp)
 {
-  assert(Kp.size()==6);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(Kp.size() == 6, "The size of the Kp vector needs to equal 6");
   m_Kp = Kp;
 }
 
 void TaskContactForceEquality::Kd(ConstRefVector Kd)
 {
-  assert(Kd.size()==6);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(Kd.size() == 6, "The size of the Kd vector needs to equal 6");
   m_Kd = Kd;
 }
 
 void TaskContactForceEquality::Ki(ConstRefVector Ki)
 {
-  assert(Ki.size()==6);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(Ki.size() == 6, "The size of the Ki vector needs to equal 6");
   m_Ki = Ki;
 }
 
@@ -128,7 +128,7 @@ const ConstraintBase & TaskContactForceEquality::compute(const double t,
 const ConstraintBase & TaskContactForceEquality::compute(const double,
                                                          ConstRefVector,
                                                          ConstRefVector,
-                                                         Data & data) {
+                                                         Data & /*data*/) {
 
   auto& M = m_constraint.matrix();
   M = m_contact->getForceGeneratorMatrix(); // 6x12 for a 6d contact

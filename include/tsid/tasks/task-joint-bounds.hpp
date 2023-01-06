@@ -39,6 +39,8 @@ namespace tsid
                       RobotWrapper & robot,
                       double dt);
 
+      virtual ~TaskJointBounds() {}
+
       int dim() const;
 
       const ConstraintBase & compute(const double t,

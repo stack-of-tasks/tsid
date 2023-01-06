@@ -36,7 +36,7 @@ namespace tsid
       m_constraint(name, 6, robot.nv()),
       m_ref(12, 6)
     {
-      assert(m_robot.model().existFrame(frameName));
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(m_robot.model().existFrame(frameName), "The frame with name '" + frameName + "' does not exist");
       m_frame_id = m_robot.model().getFrameId(frameName);
 
       m_v_ref.setZero();
@@ -84,13 +84,13 @@ namespace tsid
 
     void TaskSE3Equality::Kp(ConstRefVector Kp)
     {
-      assert(Kp.size()==6);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(Kp.size() == 6, "The size of the Kp vector needs to equal 6");
       m_Kp = Kp;
     }
 
     void TaskSE3Equality::Kd(ConstRefVector Kd)
     {
-      assert(Kd.size()==6);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(Kd.size() == 6, "The size of the Kd vector needs to equal 6");
       m_Kd = Kd;
     }
 
@@ -99,8 +99,8 @@ namespace tsid
       m_ref = ref;
 TSID_DISABLE_WARNING_PUSH
 TSID_DISABLE_WARNING_DEPRECATED
-      assert(ref.pos.size() == 12);
-      m_M_ref.translation( ref.pos.head<3>());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(ref.pos.size() == 12, "The size of the reference vector needs to be 12");
+      m_M_ref.translation(ref.pos.head<3>());
       m_M_ref.rotation(MapMatrix3(&ref.pos(3), 3, 3));
 TSID_DISABLE_WARNING_POP
       m_v_ref = Motion(ref.getDerivative());

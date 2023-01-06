@@ -38,6 +38,8 @@ namespace tsid
 
       TrajectorySE3Constant(const std::string & name, const SE3 & M);
 
+      virtual ~TrajectorySE3Constant() {}
+
       unsigned int size() const;
 
       void setReference(const SE3 & M);

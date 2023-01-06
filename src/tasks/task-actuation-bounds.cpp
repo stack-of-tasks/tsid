@@ -42,7 +42,7 @@ namespace tsid
 
     void TaskActuationBounds::mask(const Vector & m)
     {
-      assert(m.size()==m_robot.na());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(m.size() == m_robot.na(), "The size of the mask needs to equal " + std::to_string(m_robot.na()));
       m_mask = m;
       const Vector::Index dim = static_cast<Vector::Index>(m.sum());
       Matrix S = Matrix::Zero(dim, m_robot.na());
@@ -51,7 +51,7 @@ namespace tsid
       for(unsigned int i=0; i<m.size(); i++)
         if(m(i)!=0.0)
         {
-          assert(m(i)==1.0);
+          PINOCCHIO_CHECK_INPUT_ARGUMENT(m(i) == 1.0, "The mask entries need to equal either 0.0 or 1.0");
           S(j,i) = 1.0;
           m_activeAxes(j) = i;
           j++;
@@ -71,8 +71,8 @@ namespace tsid
 
     void TaskActuationBounds::setBounds(ConstRefVector lower, ConstRefVector upper)
     {
-      assert(lower.size()==dim());
-      assert(upper.size()==dim());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(lower.size() == dim(), "The size of the lower joint bounds vector needs to equal " + std::to_string(dim()));
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(upper.size() == dim(), "The size of the upper joint bounds vector needs to equal " + std::to_string(dim()));
       m_constraint.setLowerBound(lower);
       m_constraint.setUpperBound(upper);
     }

@@ -48,6 +48,8 @@ namespace tsid
                       RobotWrapper & robot,
                       const std::string & frameName);
 
+      virtual ~TaskSE3Equality() {}
+
       int dim() const;
 
       const ConstraintBase & compute(const double t,

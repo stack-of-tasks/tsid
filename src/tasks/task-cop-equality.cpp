@@ -77,7 +77,7 @@ const ConstraintBase & TaskCopEquality::compute(const double,
   M.resize(3, n);
   for(auto& cl : *m_contacts)
   {
-    int i = cl->index;
+    unsigned int i = cl->index;
     // get contact points in local frame and transform them to world frame
     const Matrix3x &P = cl->contact.getContactPoints();
     m_robot.framePosition(data, cl->contact.getMotionTask().frame_id(), oMi);
@@ -102,7 +102,7 @@ const ConstraintBase & TaskCopEquality::getConstraint() const
 
 void TaskCopEquality::setReference(const Vector3 & ref)
 {
-  assert(ref.size()==3);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(ref.size() == 3, "The size of the reference needs to equal 3");
   m_ref = ref;
 }
 

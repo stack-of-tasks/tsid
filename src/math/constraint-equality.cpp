@@ -36,7 +36,7 @@ ConstraintEquality::ConstraintEquality(const std::string & name,
   ConstraintBase(name, A),
   m_b(b)
 {
-  assert(A.rows()==b.rows());
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(A.rows()==b.rows(), "The number of rows for A and b do not match");
 }
 
 unsigned int ConstraintEquality::rows() const

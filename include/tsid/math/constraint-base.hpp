@@ -20,6 +20,7 @@
 
 #include "tsid/math/fwd.hpp"
 #include <string>
+#include <pinocchio/macros.hpp>
 
 namespace tsid
 {

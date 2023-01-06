@@ -30,6 +30,8 @@ namespace tsid
 
       TaskActuation(const std::string & name,
                     RobotWrapper & robot);
+
+      virtual ~TaskActuation() {}
     };
   }
 }

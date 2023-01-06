@@ -119,7 +119,7 @@ class StandardRomeoInvDynCtrl
 
     pinocchio::srdf::loadReferenceConfigurations(robot->model(),srdfFileName,false);
 
-    const unsigned int nv = robot->nv();
+    const unsigned int nv{static_cast<unsigned int>(robot->nv())};
     q = neutral(robot->model());
     std::cout << "q: " << q.transpose() << std::endl;
     q(2) += 0.84;

@@ -37,6 +37,8 @@ namespace tsid
 
       TrajectoryEuclidianConstant(const std::string & name, ConstRefVector ref);
 
+      virtual ~TrajectoryEuclidianConstant() {}
+
       unsigned int size() const;
 
       void setReference(ConstRefVector ref);

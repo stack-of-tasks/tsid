@@ -92,7 +92,7 @@ void ContactPoint::updateForceInequalityConstraints()
 
 double ContactPoint::getNormalForce(ConstRefVector f) const
 {
-  assert(f.size()==n_force());
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(f.size() == n_force(), "Size of f is wrong - needs to be " + std::to_string(n_force()));
   return m_contactNormal.dot(f);
 }
 
@@ -109,8 +109,7 @@ void ContactPoint::setRegularizationTaskWeightVector(ConstRefVector & w)
 
 void ContactPoint::updateForceRegularizationTask()
 {
-  typedef Eigen::Matrix<double,3,3> Matrix3;
-  Matrix3 A = Matrix3::Zero();
+  Eigen::Matrix3d A = Eigen::Matrix3d::Zero();
   A.diagonal() = m_weightForceRegTask;
   m_forceRegTask.setMatrix(A);
   m_forceRegTask.setVector(A*m_fRef);
@@ -138,7 +137,7 @@ const Vector & ContactPoint::Kd()
 
 void ContactPoint::Kp(ConstRefVector Kp)
 {
-  assert(Kp.size()==3);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(Kp.size() == 3, "Size of Kp vector needs to equal 3");
   Vector6 Kp6;
   Kp6.head<3>() = Kp;
   m_motionTask.Kp(Kp6);
@@ -146,7 +145,7 @@ void ContactPoint::Kp(ConstRefVector Kp)
 
 void ContactPoint::Kd(ConstRefVector Kd)
 {
-  assert(Kd.size()==3);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(Kd.size() == 3, "Size of Kd vector needs to equal 3");
   Vector6 Kd6;
   Kd6.head<3>() = Kd;
   m_motionTask.Kd(Kd6);
@@ -154,7 +153,7 @@ void ContactPoint::Kd(ConstRefVector Kd)
 
 bool ContactPoint::setContactNormal(ConstRefVector contactNormal)
 {
-  assert(contactNormal.size()==3);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(contactNormal.size() == 3, "Size of contact normal vector needs to equal 3");
   if(contactNormal.size()!=3)
     return false;
   m_contactNormal = contactNormal;
@@ -164,7 +163,7 @@ bool ContactPoint::setContactNormal(ConstRefVector contactNormal)
 
 bool ContactPoint::setFrictionCoefficient(const double frictionCoefficient)
 {
-  assert(frictionCoefficient>0.0);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(frictionCoefficient > 0.0, "Friction coefficient needs to be positive");
   if(frictionCoefficient<=0.0)
     return false;
   m_mu = frictionCoefficient;
@@ -174,7 +173,7 @@ bool ContactPoint::setFrictionCoefficient(const double frictionCoefficient)
 
 bool ContactPoint::setMinNormalForce(const double minNormalForce)
 {
-  assert(minNormalForce>0.0 && minNormalForce<=m_fMax);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(minNormalForce > 0.0 && minNormalForce <= m_fMax, "The minimal normal force needs to be greater than 0 and less than or equal to the maximum force.");
   if(minNormalForce<=0.0 || minNormalForce>m_fMax)
     return false;
   m_fMin = minNormalForce;
@@ -185,7 +184,7 @@ bool ContactPoint::setMinNormalForce(const double minNormalForce)
 
 bool ContactPoint::setMaxNormalForce(const double maxNormalForce)
 {
-  assert(maxNormalForce>=m_fMin);
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(maxNormalForce >= m_fMin, "The maximal normal force needs to be greater than or equal to the minimal force");
   if(maxNormalForce<m_fMin)
     return false;
   m_fMax = maxNormalForce;
@@ -196,6 +195,7 @@ bool ContactPoint::setMaxNormalForce(const double maxNormalForce)
 
 void ContactPoint::setForceReference(ConstRefVector & f_ref)
 {
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(f_ref.size() == 3, "The size of the force reference needs to equal 3");
   m_fRef = f_ref;
   updateForceRegularizationTask();
 }

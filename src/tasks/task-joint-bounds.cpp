@@ -35,7 +35,7 @@ namespace tsid
       m_nv(robot.nv()),
       m_na(robot.na())
     {
-      assert(dt>0.0);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(dt > 0.0, "dt needs to be positive");
       m_v_lb = -1e10*Vector::Ones(m_na);
       m_v_ub = +1e10*Vector::Ones(m_na);
       m_a_lb = -1e10*Vector::Ones(m_na);
@@ -68,22 +68,22 @@ namespace tsid
 
     void TaskJointBounds::setTimeStep(double dt)
     {
-      assert(dt>0);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(dt > 0.0, "dt needs to be positive");
       m_dt = dt;
     }
 
     void TaskJointBounds::setVelocityBounds(ConstRefVector lower, ConstRefVector upper)
     {
-      assert(lower.size()==m_na);
-      assert(upper.size()==m_na);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(lower.size() == m_na, "The size of the lower velocity bounds vector needs to equal " + std::to_string(m_na));
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(upper.size() == m_na, "The size of the upper velocity bounds vector needs to equal " + std::to_string(m_na));
       m_v_lb = lower;
       m_v_ub = upper;
     }
 
     void TaskJointBounds::setAccelerationBounds(ConstRefVector lower, ConstRefVector upper)
     {
-      assert(lower.size()==m_na);
-      assert(upper.size()==m_na);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(lower.size() == m_na, "The size of the lower acceleration bounds vector needs to equal " + std::to_string(m_na));
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(upper.size() == m_na, "The size of the upper acceleration bounds vector needs to equal " + std::to_string(m_na));
       m_a_lb = lower;
       m_a_ub = upper;
     }

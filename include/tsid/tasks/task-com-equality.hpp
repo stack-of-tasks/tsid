@@ -42,6 +42,8 @@ namespace tsid
       TaskComEquality(const std::string & name,
                       RobotWrapper & robot);
 
+      virtual ~TaskComEquality() {}
+
       int dim() const;
 
       const ConstraintBase & compute(const double t,

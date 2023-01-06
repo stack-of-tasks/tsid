@@ -262,10 +262,7 @@ print("Test Task Joint Posture (Uncommon joints)")
 print("")
 
 # Get robot model generator module
-import sys
-filepath = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../'))
-sys.path.append(str(filepath))
-from models.arm.generator import create_7dof_arm
+from generator import create_7dof_arm
 
 # Get robot model
 model, geom_model = create_7dof_arm() # A robot containing sperical joints where nq != nv

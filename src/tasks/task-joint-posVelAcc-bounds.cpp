@@ -45,7 +45,7 @@ namespace tsid
       m_nv(robot.nv()),
       m_na(robot.na())
     {
-      assert(dt>0.0);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(dt > 0.0, "dt needs to be positive");
       m_eps = 1e-10;
       m_qMin=Vector::Constant(m_na,1,-1e10);
       m_qMax=Vector::Constant(m_na,1,1e10);
@@ -125,7 +125,7 @@ namespace tsid
 
     void TaskJointPosVelAccBounds::setMask(ConstRefVector m)
     {
-      assert(m.size()==m_robot.na());
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(m.size() == m_robot.na(), "The size of the mask vector needs to equal " + std::to_string(m_robot.na()));
       m_mask = m;
       const Vector::Index dim = static_cast<Vector::Index>(m.sum());
       Matrix S = Matrix::Zero(dim, m_robot.nv());
@@ -134,7 +134,7 @@ namespace tsid
       for(unsigned int i=0; i<m.size(); i++)
         if(m(i)!=0.0)
         {
-          assert(m(i)==1.0);
+          PINOCCHIO_CHECK_INPUT_ARGUMENT(m(i) == 1.0, "Mask entries need to be either 0.0 or 1.0");
           S(j,m_robot.nv()-m_robot.na()+i) = 1.0;
           m_activeAxes(j) = i;
           j++;
@@ -160,7 +160,7 @@ namespace tsid
 
     void TaskJointPosVelAccBounds::setTimeStep(double dt)
     {
-      assert(dt>0);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(dt > 0.0, "dt needs to be positive");
       m_dt = dt;
     }
 
@@ -170,24 +170,24 @@ namespace tsid
 
     void TaskJointPosVelAccBounds::setPositionBounds(ConstRefVector lower, ConstRefVector upper)
     {
-      assert(lower.size()==m_na);
-      assert(upper.size()==m_na);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(lower.size() == m_na, "The size of the lower position bounds vector needs to equal " + std::to_string(m_na));
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(upper.size() == m_na, "The size of the upper position bounds vector needs to equal " + std::to_string(m_na));
       m_qMin = lower;
       m_qMax = upper;
-      m_impose_position_bounds=true;
-      m_impose_viability_bounds=true;
+      m_impose_position_bounds = true;
+      m_impose_viability_bounds = true;
     }
 
     void TaskJointPosVelAccBounds::setVelocityBounds(ConstRefVector upper)
     {
-      assert(upper.size()==m_na);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(upper.size() == m_na, "The size of the (absolute) velocity bounds vector needs to equal " + std::to_string(m_na));
       m_dqMax = upper;
       m_impose_velocity_bounds = true;
     }
 
     void TaskJointPosVelAccBounds::setAccelerationBounds(ConstRefVector upper)
     {
-      assert(upper.size()==m_na);
+      PINOCCHIO_CHECK_INPUT_ARGUMENT(upper.size() == m_na, "The size of the (absolute) acceleration bounds vector needs to equal " + std::to_string(m_na));
       m_ddqMax = upper;
       m_impose_acceleration_bounds = true;
     }

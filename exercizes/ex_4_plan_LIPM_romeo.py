@@ -20,11 +20,17 @@
 # -------
 import numpy as np
 from quadprog import solve_qp
-import LMPC_walking.second_order.reference_trajectories as reference_trajectories
-import LMPC_walking.second_order.motion_model as motion_model
-import LMPC_walking.second_order.cost_function as cost_function
-import LMPC_walking.second_order.constraints as constraints
-import LMPC_walking.second_order.plot_utils as plot_utils
+
+try:
+    import LMPC_walking.second_order.reference_trajectories as reference_trajectories
+    import LMPC_walking.second_order.motion_model as motion_model
+    import LMPC_walking.second_order.cost_function as cost_function
+    import LMPC_walking.second_order.constraints as constraints
+    import LMPC_walking.second_order.plot_utils as plot_utils
+except ModuleNotFoundError as e:
+    print("Please download LMPC_walking from https://github.com/machines-in-motion/lmpc_walking.")
+    raise e
+
 import matplotlib.pyplot as plt
 from plot_utils import *
 import ex_4_conf as conf
