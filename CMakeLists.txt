@@ -103,13 +103,6 @@ if(BUILD_TESTING)
 endif(BUILD_TESTING)
 
 # Main Library
-
-set(${PROJECT_NAME}_MEASUREDFORCES_HEADERS
-  include/tsid/measuredForces/measured-force-base.hpp
-  include/tsid/measuredForces/measured-force-3Dforce.hpp
-  include/tsid/measuredForces/measured-force-6Dwrench.hpp
-  )
-
 set(${PROJECT_NAME}_MATH_HEADERS
     include/tsid/math/fwd.hpp
     include/tsid/math/utils.hpp
@@ -135,6 +128,12 @@ set(${PROJECT_NAME}_TASKS_HEADERS
     include/tsid/tasks/task-joint-posVelAcc-bounds.hpp
     include/tsid/tasks/task-capture-point-inequality.hpp
     include/tsid/tasks/task-angular-momentum-equality.hpp)
+
+
+set(${PROJECT_NAME}_MEASUREDFORCES_HEADERS
+    include/tsid/measuredForces/measured-force-base.hpp
+    include/tsid/measuredForces/measured-force-3Dforce.hpp
+    include/tsid/measuredForces/measured-force-6Dwrench.hpp)
 
 set(${PROJECT_NAME}_CONTACTS_HEADERS
     include/tsid/contacts/fwd.hpp include/tsid/contacts/contact-base.hpp
@@ -198,26 +197,22 @@ file(
   include/tsid/bindings/python/tasks/*.hpp
   include/tsid/bindings/python/trajectories/*.hpp
   include/tsid/bindings/python/utils/*.hpp
-  include/tsid/bindings/python/math/*.hpp)
+  include/tsid/bindings/python/math/*.hpp
+  include/tsid/bindings/python/measuredForces/*.hpp)
 
 set(${PROJECT_NAME}_HEADERS
-  include/tsid/macros.hpp
-  include/tsid/utils/statistics.hpp
-  include/tsid/utils/stop-watch.hpp
-  include/tsid/utils/Stdafx.hh
-  ${${PROJECT_NAME}_MATH_HEADERS}
-  ${${PROJECT_NAME}_TASKS_HEADERS}
-  ${${PROJECT_NAME}_CONTACTS_HEADERS}
-  ${${PROJECT_NAME}_MEASUREDFORCES_HEADERS}
-  ${${PROJECT_NAME}_TRAJECTORIES_HEADERS}
-  ${${PROJECT_NAME}_SOLVERS_HEADERS}
-  ${${PROJECT_NAME}_ROBOTS_HEADERS}
-  ${${PROJECT_NAME}_FORMULATIONS_HEADERS})
-
-set(${PROJECT_NAME}_MEASUREDFORCES_SOURCES
-  src/measuredForces/measured-force-base.cpp
-  src/measuredForces/measured-force-3Dforce.cpp
-  src/measuredForces/measured-force-6Dwrench.cpp)
+    include/tsid/macros.hpp
+    include/tsid/utils/statistics.hpp
+    include/tsid/utils/stop-watch.hpp
+    include/tsid/utils/Stdafx.hh
+    ${${PROJECT_NAME}_MATH_HEADERS}
+    ${${PROJECT_NAME}_TASKS_HEADERS}
+    ${${PROJECT_NAME}_CONTACTS_HEADERS}
+    ${${PROJECT_NAME}_MEASUREDFORCES_HEADERS}
+    ${${PROJECT_NAME}_TRAJECTORIES_HEADERS}
+    ${${PROJECT_NAME}_SOLVERS_HEADERS}
+    ${${PROJECT_NAME}_ROBOTS_HEADERS}
+    ${${PROJECT_NAME}_FORMULATIONS_HEADERS})
 
 list(REMOVE_DUPLICATES ${PROJECT_NAME}_HEADERS)
 
@@ -251,6 +246,10 @@ set(${PROJECT_NAME}_TRAJECTORIES_SOURCES
     src/trajectories/trajectory-se3.cpp
     src/trajectories/trajectory-euclidian.cpp)
 
+set(${PROJECT_NAME}_TRAJECTORIES_SOURCES
+    src/trajectories/trajectory-se3.cpp
+    src/trajectories/trajectory-euclidian.cpp)
+
 set(${PROJECT_NAME}_SOLVERS_SOURCES
     src/solvers/solver-HQP-base.cpp
     src/solvers/solver-HQP-factory.cpp
@@ -278,6 +277,18 @@ set(${PROJECT_NAME}_FORMULATIONS_SOURCES
     src/formulations/inverse-dynamics-formulation-base.cpp
     src/formulations/inverse-dynamics-formulation-acc-force.cpp)
 
+set(${PROJECT_NAME}_SOURCES
+    src/utils/statistics.cpp
+    src/utils/stop-watch.cpp
+    ${${PROJECT_NAME}_MATH_SOURCES}
+    ${${PROJECT_NAME}_TASKS_SOURCES}
+    ${${PROJECT_NAME}_CONTACTS_SOURCES}
+    ${${PROJECT_NAME}_MEASUREDFORCES_SOURCES}
+    ${${PROJECT_NAME}_TRAJECTORIES_SOURCES}
+    ${${PROJECT_NAME}_SOLVERS_SOURCES}
+    ${${PROJECT_NAME}_ROBOTS_SOURCES}
+    ${${PROJECT_NAME}_FORMULATIONS_SOURCES})
+
 add_header_group(${PROJECT_NAME}_HEADERS)
 add_source_group(${PROJECT_NAME}_SOURCES)
 
@@ -291,23 +302,6 @@ if(BUILD_WITH_PROXQP)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_PROXSUITE)
   target_link_libraries(${PROJECT_NAME} PUBLIC proxsuite::proxsuite-vectorized)
 endif()
-
-
-SET(${PROJECT_NAME}_SOURCES
-  src/utils/statistics.cpp
-  src/utils/stop-watch.cpp
-  ${${PROJECT_NAME}_MATH_SOURCES}
-  ${${PROJECT_NAME}_TASKS_SOURCES}
-  ${${PROJECT_NAME}_CONTACTS_SOURCES}
-  ${${PROJECT_NAME}_MEASUREDFORCES_SOURCES}
-  ${${PROJECT_NAME}_TRAJECTORIES_SOURCES}
-  ${${PROJECT_NAME}_SOLVERS_SOURCES}
-  ${${PROJECT_NAME}_ROBOTS_SOURCES}
-  ${${PROJECT_NAME}_FORMULATIONS_SOURCES}
-  )
-
-ADD_HEADER_GROUP(${PROJECT_NAME}_HEADERS)
-ADD_SOURCE_GROUP(${PROJECT_NAME}_SOURCES)
 
 if(BUILD_WITH_OSQP)
   target_link_libraries(${PROJECT_NAME} PUBLIC OsqpEigen::OsqpEigen)

@@ -26,6 +26,7 @@
 #include "tsid/bindings/python/solvers/expose-solvers.hpp"
 #include "tsid/bindings/python/formulations/expose-formulations.hpp"
 #include "tsid/bindings/python/math/utils.hpp"
+#include "tsid/bindings/python/measuredForces/expose-measuredForces.hpp"
 
 namespace bp = boost::python;
 using namespace tsid::python;
@@ -56,5 +57,6 @@ BOOST_PYTHON_MODULE(tsid_pywrap)
   exposeSolvers();
   exposeFormulations();
   exposeMathUtils();
+  exposeMeasuredForces();
 
 }
