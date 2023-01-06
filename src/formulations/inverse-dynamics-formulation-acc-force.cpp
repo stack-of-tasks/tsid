@@ -313,8 +313,6 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     }
     else
     {
-      // std::cout<<"[InverseDynamicsFormulationAccForce] Remove contact "<<
-      //            c->contactLevel->contact.name()<<" at time "<<time<<std::endl;
       removeRigidContact(c->contactLevel->contact.name());
       // FIXME: this won't work if multiple contact transitions occur at the same time
       // because after erasing an element the iterator is invalid
@@ -365,8 +363,6 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
   m_baseDynamics->matrix().rightCols(m_k) = -J_u.transpose();
   m_baseDynamics->vector() = -h_u;
 
-//  std::vector<TaskLevel*>::iterator it;
-//  for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
   for (auto& it : m_taskMotions)
   {
     const ConstraintBase & c = it->task.compute(time, q, v, m_data);
@@ -391,13 +387,11 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
 
   for (auto& it : m_taskContactForces)
   {
-    // cout<<"Task "<<it->task.name()<<endl;
     // by default the task is associated to all contact forces
     int i0 = m_v;
     int c_size = m_k;
 
     // if the task is associated to a specific contact
-    // cout<<"Associated contact name: "<<it->task.getAssociatedContactName()<<endl;
     if(it->task.getAssociatedContactName()!="")
     {
       // look for the associated contact
@@ -413,10 +407,6 @@ const HQPData & InverseDynamicsFormulationAccForce::computeProblemData(double ti
     }
 
     const ConstraintBase & c = it->task.compute(time, q, v, m_data, &m_contacts);
-    // cout<<"matrix"<<endl<<c.matrix()<<endl;
-    // cout<<"vector"<<endl<<c.vector().transpose()<<endl;
-    // cout<<"i0 "<<i0<<" c_size "<<c_size<<endl;
-    // cout<<"constraint matrix size: "<<it->constraint->matrix().rows()<<" x "<<it->constraint->matrix().cols()<<endl;
 
     if(c.isEquality())
     {
@@ -520,7 +510,6 @@ Vector InverseDynamicsFormulationAccForce::getContactForces(const std::string & 
                                                             const HQPOutput & sol)
 {
   decodeSolution(sol);
- // for(std::vector<ContactLevel*>::iterator it=m_contacts.begin(); it!=m_contacts.end(); it++)
  for (auto &it : m_contacts)
   {
     if(it->contact.name()==name)
