@@ -238,6 +238,11 @@ set(${PROJECT_NAME}_TASKS_SOURCES
     src/tasks/task-se3-equality.cpp
     src/tasks/task-angular-momentum-equality.cpp)
 
+set(${PROJECT_NAME}_MEASUREDFORCES_SOURCES
+    src/measuredForces/measured-force-base.cpp
+    src/measuredForces/measured-force-3Dforce.cpp
+    src/measuredForces/measured-force-6Dwrench.cpp)
+
 set(${PROJECT_NAME}_CONTACTS_SOURCES
     src/contacts/contact-base.cpp src/contacts/contact-6d.cpp
     src/contacts/contact-point.cpp)
