@@ -197,8 +197,7 @@ file(
   include/tsid/bindings/python/tasks/*.hpp
   include/tsid/bindings/python/trajectories/*.hpp
   include/tsid/bindings/python/utils/*.hpp
-  include/tsid/bindings/python/math/*.hpp
-  include/tsid/bindings/python/measured-forces/*.hpp)
+  include/tsid/bindings/python/math/*.hpp)
 
 set(${PROJECT_NAME}_HEADERS
     include/tsid/macros.hpp
