@@ -15,27 +15,16 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "tsid/measuredForces/measured-force-base.hpp"
+#include "tsid/bindings/python/measured-forces/expose-measuredForces.hpp"
+#include "tsid/bindings/python/measured-forces/measured-force-6Dwrench.hpp"
 
 namespace tsid
 {
-  namespace measuredForces
+  namespace python
   {
-    MeasuredForceBase::MeasuredForceBase(const std::string & name,
-                       RobotWrapper & robot):
-      m_name(name),
-      m_robot(robot)
-    {}
-
-    const std::string & MeasuredForceBase::name() const
+    void exposeMeasuredForce6Dwrench()
     {
-      return m_name;
+      MeasuredForce6DwrenchPythonVisitor<tsid::measuredForces::MeasuredForce6Dwrench>::expose("MeasuredForce6Dwrench");
     }
-
-    void MeasuredForceBase::name(const std::string & name)
-    {
-      m_name = name;
-    }
-
   }
 }

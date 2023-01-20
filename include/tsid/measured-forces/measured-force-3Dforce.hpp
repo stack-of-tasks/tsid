@@ -18,7 +18,7 @@
 #ifndef __invdyn_measured_force_3Dforce_hpp__
 #define __invdyn_measured_force_3Dforce_hpp__
 
-#include "tsid/measuredForces/measured-force-base.hpp"
+#include "tsid/measured-forces/measured-force-base.hpp"
 #include <pinocchio/multibody/data.hpp>
 
 namespace tsid
@@ -36,37 +36,36 @@ namespace tsid
       typedef pinocchio::Data Data;
       typedef pinocchio::Data::Matrix3x Matrix3x;
 
-      MeasuredForce3Dforce(const std::string & name,
-                        RobotWrapper & robot,
-                        const std::string & frameName);
+      MeasuredForce3Dforce(const std::string &name,
+                           RobotWrapper &robot,
+                           const std::string &frameName);
 
+      const Vector &computeJointTorques(Data &data);
 
-      const Vector & computeJointTorques(Data & data);
+      /**
+       *  Set the value of the external wrench applied by the environment on the robot.
+       */
+      void setMeasuredContactForce(const Vector3 &fext);
 
-    /**
-     *  Set the value of the external wrench applied by the environment on the robot.
-     */
-     void setMeasuredContactForce(const Vector3 & fext);
+      const Vector3 &getMeasuredContactForce() const;
 
-     const Vector3 & getMeasuredContactForce() const;
+      /**
+       * @brief Specifies if the external force and jacobian is
+       * expressed in the local frame or the local world-oriented frame.
+       *
+       * @param local_frame If true, represent external force and jacobian in the
+       *   local frame. If false, represent them in the local world-oriented frame.
+       */
+      void useLocalFrame(bool local_frame);
 
-     /**
-      * @brief Specifies if the external force and jacobian is
-      * expressed in the local frame or the local world-oriented frame.
-      *
-      * @param local_frame If true, represent external force and jacobian in the
-      *   local frame. If false, represent them in the local world-oriented frame.
-      */
-     void useLocalFrame(bool local_frame);
-
-     protected:
-       std::string m_frame_name;
-       Index m_frame_id;
-       Vector3 m_fext;
-       Matrix3x m_J;
-       Matrix3x m_J_rotated;
-       Vector m_computedTorques;
-       bool m_local_frame;
+    protected:
+      std::string m_frame_name;
+      Index m_frame_id;
+      Vector3 m_fext;
+      Matrix3x m_J;
+      Matrix3x m_J_rotated;
+      Vector m_computedTorques;
+      bool m_local_frame;
     };
   }
 }

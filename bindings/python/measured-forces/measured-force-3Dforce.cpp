@@ -15,16 +15,16 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "tsid/bindings/python/measuredForces/expose-measuredForces.hpp"
-#include "tsid/bindings/python/measuredForces/measured-force-6Dwrench.hpp"
+#include "tsid/bindings/python/measured-forces/expose-measuredForces.hpp"
+#include "tsid/bindings/python/measured-forces/measured-force-3Dforce.hpp"
 
 namespace tsid
 {
   namespace python
   {
-    void exposeMeasuredForce6Dwrench()
+    void exposeMeasuredForce3Dforce()
     {
-      MeasuredForce6DwrenchPythonVisitor<tsid::measuredForces::MeasuredForce6Dwrench>::expose("MeasuredForce6Dwrench");
+      MeasuredForce3DforcePythonVisitor<tsid::measuredForces::MeasuredForce3Dforce>::expose("MeasuredForce3Dforce");
     }
   }
 }

@@ -131,9 +131,9 @@ set(${PROJECT_NAME}_TASKS_HEADERS
 
 
 set(${PROJECT_NAME}_MEASUREDFORCES_HEADERS
-    include/tsid/measuredForces/measured-force-base.hpp
-    include/tsid/measuredForces/measured-force-3Dforce.hpp
-    include/tsid/measuredForces/measured-force-6Dwrench.hpp)
+    include/tsid/measured-forces/measured-force-base.hpp
+    include/tsid/measured-forces/measured-force-3Dforce.hpp
+    include/tsid/measured-forces/measured-force-6Dwrench.hpp)
 
 set(${PROJECT_NAME}_CONTACTS_HEADERS
     include/tsid/contacts/fwd.hpp include/tsid/contacts/contact-base.hpp
@@ -198,7 +198,7 @@ file(
   include/tsid/bindings/python/trajectories/*.hpp
   include/tsid/bindings/python/utils/*.hpp
   include/tsid/bindings/python/math/*.hpp
-  include/tsid/bindings/python/measuredForces/*.hpp)
+  include/tsid/bindings/python/measured-forces/*.hpp)
 
 set(${PROJECT_NAME}_HEADERS
     include/tsid/macros.hpp
@@ -239,9 +239,9 @@ set(${PROJECT_NAME}_TASKS_SOURCES
     src/tasks/task-angular-momentum-equality.cpp)
 
 set(${PROJECT_NAME}_MEASUREDFORCES_SOURCES
-    src/measuredForces/measured-force-base.cpp
-    src/measuredForces/measured-force-3Dforce.cpp
-    src/measuredForces/measured-force-6Dwrench.cpp)
+    src/measured-forces/measured-force-base.cpp
+    src/measured-forces/measured-force-3Dforce.cpp
+    src/measured-forces/measured-force-6Dwrench.cpp)
 
 set(${PROJECT_NAME}_CONTACTS_SOURCES
     src/contacts/contact-base.cpp src/contacts/contact-6d.cpp

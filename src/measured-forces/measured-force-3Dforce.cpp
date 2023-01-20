@@ -15,7 +15,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "tsid/measuredForces/measured-force-3Dforce.hpp"
+#include "tsid/measured-forces/measured-force-3Dforce.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
 
 namespace tsid
@@ -29,11 +29,10 @@ namespace tsid
 
     typedef pinocchio::Data::Matrix6x Matrix6x;
 
-    MeasuredForce3Dforce::MeasuredForce3Dforce(const std::string & name,
-                                                  RobotWrapper & robot,
-                                                  const std::string & frameName):
-      MeasuredForceBase(name, robot),
-      m_frame_name(frameName)
+    MeasuredForce3Dforce::MeasuredForce3Dforce(const std::string &name,
+                                               RobotWrapper &robot,
+                                               const std::string &frameName) : MeasuredForceBase(name, robot),
+                                                                               m_frame_name(frameName)
     {
       assert(m_robot.model().existFrame(frameName));
       m_frame_id = m_robot.model().getFrameId(frameName);
@@ -46,40 +45,40 @@ namespace tsid
       m_local_frame = true;
     }
 
-
-    const Vector & MeasuredForce3Dforce::computeJointTorques(Data & data)
+    const Vector &MeasuredForce3Dforce::computeJointTorques(Data &data)
     {
-        Matrix6x J;
-        J.setZero(6, m_robot.nv());
+      Matrix6x J;
+      J.setZero(6, m_robot.nv());
 
-        m_robot.frameJacobianLocal(data, m_frame_id, J);
-        m_J = J.topRows(3);
+      m_robot.frameJacobianLocal(data, m_frame_id, J);
+      m_J = J.topRows(3);
 
-        if(!m_local_frame){
-          // Compute Jacobian in local world-oriented frame
-          SE3 oMi, oMi_rotation_only;
-          oMi_rotation_only.setIdentity();
-          m_robot.framePosition(data, m_frame_id, oMi);
-          oMi_rotation_only.rotation(oMi.rotation());
+      if (!m_local_frame)
+      {
+        // Compute Jacobian in local world-oriented frame
+        SE3 oMi, oMi_rotation_only;
+        oMi_rotation_only.setIdentity();
+        m_robot.framePosition(data, m_frame_id, oMi);
+        oMi_rotation_only.rotation(oMi.rotation());
 
-          // Use an explicit temporary `m_J_rotated` here to avoid allocations.
-          m_J_rotated.noalias() = (oMi_rotation_only.toActionMatrix() * J).topRows(3);
-          m_J = m_J_rotated;
-        }
+        // Use an explicit temporary `m_J_rotated` here to avoid allocations.
+        m_J_rotated.noalias() = (oMi_rotation_only.toActionMatrix() * J).topRows(3);
+        m_J = m_J_rotated;
+      }
 
-        m_computedTorques = m_J.transpose() * m_fext;
+      m_computedTorques = m_J.transpose() * m_fext;
 
-        return m_computedTorques;
+      return m_computedTorques;
     }
 
-    void MeasuredForce3Dforce::setMeasuredContactForce(const Vector3 & fext)
+    void MeasuredForce3Dforce::setMeasuredContactForce(const Vector3 &fext)
     {
-        m_fext = fext;
+      m_fext = fext;
     }
 
-    const Vector3 & MeasuredForce3Dforce::getMeasuredContactForce() const
+    const Vector3 &MeasuredForce3Dforce::getMeasuredContactForce() const
     {
-        return m_fext;
+      return m_fext;
     }
 
     void MeasuredForce3Dforce::useLocalFrame(bool local_frame)
