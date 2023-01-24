@@ -15,39 +15,39 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_measured_force_3Dforce_hpp__
-#define __invdyn_measured_force_3Dforce_hpp__
+#ifndef __invdyn_measured_6Dwrench_hpp__
+#define __invdyn_measured_6Dwrench_hpp__
 
-#include "tsid/measured-forces/measured-force-base.hpp"
+#include "tsid/contacts/measured-force-base.hpp"
 #include <pinocchio/multibody/data.hpp>
 
 namespace tsid
 {
-  namespace measuredForces
+  namespace contacts
   {
-    class MeasuredForce3Dforce : public MeasuredForceBase
+    class Measured6Dwrench : public MeasuredForceBase
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       typedef math::Index Index;
-      typedef math::Vector3 Vector3;
+      typedef math::Vector6 Vector6;
       typedef robots::RobotWrapper RobotWrapper;
       typedef pinocchio::Data Data;
-      typedef pinocchio::Data::Matrix3x Matrix3x;
+      typedef pinocchio::Data::Matrix6x Matrix6x;
 
-      MeasuredForce3Dforce(const std::string &name,
-                           RobotWrapper &robot,
-                           const std::string &frameName);
+      Measured6Dwrench(const std::string &name,
+                       RobotWrapper &robot,
+                       const std::string &frameName);
 
       const Vector &computeJointTorques(Data &data);
 
       /**
        *  Set the value of the external wrench applied by the environment on the robot.
        */
-      void setMeasuredContactForce(const Vector3 &fext);
+      void setMeasuredContactForce(const Vector6 &fext);
 
-      const Vector3 &getMeasuredContactForce() const;
+      const Vector6 &getMeasuredContactForce() const;
 
       /**
        * @brief Specifies if the external force and jacobian is
@@ -61,13 +61,13 @@ namespace tsid
     protected:
       std::string m_frame_name;
       Index m_frame_id;
-      Vector3 m_fext;
-      Matrix3x m_J;
-      Matrix3x m_J_rotated;
+      Vector6 m_fext;
+      Matrix6x m_J;
+      Matrix6x m_J_rotated;
       Vector m_computedTorques;
       bool m_local_frame;
     };
   }
 }
 
-#endif // ifndef __invdyn_measured_force_6Dwrench_hpp__
+#endif // ifndef __invdyn_measured_6Dwrench_hpp__

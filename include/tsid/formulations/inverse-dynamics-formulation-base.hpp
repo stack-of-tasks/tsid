@@ -25,7 +25,7 @@
 #include "tsid/tasks/task-motion.hpp"
 #include "tsid/tasks/task-contact-force.hpp"
 #include "tsid/contacts/contact-base.hpp"
-#include "tsid/measured-forces/measured-force-base.hpp"
+#include "tsid/contacts/measured-force-base.hpp"
 #include "tsid/solvers/solver-HQP-base.hpp"
 
 #include <string>
@@ -37,11 +37,11 @@ namespace tsid
   {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    tasks::TaskBase &task;
+    tasks::TaskBase & task;
     std::shared_ptr<math::ConstraintBase> constraint;
     unsigned int priority;
 
-    TaskLevel(tasks::TaskBase &task,
+    TaskLevel(tasks::TaskBase & task,
               unsigned int priority);
   };
 
@@ -49,11 +49,11 @@ namespace tsid
   {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    tasks::TaskContactForce &task;
+    tasks::TaskContactForce & task;
     std::shared_ptr<math::ConstraintBase> constraint;
     unsigned int priority;
 
-    TaskLevelForce(tasks::TaskContactForce &task,
+    TaskLevelForce(tasks::TaskContactForce & task,
                    unsigned int priority);
   };
 
@@ -61,9 +61,9 @@ namespace tsid
   {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    measuredForces::MeasuredForceBase &measuredForce;
+    contacts::MeasuredForceBase & measuredForce;
 
-    MeasuredForceLevel(measuredForces::MeasuredForceBase &measuredForce);
+    MeasuredForceLevel(contacts::MeasuredForceBase & measuredForce);
   };
 
   ///
@@ -82,40 +82,40 @@ namespace tsid
     typedef tasks::TaskContactForce TaskContactForce;
     typedef tasks::TaskActuation TaskActuation;
     typedef tasks::TaskBase TaskBase;
-    typedef measuredForces::MeasuredForceBase MeasuredForceBase;
+    typedef contacts::MeasuredForceBase MeasuredForceBase;
     typedef contacts::ContactBase ContactBase;
     typedef solvers::HQPData HQPData;
     typedef solvers::HQPOutput HQPOutput;
     typedef robots::RobotWrapper RobotWrapper;
 
-    InverseDynamicsFormulationBase(const std::string &name,
-                                   RobotWrapper &robot,
+    InverseDynamicsFormulationBase(const std::string & name,
+                                   RobotWrapper & robot,
                                    bool verbose = false);
 
     virtual ~InverseDynamicsFormulationBase() {}
 
-    virtual Data &data() = 0;
+    virtual Data & data() = 0;
 
     virtual unsigned int nVar() const = 0;
     virtual unsigned int nEq() const = 0;
     virtual unsigned int nIn() const = 0;
 
-    virtual bool addMotionTask(TaskMotion &task,
+    virtual bool addMotionTask(TaskMotion & task,
                                double weight,
                                unsigned int priorityLevel,
-                               double transition_duration = 0.0) = 0;
+                               double transition_duration=0.0) = 0;
 
-    virtual bool addForceTask(TaskContactForce &task,
+    virtual bool addForceTask(TaskContactForce & task,
                               double weight,
                               unsigned int priorityLevel,
-                              double transition_duration = 0.0) = 0;
+                              double transition_duration=0.0) = 0;
 
-    virtual bool addActuationTask(TaskActuation &task,
+    virtual bool addActuationTask(TaskActuation & task,
                                   double weight,
                                   unsigned int priorityLevel,
-                                  double transition_duration = 0.0) = 0;
+                                  double transition_duration=0.0) = 0;
 
-    virtual bool updateTaskWeight(const std::string &task_name,
+    virtual bool updateTaskWeight(const std::string & task_name,
                                   double weight) = 0;
 
     /**
@@ -127,10 +127,10 @@ namespace tsid
      * @param motion_priority_level Priority level of the motion task
      * @return True if everything went fine, false otherwise
      */
-    virtual bool addRigidContact(ContactBase &contact, double force_regularization_weight,
-                                 double motion_weight = 1.0, unsigned int motion_priority_level = 0) = 0;
+    virtual bool addRigidContact(ContactBase & contact, double force_regularization_weight,
+                                 double motion_weight=1.0, unsigned int motion_priority_level=0) = 0;
 
-    TSID_DEPRECATED virtual bool addRigidContact(ContactBase &contact);
+    TSID_DEPRECATED virtual bool addRigidContact(ContactBase & contact);
 
     /**
      * @brief Update the weights associated to the specified contact
@@ -139,29 +139,29 @@ namespace tsid
      * @param motion_weight Weight of the motion task, if negative it is not update
      * @return True if everything went fine, false otherwise
      */
-    virtual bool updateRigidContactWeights(const std::string &contact_name,
+    virtual bool updateRigidContactWeights(const std::string & contact_name,
                                            double force_regularization_weight,
-                                           double motion_weight = -1.0) = 0;
+                                           double motion_weight=-1.0) = 0;
 
-    virtual bool addMeasuredForce(MeasuredForceBase &measuredForce) = 0;
+    virtual bool addMeasuredForce(MeasuredForceBase & measuredForce) = 0;
 
-    virtual bool removeTask(const std::string &taskName,
-                            double transition_duration = 0.0) = 0;
+    virtual bool removeTask(const std::string & taskName,
+                            double transition_duration=0.0) = 0;
 
-    virtual bool removeRigidContact(const std::string &contactName,
-                                    double transition_duration = 0.0) = 0;
+    virtual bool removeRigidContact(const std::string & contactName,
+                                    double transition_duration=0.0) = 0;
 
-    virtual bool removeMeasuredForce(const std::string &measuredForceName) = 0;
+    virtual bool removeMeasuredForce(const std::string & measuredForceName) = 0;
 
-    virtual const HQPData &computeProblemData(double time,
+    virtual const HQPData & computeProblemData(double time,
                                               ConstRefVector q,
                                               ConstRefVector v) = 0;
 
-    virtual const Vector &getActuatorForces(const HQPOutput &sol) = 0;
-    virtual const Vector &getAccelerations(const HQPOutput &sol) = 0;
-    virtual const Vector &getContactForces(const HQPOutput &sol) = 0;
-    virtual bool getContactForces(const std::string &name,
-                                  const HQPOutput &sol,
+    virtual const Vector & getActuatorForces(const HQPOutput & sol) = 0;
+    virtual const Vector & getAccelerations(const HQPOutput & sol) = 0;
+    virtual const Vector & getContactForces(const HQPOutput & sol) = 0;
+    virtual bool getContactForces(const std::string & name,
+                                  const HQPOutput & sol,
                                   RefVector f) = 0;
 
   protected:

@@ -15,11 +15,11 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "tsid/measured-forces/measured-force-base.hpp"
+#include "tsid/contacts/measured-force-base.hpp"
 
 namespace tsid
 {
-  namespace measuredForces
+  namespace contacts
   {
     MeasuredForceBase::MeasuredForceBase(const std::string &name,
                                          RobotWrapper &robot) : m_name(name),

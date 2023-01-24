@@ -15,12 +15,12 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include "tsid/measured-forces/measured-force-3Dforce.hpp"
+#include "tsid/contacts/measured-3Dforce.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
 
 namespace tsid
 {
-  namespace measuredForces
+  namespace contacts
   {
 
     using namespace std;
@@ -29,10 +29,10 @@ namespace tsid
 
     typedef pinocchio::Data::Matrix6x Matrix6x;
 
-    MeasuredForce3Dforce::MeasuredForce3Dforce(const std::string &name,
-                                               RobotWrapper &robot,
-                                               const std::string &frameName) : MeasuredForceBase(name, robot),
-                                                                               m_frame_name(frameName)
+    Measured3Dforce::Measured3Dforce(const std::string &name,
+                                     RobotWrapper &robot,
+                                     const std::string &frameName) : MeasuredForceBase(name, robot),
+                                                                     m_frame_name(frameName)
     {
       assert(m_robot.model().existFrame(frameName));
       m_frame_id = m_robot.model().getFrameId(frameName);
@@ -45,7 +45,7 @@ namespace tsid
       m_local_frame = true;
     }
 
-    const Vector &MeasuredForce3Dforce::computeJointTorques(Data &data)
+    const Vector &Measured3Dforce::computeJointTorques(Data &data)
     {
       Matrix6x J;
       J.setZero(6, m_robot.nv());
@@ -71,17 +71,17 @@ namespace tsid
       return m_computedTorques;
     }
 
-    void MeasuredForce3Dforce::setMeasuredContactForce(const Vector3 &fext)
+    void Measured3Dforce::setMeasuredContactForce(const Vector3 &fext)
     {
       m_fext = fext;
     }
 
-    const Vector3 &MeasuredForce3Dforce::getMeasuredContactForce() const
+    const Vector3 &Measured3Dforce::getMeasuredContactForce() const
     {
       return m_fext;
     }
 
-    void MeasuredForce3Dforce::useLocalFrame(bool local_frame)
+    void Measured3Dforce::useLocalFrame(bool local_frame)
     {
       m_local_frame = local_frame;
     }

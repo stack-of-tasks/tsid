@@ -24,7 +24,7 @@
 
 namespace tsid
 {
-  namespace measuredForces
+  namespace contacts
   {
     class MeasuredForceBase
     {
@@ -35,24 +35,24 @@ namespace tsid
       typedef pinocchio::Data Data;
       typedef robots::RobotWrapper RobotWrapper;
 
-      MeasuredForceBase(const std::string & name,
-                        RobotWrapper & robot);
+      MeasuredForceBase(const std::string &name,
+                        RobotWrapper &robot);
 
-      const std::string & name() const;
+      const std::string &name() const;
 
-      void name(const std::string & name);
+      void name(const std::string &name);
 
       /**
        * Compute the bias force (J^t F) associated to the
        * external measured force.
        */
-      virtual const Vector & computeJointTorques(Data & data) = 0;
+      virtual const Vector &computeJointTorques(Data &data) = 0;
 
-     protected:
-       std::string m_name;
+    protected:
+      std::string m_name;
 
-       /// \brief Reference on the robot model.
-       RobotWrapper & m_robot;
+      /// \brief Reference on the robot model.
+      RobotWrapper &m_robot;
     };
   }
 }

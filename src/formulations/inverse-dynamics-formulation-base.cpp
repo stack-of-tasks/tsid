@@ -17,35 +17,33 @@
 
 #include "tsid/formulations/inverse-dynamics-formulation-base.hpp"
 
-
 namespace tsid
 {
 
-  TaskLevel::TaskLevel(tasks::TaskBase & task,
-                      unsigned int priority):
-    task(task),
-    priority(priority)
-  {}
+  TaskLevel::TaskLevel(tasks::TaskBase &task,
+                       unsigned int priority) : task(task),
+                                                priority(priority)
+  {
+  }
 
-  TaskLevelForce::TaskLevelForce(tasks::TaskContactForce & task,
-                                unsigned int priority):
-    task(task),
-    priority(priority)
-  {}
+  TaskLevelForce::TaskLevelForce(tasks::TaskContactForce &task,
+                                 unsigned int priority) : task(task),
+                                                          priority(priority)
+  {
+  }
 
-  MeasuredForceLevel::MeasuredForceLevel(measuredForces::MeasuredForceBase & measuredForce):
-    measuredForce(measuredForce)
-  {}
+  MeasuredForceLevel::MeasuredForceLevel(contacts::MeasuredForceBase &measuredForce) : measuredForce(measuredForce)
+  {
+  }
 
-  InverseDynamicsFormulationBase::InverseDynamicsFormulationBase(const std::string & name,
-                                                                 RobotWrapper & robot,
+  InverseDynamicsFormulationBase::InverseDynamicsFormulationBase(const std::string &name,
+                                                                 RobotWrapper &robot,
                                                                  bool verbose)
-  : m_name(name)
-  , m_robot(robot)
-  , m_verbose(verbose)
-  {}
+      : m_name(name), m_robot(robot), m_verbose(verbose)
+  {
+  }
 
-  bool InverseDynamicsFormulationBase::addRigidContact(ContactBase & contact)
+  bool InverseDynamicsFormulationBase::addRigidContact(ContactBase &contact)
   {
     return addRigidContact(contact, 1e-5);
   }

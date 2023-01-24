@@ -129,16 +129,14 @@ set(${PROJECT_NAME}_TASKS_HEADERS
     include/tsid/tasks/task-capture-point-inequality.hpp
     include/tsid/tasks/task-angular-momentum-equality.hpp)
 
-
-set(${PROJECT_NAME}_MEASUREDFORCES_HEADERS
-    include/tsid/measured-forces/measured-force-base.hpp
-    include/tsid/measured-forces/measured-force-3Dforce.hpp
-    include/tsid/measured-forces/measured-force-6Dwrench.hpp)
-
 set(${PROJECT_NAME}_CONTACTS_HEADERS
-    include/tsid/contacts/fwd.hpp include/tsid/contacts/contact-base.hpp
+    include/tsid/contacts/fwd.hpp 
+    include/tsid/contacts/contact-base.hpp
     include/tsid/contacts/contact-6d.hpp
-    include/tsid/contacts/contact-point.hpp)
+    include/tsid/contacts/contact-point.hpp
+    include/tsid/contacts/measured-force-base.hpp
+    include/tsid/contacts/measured-3Dforce.hpp
+    include/tsid/contacts/measured-6Dwrench.hpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_HEADERS
     include/tsid/trajectories/fwd.hpp
@@ -207,7 +205,6 @@ set(${PROJECT_NAME}_HEADERS
     ${${PROJECT_NAME}_MATH_HEADERS}
     ${${PROJECT_NAME}_TASKS_HEADERS}
     ${${PROJECT_NAME}_CONTACTS_HEADERS}
-    ${${PROJECT_NAME}_MEASUREDFORCES_HEADERS}
     ${${PROJECT_NAME}_TRAJECTORIES_HEADERS}
     ${${PROJECT_NAME}_SOLVERS_HEADERS}
     ${${PROJECT_NAME}_ROBOTS_HEADERS}
@@ -237,18 +234,15 @@ set(${PROJECT_NAME}_TASKS_SOURCES
     src/tasks/task-se3-equality.cpp
     src/tasks/task-angular-momentum-equality.cpp)
 
-set(${PROJECT_NAME}_MEASUREDFORCES_SOURCES
-    src/measured-forces/measured-force-base.cpp
-    src/measured-forces/measured-force-3Dforce.cpp
-    src/measured-forces/measured-force-6Dwrench.cpp)
+set(${PROJECT_NAME}_MEASUREDFORCES_SOURCES)
 
 set(${PROJECT_NAME}_CONTACTS_SOURCES
-    src/contacts/contact-base.cpp src/contacts/contact-6d.cpp
-    src/contacts/contact-point.cpp)
-
-set(${PROJECT_NAME}_TRAJECTORIES_SOURCES
-    src/trajectories/trajectory-se3.cpp
-    src/trajectories/trajectory-euclidian.cpp)
+    src/contacts/contact-base.cpp 
+    src/contacts/contact-6d.cpp
+    src/contacts/contact-point.cpp
+    src/contacts/measured-force-base.cpp
+    src/contacts/measured-3Dforce.cpp
+    src/contacts/measured-6Dwrench.cpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_SOURCES
     src/trajectories/trajectory-se3.cpp
@@ -287,7 +281,6 @@ set(${PROJECT_NAME}_SOURCES
     ${${PROJECT_NAME}_MATH_SOURCES}
     ${${PROJECT_NAME}_TASKS_SOURCES}
     ${${PROJECT_NAME}_CONTACTS_SOURCES}
-    ${${PROJECT_NAME}_MEASUREDFORCES_SOURCES}
     ${${PROJECT_NAME}_TRAJECTORIES_SOURCES}
     ${${PROJECT_NAME}_SOLVERS_SOURCES}
     ${${PROJECT_NAME}_ROBOTS_SOURCES}
