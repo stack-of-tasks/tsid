@@ -10,6 +10,7 @@ dependencies = ["pin", "eiquadprog"]
 homepage = "https://github.com/stack-of-tasks/tsid"
 
 [tool.cmeel]
+build-number = 1
 configure-args = ["-DSUFFIX_SO_VERSION=OFF"]
 
 [build-system]
