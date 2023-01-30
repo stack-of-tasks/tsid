@@ -34,8 +34,8 @@ namespace tsid
 
     double time_start;
     double time_end;
-    double fMax_start; /// max normal force at time time_start
-    double fMax_end;   /// max normal force at time time_end
+    double fMax_start;  /// max normal force at time time_start
+    double fMax_end;    /// max normal force at time time_end
     std::shared_ptr<ContactLevel> contactLevel;
   };
 

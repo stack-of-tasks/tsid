@@ -314,7 +314,7 @@ const HQPData &InverseDynamicsFormulationAccForce::computeProblemData(double tim
   }
 
   // Add all measured external forces to dynamic model
-  for (auto &it : m_measuredForces)
+  for (auto it : m_measuredForces)
   {
     h_fext += it->measuredForce.computeJointTorques(m_data);
   }
@@ -434,11 +434,6 @@ bool InverseDynamicsFormulationAccForce::decodeSolution(const HQPOutput &sol)
     return true;
 
   // Add all measured external forces to dynamic model
-  h_fext.setZero(m_v);
-  for (auto &it : m_measuredForces)
-  {
-    h_fext += it->measuredForce.computeJointTorques(m_data);
-  }
 
   const Matrix &M_a = m_robot.mass(m_data).bottomRows(m_v - m_u);
   const Vector &h_a = m_robot.nonLinearEffects(m_data).tail(m_v - m_u) - h_fext.tail(m_v - m_u);

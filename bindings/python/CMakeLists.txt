@@ -24,8 +24,7 @@ file(
   tasks/*.cpp
   trajectories/*.cpp
   math/*.cpp
-  utils/*.cpp
-  measuredForces/*.cpp)
+  utils/*.cpp)
 
 add_library(${PYWRAP} SHARED ${${PYWRAP}_SOURCES} ${${PYWRAP}_HEADERS})
 target_link_libraries(${PYWRAP} PUBLIC ${PROJECT_NAME} eigenpy::eigenpy)

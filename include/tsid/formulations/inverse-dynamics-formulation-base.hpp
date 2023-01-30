@@ -54,7 +54,7 @@ namespace tsid
     unsigned int priority;
 
     TaskLevelForce(tasks::TaskContactForce & task,
-                   unsigned int priority);
+                    unsigned int priority);
   };
 
   struct MeasuredForceLevel
