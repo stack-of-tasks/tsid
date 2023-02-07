@@ -57,7 +57,7 @@ namespace tsid
 
     InverseDynamicsFormulationAccForce(const std::string & name,
                                        RobotWrapper & robot,
-                                       bool verbose = false);
+                                       bool verbose=false);
 
     virtual ~InverseDynamicsFormulationAccForce() {}
 
@@ -70,43 +70,43 @@ namespace tsid
     bool addMotionTask(TaskMotion & task,
                        double weight,
                        unsigned int priorityLevel,
-                       double transition_duration = 0.0);
+                       double transition_duration=0.0);
 
     bool addForceTask(TaskContactForce & task,
                       double weight,
                       unsigned int priorityLevel,
-                      double transition_duration = 0.0);
+                      double transition_duration=0.0);
 
     bool addActuationTask(TaskActuation & task,
                           double weight,
                           unsigned int priorityLevel,
-                          double transition_duration = 0.0);
+                          double transition_duration=0.0);
 
     bool updateTaskWeight(const std::string & task_name,
                           double weight);
 
     bool addRigidContact(ContactBase & contact, double force_regularization_weight,
-                         double motion_weight = 1.0, unsigned int motion_priority_level = 0);
+                         double motion_weight=1.0, unsigned int motion_priority_level=0);
 
     TSID_DEPRECATED bool addRigidContact(ContactBase & contact);
 
     bool updateRigidContactWeights(const std::string & contact_name,
                                    double force_regularization_weight,
-                                   double motion_weight = -1.0);
+                                   double motion_weight=-1.0);
 
     bool addMeasuredForce(MeasuredForceBase & measuredForce);
 
     bool removeTask(const std::string & taskName,
-                    double transition_duration = 0.0);
+                    double transition_duration=0.0);
 
     bool removeRigidContact(const std::string & contactName,
-                            double transition_duration = 0.0);
+                            double transition_duration=0.0);
 
     bool removeMeasuredForce(const std::string & measuredForceName);
 
     const HQPData & computeProblemData(double time,
-                                      ConstRefVector q,
-                                      ConstRefVector v);
+                                       ConstRefVector q,
+                                       ConstRefVector v);
 
     const Vector & getActuatorForces(const HQPOutput & sol);
     const Vector & getAccelerations(const HQPOutput & sol);
