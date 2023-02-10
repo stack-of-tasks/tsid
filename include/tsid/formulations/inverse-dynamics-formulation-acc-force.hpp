@@ -39,7 +39,8 @@ namespace tsid
     std::shared_ptr<ContactLevel> contactLevel;
   };
 
-  class InverseDynamicsFormulationAccForce : public InverseDynamicsFormulationBase
+  class InverseDynamicsFormulationAccForce:
+      public InverseDynamicsFormulationBase
   {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
