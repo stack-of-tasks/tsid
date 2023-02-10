@@ -90,7 +90,7 @@ namespace tsid
 
     InverseDynamicsFormulationBase(const std::string & name,
                                    RobotWrapper & robot,
-                                   bool verbose = false);
+                                   bool verbose=false);
 
     virtual ~InverseDynamicsFormulationBase() {}
 

@@ -130,11 +130,11 @@ namespace tsid
 
     Data m_data;
     HQPData m_hqpData;
-    std::vector<std::shared_ptr<TaskLevel>> m_taskMotions;
-    std::vector<std::shared_ptr<TaskLevelForce>> m_taskContactForces;
-    std::vector<std::shared_ptr<TaskLevel>> m_taskActuations;
-    std::vector<std::shared_ptr<ContactLevel>> m_contacts;
-    std::vector<std::shared_ptr<MeasuredForceLevel>> m_measuredForces;
+    std::vector<std::shared_ptr<TaskLevel>>           m_taskMotions;
+    std::vector<std::shared_ptr<TaskLevelForce>>      m_taskContactForces;
+    std::vector<std::shared_ptr<TaskLevel>>           m_taskActuations;
+    std::vector<std::shared_ptr<ContactLevel>>        m_contacts;
+    std::vector<std::shared_ptr<MeasuredForceLevel>>  m_measuredForces;
     double m_t;        /// time
     unsigned int m_k;  /// number of contact-force variables
     unsigned int m_v;  /// number of acceleration variables
