@@ -61,7 +61,7 @@ namespace tsid
 
     virtual ~InverseDynamicsFormulationAccForce() {}
 
-    Data & data();
+    Data & data() ;
 
     unsigned int nVar() const;
     unsigned int nEq() const;
@@ -117,7 +117,7 @@ namespace tsid
                           RefVector f);
 
   public:
-    template <class TaskLevelPointer>
+    template<class TaskLevelPointer>
     void addTask(TaskLevelPointer task,
                  double weight,
                  unsigned int priorityLevel);
@@ -151,7 +151,7 @@ namespace tsid
 
     Vector h_fext;  /// sum of external measured forces
 
-    std::vector<std::shared_ptr<ContactTransitionInfo>> m_contactTransitions;
+    std::vector<std::shared_ptr<ContactTransitionInfo> > m_contactTransitions;
   };
 
 }

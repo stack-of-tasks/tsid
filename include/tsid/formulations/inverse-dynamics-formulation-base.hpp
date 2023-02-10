@@ -154,8 +154,8 @@ namespace tsid
     virtual bool removeMeasuredForce(const std::string & measuredForceName) = 0;
 
     virtual const HQPData & computeProblemData(double time,
-                                              ConstRefVector q,
-                                              ConstRefVector v) = 0;
+                                               ConstRefVector q,
+                                               ConstRefVector v) = 0;
 
     virtual const Vector & getActuatorForces(const HQPOutput & sol) = 0;
     virtual const Vector & getAccelerations(const HQPOutput & sol) = 0;
