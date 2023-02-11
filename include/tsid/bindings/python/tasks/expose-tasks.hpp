@@ -27,32 +27,28 @@
 #include "tsid/bindings/python/tasks/task-joint-posVelAcc-bounds.hpp"
 #include "tsid/bindings/python/tasks/task-am-equality.hpp"
 
+namespace tsid {
+namespace python {
+void exposeTaskComEquality();
+void exposeTaskCopEquality();
+void exposeTaskSE3Equality();
+void exposeTaskJointPosture();
+void exposeTaskActuationBounds();
+void exposeTaskJointBounds();
+void exposeTaskJointPosVelAccBounds();
+void exposeTaskAMEquality();
 
-namespace tsid
-{
-  namespace python
-  {
-    void exposeTaskComEquality();
-    void exposeTaskCopEquality();
-    void exposeTaskSE3Equality();
-    void exposeTaskJointPosture();
-    void exposeTaskActuationBounds();
-    void exposeTaskJointBounds();
-    void exposeTaskJointPosVelAccBounds();
-    void exposeTaskAMEquality();
+inline void exposeTasks() {
+  exposeTaskComEquality();
+  exposeTaskCopEquality();
+  exposeTaskSE3Equality();
+  exposeTaskJointPosture();
+  exposeTaskActuationBounds();
+  exposeTaskJointBounds();
+  exposeTaskJointPosVelAccBounds();
+  exposeTaskAMEquality();
+}
 
-    inline void exposeTasks()
-    {
-      exposeTaskComEquality();
-      exposeTaskCopEquality();
-      exposeTaskSE3Equality();
-      exposeTaskJointPosture();
-      exposeTaskActuationBounds();
-      exposeTaskJointBounds();
-      exposeTaskJointPosVelAccBounds();
-      exposeTaskAMEquality();
-    }
-    
-  } // namespace python
-} // namespace tsid
-#endif // ifndef __tsid_python_expose_tasks_hpp__
+}  // namespace python
+}  // namespace tsid
+#endif  // ifndef __tsid_python_expose_tasks_hpp__

@@ -18,12 +18,8 @@
 #ifndef __invdyn_trajectories_fwd_hpp__
 #define __invdyn_trajectories_fwd_hpp__
 
-namespace tsid
-{
-  namespace trajectories
-  {
-    
-  }
-}
+namespace tsid {
+namespace trajectories {}
+}  // namespace tsid
 
-#endif // ifndef __invdyn_trajectories_fwd_hpp__
+#endif  // ifndef __invdyn_trajectories_fwd_hpp__

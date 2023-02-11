@@ -18,14 +18,10 @@
 #ifndef __tsid_python_math_utils_hpp__
 #define __tsid_python_math_utils_hpp__
 
-
-namespace tsid
-{
-  namespace python
-  {    
-    void exposeMathUtils();
-  }
+namespace tsid {
+namespace python {
+void exposeMathUtils();
 }
+}  // namespace tsid
 
-
-#endif // ifndef __tsid_python_math_utils_hpp__
+#endif  // ifndef __tsid_python_math_utils_hpp__

@@ -22,7 +22,6 @@
 #include "OsqpEigen/OsqpEigen.h"
 #include <Eigen/Sparse>
 
-
 #ifdef PROFILE_OSQP
 #define START_PROFILER_OSQP(x) START_PROFILER(x)
 #define STOP_PROFILER_OSQP(x) STOP_PROFILER(x)
@@ -31,76 +30,72 @@
 #define STOP_PROFILER_OSQP(x)
 #endif
 
-namespace tsid
-{
-  namespace solvers
-  {
-    /**
-     * @brief
-     */
-    class TSID_DLLAPI SolverOSQP : public SolverHQPBase
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
-      typedef math::Matrix Matrix;
-      typedef math::Vector Vector;
-      typedef math::RefVector RefVector;
-      typedef math::ConstRefVector ConstRefVector;
-      typedef math::ConstRefMatrix ConstRefMatrix;
+namespace tsid {
+namespace solvers {
+/**
+ * @brief
+ */
+class TSID_DLLAPI SolverOSQP : public SolverHQPBase {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      SolverOSQP(const std::string & name);
-      SolverOSQP(const SolverOSQP & other);
+  typedef math::Matrix Matrix;
+  typedef math::Vector Vector;
+  typedef math::RefVector RefVector;
+  typedef math::ConstRefVector ConstRefVector;
+  typedef math::ConstRefMatrix ConstRefMatrix;
 
-      void resize(unsigned int n, unsigned int neq, unsigned int nin);
+  SolverOSQP(const std::string& name);
+  SolverOSQP(const SolverOSQP& other);
 
-      /** Retrieve the matrices describing a QP problem from the problem data. */
-      void retrieveQPData(const HQPData & problemData, const bool hessianRegularization = false);
-      
-      /** Return the QP data object. */
-      const QPData getQPData() const { return m_qpData; }
+  void resize(unsigned int n, unsigned int neq, unsigned int nin);
 
-      /** Solve the given Hierarchical Quadratic Program. */
-      const HQPOutput & solve(const HQPData & problemData);
+  /** Retrieve the matrices describing a QP problem from the problem data. */
+  void retrieveQPData(const HQPData& problemData,
+                      const bool hessianRegularization = false);
 
-      /** Get the objective value of the last solved problem. */
-      double getObjectiveValue();
+  /** Return the QP data object. */
+  const QPData getQPData() const { return m_qpData; }
 
-      /** Set the current maximum number of iterations performed by the solver. */
-      bool setMaximumIterations(unsigned int maxIter);
+  /** Solve the given Hierarchical Quadratic Program. */
+  const HQPOutput& solve(const HQPData& problemData);
 
-      void setSigma(double sigma);
-      void setAlpha(double alpha);
-      void setRho(double rho);
-      void setEpsilonAbsolute(double epsAbs);
-      void setEpsilonRelative(double epsRel);
-      void setVerbose(bool isVerbose = false);
+  /** Get the objective value of the last solved problem. */
+  double getObjectiveValue();
 
+  /** Set the current maximum number of iterations performed by the solver. */
+  bool setMaximumIterations(unsigned int maxIter);
 
-    protected:
+  void setSigma(double sigma);
+  void setAlpha(double alpha);
+  void setRho(double rho);
+  void setEpsilonAbsolute(double epsAbs);
+  void setEpsilonRelative(double epsRel);
+  void setVerbose(bool isVerbose = false);
 
-      void sendMsg(const std::string & s);
+ protected:
+  void sendMsg(const std::string& s);
 
-      double m_objValue;
-      double m_hessian_regularization;
+  double m_objValue;
+  double m_hessian_regularization;
 
-      OsqpEigen::Solver m_solver;
+  OsqpEigen::Solver m_solver;
 
-      unsigned int m_neq;  /// number of equality constraints
-      unsigned int m_nin;  /// number of inequality constraints
-      unsigned int m_n;    /// number of variables
+  unsigned int m_neq;  /// number of equality constraints
+  unsigned int m_nin;  /// number of inequality constraints
+  unsigned int m_n;    /// number of variables
 
-      QPDataTpl<double> m_qpData;
+  QPDataTpl<double> m_qpData;
 
-      double m_rho;
-      double m_sigma;
-      double m_alpha;
-      double m_epsAbs;
-      double m_epsRel;
-      bool m_isVerbose;
-      bool m_isDataInitialized;
-    };
-  }
-}
+  double m_rho;
+  double m_sigma;
+  double m_alpha;
+  double m_epsAbs;
+  double m_epsRel;
+  bool m_isVerbose;
+  bool m_isDataInitialized;
+};
+}  // namespace solvers
+}  // namespace tsid
 
-#endif // ifndef __solvers_osqp_hpp__
+#endif  // ifndef __solvers_osqp_hpp__

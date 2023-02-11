@@ -20,17 +20,12 @@
 
 #include "tsid/bindings/python/formulations/formulation.hpp"
 
-namespace tsid
-{
-  namespace python
-  {
-    void exposeInverseDynamicsFormulationAccForce();
+namespace tsid {
+namespace python {
+void exposeInverseDynamicsFormulationAccForce();
 
-    inline void exposeFormulations()
-    {
-      exposeInverseDynamicsFormulationAccForce();
-    }
-    
-  } // namespace python
-} // namespace tsid
-#endif // ifndef __tsid_python_expose_formulations_hpp__
+inline void exposeFormulations() { exposeInverseDynamicsFormulationAccForce(); }
+
+}  // namespace python
+}  // namespace tsid
+#endif  // ifndef __tsid_python_expose_formulations_hpp__

@@ -21,19 +21,16 @@
 #include "tsid/bindings/python/contacts/contact-6d.hpp"
 #include "tsid/bindings/python/contacts/contact-point.hpp"
 
-namespace tsid
-{
-  namespace python
-  {
-    void exposeContact6d();
-    void exposeContactPoint();
+namespace tsid {
+namespace python {
+void exposeContact6d();
+void exposeContactPoint();
 
-    inline void exposeContact()
-    {
-      exposeContact6d();
-      exposeContactPoint();
-    }
+inline void exposeContact() {
+  exposeContact6d();
+  exposeContactPoint();
+}
 
-  } // namespace python
-} // namespace tsid
-#endif // ifndef __tsid_python_expose_contact_hpp__
+}  // namespace python
+}  // namespace tsid
+#endif  // ifndef __tsid_python_expose_contact_hpp__

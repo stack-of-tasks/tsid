@@ -22,71 +22,69 @@
 #include "tsid/solvers/solver-HQP-base.hpp"
 #include "eiquadprog/eiquadprog-fast.hpp"
 
-namespace tsid
-{
-  namespace solvers
-  {
-    /**
-     * @brief
-     */
-    class TSID_DLLAPI SolverHQuadProgFast : public SolverHQPBase
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
-      typedef math::Matrix Matrix;
-      typedef math::Vector Vector;
-      typedef math::RefVector RefVector;
-      typedef math::ConstRefVector ConstRefVector;
-      typedef math::ConstRefMatrix ConstRefMatrix;
+namespace tsid {
+namespace solvers {
+/**
+ * @brief
+ */
+class TSID_DLLAPI SolverHQuadProgFast : public SolverHQPBase {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      SolverHQuadProgFast(const std::string & name);
+  typedef math::Matrix Matrix;
+  typedef math::Vector Vector;
+  typedef math::RefVector RefVector;
+  typedef math::ConstRefVector ConstRefVector;
+  typedef math::ConstRefMatrix ConstRefMatrix;
 
-      void resize(unsigned int n, unsigned int neq, unsigned int nin);
+  SolverHQuadProgFast(const std::string& name);
 
-      /** Solve the given Hierarchical Quadratic Program
-       */
-      const HQPOutput & solve(const HQPData & problemData);
+  void resize(unsigned int n, unsigned int neq, unsigned int nin);
 
-      /** Retrieve the matrices describing a QP problem from the problem data. */
-      void retrieveQPData(const HQPData & problemData, 
-                          const bool hessianRegularization = true);
+  /** Solve the given Hierarchical Quadratic Program
+   */
+  const HQPOutput& solve(const HQPData& problemData);
 
-      /** Return the QP data object. */
-      const QPDataQuadProg getQPData() const { return m_qpData; }
+  /** Retrieve the matrices describing a QP problem from the problem data. */
+  void retrieveQPData(const HQPData& problemData,
+                      const bool hessianRegularization = true);
 
-      /** Get the objective value of the last solved problem. */
-      double getObjectiveValue();
+  /** Return the QP data object. */
+  const QPDataQuadProg getQPData() const { return m_qpData; }
 
-      /** Set the current maximum number of iterations performed by the solver. */
-      bool setMaximumIterations(unsigned int maxIter);
+  /** Get the objective value of the last solved problem. */
+  double getObjectiveValue();
 
-    protected:
+  /** Set the current maximum number of iterations performed by the solver. */
+  bool setMaximumIterations(unsigned int maxIter);
 
-      void sendMsg(const std::string & s);
+ protected:
+  void sendMsg(const std::string& s);
 
-      // <nVars, nEqCon, 2*nIneqCon>
-      eiquadprog::solvers::EiquadprogFast m_solver; 
+  // <nVars, nEqCon, 2*nIneqCon>
+  eiquadprog::solvers::EiquadprogFast m_solver;
 
-      TSID_DEPRECATED Matrix m_H;
-      TSID_DEPRECATED Vector m_g;
-      TSID_DEPRECATED Matrix m_CE;
-      TSID_DEPRECATED Vector m_ce0;
-      TSID_DEPRECATED Matrix m_CI;  /// twice the rows because inequality constraints are bilateral
-      TSID_DEPRECATED Vector m_ci0;
-      double m_objValue;
-      double m_hessian_regularization;
+  TSID_DEPRECATED Matrix m_H;
+  TSID_DEPRECATED Vector m_g;
+  TSID_DEPRECATED Matrix m_CE;
+  TSID_DEPRECATED Vector m_ce0;
+  TSID_DEPRECATED Matrix
+      m_CI;  /// twice the rows because inequality constraints are bilateral
+  TSID_DEPRECATED Vector m_ci0;
+  double m_objValue;
+  double m_hessian_regularization;
 
-      Eigen::VectorXi m_activeSet;  /// vector containing the indexes of the active inequalities
-      int m_activeSetSize;
+  Eigen::VectorXi
+      m_activeSet;  /// vector containing the indexes of the active inequalities
+  int m_activeSetSize;
 
-      unsigned int m_neq;  /// number of equality constraints
-      unsigned int m_nin;  /// number of inequality constraints
-      unsigned int m_n;    /// number of variables
-      
-      QPDataQuadProgTpl<double> m_qpData;
-    };
-  }
-}
+  unsigned int m_neq;  /// number of equality constraints
+  unsigned int m_nin;  /// number of inequality constraints
+  unsigned int m_n;    /// number of variables
 
-#endif // ifndef __invdyn_solvers_hqp_eiquadprog_fast_hpp__
+  QPDataQuadProgTpl<double> m_qpData;
+};
+}  // namespace solvers
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_solvers_hqp_eiquadprog_fast_hpp__
