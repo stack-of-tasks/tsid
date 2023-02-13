@@ -65,9 +65,9 @@ const HQPOutput& SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::solve(
     const HQPData& problemData) {
   using namespace tsid::math;
 
-  //#ifndef EIGEN_RUNTIME_NO_MALLOC
-  //  Eigen::internal::set_is_malloc_allowed(false);
-  //#endif
+  // #ifndef EIGEN_RUNTIME_NO_MALLOC
+  //   Eigen::internal::set_is_malloc_allowed(false);
+  // #endif
 
   START_PROFILER_EIQUADPROG_RT(PROFILE_EIQUADPROG_PREPARATION);
 
@@ -165,9 +165,9 @@ const HQPOutput& SolverHQuadProgRT<nVars, nEqCon, nIneqCon>::solve(
 
   m_output.x = sol;
 
-  //#ifndef EIGEN_RUNTIME_NO_MALLOC
-  //  Eigen::internal::set_is_malloc_allowed(true);
-  //#endif
+  // #ifndef EIGEN_RUNTIME_NO_MALLOC
+  //   Eigen::internal::set_is_malloc_allowed(true);
+  // #endif
 
   if (status == eisol::RT_EIQUADPROG_OPTIMAL) {
     m_output.status = HQP_STATUS_OPTIMAL;

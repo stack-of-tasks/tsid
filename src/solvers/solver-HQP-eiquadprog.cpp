@@ -218,14 +218,14 @@ void SolverHQuadProg::retrieveQPData(const HQPData& problemData,
 }
 
 const HQPOutput& SolverHQuadProg::solve(const HQPData& problemData) {
-  //#ifndef NDEBUG
-  //  PRINT_MATRIX(m_qpData.H);
-  //  PRINT_VECTOR(m_qpData.g);
-  //  PRINT_MATRIX(m_qpData.CE);
-  //  PRINT_VECTOR(m_qpData.ce0);
-  //  PRINT_MATRIX(m_qpData.CI);
-  //  PRINT_VECTOR(m_qpData.ci0);
-  //#endif
+  // #ifndef NDEBUG
+  //   PRINT_MATRIX(m_qpData.H);
+  //   PRINT_VECTOR(m_qpData.g);
+  //   PRINT_MATRIX(m_qpData.CE);
+  //   PRINT_VECTOR(m_qpData.ce0);
+  //   PRINT_MATRIX(m_qpData.CI);
+  //   PRINT_VECTOR(m_qpData.ci0);
+  // #endif
   SolverHQuadProg::retrieveQPData(problemData);
 
   //  min 0.5 * x G x + g0 x

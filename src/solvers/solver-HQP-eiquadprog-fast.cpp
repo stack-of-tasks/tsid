@@ -20,7 +20,7 @@
 #include "eiquadprog/eiquadprog-fast.hpp"
 #include "tsid/utils/stop-watch.hpp"
 
-//#define PROFILE_EIQUADPROG_FAST
+// #define PROFILE_EIQUADPROG_FAST
 
 using namespace eiquadprog::solvers;
 
