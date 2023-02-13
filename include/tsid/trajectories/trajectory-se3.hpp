@@ -22,42 +22,38 @@
 
 #include <pinocchio/spatial/se3.hpp>
 
-namespace tsid
-{
-  namespace trajectories
-  {
+namespace tsid {
+namespace trajectories {
 
-    class TrajectorySE3Constant : public TrajectoryBase
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+class TrajectorySE3Constant : public TrajectoryBase {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      typedef pinocchio::SE3 SE3;
+  typedef pinocchio::SE3 SE3;
 
-      TrajectorySE3Constant(const std::string & name);
+  TrajectorySE3Constant(const std::string& name);
 
-      TrajectorySE3Constant(const std::string & name, const SE3 & M);
+  TrajectorySE3Constant(const std::string& name, const SE3& M);
 
-      virtual ~TrajectorySE3Constant() {}
+  virtual ~TrajectorySE3Constant() {}
 
-      unsigned int size() const;
+  unsigned int size() const;
 
-      void setReference(const SE3 & M);
+  void setReference(const SE3& M);
 
-      const TrajectorySample & operator()(double time);
+  const TrajectorySample& operator()(double time);
 
-      const TrajectorySample & computeNext();
+  const TrajectorySample& computeNext();
 
-      void getLastSample(TrajectorySample & sample) const;
+  void getLastSample(TrajectorySample& sample) const;
 
-      bool has_trajectory_ended() const;
+  bool has_trajectory_ended() const;
 
+ protected:
+  SE3 m_M;
+};
 
-    protected:
-      SE3    m_M;
-    };
-    
-  }
-}
+}  // namespace trajectories
+}  // namespace tsid
 
-#endif // ifndef __invdyn_trajectory_se3_hpp__
+#endif  // ifndef __invdyn_trajectory_se3_hpp__

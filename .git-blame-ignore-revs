@@ -1,2 +1,5 @@
+# pre-commit run --all-files
+477b39d52e20d2c7138e468e01aa2359c275b851
+
 # pre-commit run -a (Guilhem Saurel, 2022-09-05)
 1d932e2d389a6205e6d3a7490b5c826fe01fea47

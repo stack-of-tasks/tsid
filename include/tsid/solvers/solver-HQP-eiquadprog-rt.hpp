@@ -24,74 +24,72 @@
 
 #include "eiquadprog/eiquadprog-rt.hpp"
 
-namespace tsid
-{
-  namespace solvers
-  {
-    /**
-     * @brief
-     */
-    template<int nVars, int nEqCon, int nIneqCon>
-    class TSID_DLLAPI SolverHQuadProgRT : public SolverHQPBase
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
-      typedef math::Matrix Matrix;
-      typedef math::Vector Vector;
-      typedef math::RefVector RefVector;
-      typedef math::ConstRefVector ConstRefVector;
-      typedef math::ConstRefMatrix ConstRefMatrix;
+namespace tsid {
+namespace solvers {
+/**
+ * @brief
+ */
+template <int nVars, int nEqCon, int nIneqCon>
+class TSID_DLLAPI SolverHQuadProgRT : public SolverHQPBase {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      SolverHQuadProgRT(const std::string & name);
+  typedef math::Matrix Matrix;
+  typedef math::Vector Vector;
+  typedef math::RefVector RefVector;
+  typedef math::ConstRefVector ConstRefVector;
+  typedef math::ConstRefMatrix ConstRefMatrix;
 
-      void resize(unsigned int n, unsigned int neq, unsigned int nin);
+  SolverHQuadProgRT(const std::string& name);
 
-      /** Solve the given Hierarchical Quadratic Program
-       */
-      const HQPOutput & solve(const HQPData & problemData);
+  void resize(unsigned int n, unsigned int neq, unsigned int nin);
 
-      // TODO: change eiquadprog-rt to new API
-      /** Retrieve the matrices describing a QP problem from the problem data. */
-      void retrieveQPData(const HQPData & /*problemData*/, 
-                          const bool /*hessianRegularization = true*/){};
+  /** Solve the given Hierarchical Quadratic Program
+   */
+  const HQPOutput& solve(const HQPData& problemData);
 
-      // /** Return the QP data object. */
-      // const QPDataQuadProg getQPData() const { return m_qpData; }
+  // TODO: change eiquadprog-rt to new API
+  /** Retrieve the matrices describing a QP problem from the problem data. */
+  void retrieveQPData(const HQPData& /*problemData*/,
+                      const bool /*hessianRegularization = true*/){};
 
-      /** Get the objective value of the last solved problem. */
-      double getObjectiveValue();
+  // /** Return the QP data object. */
+  // const QPDataQuadProg getQPData() const { return m_qpData; }
 
-      /** Set the current maximum number of iterations performed by the solver. */
-      bool setMaximumIterations(unsigned int maxIter);
+  /** Get the objective value of the last solved problem. */
+  double getObjectiveValue();
 
-    protected:
+  /** Set the current maximum number of iterations performed by the solver. */
+  bool setMaximumIterations(unsigned int maxIter);
 
-      void sendMsg(const std::string & s);
+ protected:
+  void sendMsg(const std::string& s);
 
-      eiquadprog::solvers::RtEiquadprog<nVars, nEqCon, 2*nIneqCon> m_solver;
+  eiquadprog::solvers::RtEiquadprog<nVars, nEqCon, 2 * nIneqCon> m_solver;
 
-      typename RtMatrixX<nVars, nVars>::d m_H;
-      typename RtVectorX<nVars>::d m_g;
-      typename RtMatrixX<nEqCon, nVars>::d m_CE;
-      typename RtVectorX<nEqCon>::d m_ce0;
-      typename RtMatrixX<2*nIneqCon, nVars>::d m_CI;  /// twice the rows because inequality constraints are bilateral
-      typename RtVectorX<2*nIneqCon>::d m_ci0;
-      double m_objValue;
+  typename RtMatrixX<nVars, nVars>::d m_H;
+  typename RtVectorX<nVars>::d m_g;
+  typename RtMatrixX<nEqCon, nVars>::d m_CE;
+  typename RtVectorX<nEqCon>::d m_ce0;
+  typename RtMatrixX<2 * nIneqCon, nVars>::d
+      m_CI;  /// twice the rows because inequality constraints are bilateral
+  typename RtVectorX<2 * nIneqCon>::d m_ci0;
+  double m_objValue;
 
-      double m_hessian_regularization;
+  double m_hessian_regularization;
 
-      Eigen::VectorXi m_activeSet;  /// vector containing the indexes of the active inequalities
-      int m_activeSetSize;
+  Eigen::VectorXi
+      m_activeSet;  /// vector containing the indexes of the active inequalities
+  int m_activeSetSize;
 
-//      Eigen::FullPivLU<template RtMatrixX<nEqCon, nVars> > m_CE_lu;
-      // ColPivHouseholderQR
+  //      Eigen::FullPivLU<template RtMatrixX<nEqCon, nVars> > m_CE_lu;
+  // ColPivHouseholderQR
 
-      int m_neq;  /// number of equality constraints
-      int m_nin;  /// number of inequality constraints
-      int m_n;    /// number of variables
-    };
-  }
-}
+  int m_neq;  /// number of equality constraints
+  int m_nin;  /// number of inequality constraints
+  int m_n;    /// number of variables
+};
+}  // namespace solvers
+}  // namespace tsid
 
-#endif // ifndef __invdyn_solvers_hqp_eiquadprog_rt_hpp__
+#endif  // ifndef __invdyn_solvers_hqp_eiquadprog_rt_hpp__
