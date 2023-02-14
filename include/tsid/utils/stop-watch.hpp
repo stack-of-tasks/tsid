@@ -34,8 +34,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma GCC visibility push(default)
 #endif
 
-//#define START_PROFILER(name)
-//#define STOP_PROFILER(name)
+// #define START_PROFILER(name)
+// #define STOP_PROFILER(name)
 #define START_PROFILER(name) getProfiler().start(name)
 #define STOP_PROFILER(name) getProfiler().stop(name)
 
