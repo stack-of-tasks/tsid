@@ -1,0 +1,27 @@
+name: CI - Linux - ROS
+on: [push, pull_request]
+
+jobs:
+  CI:
+    strategy:
+      matrix:
+        env:
+          - {ROS_DISTRO: noetic, CMAKE_BUILD_TYPE: Debug}
+          - {ROS_DISTRO: noetic, CMAKE_BUILD_TYPE: Release}
+    env:
+      CCACHE_DIR: /github/home/.ccache # Enable ccache
+      UPSTREAM_WORKSPACE: dependencies.rosinstall
+      CMAKE_ARGS: -DBUILD_WITH_OSQP=ON -DBUILD_WITH_PROXQP=ON -DBUILD_WITH_VECTORIZATION_SUPPORT=OFF  # Simde is not available yet
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      # This step will fetch/store the directory used by ccache before/after the ci run
+      - uses: actions/cache@v3
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
+      # Run industrial_ci
+      - uses: 'ros-industrial/industrial_ci@6a8f546cbd31fbd5c9f77e3409265c8b39abc3d6'
+        env: ${{ matrix.env }}

@@ -21,46 +21,42 @@
 #include "tsid/tasks/task-base.hpp"
 #include "tsid/trajectories/trajectory-base.hpp"
 
-namespace tsid
-{
-  namespace tasks
-  {
-    class TaskMotion : public TaskBase
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
-      typedef math::Vector Vector;
-      typedef trajectories::TrajectorySample TrajectorySample;
+namespace tsid {
+namespace tasks {
+class TaskMotion : public TaskBase {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      TaskMotion(const std::string & name,
-                 RobotWrapper & robot);
+  typedef math::Vector Vector;
+  typedef trajectories::TrajectorySample TrajectorySample;
 
-      virtual ~TaskMotion() {}
+  TaskMotion(const std::string& name, RobotWrapper& robot);
 
-      virtual const TrajectorySample & getReference() const;
+  virtual ~TaskMotion() {}
 
-      virtual const Vector & getDesiredAcceleration() const;
+  virtual const TrajectorySample& getReference() const;
 
-      virtual Vector getAcceleration(ConstRefVector dv) const;
+  virtual const Vector& getDesiredAcceleration() const;
 
-      virtual const Vector & position_error() const;
-      virtual const Vector & velocity_error() const;
-      virtual const Vector & position() const;
-      virtual const Vector & velocity() const;
-      virtual const Vector & position_ref() const;
-      virtual const Vector & velocity_ref() const;
+  virtual Vector getAcceleration(ConstRefVector dv) const;
 
-      virtual void setMask(math::ConstRefVector mask);
-      virtual const Vector & getMask() const;
-      virtual bool hasMask();
+  virtual const Vector& position_error() const;
+  virtual const Vector& velocity_error() const;
+  virtual const Vector& position() const;
+  virtual const Vector& velocity() const;
+  virtual const Vector& position_ref() const;
+  virtual const Vector& velocity_ref() const;
 
-    protected:
-      Vector m_mask;
-      Vector m_dummy;
-      trajectories::TrajectorySample TrajectorySample_dummy;
-    };
-  }
-}
+  virtual void setMask(math::ConstRefVector mask);
+  virtual const Vector& getMask() const;
+  virtual bool hasMask();
 
-#endif // ifndef __invdyn_task_motion_hpp__
+ protected:
+  Vector m_mask;
+  Vector m_dummy;
+  trajectories::TrajectorySample TrajectorySample_dummy;
+};
+}  // namespace tasks
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_task_motion_hpp__

@@ -32,14 +32,13 @@ using namespace contacts;
 using namespace tsid::robots;
 using namespace std;
 
-BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
+BOOST_AUTO_TEST_SUITE(BOOST_TEST_MODULE)
 
-#define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(isFinite(A), #A<<": "<<A)
+#define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(isFinite(A), #A << ": " << A)
 
-const string romeo_model_path = TSID_SOURCE_DIR"/models/romeo";
+const string romeo_model_path = TSID_SOURCE_DIR "/models/romeo";
 
-BOOST_AUTO_TEST_CASE ( test_contact_6d )
-{
+BOOST_AUTO_TEST_CASE(test_contact_6d) {
   const double lx = 0.07;
   const double ly = 0.12;
   const double lz = 0.105;
@@ -51,27 +50,22 @@ BOOST_AUTO_TEST_CASE ( test_contact_6d )
   vector<string> package_dirs;
   package_dirs.push_back(romeo_model_path);
   string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
-  RobotWrapper robot(urdfFileName,
-                     package_dirs,
-                     pinocchio::JointModelFreeFlyer(),
-                     false);
+  RobotWrapper robot(urdfFileName, package_dirs,
+                     pinocchio::JointModelFreeFlyer(), false);
 
   BOOST_REQUIRE(robot.model().existFrame(frameName));
 
   Vector3 contactNormal = Vector3::UnitZ();
-  Matrix3x contactPoints(3,4);
-  contactPoints << -lx, -lx, +lx, +lx,
-                   -ly, +ly, -ly, +ly,
-                    lz,  lz,  lz,  lz;
-  Contact6d contact("contact6d", robot, frameName,
-                    contactPoints, contactNormal,
+  Matrix3x contactPoints(3, 4);
+  contactPoints << -lx, -lx, +lx, +lx, -ly, +ly, -ly, +ly, lz, lz, lz, lz;
+  Contact6d contact("contact6d", robot, frameName, contactPoints, contactNormal,
                     mu, fMin, fMax);
 
-  BOOST_CHECK(contact.n_motion()==6);
-  BOOST_CHECK(contact.n_force()==12);
+  BOOST_CHECK(contact.n_motion() == 6);
+  BOOST_CHECK(contact.n_force() == 12);
 
   Vector Kp = Vector::Ones(6);
-  Vector Kd = 2*Vector::Ones(6);
+  Vector Kd = 2 * Vector::Ones(6);
   contact.Kp(Kp);
   contact.Kd(Kd);
   BOOST_CHECK(contact.Kp().isApprox(Kp));
@@ -82,27 +76,33 @@ BOOST_AUTO_TEST_CASE ( test_contact_6d )
   pinocchio::Data data(robot.model());
   robot.computeAllTerms(data, q, v);
 
-  pinocchio::SE3 H_ref = robot.position(data, robot.model().getFrameId(frameName));
+  pinocchio::SE3 H_ref =
+      robot.position(data, robot.model().getFrameId(frameName));
   contact.setReference(H_ref);
 
   double t = 0.0;
   contact.computeMotionTask(t, q, v, data);
 
-  const ConstraintInequality & forceIneq = contact.computeForceTask(t, q, v, data);
+  const ConstraintInequality& forceIneq =
+      contact.computeForceTask(t, q, v, data);
   Vector3 f3;
   Vector f(12);
   f3 << 0.0, 0.0, 100.0;
   f << f3, f3, f3, f3;
   BOOST_CHECK(forceIneq.checkConstraint(f));
-  BOOST_CHECK(((forceIneq.matrix()*f).array() <= forceIneq.upperBound().array()).all());
-  BOOST_CHECK(((forceIneq.matrix()*f).array() >= forceIneq.lowerBound().array()).all());
-  f(0) = f(2)*mu*1.1;
-  BOOST_CHECK(forceIneq.checkConstraint(f)==false);
+  BOOST_CHECK(
+      ((forceIneq.matrix() * f).array() <= forceIneq.upperBound().array())
+          .all());
+  BOOST_CHECK(
+      ((forceIneq.matrix() * f).array() >= forceIneq.lowerBound().array())
+          .all());
+  f(0) = f(2) * mu * 1.1;
+  BOOST_CHECK(forceIneq.checkConstraint(f) == false);
 
-  const Matrix & forceGenMat = contact.getForceGeneratorMatrix();
-  BOOST_CHECK(forceGenMat.rows()==6 && forceGenMat.cols()==12);
+  const Matrix& forceGenMat = contact.getForceGeneratorMatrix();
+  BOOST_CHECK(forceGenMat.rows() == 6 && forceGenMat.cols() == 12);
 
   contact.computeForceRegularizationTask(t, q, v, data);
 }
 
-BOOST_AUTO_TEST_SUITE_END ()
+BOOST_AUTO_TEST_SUITE_END()

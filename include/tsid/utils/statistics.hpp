@@ -15,7 +15,6 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-
 #ifndef __invdyn_statistics_H__
 #define __invdyn_statistics_H__
 
@@ -26,13 +25,11 @@
 #define STATISTICS_MAX_NAME_LENGTH 60
 
 // Generic statistics exception class
-struct StatisticsException
-{
-public:
-  StatisticsException(std::string error) : error(error) { }
+struct StatisticsException {
+ public:
+  StatisticsException(std::string error) : error(error) {}
   std::string error;
 };
-
 
 /**
     @brief A class to compute statistics about quantities of interest.
@@ -67,8 +64,7 @@ public:
 
 */
 class Statistics {
-public:
-
+ public:
   /** Constructor */
   Statistics();
 
@@ -79,7 +75,7 @@ public:
   bool quantity_exists(std::string name);
 
   /** Record the value of the specified quantity */
-  void store(std::string name, const double & value);
+  void store(std::string name, const double& value);
 
   /** Reset a certain quantity record */
   void reset(std::string name);
@@ -88,11 +84,11 @@ public:
   void reset_all();
 
   /** Dump the data of a certain quantity record */
-  void report(std::string name, int precision=2,
+  void report(std::string name, int precision = 2,
               std::ostream& output = std::cout);
 
   /** Dump the data of all the quantity records */
-  void report_all(int precision=2, std::ostream& output = std::cout);
+  void report_all(int precision = 2, std::ostream& output = std::cout);
 
   /** Returns total execution of a certain quantity */
   long double get_total(std::string name);
@@ -116,33 +112,25 @@ public:
   /** Turn on statistics, restore operativity after a turn_off(). */
   void turn_on();
 
-protected:
-
+ protected:
   /** Struct to hold the quantity data */
   struct QuantityData {
-
-    QuantityData() :
-      total(0),
-      min(0),
-      max(0),
-      last(0),
-      stops(0) {
-    }
+    QuantityData() : total(0), min(0), max(0), last(0), stops(0) {}
 
     /** Cumulative total value */
-    long double	total;
+    long double total;
 
     /** Minimum value */
-    long double	min;
+    long double min;
 
     /** Maximum value */
-    long double	max;
+    long double max;
 
     /** Last value */
     long double last;
 
     /** How many times have this quantity been stored? */
-    int	stops;
+    int stops;
   };
 
   /** Flag to hold the statistics status */
@@ -150,8 +138,7 @@ protected:
 
   /** Pointer to the dynamic structure which holds the collection of quantity
       data */
-  std::map<std::string, QuantityData >* records_of;
-
+  std::map<std::string, QuantityData>* records_of;
 };
 
 Statistics& getStatistics();

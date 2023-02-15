@@ -38,7 +38,7 @@ option(BUILD_WITH_OSQP "Support using the osqp solver" OFF)
 # With pos, vel, acc awaiting renaming (e.g. in trajectory-base), we are
 # producing a ton of deprecation warnings. Ignoring them for now; remove this
 # once pos, vel, acc are renamed.
-add_definitions(-Wno-deprecated)
+add_definitions(-Wno-deprecated-declarations)
 
 # We frequently convert between signed and unsigned integers for Eigen::Index.
 # Ignore them for now.
@@ -162,6 +162,18 @@ if(BUILD_WITH_PROXQP)
   find_package(proxsuite REQUIRED)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
        include/tsid/solvers/solver-proxqp.hpp)
+
+  # Determine whether ot use the default target or the vectorized target, if
+  # available
+  set(proxsuite_INTERFACE proxsuite::proxsuite)
+  if(NOT TARGET proxsuite::proxsuite-vectorized)
+    message(
+      STATUS
+        "proxsuite::proxsuite-vectorized not available - defaulting to non-vectorized ProxQP"
+    )
+  else()
+    set(proxsuite_INTERFACE proxsuite::proxsuite-vectorized)
+  endif()
 endif()
 
 if(BUILD_WITH_OSQP)
@@ -297,7 +309,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC pinocchio::pinocchio
 
 if(BUILD_WITH_PROXQP)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_PROXSUITE)
-  target_link_libraries(${PROJECT_NAME} PUBLIC proxsuite::proxsuite-vectorized)
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${proxsuite_INTERFACE})
 endif()
 
 if(BUILD_WITH_OSQP)

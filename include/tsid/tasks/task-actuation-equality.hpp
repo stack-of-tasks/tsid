@@ -21,52 +21,46 @@
 #include <tsid/tasks/task-actuation.hpp>
 #include <tsid/math/constraint-equality.hpp>
 
-namespace tsid
-{
-  namespace tasks
-  {
-    class TaskActuationEquality : public TaskActuation
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+namespace tsid {
+namespace tasks {
+class TaskActuationEquality : public TaskActuation {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      typedef math::Index Index;
-      typedef math::Vector Vector;
-      typedef math::VectorXi VectorXi;
-      typedef math::ConstraintEquality ConstraintEquality;
-      typedef pinocchio::Data Data;
+  typedef math::Index Index;
+  typedef math::Vector Vector;
+  typedef math::VectorXi VectorXi;
+  typedef math::ConstraintEquality ConstraintEquality;
+  typedef pinocchio::Data Data;
 
-      TaskActuationEquality(const std::string & name,
-                            RobotWrapper & robot);
+  TaskActuationEquality(const std::string& name, RobotWrapper& robot);
 
-      virtual ~TaskActuationEquality() {}
+  virtual ~TaskActuationEquality() {}
 
-      int dim() const;
+  int dim() const;
 
-      const ConstraintBase & compute(const double t,
-                                     ConstRefVector q,
-                                     ConstRefVector v,
-                                     Data & data);
+  const ConstraintBase& compute(const double t, ConstRefVector q,
+                                ConstRefVector v, Data& data);
 
-      const ConstraintBase & getConstraint() const;
+  const ConstraintBase& getConstraint() const;
 
-      void setReference(math::ConstRefVector ref);
-      const Vector & getReference() const;
+  void setReference(math::ConstRefVector ref);
+  const Vector& getReference() const;
 
-      void setWeightVector(math::ConstRefVector weights);
-      const Vector & getWeightVector() const;
+  void setWeightVector(math::ConstRefVector weights);
+  const Vector& getWeightVector() const;
 
-      const Vector & mask() const;
-      void mask(const Vector & mask);
+  const Vector& mask() const;
+  void mask(const Vector& mask);
 
-    protected:
-      Vector m_mask;
-      VectorXi m_activeAxes;
-      Vector m_ref;
-      Vector m_weights;
-      ConstraintEquality m_constraint;
-    };
-  }
-}
+ protected:
+  Vector m_mask;
+  VectorXi m_activeAxes;
+  Vector m_ref;
+  Vector m_weights;
+  ConstraintEquality m_constraint;
+};
+}  // namespace tasks
+}  // namespace tsid
 
-#endif // ifndef __invdyn_task_actuation_equality_hpp__
+#endif  // ifndef __invdyn_task_actuation_equality_hpp__
