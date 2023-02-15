@@ -16,6 +16,7 @@
 //
 
 #include "tsid/formulations/inverse-dynamics-formulation-acc-force.hpp"
+
 #include "tsid/math/constraint-bound.hpp"
 #include "tsid/math/constraint-inequality.hpp"
 
@@ -37,7 +38,7 @@ InverseDynamicsFormulationAccForce::InverseDynamicsFormulationAccForce(
       m_solutionDecoded(false) {
   m_t = 0.0;
   m_v = robot.nv();
-  m_u = robot.nv()-robot.na();
+  m_u = robot.nv() - robot.na();
   m_k = 0;
   m_eq = m_u;
   m_in = 0;
@@ -243,8 +244,8 @@ bool InverseDynamicsFormulationAccForce::updateRigidContactWeights(
   return false;
 }
 
-bool InverseDynamicsFormulationAccForce::addMeasuredForce(MeasuredForceBase &measuredForce)
-{
+bool InverseDynamicsFormulationAccForce::addMeasuredForce(
+    MeasuredForceBase &measuredForce) {
   auto tl = std::make_shared<MeasuredForceLevel>(measuredForce);
   m_measuredForces.push_back(tl);
 
@@ -304,16 +305,17 @@ const HQPData &InverseDynamicsFormulationAccForce::computeProblemData(
 
   // Add all measured external forces to dynamic model
   h_fext.setZero(m_v);
-  for(auto it : m_measuredForces)
-  {
+  for (auto it : m_measuredForces) {
     h_fext += it->measuredForce.computeJointTorques(m_data);
   }
 
-  const Matrix &M_a = m_robot.mass(m_data).bottomRows(m_v-m_u);
-  const Vector &h_a = m_robot.nonLinearEffects(m_data).tail(m_v-m_u)-h_fext.tail(m_v-m_u);
-  const Matrix &J_a = m_Jc.rightCols(m_v-m_u);
+  const Matrix &M_a = m_robot.mass(m_data).bottomRows(m_v - m_u);
+  const Vector &h_a =
+      m_robot.nonLinearEffects(m_data).tail(m_v - m_u) - h_fext.tail(m_v - m_u);
+  const Matrix &J_a = m_Jc.rightCols(m_v - m_u);
   const Matrix &M_u = m_robot.mass(m_data).topRows(m_u);
-  const Vector &h_u = m_robot.nonLinearEffects(m_data).head(m_u)-h_fext.head(m_u);
+  const Vector &h_u =
+      m_robot.nonLinearEffects(m_data).head(m_u) - h_fext.head(m_u);
   const Matrix &J_u = m_Jc.leftCols(m_u);
 
   m_baseDynamics->matrix().leftCols(m_v) = M_u;
@@ -410,14 +412,13 @@ const HQPData &InverseDynamicsFormulationAccForce::computeProblemData(
   return m_hqpData;
 }
 
-bool InverseDynamicsFormulationAccForce::decodeSolution(const HQPOutput & sol)
-{
-  if(m_solutionDecoded)
-    return true;
+bool InverseDynamicsFormulationAccForce::decodeSolution(const HQPOutput &sol) {
+  if (m_solutionDecoded) return true;
 
-  const Matrix &M_a = m_robot.mass(m_data).bottomRows(m_v-m_u);
-  const Vector &h_a = m_robot.nonLinearEffects(m_data).tail(m_v-m_u)-h_fext.tail(m_v-m_u);
-  const Matrix &J_a = m_Jc.rightCols(m_v-m_u);
+  const Matrix &M_a = m_robot.mass(m_data).bottomRows(m_v - m_u);
+  const Vector &h_a =
+      m_robot.nonLinearEffects(m_data).tail(m_v - m_u) - h_fext.tail(m_v - m_u);
+  const Matrix &J_a = m_Jc.rightCols(m_v - m_u);
   m_dv = sol.x.head(m_v);
   m_f = sol.x.tail(m_k);
   m_tau = h_a;
@@ -573,12 +574,10 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(
          third_constraint_found;
 }
 
-bool InverseDynamicsFormulationAccForce::removeMeasuredForce(const std::string &measuredForceName)
-{
-  for(auto it = m_measuredForces.begin(); it != m_measuredForces.end(); it++)
-  {
-    if((*it)->measuredForce.name()==measuredForceName)
-    {
+bool InverseDynamicsFormulationAccForce::removeMeasuredForce(
+    const std::string &measuredForceName) {
+  for (auto it = m_measuredForces.begin(); it != m_measuredForces.end(); it++) {
+    if ((*it)->measuredForce.name() == measuredForceName) {
       m_measuredForces.erase(it);
       return true;
     }
