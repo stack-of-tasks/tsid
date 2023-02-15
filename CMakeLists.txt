@@ -246,8 +246,6 @@ set(${PROJECT_NAME}_TASKS_SOURCES
     src/tasks/task-se3-equality.cpp
     src/tasks/task-angular-momentum-equality.cpp)
 
-set(${PROJECT_NAME}_MEASUREDFORCES_SOURCES)
-
 set(${PROJECT_NAME}_CONTACTS_SOURCES
     src/contacts/contact-base.cpp 
     src/contacts/contact-6d.cpp
