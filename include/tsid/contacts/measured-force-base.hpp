@@ -18,43 +18,40 @@
 #ifndef __invdyn_measured_force_base_hpp__
 #define __invdyn_measured_force_base_hpp__
 
-#include "tsid/math/fwd.hpp"
-#include "tsid/robots/fwd.hpp"
 #include <pinocchio/multibody/fwd.hpp>
 
-namespace tsid
-{
-  namespace contacts
-  {
-    class MeasuredForceBase
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#include "tsid/math/fwd.hpp"
+#include "tsid/robots/fwd.hpp"
 
-      typedef math::Vector Vector;
-      typedef pinocchio::Data Data;
-      typedef robots::RobotWrapper RobotWrapper;
+namespace tsid {
+namespace contacts {
+class MeasuredForceBase {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      MeasuredForceBase(const std::string &name,
-                        RobotWrapper &robot);
+  typedef math::Vector Vector;
+  typedef pinocchio::Data Data;
+  typedef robots::RobotWrapper RobotWrapper;
 
-      const std::string &name() const;
+  MeasuredForceBase(const std::string &name, RobotWrapper &robot);
 
-      void name(const std::string &name);
+  const std::string &name() const;
 
-      /**
-       * Compute the bias force (J^t F) associated to the
-       * external measured force.
-       */
-      virtual const Vector &computeJointTorques(Data &data) = 0;
+  void name(const std::string &name);
 
-    protected:
-      std::string m_name;
+  /**
+   * Compute the bias force (J^t F) associated to the
+   * external measured force.
+   */
+  virtual const Vector &computeJointTorques(Data &data) = 0;
 
-      /// \brief Reference on the robot model.
-      RobotWrapper &m_robot;
-    };
-  }
-}
+ protected:
+  std::string m_name;
 
-#endif // ifndef __invdyn_measured_force_base_hpp__
+  /// \brief Reference on the robot model.
+  RobotWrapper &m_robot;
+};
+}  // namespace contacts
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_measured_force_base_hpp__
