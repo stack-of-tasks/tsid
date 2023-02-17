@@ -18,8 +18,8 @@ set(PROJECT_ORG stack-of-tasks)
 set(PROJECT_NAME tsid)
 set(PROJECT_DESCRIPTION
     "Efficient Task Space Inverse Dynamics for Multi-body Systems based on Pinocchio"
-)
-set(PROJECT_URL "https://github.com/${PROJECT_ORG}/${PROJECT_NAME}")
+  )
+  set(PROJECT_URL "https://github.com/${PROJECT_ORG}/${PROJECT_NAME}")
 
 # Project options
 option(INSTALL_DOCUMENTATION "Build and install the documentation" OFF)
