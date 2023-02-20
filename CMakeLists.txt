@@ -18,8 +18,8 @@ set(PROJECT_ORG stack-of-tasks)
 set(PROJECT_NAME tsid)
 set(PROJECT_DESCRIPTION
     "Efficient Task Space Inverse Dynamics for Multi-body Systems based on Pinocchio"
-  )
-  set(PROJECT_URL "https://github.com/${PROJECT_ORG}/${PROJECT_NAME}")
+)
+set(PROJECT_URL "https://github.com/${PROJECT_ORG}/${PROJECT_NAME}")
 
 # Project options
 option(INSTALL_DOCUMENTATION "Build and install the documentation" OFF)
@@ -130,7 +130,7 @@ set(${PROJECT_NAME}_TASKS_HEADERS
     include/tsid/tasks/task-angular-momentum-equality.hpp)
 
 set(${PROJECT_NAME}_CONTACTS_HEADERS
-    include/tsid/contacts/fwd.hpp 
+    include/tsid/contacts/fwd.hpp
     include/tsid/contacts/contact-base.hpp
     include/tsid/contacts/contact-6d.hpp
     include/tsid/contacts/contact-point.hpp
@@ -161,7 +161,7 @@ set(${PROJECT_NAME}_SOLVERS_HEADERS
 if(BUILD_WITH_PROXQP)
   find_package(proxsuite REQUIRED)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
-       include/tsid/solvers/solver-proxqp.hpp)
+              include/tsid/solvers/solver-proxqp.hpp)
 
   # Determine whether ot use the default target or the vectorized target, if
   # available
@@ -179,12 +179,12 @@ endif()
 if(BUILD_WITH_OSQP)
   find_package(OsqpEigen REQUIRED)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
-       include/tsid/solvers/solver-osqp.hpp)
+              include/tsid/solvers/solver-osqp.hpp)
 endif()
 
 if(qpmad_FOUND)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
-       include/tsid/solvers/solver-HQP-qpmad.hpp)
+              include/tsid/solvers/solver-HQP-qpmad.hpp)
 endif()
 
 set(${PROJECT_NAME}_ROBOTS_HEADERS include/tsid/robots/fwd.hpp
@@ -247,12 +247,9 @@ set(${PROJECT_NAME}_TASKS_SOURCES
     src/tasks/task-angular-momentum-equality.cpp)
 
 set(${PROJECT_NAME}_CONTACTS_SOURCES
-    src/contacts/contact-base.cpp 
-    src/contacts/contact-6d.cpp
-    src/contacts/contact-point.cpp
-    src/contacts/measured-force-base.cpp
-    src/contacts/measured-3Dforce.cpp
-    src/contacts/measured-6Dwrench.cpp)
+    src/contacts/contact-base.cpp src/contacts/contact-6d.cpp
+    src/contacts/contact-point.cpp src/contacts/measured-force-base.cpp
+    src/contacts/measured-3Dforce.cpp src/contacts/measured-6Dwrench.cpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_SOURCES
     src/trajectories/trajectory-se3.cpp
