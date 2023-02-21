@@ -161,7 +161,7 @@ set(${PROJECT_NAME}_SOLVERS_HEADERS
 if(BUILD_WITH_PROXQP)
   find_package(proxsuite REQUIRED)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
-              include/tsid/solvers/solver-proxqp.hpp)
+       include/tsid/solvers/solver-proxqp.hpp)
 
   # Determine whether ot use the default target or the vectorized target, if
   # available
@@ -179,12 +179,12 @@ endif()
 if(BUILD_WITH_OSQP)
   find_package(OsqpEigen REQUIRED)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
-              include/tsid/solvers/solver-osqp.hpp)
+       include/tsid/solvers/solver-osqp.hpp)
 endif()
 
 if(qpmad_FOUND)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
-              include/tsid/solvers/solver-HQP-qpmad.hpp)
+       include/tsid/solvers/solver-HQP-qpmad.hpp)
 endif()
 
 set(${PROJECT_NAME}_ROBOTS_HEADERS include/tsid/robots/fwd.hpp
