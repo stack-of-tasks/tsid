@@ -18,17 +18,17 @@
 #ifndef __invdyn_inverse_dynamics_formulation_base_hpp__
 #define __invdyn_inverse_dynamics_formulation_base_hpp__
 
-#include <string>
-
-#include "tsid/contacts/contact-base.hpp"
-#include "tsid/contacts/measured-force-base.hpp"
 #include "tsid/deprecated.hh"
 #include "tsid/math/fwd.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
-#include "tsid/solvers/solver-HQP-base.hpp"
 #include "tsid/tasks/task-actuation.hpp"
-#include "tsid/tasks/task-contact-force.hpp"
 #include "tsid/tasks/task-motion.hpp"
+#include "tsid/tasks/task-contact-force.hpp"
+#include "tsid/contacts/contact-base.hpp"
+#include "tsid/contacts/measured-force-base.hpp"
+#include "tsid/solvers/solver-HQP-base.hpp"
+
+#include <string>
 
 namespace tsid {
 
