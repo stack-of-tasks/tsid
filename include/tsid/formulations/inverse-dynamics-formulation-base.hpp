@@ -25,6 +25,7 @@
 #include "tsid/tasks/task-motion.hpp"
 #include "tsid/tasks/task-contact-force.hpp"
 #include "tsid/contacts/contact-base.hpp"
+#include "tsid/contacts/measured-force-base.hpp"
 #include "tsid/solvers/solver-HQP-base.hpp"
 
 #include <string>
@@ -51,6 +52,14 @@ struct TaskLevelForce {
   TaskLevelForce(tasks::TaskContactForce& task, unsigned int priority);
 };
 
+struct MeasuredForceLevel {
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  contacts::MeasuredForceBase& measuredForce;
+
+  MeasuredForceLevel(contacts::MeasuredForceBase& measuredForce);
+};
+
 ///
 /// \brief Wrapper for a robot based on pinocchio
 ///
@@ -66,6 +75,7 @@ class InverseDynamicsFormulationBase {
   typedef tasks::TaskContactForce TaskContactForce;
   typedef tasks::TaskActuation TaskActuation;
   typedef tasks::TaskBase TaskBase;
+  typedef contacts::MeasuredForceBase MeasuredForceBase;
   typedef contacts::ContactBase ContactBase;
   typedef solvers::HQPData HQPData;
   typedef solvers::HQPOutput HQPOutput;
@@ -128,11 +138,15 @@ class InverseDynamicsFormulationBase {
                                          double force_regularization_weight,
                                          double motion_weight = -1.0) = 0;
 
+  virtual bool addMeasuredForce(MeasuredForceBase& measuredForce) = 0;
+
   virtual bool removeTask(const std::string& taskName,
                           double transition_duration = 0.0) = 0;
 
   virtual bool removeRigidContact(const std::string& contactName,
                                   double transition_duration = 0.0) = 0;
+
+  virtual bool removeMeasuredForce(const std::string& measuredForceName) = 0;
 
   virtual const HQPData& computeProblemData(double time, ConstRefVector q,
                                             ConstRefVector v) = 0;

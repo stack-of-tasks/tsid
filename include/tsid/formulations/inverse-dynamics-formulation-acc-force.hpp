@@ -18,11 +18,11 @@
 #ifndef __invdyn_inverse_dynamics_formulation_acc_force_hpp__
 #define __invdyn_inverse_dynamics_formulation_acc_force_hpp__
 
-#include "tsid/formulations/inverse-dynamics-formulation-base.hpp"
-#include "tsid/formulations/contact-level.hpp"
-#include "tsid/math/constraint-equality.hpp"
-
 #include <vector>
+
+#include "tsid/formulations/contact-level.hpp"
+#include "tsid/formulations/inverse-dynamics-formulation-base.hpp"
+#include "tsid/math/constraint-equality.hpp"
 
 namespace tsid {
 
@@ -50,6 +50,7 @@ class InverseDynamicsFormulationAccForce
   typedef tasks::TaskMotion TaskMotion;
   typedef tasks::TaskContactForce TaskContactForce;
   typedef tasks::TaskActuation TaskActuation;
+  typedef contacts::MeasuredForceBase MeasuredForceBase;
   typedef solvers::HQPOutput HQPOutput;
 
   InverseDynamicsFormulationAccForce(const std::string& name,
@@ -87,11 +88,15 @@ class InverseDynamicsFormulationAccForce
                                  double force_regularization_weight,
                                  double motion_weight = -1.0);
 
+  bool addMeasuredForce(MeasuredForceBase& measuredForce);
+
   bool removeTask(const std::string& taskName,
                   double transition_duration = 0.0);
 
   bool removeRigidContact(const std::string& contactName,
                           double transition_duration = 0.0);
+
+  bool removeMeasuredForce(const std::string& measuredForceName);
 
   const HQPData& computeProblemData(double time, ConstRefVector q,
                                     ConstRefVector v);
@@ -116,10 +121,11 @@ class InverseDynamicsFormulationAccForce
 
   Data m_data;
   HQPData m_hqpData;
-  std::vector<std::shared_ptr<TaskLevel> > m_taskMotions;
-  std::vector<std::shared_ptr<TaskLevelForce> > m_taskContactForces;
-  std::vector<std::shared_ptr<TaskLevel> > m_taskActuations;
-  std::vector<std::shared_ptr<ContactLevel> > m_contacts;
+  std::vector<std::shared_ptr<TaskLevel>> m_taskMotions;
+  std::vector<std::shared_ptr<TaskLevelForce>> m_taskContactForces;
+  std::vector<std::shared_ptr<TaskLevel>> m_taskActuations;
+  std::vector<std::shared_ptr<ContactLevel>> m_contacts;
+  std::vector<std::shared_ptr<MeasuredForceLevel>> m_measuredForces;
   double m_t;         /// time
   unsigned int m_k;   /// number of contact-force variables
   unsigned int m_v;   /// number of acceleration variables
@@ -134,9 +140,9 @@ class InverseDynamicsFormulationAccForce
   Vector m_f;
   Vector m_tau;
 
-  std::vector<std::shared_ptr<ContactTransitionInfo> > m_contactTransitions;
+  Vector h_fext;  /// sum of external measured forces
+
+  std::vector<std::shared_ptr<ContactTransitionInfo>> m_contactTransitions;
 };
-
 }  // namespace tsid
-
 #endif  // ifndef __invdyn_inverse_dynamics_formulation_acc_force_hpp__
