@@ -2,7 +2,6 @@
 name = "tsid"
 version = "1.6.2.1"
 description = "A fast and flexible implementation of Rigid Body Dynamics algorithms and their analytical derivatives"
-readme = "README.md"
 license= "BSD-3-Clause"
 dependencies = ["pin", "eiquadprog"]
 
@@ -15,9 +14,4 @@ configure-args = ["-DSUFFIX_SO_VERSION=OFF"]
 
 [build-system]
 build-backend = "cmeel.build"
-requires = [
-    "cmeel[build]",
-    "cmeel-urdfdom-headers",
-    "eiquadprog",
-    "pin",
-    ]
+requires = ["cmeel[build]", "eiquadprog", "pin[build]"]
