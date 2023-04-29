@@ -1,9 +1,13 @@
+[build-system]
+build-backend = "cmeel.build"
+requires = ["cmeel[build]", "eiquadprog", "pin[build]"]
+
 [project]
+dependencies = ["eiquadprog", "pin"]
+description = "A fast and flexible implementation of Rigid Body Dynamics algorithms and their analytical derivatives"
+license = "BSD-3-Clause"
 name = "tsid"
 version = "1.6.2.1"
-description = "A fast and flexible implementation of Rigid Body Dynamics algorithms and their analytical derivatives"
-license= "BSD-3-Clause"
-dependencies = ["pin", "eiquadprog"]
 
 [project.urls]
 homepage = "https://github.com/stack-of-tasks/tsid"
@@ -12,6 +16,5 @@ homepage = "https://github.com/stack-of-tasks/tsid"
 build-number = 2
 configure-args = ["-DSUFFIX_SO_VERSION=OFF"]
 
-[build-system]
-build-backend = "cmeel.build"
-requires = ["cmeel[build]", "eiquadprog", "pin[build]"]
+[tool.tomlsort]
+all = true

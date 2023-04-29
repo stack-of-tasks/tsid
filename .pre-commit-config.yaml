@@ -12,3 +12,7 @@ repos:
     rev: v0.6.13
     hooks:
     - id: cmake-format
+-   repo: https://github.com/pappasam/toml-sort
+    rev: v0.23.0
+    hooks:
+    - id: toml-sort-fix
