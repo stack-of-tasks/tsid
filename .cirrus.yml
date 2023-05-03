@@ -8,6 +8,7 @@ macos_arm64_task:
   env:
     CIRRUS_CLONE_SUBMODULES: true
     CIBW_REPAIR_WHEEL_COMMAND: ""
+    CIBW_SKIP: "cp38-*"
     PATH: /opt/homebrew/opt/python@3.10/bin:$PATH
   install_pre_requirements_script:
     - brew install python@3.10
