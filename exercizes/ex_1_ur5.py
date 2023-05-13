@@ -1,13 +1,14 @@
-import numpy as np
-from numpy import nan
-from numpy.linalg import norm as norm
-import matplotlib.pyplot as plt
-import plot_utils as plut
 import time
-from tsid_manipulator import TsidManipulator
+
+import matplotlib.pyplot as plt
+import numpy as np
+import plot_utils as plut
 
 # import ur5_conf as conf
 import ur5_reaching_conf as conf
+from numpy import nan
+from numpy.linalg import norm as norm
+from tsid_manipulator import TsidManipulator
 
 print(("".center(conf.LINE_WIDTH, "#")))
 print((" TSID - Manipulator End-Effector Sin Tracking ".center(conf.LINE_WIDTH, "#")))

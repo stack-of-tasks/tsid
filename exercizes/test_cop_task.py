@@ -7,13 +7,14 @@
     which was the goal of the test, validating the CoP task.
 """
 
+import time
+
+import ex_4_conf as conf
+import matplotlib.pyplot as plt
 import numpy as np
+import plot_utils as plut
 from numpy import nan
 from numpy.linalg import norm as norm
-import matplotlib.pyplot as plt
-import plot_utils as plut
-import time
-import ex_4_conf as conf
 
 # import ex_4_long_conf as conf
 from tsid_biped import TsidBiped

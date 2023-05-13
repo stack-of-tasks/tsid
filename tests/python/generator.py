@@ -1,7 +1,8 @@
-import pinocchio as pin
+from math import pi
+
 import hppfcl as fcl
 import numpy as np
-from math import pi
+import pinocchio as pin
 
 
 def create_7dof_arm(revoluteOnly=False):

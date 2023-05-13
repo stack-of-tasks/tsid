@@ -1,11 +1,12 @@
+import time
+
+import matplotlib.pyplot as plt
 import numpy as np
+import pinocchio as pin
+import plot_utils as plut
+import romeo_conf as conf
 from numpy import nan
 from numpy.linalg import norm as norm
-import matplotlib.pyplot as plt
-import plot_utils as plut
-import time
-import romeo_conf as conf
-import pinocchio as pin
 from tsid_biped import TsidBiped
 
 print("".center(conf.LINE_WIDTH, "#"))

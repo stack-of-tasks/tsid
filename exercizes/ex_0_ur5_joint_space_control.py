@@ -1,16 +1,17 @@
+import os
+import subprocess
+import time
+
+import gepetto.corbaserver
+import matplotlib.pyplot as plt
 import numpy as np
+import pinocchio as pin
+import plot_utils as plut
+import ur5_conf as conf
 from numpy import nan
 from numpy.linalg import norm as norm
-import matplotlib.pyplot as plt
-import plot_utils as plut
-import time
-import pinocchio as pin
-import tsid
-import gepetto.corbaserver
-import subprocess
-import os
 
-import ur5_conf as conf
+import tsid
 
 print("".center(conf.LINE_WIDTH, "#"))
 print(" Joint Space Inverse Dynamics - Manipulator ".center(conf.LINE_WIDTH, "#"))

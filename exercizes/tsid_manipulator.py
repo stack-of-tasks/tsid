@@ -1,11 +1,13 @@
-import pinocchio as se3
-import tsid
+import os
+import subprocess
+import time
+
+import gepetto.corbaserver
 import numpy as np
 import numpy.matlib as matlib
-import os
-import gepetto.corbaserver
-import time
-import subprocess
+import pinocchio as se3
+
+import tsid
 
 
 class TsidManipulator:

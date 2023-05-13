@@ -1,6 +1,7 @@
 import os
-import pinocchio as pin
+
 import numpy as np
+import pinocchio as pin
 from example_robot_data.robots_loader import getModelPath
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)

@@ -12,7 +12,6 @@ from tkinter import HORIZONTAL, Button, Entry, Frame, Label, Scale, Tk, mainloop
 
 import numpy as np
 import pinocchio as pin
-
 import talos_conf as conf
 
 # import romeo_conf as conf

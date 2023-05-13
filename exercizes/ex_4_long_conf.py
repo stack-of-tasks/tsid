@@ -5,8 +5,9 @@ Created on Thu Apr 18 09:47:07 2019
 @author: student
 """
 
-import numpy as np
 import os
+
+import numpy as np
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 LINE_WIDTH = 60

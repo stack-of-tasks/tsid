@@ -1,11 +1,11 @@
-import numpy as np
+import ex_4_conf as conf
 import LMPC_walking.second_order.plot_utils as plot_utils
+import matplotlib.pyplot as plt
+import numpy as np
 from LMPC_walking.second_order.LIPM_to_whole_body import (
     compute_foot_traj,
     interpolate_lipm_traj,
 )
-import matplotlib.pyplot as plt
-import ex_4_conf as conf
 
 # import ex_4_long_conf as conf
 

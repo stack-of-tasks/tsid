@@ -1,7 +1,9 @@
-import pinocchio as se3
-import tsid
-import numpy as np
 import copy
+
+import numpy as np
+import pinocchio as se3
+
+import tsid
 
 print("")
 print("Test Contact")

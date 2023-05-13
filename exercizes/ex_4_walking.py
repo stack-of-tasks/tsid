@@ -1,16 +1,15 @@
 import time
-import numpy as np
-import scipy.sparse as spa
-import matplotlib.pyplot as plt
 
-import tsid
-import plot_utils as plut
 import ex_4_conf as conf
-
+import matplotlib.pyplot as plt
+import numpy as np
+import plot_utils as plut
+import scipy.sparse as spa
 from numpy import nan
 from numpy.linalg import norm as norm
 from tsid_biped import TsidBiped
 
+import tsid
 
 print("".center(conf.LINE_WIDTH, "#"))
 print(" Test Walking ".center(conf.LINE_WIDTH, "#"))

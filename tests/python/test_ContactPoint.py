@@ -6,7 +6,6 @@ import pinocchio as se3
 
 import tsid
 
-
 print("")
 print("Test Contact")
 print("")

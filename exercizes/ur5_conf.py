@@ -5,8 +5,9 @@ Created on Thu Apr 18 09:47:07 2019
 @author: student
 """
 
-import numpy as np
 import os
+
+import numpy as np
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 LINE_WIDTH = 60
@@ -52,8 +53,9 @@ REF_SPHERE_RADIUS = 0.03
 EE_SPHERE_COLOR = (1, 0.5, 0, 0.5)
 EE_REF_SPHERE_COLOR = (1, 0, 0, 0.5)
 
-from example_robot_data.robots_loader import getModelPath
 from os.path import join
+
+from example_robot_data.robots_loader import getModelPath
 
 urdf = "ur_description/urdf/ur5_robot.urdf"
 path = getModelPath(urdf)

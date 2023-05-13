@@ -1,17 +1,19 @@
-import pinocchio as pin
-import tsid
-import numpy as np
-from numpy import nan
-from numpy.linalg import norm as norm
 import os
-import gepetto.corbaserver
-import time
 import subprocess
 import sys
+import time
+
+import gepetto.corbaserver
+import numpy as np
+import pinocchio as pin
+from numpy import nan
+from numpy.linalg import norm as norm
+
+import tsid
 
 sys.path += [os.getcwd() + "/../exercizes"]
-import plot_utils as plut
 import matplotlib.pyplot as plt
+import plot_utils as plut
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
