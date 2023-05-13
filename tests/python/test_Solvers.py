@@ -60,11 +60,11 @@ A1 = np.random.rand(n, n) + 0.001 * np.eye(n)
 b1 = np.random.rand(n)
 cost = tsid.ConstraintEquality("c1", A1, b1)
 
-x = np.linalg.inv(A1) @ b1
+x = np.linalg.inv(A1).dot(b1)
 A_in = np.random.rand(nin, n)
 A_lb = np.random.rand(nin) * NORMAL_DISTR_VAR
 A_ub = np.random.rand(nin) * NORMAL_DISTR_VAR
-constrVal = A_in @ x
+constrVal = A_in.dot(x)
 
 for i in range(0, nin):
     if A_ub[i] <= A_lb[i]:
@@ -78,7 +78,7 @@ for i in range(0, nin):
 
 in_const = tsid.ConstraintInequality("ini1", A_in, A_lb, A_ub)
 A_eq = np.random.rand(neq, n)
-b_eq = A_eq @ x
+b_eq = A_eq.dot(x)
 eq_const = tsid.ConstraintEquality("eq1", A_eq, b_eq)
 
 const1 = tsid.ConstraintLevel()
@@ -111,7 +111,7 @@ for name, solver in solver_list:
 
         HQPoutput = solver.solve(HQPData)
 
-        assert np.linalg.norm(A_eq @ HQPoutput.x - b_eq, 2) < EPS
-        assert (A_in @ HQPoutput.x <= A_ub + EPS).all()
-        assert (A_in @ HQPoutput.x > A_lb - EPS).all()
+        assert np.linalg.norm(A_eq.dot(HQPoutput.x) - b_eq, 2) < EPS
+        assert (A_in.dot(HQPoutput.x) <= A_ub + EPS).all()
+        assert (A_in.dot(HQPoutput.x) > A_lb - EPS).all()
     print("-> succesful")

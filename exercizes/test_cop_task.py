@@ -152,16 +152,16 @@ for i in range(-N_pre, N + N_post):
 
         if tsid.formulation.checkContact(tsid.contactRF.name, sol):
             T_RF = tsid.contactRF.getForceGeneratorMatrix
-            f_RF[:, i] = T_RF @ tsid.formulation.getContactForce(
-                tsid.contactRF.name, sol
+            f_RF[:, i] = T_RF.dot(
+                tsid.formulation.getContactForce(tsid.contactRF.name, sol)
             )
             if f_RF[2, i] > 1e-3:
                 cop_RF[0, i] = f_RF[4, i] / f_RF[2, i]
                 cop_RF[1, i] = -f_RF[3, i] / f_RF[2, i]
         if tsid.formulation.checkContact(tsid.contactLF.name, sol):
             T_LF = tsid.contactRF.getForceGeneratorMatrix
-            f_LF[:, i] = T_LF @ tsid.formulation.getContactForce(
-                tsid.contactLF.name, sol
+            f_LF[:, i] = T_LF.dot(
+                tsid.formulation.getContactForce(tsid.contactLF.name, sol)
             )
             if f_LF[2, i] > 1e-3:
                 cop_LF[0, i] = f_LF[4, i] / f_LF[2, i]

@@ -4,7 +4,6 @@ import ex_4_conf as conf
 import matplotlib.pyplot as plt
 import numpy as np
 import plot_utils as plut
-import scipy.sparse as spa
 from numpy import nan
 from numpy.linalg import norm as norm
 from tsid_biped import TsidBiped
@@ -175,16 +174,16 @@ for i in range(-N_pre, N + N_post):
 
         if tsid_biped.formulation.checkContact(tsid_biped.contactRF.name, sol):
             T_RF = tsid_biped.contactRF.getForceGeneratorMatrix
-            f_RF[:, i] = T_RF @ tsid_biped.formulation.getContactForce(
-                tsid_biped.contactRF.name, sol
+            f_RF[:, i] = T_RF.dot(
+                tsid_biped.formulation.getContactForce(tsid_biped.contactRF.name, sol)
             )
             if f_RF[2, i] > 1e-3:
                 cop_RF[0, i] = f_RF[4, i] / f_RF[2, i]
                 cop_RF[1, i] = -f_RF[3, i] / f_RF[2, i]
         if tsid_biped.formulation.checkContact(tsid_biped.contactLF.name, sol):
             T_LF = tsid_biped.contactRF.getForceGeneratorMatrix
-            f_LF[:, i] = T_LF @ tsid_biped.formulation.getContactForce(
-                tsid_biped.contactLF.name, sol
+            f_LF[:, i] = T_LF.dot(
+                tsid_biped.formulation.getContactForce(tsid_biped.contactLF.name, sol)
             )
             if f_LF[2, i] > 1e-3:
                 cop_LF[0, i] = f_LF[4, i] / f_LF[2, i]
