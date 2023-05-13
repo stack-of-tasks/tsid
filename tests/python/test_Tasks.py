@@ -57,9 +57,9 @@ for i in range(0, max_it):
     const = taskCOM.compute(t, q, v, data)
 
     Jpinv = np.linalg.pinv(const.matrix, 1e-5)
-    dv = Jpinv * const.vector
+    dv = Jpinv.dot(const.vector)
 
-    assert np.linalg.norm(Jpinv * const.matrix, 2) - 1.0 < tol
+    assert np.linalg.norm(Jpinv.dot(const.matrix), 2) - 1.0 < tol
     v += dt * dv
     q = pin.integrate(model, q, dt * v)
     t += dt
@@ -113,9 +113,9 @@ for i in range(0, max_it):
     const = task_joint.compute(t, q, v, data)
 
     Jpinv = np.linalg.pinv(const.matrix, 1e-5)
-    dv = Jpinv * const.vector
+    dv = Jpinv.dot(const.vector)
 
-    assert np.linalg.norm(Jpinv * const.matrix, 2) - 1.0 < tol
+    assert np.linalg.norm(Jpinv.dot(const.matrix), 2) - 1.0 < tol
     v += dt * dv
     q = pin.integrate(model, q, dt * v)
     t += dt
@@ -171,9 +171,9 @@ for i in range(0, max_it):
     const = task_se3.compute(t, q, v, data)
 
     Jpinv = np.linalg.pinv(const.matrix, 1e-5)
-    dv = Jpinv * const.vector
+    dv = Jpinv.dot(const.vector)
 
-    assert np.linalg.norm(Jpinv * const.matrix, 2) - 1.0 < tol
+    assert np.linalg.norm(Jpinv.dot(const.matrix), 2) - 1.0 < tol
 
     v += dt * dv
     q = pin.integrate(model, q, dt * v)
@@ -252,15 +252,15 @@ for i in range(0, max_it):
     robot.computeAllTerms(data_next, q_next, v)
     J_am = data.Ag
     J_am_next = data_next.Ag
-    drift = (J_am_next[-3:, :] - J_am[-3:, :]) * v / dt
+    drift = (J_am_next[-3:, :] - J_am[-3:, :]).dot(v) / dt
     drift_pin = pin.computeCentroidalMomentumTimeVariation(model, data).angular
     diff_drift = norm(drift_pin - drift)
     print("Difference between drift computations: ", diff_drift)
 
     Jpinv = np.linalg.pinv(const.matrix, 1e-5)
-    dv = Jpinv * const.vector
+    dv = Jpinv.dot(const.vector)
 
-    assert np.linalg.norm(Jpinv * const.matrix, 2) - 1.0 < tol
+    assert np.linalg.norm(Jpinv.dot(const.matrix), 2) - 1.0 < tol
     v += dt * dv
     q = pin.integrate(model, q, dt * v)
     t += dt
@@ -321,9 +321,9 @@ for i in range(0, max_it):
     const = task_joint.compute(t, q, v, data)
 
     Jpinv = np.linalg.pinv(const.matrix, 1e-5)
-    dv = Jpinv * const.vector
+    dv = Jpinv.dot(const.vector)
 
-    assert np.linalg.norm(Jpinv * const.matrix, 2) - 1.0 < tol
+    assert np.linalg.norm(Jpinv.dot(const.matrix), 2) - 1.0 < tol
     v += dt * dv
     q = pin.integrate(model, q, dt * v)
     t += dt
