@@ -17,7 +17,17 @@ GRADIENT_PERTURBATION_VARIANCE = 1e-2
 HESSIAN_PERTURBATION_VARIANCE = 1e-1
 MARGIN_PERC = 1e-3
 
-print("Gonna perform", nTest, "tests with", n, "variables, ", neq, "equalities", nin, "inequalities")
+print(
+    "Gonna perform",
+    nTest,
+    "tests with",
+    n,
+    "variables, ",
+    neq,
+    "equalities",
+    nin,
+    "inequalities",
+)
 
 solver_list = []
 
@@ -95,7 +105,6 @@ for i in range(0, nTest):
 for name, solver in solver_list:
     print(f"Using {name}")
     for i in range(0, nTest):
-
         cost.setMatrix(cost.matrix + hessianPerturbations[i])
         cost.setVector(cost.vector + gradientPerturbations[i])
 

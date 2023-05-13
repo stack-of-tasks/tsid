@@ -11,8 +11,8 @@ print("")
 
 
 filename = str(os.path.dirname(os.path.abspath(__file__)))
-path = filename + '/../../models/romeo'
-urdf = path + '/urdf/romeo.urdf'
+path = filename + "/../../models/romeo"
+urdf = path + "/urdf/romeo.urdf"
 vector = se3.StdVec_StdString()
 vector.extend(item for item in path)
 
@@ -27,6 +27,6 @@ no_gravity = robot.model().gravity.copy()
 print(init_gravity)
 print(no_gravity)
 
-assert init_gravity!=no_gravity
+assert init_gravity != no_gravity
 
 print("All test is done")

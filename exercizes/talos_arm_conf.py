@@ -26,12 +26,19 @@ tau_max_scaling = 0.4  # scaling factor of torque bounds
 v_max_scaling = 0.4
 
 ee_frame_name = "ee_fixed_joint"  # end-effector frame name
-ee_task_mask = np.array([1., 1, 1, 0, 0, 0])
+ee_task_mask = np.array([1.0, 1, 1, 0, 0, 0])
 
 PRINT_N = 500  # print every PRINT_N time steps
 DISPLAY_N = 20  # update robot configuration in viwewer every DISPLAY_N time steps
-CAMERA_TRANSFORM = [2.582354784011841, 1.620774507522583, 1.0674564838409424, 0.2770655155181885, 0.5401807427406311,
-                    0.6969326734542847, 0.3817386031150818]
+CAMERA_TRANSFORM = [
+    2.582354784011841,
+    1.620774507522583,
+    1.0674564838409424,
+    0.2770655155181885,
+    0.5401807427406311,
+    0.6969326734542847,
+    0.3817386031150818,
+]
 SPHERE_RADIUS = 0.03
 REF_SPHERE_RADIUS = 0.03
 EE_SPHERE_COLOR = (1, 0.5, 0, 0.5)

@@ -13,8 +13,8 @@ print("")
 
 tol = 1e-5
 filename = str(os.path.dirname(os.path.abspath(__file__)))
-path = filename + '/../../models/romeo'
-urdf = path + '/urdf/romeo.urdf'
+path = filename + "/../../models/romeo"
+urdf = path + "/urdf/romeo.urdf"
 vector = se3.StdVec_StdString()
 vector.extend(item for item in path)
 robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
@@ -28,7 +28,9 @@ frameName = "RAnkleRoll"
 contactNormal = np.zeros(3)
 contactNormal[2] = 1.0
 
-contact = tsid.ContactPoint("contactPoint", robot, frameName, contactNormal, mu, fMin, fMax)
+contact = tsid.ContactPoint(
+    "contactPoint", robot, frameName, contactNormal, mu, fMin, fMax
+)
 
 assert contact.n_motion == 3
 assert contact.n_force == 3
