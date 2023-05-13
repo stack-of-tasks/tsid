@@ -75,6 +75,8 @@ include("${JRL_CMAKE_MODULES}/base.cmake")
 include("${JRL_CMAKE_MODULES}/ide.cmake")
 include("${JRL_CMAKE_MODULES}/apple.cmake")
 
+set_default_cmake_build_type("RelWithDebInfo")
+
 # Handle APPLE Cmake policy
 if(APPLE)
   apply_default_apple_configuration()
