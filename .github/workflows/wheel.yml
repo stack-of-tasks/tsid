@@ -3,7 +3,6 @@ name: Test Wheel packaging
 on: ["push", "pull_request"]
 
 env:
-  CMEEL_CMAKE_ARGS: '-DCMAKE_CXX_FLAGS="-D_GLIBCXX_USE_CXX11_ABI=0"'
   CMEEL_JOBS: 1
   CMEEL_LOG_LEVEL: 'DEBUG'
   CMEEL_TEST_JOBS: 1
@@ -15,15 +14,9 @@ jobs:
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
-        python-version: ["3.9", "3.10", "3.11"]
-        include:
-          - os: "ubuntu-latest"
-            python-version: "3.7"
-          - os: "ubuntu-latest"
-            python-version: "3.8"
-          - os: "macos-10.15"
-            python-version: "3.7"
-          - os: "macos-10.15"
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        exclude:
+          - os: "macos-latest"
             python-version: "3.8"
     steps:
       - uses: actions/checkout@v3
@@ -49,7 +42,10 @@ jobs:
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        exclude:
+          - os: "macos-latest"
+            python-version: "3.8"
     steps:
       - uses: actions/download-artifact@v3
       - uses: actions/setup-python@v4
@@ -61,8 +57,8 @@ jobs:
           python -m pip install wheel simple503
           python -m simple503 --sort --base-url "${{ github.workspace }}/artifact" artifact
       - name: install wheel
-        run: python -m pip install -i "file:///${{ github.workspace }}/artifact" tsid
+        run: python -m pip install -i "file:///${{ github.workspace }}/artifact" crocoddyl
       - name: test
-        run: python -c "import tsid"
+        run: python -c "import crocoddyl"
         env:
           PYTHONWARNINGS: error
