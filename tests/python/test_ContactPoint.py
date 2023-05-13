@@ -6,7 +6,6 @@ import pinocchio as se3
 
 import tsid
 
-se3.switchToNumpyMatrix()
 
 print("")
 print("Test Contact")

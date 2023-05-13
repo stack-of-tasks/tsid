@@ -7,7 +7,6 @@ from numpy.linalg import norm
 
 import tsid
 
-se3.switchToNumpyMatrix()
 
 print("")
 print("Test InvDyn")

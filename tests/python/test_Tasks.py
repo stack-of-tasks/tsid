@@ -11,7 +11,6 @@ print("")
 print("Test Task COM")
 print("")
 
-pin.switchToNumpyMatrix()
 
 tol = 1e-5
 filename = str(os.path.dirname(os.path.abspath(__file__)))

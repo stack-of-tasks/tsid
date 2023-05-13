@@ -9,7 +9,6 @@ print("")
 print("Test setGravity")
 print("")
 
-se3.switchToNumpyMatrix()
 
 filename = str(os.path.dirname(os.path.abspath(__file__)))
 path = filename + '/../../models/romeo'
