@@ -25,74 +25,68 @@
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/data.hpp>
 
-namespace tsid
-{
-  namespace tasks
-  {
+namespace tsid {
+namespace tasks {
 
-    class TaskCapturePointInequality : public TaskMotion
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+class TaskCapturePointInequality : public TaskMotion {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      typedef math::Index Index;
-      typedef math::Vector Vector;
-      typedef math::Matrix Matrix;
-      typedef math::Vector3 Vector3;
-      typedef math::ConstraintInequality ConstraintInequality;
-      typedef pinocchio::Data Data;
-      typedef pinocchio::SE3 SE3;
+  typedef math::Index Index;
+  typedef math::Vector Vector;
+  typedef math::Matrix Matrix;
+  typedef math::Vector3 Vector3;
+  typedef math::ConstraintInequality ConstraintInequality;
+  typedef pinocchio::Data Data;
+  typedef pinocchio::SE3 SE3;
 
-      TaskCapturePointInequality(const std::string & name,
-                               RobotWrapper & robot,
-                               const double timeStep);
+  TaskCapturePointInequality(const std::string& name, RobotWrapper& robot,
+                             const double timeStep);
 
-      int dim() const;
+  virtual ~TaskCapturePointInequality() {}
 
-      const ConstraintBase & compute(const double t,
-                                     ConstRefVector q,
-                                     ConstRefVector v,
-                                     Data & data);
+  int dim() const;
 
-      const ConstraintBase & getConstraint() const;
+  const ConstraintBase& compute(const double t, ConstRefVector q,
+                                ConstRefVector v, Data& data);
 
-      Vector getAcceleration(ConstRefVector dv) const;
+  const ConstraintBase& getConstraint() const;
 
-      const Vector & position() const;
+  Vector getAcceleration(ConstRefVector dv) const;
 
-      void setSupportLimitsXAxis(const double x_min, const double x_max);
+  const Vector& position() const;
 
-      void setSupportLimitsYAxis(const double y_min, const double y_max);
+  void setSupportLimitsXAxis(const double x_min, const double x_max);
 
-      void setSafetyMargin(const double x_margin, const double y_margin);
+  void setSupportLimitsYAxis(const double y_min, const double y_max);
 
-    protected:
+  void setSafetyMargin(const double x_margin, const double y_margin);
 
+ protected:
+  Vector m_drift_vec;
+  Vector3 m_drift;
+  Vector m_p_com, m_v_com;
+  Vector m_rp_min;
+  Vector m_rp_max;
 
-      Vector m_drift_vec;
-      Vector3 m_drift;
-      Vector m_p_com, m_v_com;
-      Vector m_rp_min;
-      Vector m_rp_max;
+  ConstraintInequality m_constraint;
 
-      ConstraintInequality m_constraint;
+  Vector m_safety_margin;
+  Vector m_support_limits_x;
+  Vector m_support_limits_y;
 
-      Vector m_safety_margin;
-      Vector m_support_limits_x;
-      Vector m_support_limits_y;
+  Eigen::Index m_nv;
+  double m_delta_t;
+  double m_g;
+  double m_w;
+  double m_ka;
+  int m_dim;
 
-      Eigen::Index m_nv;
-      double m_delta_t;
-      double m_g;
-      double m_w;
-      double m_ka;
-      int m_dim;
+  Vector b_lower;
+  Vector b_upper;
+};
 
-      Vector b_lower;
-      Vector b_upper;
-    };
+}  // namespace tasks
+}  // namespace tsid
 
-  }
-}
-
-#endif //ifndef __invdyn_task_capture_point_inequality_hpp__
+#endif  // ifndef __invdyn_task_capture_point_inequality_hpp__

@@ -23,41 +23,35 @@
 
 #include <vector>
 
+namespace tsid {
+namespace solvers {
 
-namespace tsid
-{
-  namespace solvers
-  {
-    
-    class HQPOutput
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
-      typedef math::Vector Vector;
-      typedef math::VectorXi VectorXi;
-      
-      HQPStatus status;    /// solver status
-      Vector x;            /// solution
-      Vector lambda;       /// Lagrange multipliers
-      VectorXi activeSet;  /// indexes of active inequalities
-      int iterations;      /// number of iterations performed by the solver
-      
-      HQPOutput(){}
-      
-      HQPOutput(int nVars, int nEqCon, int nInCon)
-      {
-        resize(nVars, nEqCon, nInCon);
-      }
-      
-      void resize(int nVars, int nEqCon, int nInCon)
-      {
-        x.resize(nVars);
-        lambda.resize(nEqCon+nInCon);
-        activeSet.resize(nInCon);
-      }
-    };
+class HQPOutput {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  typedef math::Vector Vector;
+  typedef math::VectorXi VectorXi;
+
+  HQPStatus status;    /// solver status
+  Vector x;            /// solution
+  Vector lambda;       /// Lagrange multipliers
+  VectorXi activeSet;  /// indexes of active inequalities
+  int iterations;      /// number of iterations performed by the solver
+
+  HQPOutput() {}
+
+  HQPOutput(unsigned int nVars, unsigned int nEqCon, unsigned int nInCon) {
+    resize(nVars, nEqCon, nInCon);
   }
-}
 
-#endif // ifndef __invdyn_solvers_hqp_output_hpp__
+  void resize(unsigned int nVars, unsigned int nEqCon, unsigned int nInCon) {
+    x.resize(nVars);
+    lambda.resize(nEqCon + nInCon);
+    activeSet.resize(nInCon);
+  }
+};
+}  // namespace solvers
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_solvers_hqp_output_hpp__

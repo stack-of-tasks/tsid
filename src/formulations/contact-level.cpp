@@ -17,13 +17,8 @@
 
 #include "tsid/formulations/contact-level.hpp"
 
+namespace tsid {
 
-namespace tsid
-{
+ContactLevel::ContactLevel(contacts::ContactBase& contact) : contact(contact) {}
 
-ContactLevel::ContactLevel(contacts::ContactBase & contact):
-  contact(contact)
-{}
-
-}
-
+}  // namespace tsid

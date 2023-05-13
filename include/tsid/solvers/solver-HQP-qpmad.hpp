@@ -22,63 +22,62 @@
 
 #include <qpmad/solver.h>
 
-namespace tsid
-{
-  namespace solvers
-  {
-    /**
-     * @brief Implementation of Quadratic Program (HQP) solver using qpmad.
-     */
-    class TSID_DLLAPI SolverHQpmad:
-        public SolverHQPBase
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
-      typedef math::Matrix Matrix;
-      typedef math::Vector Vector;
-      typedef math::RefVector RefVector;
-      typedef math::ConstRefVector ConstRefVector;
-      typedef math::ConstRefMatrix ConstRefMatrix;
+namespace tsid {
+namespace solvers {
+/**
+ * @brief Implementation of Quadratic Program (HQP) solver using qpmad.
+ */
+class TSID_DLLAPI SolverHQpmad : public SolverHQPBase {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      typedef qpmad::SolverParameters Settings;
+  typedef math::Matrix Matrix;
+  typedef math::Vector Vector;
+  typedef math::RefVector RefVector;
+  typedef math::ConstRefVector ConstRefVector;
+  typedef math::ConstRefMatrix ConstRefMatrix;
 
-      SolverHQpmad(const std::string & name);
+  typedef qpmad::SolverParameters Settings;
 
-      void resize(unsigned int n, unsigned int neq, unsigned int nin);
+  SolverHQpmad(const std::string& name);
 
-      /** Solve the given Hierarchical Quadratic Program
-       */
-      const HQPOutput & solve(const HQPData & problemData);
+  void resize(unsigned int n, unsigned int neq, unsigned int nin);
 
-      /** Get the objective value of the last solved problem. */
-      double getObjectiveValue();
+  /** Solve the given Hierarchical Quadratic Program
+   */
+  const HQPOutput& solve(const HQPData& problemData);
 
-      Settings& settings() { return m_settings; }
+  /** Retrieve the matrices describing a QP problem from the problem data. */
+  void retrieveQPData(const HQPData& problemData,
+                      const bool hessianRegularization = true);
 
-    protected:
+  /** Get the objective value of the last solved problem. */
+  double getObjectiveValue();
 
-      void sendMsg(const std::string & s);
+  Settings& settings() { return m_settings; }
 
-      qpmad::Solver m_solver;
-      Settings m_settings;
+ protected:
+  void sendMsg(const std::string& s);
 
-      bool m_has_bounds;
-      
-      Matrix m_H;   // hessian matrix
-      Vector m_g;   // gradient vector
-      Vector m_lb;  // gradient vector
-      Vector m_ub;  // gradient vector
-      Matrix m_C;   // constraint matrix
-      Vector m_cl;  // constraints lower bound
-      Vector m_cu;  // constraints upper bound
+  qpmad::Solver m_solver;
+  Settings m_settings;
 
-      double m_hessian_regularization;
+  bool m_has_bounds;
 
-      unsigned int m_nc;  /// number of equality-inequality constraints
-      unsigned int m_n;    /// number of variables
-    };
-  }
-}
+  Matrix m_H;   // hessian matrix
+  Vector m_g;   // gradient vector
+  Vector m_lb;  // gradient vector
+  Vector m_ub;  // gradient vector
+  Matrix m_C;   // constraint matrix
+  Vector m_cl;  // constraints lower bound
+  Vector m_cu;  // constraints upper bound
 
-#endif // ifndef __invdyn_solvers_hqp_qpmad_hpp__
+  double m_hessian_regularization;
+
+  unsigned int m_nc;  /// number of equality-inequality constraints
+  unsigned int m_n;   /// number of variables
+};
+}  // namespace solvers
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_solvers_hqp_qpmad_hpp__

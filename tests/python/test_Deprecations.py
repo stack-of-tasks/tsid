@@ -1,5 +1,5 @@
-import unittest
 import sys
+import unittest
 import warnings
 
 import numpy as np
@@ -36,5 +36,5 @@ class DeprecationTest(unittest.TestCase):
                 self.assertEqual(w[-1].category, UserWarning)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

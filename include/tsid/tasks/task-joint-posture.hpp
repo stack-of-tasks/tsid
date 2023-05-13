@@ -23,70 +23,66 @@
 #include <tsid/math/constraint-equality.hpp>
 #include <tsid/deprecated.hh>
 
-namespace tsid
-{
-  namespace tasks
-  {
+namespace tsid {
+namespace tasks {
 
-    class TaskJointPosture : public TaskMotion
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
-      typedef math::Index Index;
-      typedef trajectories::TrajectorySample TrajectorySample;
-      typedef math::Vector Vector;
-      typedef math::VectorXi VectorXi;
-      typedef math::ConstraintEquality ConstraintEquality;
-      typedef pinocchio::Data Data;
+class TaskJointPosture : public TaskMotion {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      TaskJointPosture(const std::string & name,
-                      RobotWrapper & robot);
+  typedef math::Index Index;
+  typedef trajectories::TrajectorySample TrajectorySample;
+  typedef math::Vector Vector;
+  typedef math::VectorXi VectorXi;
+  typedef math::ConstraintEquality ConstraintEquality;
+  typedef pinocchio::Data Data;
 
-      int dim() const;
+  TaskJointPosture(const std::string& name, RobotWrapper& robot);
 
-      const ConstraintBase & compute(const double t,
-                                     ConstRefVector q,
-                                     ConstRefVector v,
-                                     Data & data);
+  virtual ~TaskJointPosture() {}
 
-      const ConstraintBase & getConstraint() const;
+  int dim() const;
 
-      void setReference(const TrajectorySample & ref);
-      const TrajectorySample & getReference() const;
+  const ConstraintBase& compute(const double t, ConstRefVector q,
+                                ConstRefVector v, Data& data);
 
-      const Vector & getDesiredAcceleration() const;
-      Vector getAcceleration(ConstRefVector dv) const;
+  const ConstraintBase& getConstraint() const;
 
-      TSID_DEPRECATED const Vector & mask() const; // deprecated
-      TSID_DEPRECATED void mask(const Vector & mask); // deprecated
-      virtual void setMask(math::ConstRefVector mask);
+  void setReference(const TrajectorySample& ref);
+  const TrajectorySample& getReference() const;
 
-      const Vector & position_error() const;
-      const Vector & velocity_error() const;
-      const Vector & position() const;
-      const Vector & velocity() const;
-      const Vector & position_ref() const;
-      const Vector & velocity_ref() const;
+  const Vector& getDesiredAcceleration() const;
+  Vector getAcceleration(ConstRefVector dv) const;
 
-      const Vector & Kp();
-      const Vector & Kd();
-      void Kp(ConstRefVector Kp);
-      void Kd(ConstRefVector Kp);
+  TSID_DEPRECATED const Vector& mask() const;     // deprecated
+  TSID_DEPRECATED void mask(const Vector& mask);  // deprecated
+  virtual void setMask(math::ConstRefVector mask);
 
-    protected:
-      Vector m_Kp;
-      Vector m_Kd;
-      Vector m_p_error, m_v_error;
-      Vector m_p, m_v;
-      Vector m_a_des;
-      VectorXi m_activeAxes;
-      TrajectorySample m_ref;
-      Vector m_ref_q_augmented;
-      ConstraintEquality m_constraint;
-    };
-    
-  }
-}
+  const Vector& position_error() const;
+  const Vector& velocity_error() const;
+  const Vector& position() const;
+  const Vector& velocity() const;
+  const Vector& position_ref() const;
+  const Vector& velocity_ref() const;
 
-#endif // ifndef __invdyn_task_joint_posture_hpp__
+  const Vector& Kp();
+  const Vector& Kd();
+  void Kp(ConstRefVector Kp);
+  void Kd(ConstRefVector Kp);
+
+ protected:
+  Vector m_Kp;
+  Vector m_Kd;
+  Vector m_p_error, m_v_error;
+  Vector m_p, m_v;
+  Vector m_a_des;
+  VectorXi m_activeAxes;
+  TrajectorySample m_ref;
+  Vector m_ref_q_augmented;
+  ConstraintEquality m_constraint;
+};
+
+}  // namespace tasks
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_task_joint_posture_hpp__

@@ -22,49 +22,45 @@
 #include <tsid/trajectories/trajectory-base.hpp>
 #include <tsid/math/constraint-inequality.hpp>
 
-namespace tsid
-{
-  namespace tasks
-  {
+namespace tsid {
+namespace tasks {
 
-    class TaskActuationBounds : public TaskActuation
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+class TaskActuationBounds : public TaskActuation {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      typedef math::Index Index;
-      typedef trajectories::TrajectorySample TrajectorySample;
-      typedef math::Vector Vector;
-      typedef math::VectorXi VectorXi;
-      typedef math::ConstraintInequality ConstraintInequality;
-      typedef pinocchio::Data Data;
+  typedef math::Index Index;
+  typedef trajectories::TrajectorySample TrajectorySample;
+  typedef math::Vector Vector;
+  typedef math::VectorXi VectorXi;
+  typedef math::ConstraintInequality ConstraintInequality;
+  typedef pinocchio::Data Data;
 
-      TaskActuationBounds(const std::string & name,
-                          RobotWrapper & robot);
+  TaskActuationBounds(const std::string& name, RobotWrapper& robot);
 
-      int dim() const;
+  virtual ~TaskActuationBounds() {}
 
-      const ConstraintBase & compute(const double t,
-                                     ConstRefVector q,
-                                     ConstRefVector v,
-                                     Data & data);
+  int dim() const;
 
-      const ConstraintBase & getConstraint() const;
+  const ConstraintBase& compute(const double t, ConstRefVector q,
+                                ConstRefVector v, Data& data);
 
-      void setBounds(ConstRefVector lower, ConstRefVector upper);
-      const Vector & getLowerBounds() const;
-      const Vector & getUpperBounds() const;
+  const ConstraintBase& getConstraint() const;
 
-      const Vector & mask() const;
-      void mask(const Vector & mask);
+  void setBounds(ConstRefVector lower, ConstRefVector upper);
+  const Vector& getLowerBounds() const;
+  const Vector& getUpperBounds() const;
 
-    protected:
-      Vector m_mask;
-      VectorXi m_activeAxes;
-      ConstraintInequality m_constraint;
-    };
+  const Vector& mask() const;
+  void mask(const Vector& mask);
 
-  }
-}
+ protected:
+  Vector m_mask;
+  VectorXi m_activeAxes;
+  ConstraintInequality m_constraint;
+};
 
-#endif // ifndef __invdyn_task_actuation_bounds_hpp__
+}  // namespace tasks
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_task_actuation_bounds_hpp__

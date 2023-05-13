@@ -26,65 +26,60 @@
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/data.hpp>
 
-namespace tsid
-{
-  namespace tasks
-  {
+namespace tsid {
+namespace tasks {
 
-    class TaskAMEquality : public TaskMotion
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
-      typedef math::Index Index;
-      typedef trajectories::TrajectorySample TrajectorySample;
-      typedef math::Vector Vector;
-      typedef math::Vector3 Vector3;
-      typedef math::ConstraintEquality ConstraintEquality;
-      typedef pinocchio::Data::Matrix6x Matrix6x;
+class TaskAMEquality : public TaskMotion {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+  typedef math::Index Index;
+  typedef trajectories::TrajectorySample TrajectorySample;
+  typedef math::Vector Vector;
+  typedef math::Vector3 Vector3;
+  typedef math::ConstraintEquality ConstraintEquality;
+  typedef pinocchio::Data::Matrix6x Matrix6x;
 
-      TaskAMEquality(const std::string & name, 
-                      RobotWrapper & robot);
+  TaskAMEquality(const std::string& name, RobotWrapper& robot);
 
-      int dim() const;
+  virtual ~TaskAMEquality() {}
 
-      const ConstraintBase & compute(const double t,
-                                     ConstRefVector q,
-                                     ConstRefVector v,
-                                     Data & data);
+  int dim() const;
 
-      const ConstraintBase & getConstraint() const;
+  const ConstraintBase& compute(const double t, ConstRefVector q,
+                                ConstRefVector v, Data& data);
 
-      void setReference(const TrajectorySample & ref);
-      const TrajectorySample & getReference() const;
+  const ConstraintBase& getConstraint() const;
 
-      const Vector3 & getDesiredMomentumDerivative() const;
-      Vector3 getdMomentum(ConstRefVector dv) const;
+  void setReference(const TrajectorySample& ref);
+  const TrajectorySample& getReference() const;
 
-      const Vector3 & momentum_error() const;
-      const Vector3 & momentum() const;
-      const Vector & momentum_ref() const;
-      const Vector & dmomentum_ref() const;
+  const Vector3& getDesiredMomentumDerivative() const;
+  Vector3 getdMomentum(ConstRefVector dv) const;
 
-      const Vector3 & Kp();
-      const Vector3 & Kd();
-      void Kp(ConstRefVector Kp);
-      void Kd(ConstRefVector Kp);
+  const Vector3& momentum_error() const;
+  const Vector3& momentum() const;
+  const Vector& momentum_ref() const;
+  const Vector& dmomentum_ref() const;
 
-    protected:
-      Vector3 m_Kp;
-      Vector3 m_Kd;
-      Vector3 m_L_error, m_dL_error;
-      Vector3 m_dL_des;
-      
-      Vector3 m_drift;
-      Vector3 m_L, m_dL;
-      TrajectorySample m_ref;
-      ConstraintEquality m_constraint;
-    };
-    
-  }
-}
+  const Vector3& Kp();
+  const Vector3& Kd();
+  void Kp(ConstRefVector Kp);
+  void Kd(ConstRefVector Kp);
 
-#endif // ifndef __invdyn_task_am_equality_hpp__
+ protected:
+  Vector3 m_Kp;
+  Vector3 m_Kd;
+  Vector3 m_L_error, m_dL_error;
+  Vector3 m_dL_des;
+
+  Vector3 m_drift;
+  Vector3 m_L, m_dL;
+  TrajectorySample m_ref;
+  ConstraintEquality m_constraint;
+};
+
+}  // namespace tasks
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_task_am_equality_hpp__

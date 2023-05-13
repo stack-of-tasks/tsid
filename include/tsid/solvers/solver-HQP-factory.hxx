@@ -21,23 +21,19 @@
 #include <tsid/solvers/solver-HQP-factory.hpp>
 #include <tsid/solvers/solver-HQP-eiquadprog-rt.hxx>
 
+namespace tsid {
+namespace solvers {
 
-namespace tsid
-{
-  namespace solvers
-  {
-    
-    template<int nVars, int nEqCon, int nIneqCon>
-    SolverHQPBase* SolverHQPFactory::createNewSolver(const SolverHQP solverType,
-                                                       const std::string & name)
-    {
-      if(solverType==SOLVER_HQP_EIQUADPROG_RT)
-        return new SolverHQuadProgRT<nVars, nEqCon, nIneqCon>(name);
-      
-      assert(false && "Specified solver type not recognized");
-      return NULL;
-    }
-  }
+template <int nVars, int nEqCon, int nIneqCon>
+SolverHQPBase* SolverHQPFactory::createNewSolver(const SolverHQP solverType,
+                                                 const std::string& name) {
+  if (solverType == SOLVER_HQP_EIQUADPROG_RT)
+    return new SolverHQuadProgRT<nVars, nEqCon, nIneqCon>(name);
+
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(false, "Specified solver type not recognized");
+  return nullptr;
 }
+}  // namespace solvers
+}  // namespace tsid
 
-#endif // ifndef __invdyn_solvers_hqp_factory_hxx__
+#endif  // ifndef __invdyn_solvers_hqp_factory_hxx__

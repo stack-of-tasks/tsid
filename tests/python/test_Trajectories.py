@@ -7,12 +7,11 @@ print("")
 print("Test Trajectory Euclidian")
 print("")
 
-se3.switchToNumpyMatrix()
 
 tol = 1e-5
 n = 5
-q_ref = np.matrix(np.ones(n)).transpose()
-zero = np.matrix(np.zeros(n)).transpose()
+q_ref = np.ones(n)
+zero = np.zeros(n)
 
 traj_euclidian = tsid.TrajectoryEuclidianConstant("traj_eucl", q_ref)
 assert traj_euclidian.has_trajectory_ended()
@@ -30,12 +29,12 @@ print("Test Trajectory SE3")
 print("")
 
 M_ref = se3.SE3.Identity()
-M_vec = np.matrix(np.zeros(12)).transpose()
+M_vec = np.zeros(12)
 M_vec[0:3] = M_ref.translation
-zero = np.matrix(np.zeros(6)).transpose()
+zero = np.zeros(6)
 
 for i in range(1, 4):
-    M_vec[3 * i:3 * i + 3] = M_ref.rotation[:, i - 1]
+    M_vec[3 * i : 3 * i + 3] = M_ref.rotation[:, i - 1]
 
 traj_se3 = tsid.TrajectorySE3Constant("traj_se3")
 traj_se3.setReference(M_ref)

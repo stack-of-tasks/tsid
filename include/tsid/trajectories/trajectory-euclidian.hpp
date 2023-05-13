@@ -20,40 +20,39 @@
 
 #include <tsid/trajectories/trajectory-base.hpp>
 
-namespace tsid
-{
-  namespace trajectories
-  {
+namespace tsid {
+namespace trajectories {
 
-    class TrajectoryEuclidianConstant : public TrajectoryBase
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
-      typedef math::Vector         Vector;
-      typedef math::ConstRefVector ConstRefVector;
+class TrajectoryEuclidianConstant : public TrajectoryBase {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      TrajectoryEuclidianConstant(const std::string & name);
+  typedef math::Vector Vector;
+  typedef math::ConstRefVector ConstRefVector;
 
-      TrajectoryEuclidianConstant(const std::string & name, ConstRefVector ref);
+  TrajectoryEuclidianConstant(const std::string& name);
 
-      unsigned int size() const;
+  TrajectoryEuclidianConstant(const std::string& name, ConstRefVector ref);
 
-      void setReference(ConstRefVector ref);
+  virtual ~TrajectoryEuclidianConstant() {}
 
-      const TrajectorySample & operator()(double time);
+  unsigned int size() const;
 
-      const TrajectorySample & computeNext();
+  void setReference(ConstRefVector ref);
 
-      void getLastSample(TrajectorySample & sample) const;
+  const TrajectorySample& operator()(double time);
 
-      bool has_trajectory_ended() const;
+  const TrajectorySample& computeNext();
 
-    protected:
-      Vector m_ref;
-    };
-    
-  }
-}
+  void getLastSample(TrajectorySample& sample) const;
 
-#endif // ifndef __invdyn_trajectory_euclidian_hpp__
+  bool has_trajectory_ended() const;
+
+ protected:
+  Vector m_ref;
+};
+
+}  // namespace trajectories
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_trajectory_euclidian_hpp__

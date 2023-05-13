@@ -23,10 +23,18 @@ file(
   solvers/*.cpp
   tasks/*.cpp
   trajectories/*.cpp
+  math/*.cpp
   utils/*.cpp)
 
 add_library(${PYWRAP} SHARED ${${PYWRAP}_SOURCES} ${${PYWRAP}_HEADERS})
 target_link_libraries(${PYWRAP} PUBLIC ${PROJECT_NAME} eigenpy::eigenpy)
+
+if(IS_ABSOLUTE ${PYTHON_SITELIB})
+  set(${PYWRAP}_INSTALL_DIR ${PYTHON_SITELIB}/${PROJECT_NAME})
+else()
+  set(${PYWRAP}_INSTALL_DIR
+      ${CMAKE_INSTALL_PREFIX}/${PYTHON_SITELIB}/${PROJECT_NAME})
+endif()
 
 if(BUILD_WITH_COMMIT_VERSION)
   tag_library_version(${PYWRAP})
@@ -34,19 +42,18 @@ endif(BUILD_WITH_COMMIT_VERSION)
 add_header_group(${PYWRAP}_HEADERS)
 add_source_group(${PYWRAP}_SOURCES)
 
-if(APPLE)
-  # We need to change the extension for python bindings
-  set_target_properties(${PYWRAP} PROPERTIES SUFFIX ".so")
-endif(APPLE)
+# We need to change the extension for python bindings
+set_target_properties(
+  ${PYWRAP}
+  PROPERTIES SUFFIX ${PYTHON_EXT_SUFFIX}
+             PREFIX ""
+             LIBRARY_OUTPUT_DIRECTORY
+             "${CMAKE_BINARY_DIR}/bindings/python/${PROJECT_NAME}")
 
-set_target_properties(${PYWRAP} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
-                                           ${PROJECT_NAME})
-
-if(APPLE)
+if(UNIX)
+  get_relative_rpath(${${PYWRAP}_INSTALL_DIR} ${PYWRAP}_INSTALL_RPATH)
   set_target_properties(${PYWRAP} PROPERTIES INSTALL_RPATH
-                                             "@loader_path/../../..")
-elseif(UNIX)
-  set_target_properties(${PYWRAP} PROPERTIES INSTALL_RPATH "\$ORIGIN/../../..")
+                                             "${${PYWRAP}_INSTALL_RPATH}")
 endif()
 
 install(
@@ -57,5 +64,7 @@ install(
 set(PYTHON_FILES __init__.py)
 
 foreach(python ${PYTHON_FILES})
-  python_install_on_site(${PROJECT_NAME} ${python})
+  python_build(${PROJECT_NAME} ${python})
+  install(FILES "${${PROJECT_NAME}_SOURCE_DIR}/bindings/python/tsid/${python}"
+          DESTINATION ${${PYWRAP}_INSTALL_DIR})
 endforeach(python)

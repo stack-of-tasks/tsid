@@ -20,18 +20,15 @@
 
 #include <tsid/tasks/task-base.hpp>
 
-namespace tsid
-{
-  namespace tasks
-  {
-    class TaskActuation : public TaskBase
-    {
-    public:
+namespace tsid {
+namespace tasks {
+class TaskActuation : public TaskBase {
+ public:
+  TaskActuation(const std::string& name, RobotWrapper& robot);
 
-      TaskActuation(const std::string & name,
-                    RobotWrapper & robot);
-    };
-  }
-}
+  virtual ~TaskActuation() {}
+};
+}  // namespace tasks
+}  // namespace tsid
 
-#endif // ifndef __invdyn_task_actuation_hpp__
+#endif  // ifndef __invdyn_task_actuation_hpp__

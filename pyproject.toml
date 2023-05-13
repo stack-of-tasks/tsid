@@ -16,5 +16,8 @@ homepage = "https://github.com/stack-of-tasks/tsid"
 build-number = 2
 configure-args = ["-DSUFFIX_SO_VERSION=OFF"]
 
+[tool.isort]
+profile = "black"
+
 [tool.tomlsort]
 all = true

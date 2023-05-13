@@ -24,51 +24,47 @@
 
 #include <pinocchio/multibody/fwd.hpp>
 
-namespace tsid
-{
-  namespace tasks
-  {
-    
-    ///
-    /// \brief Base template of a Task.
-    /// Each class is defined according to a constant model of a robot.
-    ///
-    class TaskBase
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      
-      typedef math::ConstraintBase ConstraintBase;
-      typedef math::ConstRefVector ConstRefVector;
-      typedef pinocchio::Data Data;
-      typedef robots::RobotWrapper RobotWrapper;
+namespace tsid {
+namespace tasks {
 
-      TaskBase(const std::string & name,
-               RobotWrapper & robot);
+///
+/// \brief Base template of a Task.
+/// Each class is defined according to a constant model of a robot.
+///
+class TaskBase {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      const std::string & name() const;
+  typedef math::ConstraintBase ConstraintBase;
+  typedef math::ConstRefVector ConstRefVector;
+  typedef pinocchio::Data Data;
+  typedef robots::RobotWrapper RobotWrapper;
 
-      void name(const std::string & name);
-      
-      /// \brief Return the dimension of the task.
-      /// \info should be overloaded in the child class.
-      virtual int dim() const = 0;
+  TaskBase(const std::string& name, RobotWrapper& robot);
 
-      virtual const ConstraintBase & compute(const double t,
-                                             ConstRefVector q,
-                                             ConstRefVector v,
-                                             Data & data) = 0;
+  virtual ~TaskBase() {}
 
-      virtual const ConstraintBase & getConstraint() const = 0;
-      
-    protected:
-      std::string m_name;
-      
-      /// \brief Reference on the robot model.
-      RobotWrapper & m_robot;
-    };
-    
-  }
-}
+  const std::string& name() const;
 
-#endif // ifndef __invdyn_task_base_hpp__
+  void name(const std::string& name);
+
+  /// \brief Return the dimension of the task.
+  /// \info should be overloaded in the child class.
+  virtual int dim() const = 0;
+
+  virtual const ConstraintBase& compute(const double t, ConstRefVector q,
+                                        ConstRefVector v, Data& data) = 0;
+
+  virtual const ConstraintBase& getConstraint() const = 0;
+
+ protected:
+  std::string m_name;
+
+  /// \brief Reference on the robot model.
+  RobotWrapper& m_robot;
+};
+
+}  // namespace tasks
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_task_base_hpp__

@@ -1,4 +1,3 @@
-import copy
 import os
 
 import numpy as np
@@ -7,27 +6,25 @@ from numpy.linalg import norm
 
 import tsid
 
-se3.switchToNumpyMatrix()
-
 print("")
 print("Test InvDyn")
 print("")
 
 filename = str(os.path.dirname(os.path.abspath(__file__)))
-path = filename + '/../../models/romeo'
-urdf = path + '/urdf/romeo.urdf'
+path = filename + "/../../models/romeo"
+urdf = path + "/urdf/romeo.urdf"
 vector = se3.StdVec_StdString()
 vector.extend(item for item in path)
 robot = tsid.RobotWrapper(urdf, vector, se3.JointModelFreeFlyer(), False)
 
-srdf = path + '/srdf/romeo_collision.srdf'
+srdf = path + "/srdf/romeo_collision.srdf"
 
 model = robot.model()
 se3.loadReferenceConfigurations(model, srdf, False)
 q = model.referenceConfigurations["half_sitting"]
 
 q[2] += 0.84
-v = np.matrix(np.zeros(robot.nv)).transpose()
+v = np.zeros(robot.nv)
 
 t = 0.0
 lxp = 0.14
@@ -40,7 +37,7 @@ fMin = 5.0
 fMax = 1000.0
 rf_frame_name = "RAnkleRoll"
 lf_frame_name = "LAnkleRoll"
-contactNormal = np.matrix([0.0, 0.0, 1.0]).transpose()
+contactNormal = np.array([0.0, 0.0, 1.0])
 w_com = 1.0
 w_posture = 1e-2
 w_forceRef = 1e-5
@@ -54,34 +51,52 @@ assert robot.model().existFrame(lf_frame_name)
 invdyn = tsid.InverseDynamicsFormulationAccForce("tsid", robot, False)
 invdyn.computeProblemData(t, q, v)
 data = invdyn.data()
-contact_Point = np.matrix(np.ones((3, 4)) * lz)
+contact_Point = np.ones((3, 4)) * lz
 contact_Point[0, :] = [-lxn, -lxn, lxp, lxp]
 contact_Point[1, :] = [-lyn, lyp, -lyn, lyp]
 
-contactRF = tsid.Contact6d("contact_rfoot", robot, rf_frame_name, contact_Point, contactNormal, mu, fMin, fMax,
-                           w_forceRef)
-contactRF.setKp(kp_contact * np.matrix(np.ones(6)).transpose())
-contactRF.setKd(2.0 * np.sqrt(kp_contact) * np.matrix(np.ones(6)).transpose())
+contactRF = tsid.Contact6d(
+    "contact_rfoot",
+    robot,
+    rf_frame_name,
+    contact_Point,
+    contactNormal,
+    mu,
+    fMin,
+    fMax,
+    w_forceRef,
+)
+contactRF.setKp(kp_contact * np.ones(6))
+contactRF.setKd(2.0 * np.sqrt(kp_contact) * np.ones(6))
 H_rf_ref = robot.position(data, robot.model().getJointId(rf_frame_name))
 contactRF.setReference(H_rf_ref)
 invdyn.addRigidContact(contactRF)
 
-contactLF = tsid.Contact6d("contact_lfoot", robot, lf_frame_name, contact_Point, contactNormal, mu, fMin, fMax,
-                           w_forceRef)
-contactLF.setKp(kp_contact * np.matrix(np.ones(6)).transpose())
-contactLF.setKd(2.0 * np.sqrt(kp_contact) * np.matrix(np.ones(6)).transpose())
+contactLF = tsid.Contact6d(
+    "contact_lfoot",
+    robot,
+    lf_frame_name,
+    contact_Point,
+    contactNormal,
+    mu,
+    fMin,
+    fMax,
+    w_forceRef,
+)
+contactLF.setKp(kp_contact * np.ones(6))
+contactLF.setKd(2.0 * np.sqrt(kp_contact) * np.ones(6))
 H_lf_ref = robot.position(data, robot.model().getJointId(lf_frame_name))
 contactLF.setReference(H_lf_ref)
 invdyn.addRigidContact(contactLF)
 
 comTask = tsid.TaskComEquality("task-com", robot)
-comTask.setKp(kp_com * np.matrix(np.ones(3)).transpose())
-comTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(3)).transpose())
+comTask.setKp(kp_com * np.ones(3))
+comTask.setKd(2.0 * np.sqrt(kp_com) * np.ones(3))
 invdyn.addMotionTask(comTask, w_com, 1, 0.0)
 
 postureTask = tsid.TaskJointPosture("task-posture", robot)
-postureTask.setKp(kp_posture * np.matrix(np.ones(robot.nv - 6)).transpose())
-postureTask.setKd(2.0 * np.sqrt(kp_posture) * np.matrix(np.ones(robot.nv - 6)).transpose())
+postureTask.setKp(kp_posture * np.ones(robot.nv - 6))
+postureTask.setKd(2.0 * np.sqrt(kp_posture) * np.ones(robot.nv - 6))
 invdyn.addMotionTask(postureTask, w_posture, 1, 0.0)
 
 ########### Test 1 ##################3
@@ -93,16 +108,16 @@ kp_RF = 100.0
 w_RF = 1e3
 max_it = 1000
 rightFootTask = tsid.TaskSE3Equality("task-right-foot", robot, rf_frame_name)
-rightFootTask.setKp(kp_RF * np.matrix(np.ones(6)).transpose())
-rightFootTask.setKd(2.0 * np.sqrt(kp_com) * np.matrix(np.ones(6)).transpose())
+rightFootTask.setKp(kp_RF * np.ones(6))
+rightFootTask.setKd(2.0 * np.sqrt(kp_com) * np.ones(6))
 H_rf_ref = robot.position(data, robot.model().getJointId(rf_frame_name))
 invdyn.addMotionTask(rightFootTask, w_RF, 1, 0.0)
 
 s = tsid.TrajectorySample(12, 6)
-H_rf_ref_vec = np.matrix(np.zeros(12)).transpose()
+H_rf_ref_vec = np.zeros(12)
 H_rf_ref_vec[0:3] = H_rf_ref.translation
 for i in range(0, 3):
-    H_rf_ref_vec[3 * i + 3:3 * i + 6] = H_rf_ref.rotation[:, i]
+    H_rf_ref_vec[3 * i + 3 : 3 * i + 6] = H_rf_ref.rotation[:, i]
 s.value(H_rf_ref_vec)
 rightFootTask.setReference(s)
 
@@ -118,7 +133,7 @@ samplePosture = tsid.TrajectorySample(robot.nv - 6)
 solver = tsid.SolverHQuadProg("qp solver")
 solver.resize(invdyn.nVar, invdyn.nEq, invdyn.nIn)
 
-tau_old = np.matrix(np.zeros(robot.nv - 6)).transpose()
+tau_old = np.zeros(robot.nv - 6)
 
 for i in range(0, max_it):
     if i == REMOVE_CONTACT_N:

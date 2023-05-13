@@ -22,40 +22,30 @@
 
 #include "tsid/solvers/solver-HQP-output.hpp"
 
-namespace tsid
-{
-  namespace python
-  {    
-    namespace bp = boost::python;
-    
-    template<typename T>
-    struct HQPOutputPythonVisitor
-    : public boost::python::def_visitor< HQPOutputPythonVisitor<T> >
-    {
-      template<class PyClass>     
+namespace tsid {
+namespace python {
+namespace bp = boost::python;
 
-      void visit(PyClass& cl) const
-      {
-        cl
-        .def(bp::init<>("Defulat Constructor"))
+template <typename T>
+struct HQPOutputPythonVisitor
+    : public boost::python::def_visitor<HQPOutputPythonVisitor<T> > {
+  template <class PyClass>
+
+  void visit(PyClass& cl) const {
+    cl.def(bp::init<>("Default Constructor"))
         .def(bp::init<int, int, int>((bp::args("nVars", "nEq", "nInCon"))))
         .add_property("x", &HQPOutputPythonVisitor::x)
-        .add_property("status", &HQPOutputPythonVisitor::status)
-        ;
-      }
-      static Eigen::VectorXd x (const T & self) {return self.x;}
-      static int status (const T & self) {return self.status;}
-      static void expose(const std::string & class_name)
-      {
-        std::string doc = "HQPOutput info.";
-        bp::class_<T>(class_name.c_str(),
-                          doc.c_str(),
-                          bp::no_init)
-        .def(HQPOutputPythonVisitor<T>());       
-      }
-    };
+        .add_property("status", &HQPOutputPythonVisitor::status);
   }
-}
+  static Eigen::VectorXd x(const T& self) { return self.x; }
+  static int status(const T& self) { return self.status; }
+  static void expose(const std::string& class_name) {
+    std::string doc = "HQPOutput info.";
+    bp::class_<T>(class_name.c_str(), doc.c_str(), bp::no_init)
+        .def(HQPOutputPythonVisitor<T>());
+  }
+};
+}  // namespace python
+}  // namespace tsid
 
-
-#endif // ifndef __tsid_python_HQPOutput_hpp__
+#endif  // ifndef __tsid_python_HQPOutput_hpp__

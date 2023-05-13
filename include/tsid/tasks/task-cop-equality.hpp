@@ -24,60 +24,55 @@
 #include "tsid/math/constraint-equality.hpp"
 #include "tsid/formulations/inverse-dynamics-formulation-base.hpp"
 
-namespace tsid
-{
-  namespace tasks
-  {
+namespace tsid {
+namespace tasks {
 
-    class TaskCopEquality : public TaskContactForce
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+class TaskCopEquality : public TaskContactForce {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      typedef math::Index Index;
-      typedef trajectories::TrajectorySample TrajectorySample;
-      typedef math::Vector Vector;
-      typedef math::Vector3 Vector3;
-      typedef math::ConstraintEquality ConstraintEquality;
-      typedef pinocchio::SE3 SE3;
+  typedef math::Index Index;
+  typedef trajectories::TrajectorySample TrajectorySample;
+  typedef math::Vector Vector;
+  typedef math::Vector3 Vector3;
+  typedef math::ConstraintEquality ConstraintEquality;
+  typedef pinocchio::SE3 SE3;
 
-      TaskCopEquality(const std::string & name,
-                      RobotWrapper & robot);
+  TaskCopEquality(const std::string &name, RobotWrapper &robot);
 
-      void setContactList(const std::vector<std::shared_ptr<ContactLevel> >  *contacts);
+  virtual ~TaskCopEquality() {}
 
-      int dim() const;
+  void setContactList(
+      const std::vector<std::shared_ptr<ContactLevel> > *contacts);
 
-      virtual const std::string& getAssociatedContactName();
+  int dim() const;
 
-      const ConstraintBase & compute(const double t,
-                                     ConstRefVector q,
-                                     ConstRefVector v,
-                                     Data & data);
+  virtual const std::string &getAssociatedContactName();
 
-      const ConstraintBase & compute(const double t,
-                                     ConstRefVector q,
-                                     ConstRefVector v,
-                                     Data & data,
-                                     const std::vector<std::shared_ptr<ContactLevel> >  *contacts);
+  const ConstraintBase &compute(const double t, ConstRefVector q,
+                                ConstRefVector v, Data &data);
 
-      const ConstraintBase & getConstraint() const;
+  const ConstraintBase &compute(
+      const double t, ConstRefVector q, ConstRefVector v, Data &data,
+      const std::vector<std::shared_ptr<ContactLevel> > *contacts);
 
-      void setReference(const Vector3 & ref);
-      const Vector3 & getReference() const;
+  const ConstraintBase &getConstraint() const;
 
-      void setContactNormal(const Vector3 & n);
-      const Vector3 & getContactNormal() const;
+  void setReference(const Vector3 &ref);
+  const Vector3 &getReference() const;
 
-    protected:
-      const std::vector<std::shared_ptr<ContactLevel> > *m_contacts;
-      std::string m_contact_name; // an empty string
-      Vector3 m_normal;     // normal direction to the ground expressed in world frame
-      Vector3 m_ref;        // reference CoP in world frame
-      ConstraintEquality m_constraint;
-    };
+  void setContactNormal(const Vector3 &n);
+  const Vector3 &getContactNormal() const;
 
-  }
-}
+ protected:
+  const std::vector<std::shared_ptr<ContactLevel> > *m_contacts;
+  std::string m_contact_name;  // an empty string
+  Vector3 m_normal;  // normal direction to the ground expressed in world frame
+  Vector3 m_ref;     // reference CoP in world frame
+  ConstraintEquality m_constraint;
+};
 
-#endif // ifndef __invdyn_task_com_equality_hpp__
+}  // namespace tasks
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_task_com_equality_hpp__

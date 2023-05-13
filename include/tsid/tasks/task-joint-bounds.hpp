@@ -21,53 +21,48 @@
 #include <tsid/tasks/task-motion.hpp>
 #include <tsid/math/constraint-bound.hpp>
 
-namespace tsid
-{
-  namespace tasks
-  {
+namespace tsid {
+namespace tasks {
 
-    class TaskJointBounds : public TaskMotion
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+class TaskJointBounds : public TaskMotion {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      typedef math::Vector Vector;
-      typedef math::ConstraintBound ConstraintBound;
-      typedef pinocchio::Data Data;
+  typedef math::Vector Vector;
+  typedef math::ConstraintBound ConstraintBound;
+  typedef pinocchio::Data Data;
 
-      TaskJointBounds(const std::string & name,
-                      RobotWrapper & robot,
-                      double dt);
+  TaskJointBounds(const std::string& name, RobotWrapper& robot, double dt);
 
-      int dim() const;
+  virtual ~TaskJointBounds() {}
 
-      const ConstraintBase & compute(const double t,
-                                     ConstRefVector q,
-                                     ConstRefVector v,
-                                     Data & data);
+  int dim() const;
 
-      const ConstraintBase & getConstraint() const;
+  const ConstraintBase& compute(const double t, ConstRefVector q,
+                                ConstRefVector v, Data& data);
 
-      void setTimeStep(double dt);
-      void setVelocityBounds(ConstRefVector lower, ConstRefVector upper);
-      void setAccelerationBounds(ConstRefVector lower, ConstRefVector upper);
-      const Vector & getAccelerationLowerBounds() const;
-      const Vector & getAccelerationUpperBounds() const;
-      const Vector & getVelocityLowerBounds() const;
-      const Vector & getVelocityUpperBounds() const;
+  const ConstraintBase& getConstraint() const;
 
-      virtual void setMask(math::ConstRefVector mask);
+  void setTimeStep(double dt);
+  void setVelocityBounds(ConstRefVector lower, ConstRefVector upper);
+  void setAccelerationBounds(ConstRefVector lower, ConstRefVector upper);
+  const Vector& getAccelerationLowerBounds() const;
+  const Vector& getAccelerationUpperBounds() const;
+  const Vector& getVelocityLowerBounds() const;
+  const Vector& getVelocityUpperBounds() const;
 
-    protected:
-      Vector m_v_lb, m_v_ub;
-      Vector m_a_lb, m_a_ub;
-      Vector m_ddq_max_due_to_vel, m_ddq_min_due_to_vel;
-      ConstraintBound m_constraint;
-      double m_dt;
-      int m_nv, m_na;
-    };
+  virtual void setMask(math::ConstRefVector mask);
 
-  }
-}
+ protected:
+  Vector m_v_lb, m_v_ub;
+  Vector m_a_lb, m_a_ub;
+  Vector m_ddq_max_due_to_vel, m_ddq_min_due_to_vel;
+  ConstraintBound m_constraint;
+  double m_dt;
+  int m_nv, m_na;
+};
 
-#endif // ifndef __invdyn_task_joint_bounds_hpp__
+}  // namespace tasks
+}  // namespace tsid
+
+#endif  // ifndef __invdyn_task_joint_bounds_hpp__

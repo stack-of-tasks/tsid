@@ -22,6 +22,7 @@ set(PROJECT_DESCRIPTION
 set(PROJECT_URL "https://github.com/${PROJECT_ORG}/${PROJECT_NAME}")
 
 # Project options
+option(INSTALL_DOCUMENTATION "Build and install the documentation" OFF)
 option(BUILD_PYTHON_INTERFACE "Build the python bindings" ON)
 option(INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
 option(SUFFIX_SO_VERSION "Suffix library name with its version" ON)
@@ -31,6 +32,17 @@ option(EIGEN_RUNTIME_NO_MALLOC
 option(EIGEN_NO_AUTOMATIC_RESIZING
        "If ON, it forbids automatic resizing of dynamics arrays and matrices"
        OFF)
+option(BUILD_WITH_PROXQP "Support using the proxqp solver" OFF)
+option(BUILD_WITH_OSQP "Support using the osqp solver" OFF)
+
+# With pos, vel, acc awaiting renaming (e.g. in trajectory-base), we are
+# producing a ton of deprecation warnings. Ignoring them for now; remove this
+# once pos, vel, acc are renamed.
+add_definitions(-Wno-deprecated-declarations)
+
+# We frequently convert between signed and unsigned integers for Eigen::Index.
+# Ignore them for now.
+add_definitions(-Wno-sign-conversion)
 
 # Project configuration
 if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
@@ -41,9 +53,29 @@ set(DOXYGEN_USE_MATHJAX YES)
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
 # JRL-cmakemodule setup
-include(cmake/base.cmake)
-include(cmake/ide.cmake)
-include(cmake/apple.cmake)
+set(JRL_CMAKE_MODULES "${CMAKE_CURRENT_LIST_DIR}/cmake")
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/cmake/base.cmake")
+  if(${CMAKE_VERSION} VERSION_LESS "3.14.0")
+    message(
+      FATAL_ERROR
+        "\nPlease run the following command first:\ngit submodule update --init\n"
+    )
+  else()
+    message(STATUS "JRL cmakemodules not found. Let's fetch it.")
+    include(FetchContent)
+    FetchContent_Declare(
+      "jrl-cmakemodules"
+      GIT_REPOSITORY "https://github.com/jrl-umi3218/jrl-cmakemodules.git")
+    FetchContent_MakeAvailable("jrl-cmakemodules")
+    FetchContent_GetProperties("jrl-cmakemodules" SOURCE_DIR JRL_CMAKE_MODULES)
+  endif()
+endif()
+
+include("${JRL_CMAKE_MODULES}/base.cmake")
+include("${JRL_CMAKE_MODULES}/ide.cmake")
+include("${JRL_CMAKE_MODULES}/apple.cmake")
+
+set_default_cmake_build_type("RelWithDebInfo")
 
 # Handle APPLE Cmake policy
 if(APPLE)
@@ -69,7 +101,7 @@ if(EIGEN_NO_AUTOMATIC_RESIZING)
   add_definitions(-DEIGEN_NO_AUTOMATIC_RESIZING)
 endif(EIGEN_NO_AUTOMATIC_RESIZING)
 
-check_minimal_cxx_standard(11 ENFORCE)
+check_minimal_cxx_standard(17 ENFORCE)
 
 # Project dependencies
 if(BUILD_PYTHON_INTERFACE)
@@ -82,6 +114,7 @@ add_project_dependency(eiquadprog 1.1.3 REQUIRED)
 
 find_package(qpmad QUIET) # optional
 if(qpmad_FOUND)
+  message(STATUS "qpmad found - building with qpmad support")
   add_project_dependency(qpmad QUIET)
 endif()
 
@@ -117,9 +150,13 @@ set(${PROJECT_NAME}_TASKS_HEADERS
     include/tsid/tasks/task-angular-momentum-equality.hpp)
 
 set(${PROJECT_NAME}_CONTACTS_HEADERS
-    include/tsid/contacts/fwd.hpp include/tsid/contacts/contact-base.hpp
+    include/tsid/contacts/fwd.hpp
+    include/tsid/contacts/contact-base.hpp
     include/tsid/contacts/contact-6d.hpp
-    include/tsid/contacts/contact-point.hpp)
+    include/tsid/contacts/contact-point.hpp
+    include/tsid/contacts/measured-force-base.hpp
+    include/tsid/contacts/measured-3Dforce.hpp
+    include/tsid/contacts/measured-6Dwrench.hpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_HEADERS
     include/tsid/trajectories/fwd.hpp
@@ -130,6 +167,7 @@ set(${PROJECT_NAME}_TRAJECTORIES_HEADERS
 set(${PROJECT_NAME}_SOLVERS_HEADERS
     include/tsid/solvers/fwd.hpp
     include/tsid/solvers/utils.hpp
+    include/tsid/solvers/solver-qpData.hpp
     include/tsid/solvers/solver-HQP-output.hpp
     include/tsid/solvers/solver-HQP-base.hpp
     include/tsid/solvers/solver-HQP-factory.hpp
@@ -139,6 +177,30 @@ set(${PROJECT_NAME}_SOLVERS_HEADERS
     include/tsid/solvers/solver-HQP-eiquadprog-rt.hpp
     include/tsid/solvers/solver-HQP-eiquadprog-rt.hxx
     include/tsid/solvers/solver-HQP-eiquadprog-fast.hpp)
+
+if(BUILD_WITH_PROXQP)
+  find_package(proxsuite REQUIRED)
+  list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
+       include/tsid/solvers/solver-proxqp.hpp)
+
+  # Determine whether ot use the default target or the vectorized target, if
+  # available
+  set(proxsuite_INTERFACE proxsuite::proxsuite)
+  if(NOT TARGET proxsuite::proxsuite-vectorized)
+    message(
+      STATUS
+        "proxsuite::proxsuite-vectorized not available - defaulting to non-vectorized ProxQP"
+    )
+  else()
+    set(proxsuite_INTERFACE proxsuite::proxsuite-vectorized)
+  endif()
+endif()
+
+if(BUILD_WITH_OSQP)
+  find_package(OsqpEigen REQUIRED)
+  list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
+       include/tsid/solvers/solver-osqp.hpp)
+endif()
 
 if(qpmad_FOUND)
   list(APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
@@ -164,7 +226,8 @@ file(
   include/tsid/bindings/python/solvers/*.hpp
   include/tsid/bindings/python/tasks/*.hpp
   include/tsid/bindings/python/trajectories/*.hpp
-  include/tsid/bindings/python/utils/*.hpp)
+  include/tsid/bindings/python/utils/*.hpp
+  include/tsid/bindings/python/math/*.hpp)
 
 set(${PROJECT_NAME}_HEADERS
     include/tsid/macros.hpp
@@ -205,7 +268,8 @@ set(${PROJECT_NAME}_TASKS_SOURCES
 
 set(${PROJECT_NAME}_CONTACTS_SOURCES
     src/contacts/contact-base.cpp src/contacts/contact-6d.cpp
-    src/contacts/contact-point.cpp)
+    src/contacts/contact-point.cpp src/contacts/measured-force-base.cpp
+    src/contacts/measured-3Dforce.cpp src/contacts/measured-6Dwrench.cpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_SOURCES
     src/trajectories/trajectory-se3.cpp
@@ -218,6 +282,14 @@ set(${PROJECT_NAME}_SOLVERS_SOURCES
     src/solvers/solver-HQP-eiquadprog-fast.cpp
     src/solvers/solver-HQP-qpoases.cpp
     src/solvers/utils.cpp)
+
+if(BUILD_WITH_PROXQP)
+  list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-proxqp.cpp)
+endif()
+
+if(BUILD_WITH_OSQP)
+  list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-osqp.cpp)
+endif()
 
 if(qpmad_FOUND)
   list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-HQP-qpmad.cpp)
@@ -254,6 +326,16 @@ if(APPLE)
   set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "@loader_path")
 elseif(UNIX)
   set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+endif()
+
+if(BUILD_WITH_PROXQP)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_PROXSUITE)
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${proxsuite_INTERFACE})
+endif()
+
+if(BUILD_WITH_OSQP)
+  target_link_libraries(${PROJECT_NAME} PUBLIC OsqpEigen::OsqpEigen)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_OSQP)
 endif()
 
 if(qpmad_FOUND)

@@ -7,7 +7,6 @@ print("")
 print("Test Constraint Bound")
 print("")
 
-#se3.switchToNumpyMatrix()
 
 tol = 1e-5
 n = 5
