@@ -57,8 +57,8 @@ jobs:
           python -m pip install wheel simple503
           python -m simple503 --sort --base-url "${{ github.workspace }}/artifact" artifact
       - name: install wheel
-        run: python -m pip install -i "file:///${{ github.workspace }}/artifact" crocoddyl
+        run: python -m pip install -i "file:///${{ github.workspace }}/artifact" tsid
       - name: test
-        run: python -c "import crocoddyl"
+        run: python -c "import tsid"
         env:
           PYTHONWARNINGS: error
