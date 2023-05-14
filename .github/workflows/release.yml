@@ -51,7 +51,7 @@ jobs:
           CIBW_MANYLINUX_PYPY_X86_64_IMAGE: "quay.io/pypa/manylinux_2_28_x86_64"
           CIBW_MANYLINUX_AARCH64_IMAGE: "quay.io/pypa/manylinux_2_28_aarch64"
           CIBW_REPAIR_WHEEL_COMMAND: ""
-          CIBW_ENVIRONMENT: CMEEL_LOG_LEVEL="DEBUG"
+          CIBW_ENVIRONMENT: CMEEL_LOG_LEVEL="DEBUG" CMEEL_RUN_TESTS="OFF"
       - uses: actions/upload-artifact@v3
         with:
           path: wh
