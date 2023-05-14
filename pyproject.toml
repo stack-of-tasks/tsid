@@ -13,6 +13,7 @@ version = "1.7.0"
 homepage = "https://github.com/stack-of-tasks/tsid"
 
 [tool.cmeel]
+build-number = 1
 configure-args = ["-DSUFFIX_SO_VERSION=OFF"]
 
 [tool.isort]
