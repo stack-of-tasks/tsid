@@ -7,6 +7,7 @@ macos_arm64_task:
     image: ghcr.io/cirruslabs/macos-monterey-xcode
   env:
     CIRRUS_CLONE_SUBMODULES: true
+    CIBW_ENVIRONMENT: "CMEEL_LOG_LEVEL=DEBUG"
     CIBW_REPAIR_WHEEL_COMMAND: ""
     CIBW_SKIP: "cp38-*"
     PATH: /opt/homebrew/opt/python@3.10/bin:$PATH
