@@ -2,9 +2,8 @@ import os
 
 import numpy as np
 import pinocchio as se3
-from numpy.linalg import norm
-
 import tsid
+from numpy.linalg import norm
 
 print("")
 print("Test InvDyn")

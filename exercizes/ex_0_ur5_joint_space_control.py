@@ -7,11 +7,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pinocchio as pin
 import plot_utils as plut
+import tsid
 import ur5_conf as conf
 from numpy import nan
 from numpy.linalg import norm as norm
-
-import tsid
 
 print("".center(conf.LINE_WIDTH, "#"))
 print(" Joint Space Inverse Dynamics - Manipulator ".center(conf.LINE_WIDTH, "#"))
