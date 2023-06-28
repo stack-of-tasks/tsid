@@ -180,7 +180,7 @@ for i in range(-N_pre, N + N_post):
                 cop_RF[0, i] = f_RF[4, i] / f_RF[2, i]
                 cop_RF[1, i] = -f_RF[3, i] / f_RF[2, i]
         if tsid_biped.formulation.checkContact(tsid_biped.contactLF.name, sol):
-            T_LF = tsid_biped.contactRF.getForceGeneratorMatrix
+            T_LF = tsid_biped.contactLF.getForceGeneratorMatrix
             f_LF[:, i] = T_LF.dot(
                 tsid_biped.formulation.getContactForce(tsid_biped.contactLF.name, sol)
             )
