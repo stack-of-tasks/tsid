@@ -1,5 +1,5 @@
 [build-system]
-build-backend = "cmeel.build"
+build-backend = "cmeel"
 requires = ["cmeel[build]", "eiquadprog >= 1.2.6, < 2", "pin[build] >= 2.6.18, < 3"]
 
 [project]
