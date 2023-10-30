@@ -6,10 +6,9 @@ import time
 import gepetto.corbaserver
 import numpy as np
 import pinocchio as pin
+import tsid
 from numpy import nan
 from numpy.linalg import norm as norm
-
-import tsid
 
 sys.path += [os.getcwd() + "/../exercizes"]
 import matplotlib.pyplot as plt

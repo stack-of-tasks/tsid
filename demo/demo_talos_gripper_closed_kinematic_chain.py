@@ -10,14 +10,13 @@ import time
 import gepetto.corbaserver
 import numpy as np
 import pinocchio as pin
+import tsid
 from numpy import nan
 from numpy.linalg import norm as norm
 
-import tsid
-
 sys.path += [os.getcwd() + "/../exercizes"]
-#import matplotlib.pyplot as plt
-#import plot_utils as plut
+# import matplotlib.pyplot as plt
+# import plot_utils as plut
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
@@ -43,10 +42,10 @@ urdf = path + "/urdf/talos_gripper_half.urdf"
 vector = pin.StdVec_StdString()
 vector.extend(item for item in path)
 
-robot = tsid.RobotWrapper(urdf, vector, False) # Load with fixed base
+robot = tsid.RobotWrapper(urdf, vector, False)  # Load with fixed base
 
 # for viewer
-robot_display = pin.RobotWrapper.BuildFromURDF( urdf, [path])
+robot_display = pin.RobotWrapper.BuildFromURDF(urdf, [path])
 robot_display.initViewer(loadModel=True)
 
 model = robot.model()
@@ -69,14 +68,18 @@ data = invdyn.data()
 fingertip_name = "gripper_left_fingertip_3_link"
 H_fingertip_ref = robot.framePosition(invdyn.data(), model.getFrameId(fingertip_name))
 
-fingertipPositionTask = tsid.TaskSE3Equality("task-fingertip-position", robot, fingertip_name)
+fingertipPositionTask = tsid.TaskSE3Equality(
+    "task-fingertip-position", robot, fingertip_name
+)
 fingertipPositionTask.useLocalFrame(False)
 fingertipPositionTask.setKp(kp_ee * np.ones(6))
 fingertipPositionTask.setKd(2.0 * np.sqrt(kp_ee) * np.ones(6))
-trajFingertipPosition = tsid.TrajectorySE3Constant("traj-fingertip-position", H_fingertip_ref)
-sampleFingertipPosition = trajFingertipPosition.computeNext()        
+trajFingertipPosition = tsid.TrajectorySE3Constant(
+    "traj-fingertip-position", H_fingertip_ref
+)
+sampleFingertipPosition = trajFingertipPosition.computeNext()
 fingertipPositionTask.setReference(sampleFingertipPosition)
-invdyn.addMotionTask(fingertipPositionTask, w_ee, 1, 0.0)            
+invdyn.addMotionTask(fingertipPositionTask, w_ee, 1, 0.0)
 
 postureTask = tsid.TaskJointPosture("task-posture", robot)
 postureTask.setKp(kp_posture * np.ones(robot.nv))
@@ -85,23 +88,33 @@ invdyn.addMotionTask(postureTask, w_posture, 1, 0.0)
 
 
 # Creating a closed kinematic chain in TSID formulation by creating a contact between two frames, for which there are special links in URDF
-contactTwoFramesFingertipBottomAxis = tsid.ContactTwoFrames("contact-two-frames-fingertip-bottom-axis", 
-                                                            robot, 
-                                                            "gripper_left_motor_single_link_ckc_axis", 
-                                                            "gripper_left_fingertip_3_link_ckc_axis", 
-                                                            -1000, 
-                                                            1000)
+contactTwoFramesFingertipBottomAxis = tsid.ContactTwoFrames(
+    "contact-two-frames-fingertip-bottom-axis",
+    robot,
+    "gripper_left_motor_single_link_ckc_axis",
+    "gripper_left_fingertip_3_link_ckc_axis",
+    -1000,
+    1000,
+)
 twoFramesContact_Kp = 300
 contactTwoFramesFingertipBottomAxis.setKp(twoFramesContact_Kp * np.ones(3))
-contactTwoFramesFingertipBottomAxis.setKd(2.0 * np.sqrt(twoFramesContact_Kp) * np.ones(3))
-        
+contactTwoFramesFingertipBottomAxis.setKd(
+    2.0 * np.sqrt(twoFramesContact_Kp) * np.ones(3)
+)
+
 twoFramesContact_w_forceRef = 1e-5
-invdyn.addRigidContact(contactTwoFramesFingertipBottomAxis, twoFramesContact_w_forceRef, 1.0, 1)
+invdyn.addRigidContact(
+    contactTwoFramesFingertipBottomAxis, twoFramesContact_w_forceRef, 1.0, 1
+)
 
 # Setting actuation to zero for passive joints in kinematic chain via TaskActuationBounds
-tau_max = model.effortLimit[-robot.na:]
-tau_max[0] = 0.0 # setting gripper_left_inner_single_joint to passive contstrainig it's actuation bounds to zero
-tau_max[1] = 0.0 # setting gripper_left_fingertip_3_joint to passive contstrainig it's actuation bounds to zero
+tau_max = model.effortLimit[-robot.na :]
+tau_max[
+    0
+] = 0.0  # setting gripper_left_inner_single_joint to passive contstrainig it's actuation bounds to zero
+tau_max[
+    1
+] = 0.0  # setting gripper_left_fingertip_3_joint to passive contstrainig it's actuation bounds to zero
 tau_min = -tau_max
 actuationBoundsTask = tsid.TaskActuationBounds("task-actuation-bounds", robot)
 actuationBoundsTask.setBounds(tau_min, tau_max)
@@ -123,7 +136,7 @@ solver = tsid.SolverHQuadProgFast("qp solver")
 solver.resize(invdyn.nVar, invdyn.nEq, invdyn.nIn)
 
 offset = sampleFingertipPosition.pos()
-offset[:3] += np.array([0,-0.04, 0])  
+offset[:3] += np.array([0, -0.04, 0])
 amp = np.array([0.0, 0.04, 0.0])
 two_pi_f = 2 * np.pi * np.array([0.0, 0.5, 0.0])
 two_pi_f_amp = np.multiply(two_pi_f, amp)
@@ -131,10 +144,10 @@ two_pi_f_squared_amp = np.multiply(two_pi_f, two_pi_f_amp)
 
 pEE = offset.copy()
 vEE = np.zeros(6)
-aEE = np.zeros(6) 
+aEE = np.zeros(6)
 
 i = 0
-while(True):
+while True:
     time_start = time.time()
 
     # Setting gripper finger task target to sine motion
@@ -145,7 +158,7 @@ while(True):
     sampleFingertipPosition.derivative(vEE)
     sampleFingertipPosition.second_derivative(aEE)
 
-    fingertipPositionTask.setReference(sampleFingertipPosition) 
+    fingertipPositionTask.setReference(sampleFingertipPosition)
 
     samplePosture = trajPosture.computeNext()
     postureTask.setReference(samplePosture)
@@ -163,7 +176,6 @@ while(True):
     tau = invdyn.getActuatorForces(sol)
     dv = invdyn.getAccelerations(sol)
 
-
     if i % PRINT_N == 0:
         print("Time %.3f" % (t))
 
@@ -178,6 +190,5 @@ while(True):
     time_spent = time.time() - time_start
     if time_spent < dt:
         time.sleep(dt - time_spent)
-    
-    i = i + 1
 
+    i = i + 1

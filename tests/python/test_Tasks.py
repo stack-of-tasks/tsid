@@ -2,9 +2,8 @@ import os
 
 import numpy as np
 import pinocchio as pin
-from numpy.linalg import norm
-
 import tsid
+from numpy.linalg import norm
 
 print("")
 print("Test Task COM")

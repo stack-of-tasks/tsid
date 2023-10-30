@@ -67,7 +67,8 @@ struct InvDynPythonVisitor
              bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_AM,
              bp::args("task", "weight", "priorityLevel", "transition duration"))
-        .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_TwoFramesEquality, 
+        .def("addMotionTask",
+             &InvDynPythonVisitor::addMotionTask_TwoFramesEquality,
              bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addForceTask", &InvDynPythonVisitor::addForceTask_COP,
              bp::args("task", "weight", "priorityLevel", "transition duration"))
@@ -100,12 +101,12 @@ struct InvDynPythonVisitor
              &InvDynPythonVisitor::addRigidContactPointWithPriorityLevel,
              bp::args("contact", "force_reg_weight", "motion_weight",
                       "priority_level"))
-        .def("addRigidContact", 
-             &InvDynPythonVisitor::addRigidContactTwoFrames, 
+        .def("addRigidContact", &InvDynPythonVisitor::addRigidContactTwoFrames,
              bp::args("contact", "force_reg_weight"))
-        .def("addRigidContact", 
-             &InvDynPythonVisitor::addRigidContactTwoFramesWithPriorityLevel, 
-             bp::args("contact", "force_reg_weight", "motion_weight", "priority_level"))
+        .def("addRigidContact",
+             &InvDynPythonVisitor::addRigidContactTwoFramesWithPriorityLevel,
+             bp::args("contact", "force_reg_weight", "motion_weight",
+                      "priority_level"))
         .def("removeTask", &InvDynPythonVisitor::removeTask,
              bp::args("task_name", "duration"))
         .def("removeRigidContact", &InvDynPythonVisitor::removeRigidContact,
@@ -161,11 +162,11 @@ struct InvDynPythonVisitor
                                double transition_duration) {
     return self.addMotionTask(task, weight, priorityLevel, transition_duration);
   }
-  static bool addMotionTask_TwoFramesEquality(T& self, tasks::TaskTwoFramesEquality& task, 
-                               double weight, unsigned int priorityLevel, 
-                               double transition_duration) {
+  static bool addMotionTask_TwoFramesEquality(
+      T& self, tasks::TaskTwoFramesEquality& task, double weight,
+      unsigned int priorityLevel, double transition_duration) {
     return self.addMotionTask(task, weight, priorityLevel, transition_duration);
-  } 
+  }
   static bool addForceTask_COP(T& self, tasks::TaskCopEquality& task,
                                double weight, unsigned int priorityLevel,
                                double transition_duration) {
@@ -218,16 +219,18 @@ struct InvDynPythonVisitor
     return self.addRigidContact(contact, force_regularization_weight,
                                 motion_weight, priority_level);
   }
-  static bool addRigidContactTwoFrames(T& self, contacts::ContactTwoFrames& contact, 
-                                   double force_regularization_weight) {
+  static bool addRigidContactTwoFrames(T& self,
+                                       contacts::ContactTwoFrames& contact,
+                                       double force_regularization_weight) {
     return self.addRigidContact(contact, force_regularization_weight);
-  }  
-  static bool addRigidContactTwoFramesWithPriorityLevel(T& self, contacts::ContactTwoFrames & contact,
-                                                        double force_regularization_weight,
-                                                        double motion_weight,
-                                                        const bool priority_level){
-    return self.addRigidContact(contact, force_regularization_weight, motion_weight, priority_level);
-  }        
+  }
+  static bool addRigidContactTwoFramesWithPriorityLevel(
+      T& self, contacts::ContactTwoFrames& contact,
+      double force_regularization_weight, double motion_weight,
+      const bool priority_level) {
+    return self.addRigidContact(contact, force_regularization_weight,
+                                motion_weight, priority_level);
+  }
   static bool removeTask(T& self, const std::string& task_name,
                          double transition_duration) {
     return self.removeTask(task_name, transition_duration);

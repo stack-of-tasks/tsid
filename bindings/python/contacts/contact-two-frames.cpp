@@ -18,13 +18,11 @@
 #include "tsid/bindings/python/contacts/contact-two-frames.hpp"
 #include "tsid/bindings/python/contacts/expose-contact.hpp"
 
-namespace tsid
-{
-  namespace python
-  {
-    void exposeContactTwoFrames()
-    {
-      ContactTwoFramesPythonVisitor<tsid::contacts::ContactTwoFrames>::expose("ContactTwoFrames");
-    }
-  }
+namespace tsid {
+namespace python {
+void exposeContactTwoFrames() {
+  ContactTwoFramesPythonVisitor<tsid::contacts::ContactTwoFrames>::expose(
+      "ContactTwoFrames");
 }
+}  // namespace python
+}  // namespace tsid
