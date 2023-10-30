@@ -49,8 +49,6 @@ namespace tsid
                 RobotWrapper & robot,
                 const std::string & frameName1,
                 const std::string & frameName2,
-                ConstRefVector contactNormal,
-                const double frictionCoefficient,
                 const double minNormalForce,
                 const double maxNormalForce);
 
@@ -124,12 +122,10 @@ namespace tsid
       TaskSE3Equality m_dummyMotionTask;
       ConstraintInequality m_forceInequality;
       ConstraintEquality m_forceRegTask;
-      Vector3 m_contactNormal;
       Vector3 m_fRef;
       Vector3 m_weightForceRegTask;
       Matrix3x m_contactPoints;
       Vector m_Kp3, m_Kd3;  // gain vectors to be returned by reference
-      double m_mu;
       double m_fMin;
       double m_fMax;
       double m_regularizationTaskWeight;

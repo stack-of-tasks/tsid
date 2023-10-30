@@ -30,8 +30,6 @@ ContactTwoFrames::ContactTwoFrames(const std::string & name,
                      RobotWrapper & robot,
                      const std::string & frameName1,
                      const std::string & frameName2,
-                     ConstRefVector contactNormal,
-                     const double frictionCoefficient,
                      const double minNormalForce,
                      const double maxNormalForce):
   ContactBase(name, robot),
@@ -39,8 +37,6 @@ ContactTwoFrames::ContactTwoFrames(const std::string & name,
   m_dummyMotionTask(name, robot, frameName1), // Only to fit the ContactBase class returns, type TaskSE3Equality, seems to be needed only by TaskCopEquality
   m_forceInequality(name, 3, 3),
   m_forceRegTask(name, 3, 3),
-  m_contactNormal(contactNormal),
-  m_mu(frictionCoefficient),
   m_fMin(minNormalForce),
   m_fMax(maxNormalForce)
 {
@@ -68,11 +64,8 @@ void ContactTwoFrames::useLocalFrame(bool local_frame)
 
 void ContactTwoFrames::updateForceInequalityConstraints()
 {
-  // Force "gluing" two frames together can be arbitrary in sign/direction
-  Matrix B = Matrix::Identity(3, 3);
-  //Vector lb = -1e10*Vector::Ones(3); 
-  //Vector ub = 1e10*Vector::Ones(3);
-
+  
+  Matrix B = Matrix::Identity(3, 3); // Force "gluing" two frames together can be arbitrary in sign/direction
   Vector lb = m_fMin*Vector::Ones(3); 
   Vector ub = m_fMax*Vector::Ones(3);
 
@@ -83,8 +76,7 @@ void ContactTwoFrames::updateForceInequalityConstraints()
 
 double ContactTwoFrames::getNormalForce(ConstRefVector f) const
 {
-  assert(f.size()==n_force());
-  return m_contactNormal.dot(f);
+  return 0.0;
 }
 
 const Matrix3x & ContactTwoFrames::getContactPoints() const
@@ -199,7 +191,7 @@ void ContactTwoFrames::setForceReference(ConstRefVector & f_ref)
 
 void ContactTwoFrames::setReference(const SE3 & ref)
 {
-  m_dummyMotionTask.setReference(ref);
+  //m_dummyMotionTask.setReference(ref);
 }
 
 const ConstraintBase & ContactTwoFrames::computeMotionTask(const double t,

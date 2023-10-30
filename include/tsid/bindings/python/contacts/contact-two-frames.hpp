@@ -42,7 +42,7 @@ namespace tsid
       void visit(PyClass& cl) const
       {
         cl
-        .def(bp::init<std::string, robots::RobotWrapper &, std::string, std::string, Eigen::VectorXd, double, double, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("framename1"), bp::arg("framename2"), bp::arg("contactNormal"), bp::arg("frictionCoeff"), bp::arg("minForce"), bp::arg("maxForce")), "Default Constructor"))
+        .def(bp::init<std::string, robots::RobotWrapper &, std::string, std::string, double, double> ((bp::arg("name"), bp::arg("robot"), bp::arg("framename1"), bp::arg("framename2"), bp::arg("minForce"), bp::arg("maxForce")), "Default Constructor"))
         .add_property("n_motion", &ContactTwoFrames::n_motion, "return number of motion")
         .add_property("n_force", &ContactTwoFrames::n_force, "return number of force")
         .add_property("name", &ContactTwoFramesPythonVisitor::name, "return name")
