@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 CNRS, NYU, MPI Tübingen
+// Copyright (c) 2023 MIPT
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -15,25 +15,16 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __tsid_python_expose_contact_hpp__
-#define __tsid_python_expose_contact_hpp__
+#include "tsid/bindings/python/tasks/task-two-frames-equality.hpp"
+#include "tsid/bindings/python/tasks/expose-tasks.hpp"
 
-#include "tsid/bindings/python/contacts/contact-6d.hpp"
-#include "tsid/bindings/python/contacts/contact-point.hpp"
-#include "tsid/bindings/python/contacts/contact-two-frames.hpp"
-
-namespace tsid {
-namespace python {
-void exposeContact6d();
-void exposeContactPoint();
-void exposeContactTwoFrames();
-
-inline void exposeContact() {
-  exposeContact6d();
-  exposeContactPoint();
-  exposeContactTwoFrames();
+namespace tsid
+{
+  namespace python
+  {
+    void exposeTaskTwoFramesEquality()
+    {
+      TaskTwoFramesEqualityPythonVisitor<tsid::tasks::TaskTwoFramesEquality>::expose("TaskTwoFramesEquality");
+    }
+  }
 }
-
-}  // namespace python
-}  // namespace tsid
-#endif  // ifndef __tsid_python_expose_contact_hpp__
