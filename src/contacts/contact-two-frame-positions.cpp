@@ -137,49 +137,25 @@ void ContactTwoFramePositions::Kd(ConstRefVector Kd)
 
 bool ContactTwoFramePositions::setContactNormal(ConstRefVector contactNormal)
 {
-  /*assert(contactNormal.size()==3);
-  if(contactNormal.size()!=3)
-    return false;
-  m_contactNormal = contactNormal;
-  updateForceInequalityConstraints();*/
   return true;
 }
 
 bool ContactTwoFramePositions::setFrictionCoefficient(const double frictionCoefficient)
 {
-  /*
-  assert(frictionCoefficient>0.0);
-  if(frictionCoefficient<=0.0)
-    return false;
-  m_mu = frictionCoefficient;
-  updateForceInequalityConstraints();
-  */
   return true;
 }
 
 bool ContactTwoFramePositions::setMinNormalForce(const double minNormalForce)
 {
-  /*
-  assert(minNormalForce>0.0 && minNormalForce<=m_fMax);
-  if(minNormalForce<=0.0 || minNormalForce>m_fMax)
-    return false;
   m_fMin = minNormalForce;
-  Vector & lb = m_forceInequality.lowerBound();
-  lb(lb.size()-1) = m_fMin;
-  */
+  updateForceInequalityConstraints();
   return true;
 }
 
 bool ContactTwoFramePositions::setMaxNormalForce(const double maxNormalForce)
 {
-  /*
-  assert(maxNormalForce>=m_fMin);
-  if(maxNormalForce<m_fMin)
-    return false;
   m_fMax = maxNormalForce;
-  Vector & ub = m_forceInequality.upperBound();
-  ub(ub.size()-1) = m_fMax;
-  */
+  updateForceInequalityConstraints();
   return true;
 }
 
