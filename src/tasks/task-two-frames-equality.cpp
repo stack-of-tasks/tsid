@@ -60,7 +60,6 @@ TaskTwoFramesEquality::TaskTwoFramesEquality(const std::string& name,
   m_mask.resize(6);
   m_mask.fill(1.);
   setMask(m_mask);
-
 }
 
 void TaskTwoFramesEquality::setMask(math::ConstRefVector mask)
