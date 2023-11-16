@@ -24,14 +24,11 @@
 #include "tsid/math/constraint-inequality.hpp"
 #include "tsid/math/constraint-equality.hpp"
 
-namespace tsid
-{
-  namespace contacts
-  {
-    class ContactTwoFramePositions : public ContactBase
-    {
-    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+namespace tsid {
+namespace contacts {
+class ContactTwoFramePositions : public ContactBase {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   typedef math::ConstRefMatrix ConstRefMatrix;
   typedef math::ConstRefVector ConstRefVector;
@@ -45,12 +42,11 @@ namespace tsid
   typedef math::ConstraintEquality ConstraintEquality;
   typedef pinocchio::SE3 SE3;
 
-      ContactTwoFramePositions(const std::string & name,
-                RobotWrapper & robot,
-                const std::string & frameName1,
-                const std::string & frameName2,
-                const double minNormalForce,
-                const double maxNormalForce);
+  ContactTwoFramePositions(const std::string& name, RobotWrapper& robot,
+                           const std::string& frameName1,
+                           const std::string& frameName2,
+                           const double minNormalForce,
+                           const double maxNormalForce);
 
   /// Return the number of motion constraints
   virtual unsigned int n_motion() const;
@@ -133,25 +129,26 @@ namespace tsid
 }  // namespace contacts
 }  // namespace tsid
 
-      void updateForceInequalityConstraints();
-      void updateForceRegularizationTask();
-      void updateForceGeneratorMatrix();
+void updateForceInequalityConstraints();
+void updateForceRegularizationTask();
+void updateForceGeneratorMatrix();
 
-      TaskTwoFramesEquality m_motionTask;
-      TaskSE3Equality m_dummyMotionTask;
-      ConstraintInequality m_forceInequality;
-      ConstraintEquality m_forceRegTask;
-      Vector3 m_fRef;
-      Vector3 m_weightForceRegTask;
-      Matrix3x m_contactPoints;
-      Vector m_Kp3, m_Kd3;  // gain vectors to be returned by reference
-      double m_fMin;
-      double m_fMax;
-      double m_regularizationTaskWeight;
-      double m_motionTaskWeight;
-      Matrix m_forceGenMat;
-    };
-  }
+TaskTwoFramesEquality m_motionTask;
+TaskSE3Equality m_dummyMotionTask;
+ConstraintInequality m_forceInequality;
+ConstraintEquality m_forceRegTask;
+Vector3 m_fRef;
+Vector3 m_weightForceRegTask;
+Matrix3x m_contactPoints;
+Vector m_Kp3, m_Kd3;  // gain vectors to be returned by reference
+double m_fMin;
+double m_fMax;
+double m_regularizationTaskWeight;
+double m_motionTaskWeight;
+Matrix m_forceGenMat;
+}
+;
+}
 }
 
-#endif // ifndef __invdyn_contact_two_frame_positions_hpp__
+#endif  // ifndef __invdyn_contact_two_frame_positions_hpp__

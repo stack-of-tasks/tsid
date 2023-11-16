@@ -12,13 +12,15 @@ import tsid
 from numpy import nan
 from numpy.linalg import norm as norm
 
-import tsid
-
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
 LINE_WIDTH = 60
 print("".center(LINE_WIDTH, "#"))
-print(" Demo of TSID with Closed Kinematic Chains via ContactTwoFramePositions".center(LINE_WIDTH, "#"))
+print(
+    " Demo of TSID with Closed Kinematic Chains via ContactTwoFramePositions".center(
+        LINE_WIDTH, "#"
+    )
+)
 print("".center(LINE_WIDTH, "#"), "\n")
 
 w_ee = 1.0  # weight of end effector task
@@ -88,18 +90,24 @@ invdyn.addMotionTask(postureTask, w_posture, 1, 0.0)
 
 
 # Creating a closed kinematic chain in TSID formulation by creating a contact between two frames, for which there are special links in URDF
-ContactTwoFramePositionsFingertipBottomAxis = tsid.ContactTwoFramePositions("contact-two-frame-positions-fingertip-bottom-axis", 
-                                                            robot, 
-                                                            "gripper_left_motor_single_link_ckc_axis", 
-                                                            "gripper_left_fingertip_3_link_ckc_axis", 
-                                                            -1000, 
-                                                            1000)
+ContactTwoFramePositionsFingertipBottomAxis = tsid.ContactTwoFramePositions(
+    "contact-two-frame-positions-fingertip-bottom-axis",
+    robot,
+    "gripper_left_motor_single_link_ckc_axis",
+    "gripper_left_fingertip_3_link_ckc_axis",
+    -1000,
+    1000,
+)
 twoFramesContact_Kp = 300
 ContactTwoFramePositionsFingertipBottomAxis.setKp(twoFramesContact_Kp * np.ones(3))
-ContactTwoFramePositionsFingertipBottomAxis.setKd(2.0 * np.sqrt(twoFramesContact_Kp) * np.ones(3))
-        
+ContactTwoFramePositionsFingertipBottomAxis.setKd(
+    2.0 * np.sqrt(twoFramesContact_Kp) * np.ones(3)
+)
+
 twoFramesContact_w_forceRef = 1e-5
-invdyn.addRigidContact(ContactTwoFramePositionsFingertipBottomAxis, twoFramesContact_w_forceRef, 1.0, 1)
+invdyn.addRigidContact(
+    ContactTwoFramePositionsFingertipBottomAxis, twoFramesContact_w_forceRef, 1.0, 1
+)
 
 # Setting actuation to zero for passive joints in kinematic chain via TaskActuationBounds
 tau_max = model.effortLimit[-robot.na :]
