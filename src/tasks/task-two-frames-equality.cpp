@@ -139,7 +139,7 @@ namespace tsid
                                                     Data & data)
     {
 
-      // Calculating task with formulation: [J1 - J2   0   0] y = [-J1dot*v + J2dot*v]
+      // Calculating task with formulation: [J1 - J2   0   0] dv = [-J1dot*v + J2dot*v]
 
       SE3 oMi1, oMi2;
       Motion v_frame1, v_frame2;
@@ -151,28 +151,28 @@ namespace tsid
       m_robot.frameClassicAcceleration(data, m_frame_id1, m_drift1);
       m_robot.frameClassicAcceleration(data, m_frame_id2, m_drift2);
 
-      // Transformations from local to world
+      // Transformations from local to local-world-aligned frame (thus only rotation is used)
       m_wMl1.rotation(oMi1.rotation());   
       m_wMl2.rotation(oMi2.rotation());     
 
       m_robot.frameJacobianLocal(data, m_frame_id1, m_J1);
       m_robot.frameJacobianLocal(data, m_frame_id2, m_J2);
 
-      // Doing all calculations in world frame
-      errorInSE3(oMi1, oMi2, m_p_error);          // pos err in local (=rotated) oMi1 frame
-      m_p_error_vec = m_wMl1.toActionMatrix() * m_p_error.toVector(); // pos err in world frame
+      // Doing all calculations in local-world-aligned frame
+      errorInSE3(oMi1, oMi2, m_p_error);          // pos err in local oMi1 frame
+      m_p_error_vec = m_wMl1.toActionMatrix() * m_p_error.toVector(); // pos err in local-world-aligned frame
 
-      m_v_error = m_wMl2.act(v_frame2) - m_wMl1.act(v_frame1);  // vel err in world frame
+      m_v_error = m_wMl2.act(v_frame2) - m_wMl1.act(v_frame1);  // vel err in local-world-aligned frame
 
-      // desired acc in world frame
+      // desired acc in local-world-aligned frame
       m_a_des = m_Kp.cwiseProduct(m_p_error_vec)
                 + m_Kd.cwiseProduct(m_v_error.toVector());
 
       m_v_error_vec = m_v_error.toVector();
 
       m_drift = (m_wMl1.act(m_drift1) - m_wMl2.act(m_drift2));
-
-      m_J1_rotated.noalias() = m_wMl1.toActionMatrix() * m_J1;
+      
+      m_J1_rotated.noalias() = m_wMl1.toActionMatrix() * m_J1; // Use an explicit temporary m_J_rotated to avoid allocations
       m_J1 = m_J1_rotated;      
 
       m_J2_rotated.noalias() = m_wMl2.toActionMatrix() * m_J2;

@@ -16,7 +16,7 @@
 //
 
 #include "tsid/math/utils.hpp"
-#include "tsid/contacts/contact-two-frames.hpp"
+#include "tsid/contacts/contact-two-frame-positions.hpp"
 
 #include <pinocchio/spatial/skew.hpp>
 
@@ -26,7 +26,7 @@ using namespace math;
 using namespace trajectories;
 using namespace tasks;
 
-ContactTwoFrames::ContactTwoFrames(const std::string & name,
+ContactTwoFramePositions::ContactTwoFramePositions(const std::string & name,
                      RobotWrapper & robot,
                      const std::string & frameName1,
                      const std::string & frameName2,
@@ -49,7 +49,7 @@ ContactTwoFrames::ContactTwoFrames(const std::string & name,
   updateForceInequalityConstraints();
   updateForceRegularizationTask();
 
-  // This contact has forceGenMat as 3x3 identity matrix, so it can be used only for emulating a bll joint between two frames
+  // This contact has forceGenMat as 3x3 identity matrix, so it can be used only for emulating a ball joint between two frames
   // The forces calculated will have only linear part (rotation will be unconstrained)
   // So we need to set the appropriate mask for motion task (which can take into account rotation but we don't need it)
   math::Vector motion_mask(6);  
@@ -57,12 +57,12 @@ ContactTwoFrames::ContactTwoFrames(const std::string & name,
   m_motionTask.setMask(motion_mask);
 }
 
-void ContactTwoFrames::useLocalFrame(bool local_frame)
+void ContactTwoFramePositions::useLocalFrame(bool local_frame)
 {
   m_dummyMotionTask.useLocalFrame(local_frame);
 }
 
-void ContactTwoFrames::updateForceInequalityConstraints()
+void ContactTwoFramePositions::updateForceInequalityConstraints()
 {
   
   Matrix B = Matrix::Identity(3, 3); // Force "gluing" two frames together can be arbitrary in sign/direction
@@ -74,23 +74,23 @@ void ContactTwoFrames::updateForceInequalityConstraints()
   m_forceInequality.setUpperBound(ub);
 }
 
-double ContactTwoFrames::getNormalForce(ConstRefVector f) const
+double ContactTwoFramePositions::getNormalForce(ConstRefVector f) const
 {
   return 0.0;
 }
 
-const Matrix3x & ContactTwoFrames::getContactPoints() const
+const Matrix3x & ContactTwoFramePositions::getContactPoints() const
 {
   return m_contactPoints;
 }
 
-void ContactTwoFrames::setRegularizationTaskWeightVector(ConstRefVector & w)
+void ContactTwoFramePositions::setRegularizationTaskWeightVector(ConstRefVector & w)
 {
   m_weightForceRegTask = w;
   updateForceRegularizationTask();
 }
 
-void ContactTwoFrames::updateForceRegularizationTask()
+void ContactTwoFramePositions::updateForceRegularizationTask()
 {
   typedef Eigen::Matrix<double,3,3> Matrix3;
   Matrix3 A = Matrix3::Zero();
@@ -99,27 +99,27 @@ void ContactTwoFrames::updateForceRegularizationTask()
   m_forceRegTask.setVector(A*m_fRef);
 }
 
-void ContactTwoFrames:: updateForceGeneratorMatrix()
+void ContactTwoFramePositions:: updateForceGeneratorMatrix()
 {
   m_forceGenMat.setIdentity();
 }
 
-unsigned int ContactTwoFrames::n_motion() const { return m_motionTask.dim(); }
-unsigned int ContactTwoFrames::n_force() const { return 3; }
+unsigned int ContactTwoFramePositions::n_motion() const { return m_motionTask.dim(); }
+unsigned int ContactTwoFramePositions::n_force() const { return 3; }
 
-const Vector & ContactTwoFrames::Kp()
+const Vector & ContactTwoFramePositions::Kp()
 {
   m_Kp3 = m_motionTask.Kp().head<3>();
   return m_Kp3;
 }
 
-const Vector & ContactTwoFrames::Kd()
+const Vector & ContactTwoFramePositions::Kd()
 {
   m_Kd3 = m_motionTask.Kd().head<3>();
   return m_Kd3;
 }
 
-void ContactTwoFrames::Kp(ConstRefVector Kp)
+void ContactTwoFramePositions::Kp(ConstRefVector Kp)
 {
   assert(Kp.size()==3);
   Vector6 Kp6;
@@ -127,7 +127,7 @@ void ContactTwoFrames::Kp(ConstRefVector Kp)
   m_motionTask.Kp(Kp6);
 }
 
-void ContactTwoFrames::Kd(ConstRefVector Kd)
+void ContactTwoFramePositions::Kd(ConstRefVector Kd)
 {
   assert(Kd.size()==3);
   Vector6 Kd6;
@@ -135,7 +135,7 @@ void ContactTwoFrames::Kd(ConstRefVector Kd)
   m_motionTask.Kd(Kd6);
 }
 
-bool ContactTwoFrames::setContactNormal(ConstRefVector contactNormal)
+bool ContactTwoFramePositions::setContactNormal(ConstRefVector contactNormal)
 {
   /*assert(contactNormal.size()==3);
   if(contactNormal.size()!=3)
@@ -145,7 +145,7 @@ bool ContactTwoFrames::setContactNormal(ConstRefVector contactNormal)
   return true;
 }
 
-bool ContactTwoFrames::setFrictionCoefficient(const double frictionCoefficient)
+bool ContactTwoFramePositions::setFrictionCoefficient(const double frictionCoefficient)
 {
   /*
   assert(frictionCoefficient>0.0);
@@ -157,7 +157,7 @@ bool ContactTwoFrames::setFrictionCoefficient(const double frictionCoefficient)
   return true;
 }
 
-bool ContactTwoFrames::setMinNormalForce(const double minNormalForce)
+bool ContactTwoFramePositions::setMinNormalForce(const double minNormalForce)
 {
   /*
   assert(minNormalForce>0.0 && minNormalForce<=m_fMax);
@@ -170,7 +170,7 @@ bool ContactTwoFrames::setMinNormalForce(const double minNormalForce)
   return true;
 }
 
-bool ContactTwoFrames::setMaxNormalForce(const double maxNormalForce)
+bool ContactTwoFramePositions::setMaxNormalForce(const double maxNormalForce)
 {
   /*
   assert(maxNormalForce>=m_fMin);
@@ -183,18 +183,18 @@ bool ContactTwoFrames::setMaxNormalForce(const double maxNormalForce)
   return true;
 }
 
-void ContactTwoFrames::setForceReference(ConstRefVector & f_ref)
+void ContactTwoFramePositions::setForceReference(ConstRefVector & f_ref)
 {
   m_fRef = f_ref;
   updateForceRegularizationTask();
 }
 
-void ContactTwoFrames::setReference(const SE3 & ref)
+void ContactTwoFramePositions::setReference(const SE3 & ref)
 {
   //m_dummyMotionTask.setReference(ref);
 }
 
-const ConstraintBase & ContactTwoFrames::computeMotionTask(const double t,
+const ConstraintBase & ContactTwoFramePositions::computeMotionTask(const double t,
                                                     ConstRefVector q,
                                                     ConstRefVector v,
                                                     Data & data)
@@ -202,7 +202,7 @@ const ConstraintBase & ContactTwoFrames::computeMotionTask(const double t,
   return m_motionTask.compute(t, q, v, data);
 }
 
-const ConstraintInequality & ContactTwoFrames::computeForceTask(const double,
+const ConstraintInequality & ContactTwoFramePositions::computeForceTask(const double,
                                                          ConstRefVector ,
                                                          ConstRefVector ,
                                                          const Data & )
@@ -210,12 +210,12 @@ const ConstraintInequality & ContactTwoFrames::computeForceTask(const double,
   return m_forceInequality;
 }
 
-const Matrix & ContactTwoFrames::getForceGeneratorMatrix()
+const Matrix & ContactTwoFramePositions::getForceGeneratorMatrix()
 {
   return m_forceGenMat;
 }
 
-const ConstraintEquality & ContactTwoFrames::
+const ConstraintEquality & ContactTwoFramePositions::
 computeForceRegularizationTask(const double ,
 			       ConstRefVector ,
 			       ConstRefVector ,
@@ -224,18 +224,18 @@ computeForceRegularizationTask(const double ,
   return m_forceRegTask;
 }
 
-double ContactTwoFrames::getMinNormalForce() const { return m_fMin; }
-double ContactTwoFrames::getMaxNormalForce() const { return m_fMax; }
+double ContactTwoFramePositions::getMinNormalForce() const { return m_fMin; }
+double ContactTwoFramePositions::getMaxNormalForce() const { return m_fMax; }
 
-const TaskSE3Equality & ContactTwoFrames::getMotionTask() const { 
-  std::cout << "Warning! Returning emtpy motion task from ContactTwoFrames::m_dummyMotionTask" << std::endl;
+const TaskSE3Equality & ContactTwoFramePositions::getMotionTask() const { 
+  std::cout << "Warning! Returning emtpy motion task from ContactTwoFramePositions::m_dummyMotionTask" << std::endl;
   return m_dummyMotionTask; 
 }
 
-const ConstraintBase & ContactTwoFrames::getMotionConstraint() const { 
+const ConstraintBase & ContactTwoFramePositions::getMotionConstraint() const { 
   return m_motionTask.getConstraint(); 
 }
 
-const ConstraintInequality & ContactTwoFrames::getForceConstraint() const { return m_forceInequality; }
+const ConstraintInequality & ContactTwoFramePositions::getForceConstraint() const { return m_forceInequality; }
 
-const ConstraintEquality & ContactTwoFrames::getForceRegularizationTask() const { return m_forceRegTask; }
+const ConstraintEquality & ContactTwoFramePositions::getForceRegularizationTask() const { return m_forceRegTask; }

@@ -15,8 +15,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_contact_two_frames_hpp__
-#define __invdyn_contact_two_frames_hpp__
+#ifndef __invdyn_contact_two_frame_positions_hpp__
+#define __invdyn_contact_two_frame_positions_hpp__
 
 #include "tsid/contacts/contact-base.hpp"
 #include "tsid/tasks/task-se3-equality.hpp"
@@ -28,7 +28,7 @@ namespace tsid
 {
   namespace contacts
   {
-    class ContactTwoFrames : public ContactBase
+    class ContactTwoFramePositions : public ContactBase
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -45,7 +45,7 @@ namespace tsid
       typedef math::ConstraintEquality ConstraintEquality;
       typedef pinocchio::SE3 SE3;
 
-      ContactTwoFrames(const std::string & name,
+      ContactTwoFramePositions(const std::string & name,
                 RobotWrapper & robot,
                 const std::string & frameName1,
                 const std::string & frameName2,
@@ -135,4 +135,4 @@ namespace tsid
   }
 }
 
-#endif // ifndef __invdyn_contact_frames_hpp__
+#endif // ifndef __invdyn_contact_two_frame_positions_hpp__

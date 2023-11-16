@@ -158,7 +158,7 @@ set(${PROJECT_NAME}_CONTACTS_HEADERS
     include/tsid/contacts/measured-force-base.hpp
     include/tsid/contacts/measured-3Dforce.hpp
     include/tsid/contacts/measured-6Dwrench.hpp
-    include/tsid/contacts/contact-two-frames.hpp)
+    include/tsid/contacts/contact-two-frame-positions.hpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_HEADERS
     include/tsid/trajectories/fwd.hpp
@@ -273,7 +273,7 @@ set(${PROJECT_NAME}_CONTACTS_SOURCES
     src/contacts/contact-base.cpp src/contacts/contact-6d.cpp
     src/contacts/contact-point.cpp src/contacts/measured-force-base.cpp
     src/contacts/measured-3Dforce.cpp src/contacts/measured-6Dwrench.cpp
-    src/contacts/contact-two-frames.cpp)
+    src/contacts/contact-two-frame-positions.cpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_SOURCES
     src/trajectories/trajectory-se3.cpp

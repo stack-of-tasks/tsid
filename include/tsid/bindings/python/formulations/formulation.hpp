@@ -26,7 +26,7 @@
 #include "tsid/bindings/python/solvers/HQPData.hpp"
 #include "tsid/contacts/contact-6d.hpp"
 #include "tsid/contacts/contact-point.hpp"
-#include "tsid/contacts/contact-two-frames.hpp"
+#include "tsid/contacts/contact-two-frame-positions.hpp"
 #include "tsid/tasks/task-joint-posture.hpp"
 #include "tsid/tasks/task-se3-equality.hpp"
 #include "tsid/tasks/task-com-equality.hpp"
@@ -101,10 +101,10 @@ struct InvDynPythonVisitor
              bp::args("contact", "force_reg_weight", "motion_weight",
                       "priority_level"))
         .def("addRigidContact", 
-             &InvDynPythonVisitor::addRigidContactTwoFrames, 
+             &InvDynPythonVisitor::addRigidContactTwoFramePositions, 
              bp::args("contact", "force_reg_weight"))
         .def("addRigidContact", 
-             &InvDynPythonVisitor::addRigidContactTwoFramesWithPriorityLevel, 
+             &InvDynPythonVisitor::addRigidContactTwoFramePositionsWithPriorityLevel, 
              bp::args("contact", "force_reg_weight", "motion_weight", "priority_level"))
         .def("removeTask", &InvDynPythonVisitor::removeTask,
              bp::args("task_name", "duration"))
@@ -218,11 +218,11 @@ struct InvDynPythonVisitor
     return self.addRigidContact(contact, force_regularization_weight,
                                 motion_weight, priority_level);
   }
-  static bool addRigidContactTwoFrames(T& self, contacts::ContactTwoFrames& contact, 
+  static bool addRigidContactTwoFramePositions(T& self, contacts::ContactTwoFramePositions& contact, 
                                    double force_regularization_weight) {
     return self.addRigidContact(contact, force_regularization_weight);
   }  
-  static bool addRigidContactTwoFramesWithPriorityLevel(T& self, contacts::ContactTwoFrames & contact,
+  static bool addRigidContactTwoFramePositionsWithPriorityLevel(T& self, contacts::ContactTwoFramePositions & contact,
                                                         double force_regularization_weight,
                                                         double motion_weight,
                                                         const bool priority_level){

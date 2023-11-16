@@ -20,18 +20,18 @@
 
 #include "tsid/bindings/python/contacts/contact-6d.hpp"
 #include "tsid/bindings/python/contacts/contact-point.hpp"
-#include "tsid/bindings/python/contacts/contact-two-frames.hpp"
+#include "tsid/bindings/python/contacts/contact-two-frame-positions.hpp"
 
 namespace tsid {
 namespace python {
 void exposeContact6d();
 void exposeContactPoint();
-void exposeContactTwoFrames();
+void exposeContactTwoFramePositions();
 
 inline void exposeContact() {
   exposeContact6d();
   exposeContactPoint();
-  exposeContactTwoFrames();
+  exposeContactTwoFramePositions();
 }
 
 }  // namespace python
