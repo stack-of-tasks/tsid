@@ -57,144 +57,14 @@ TaskTwoFramesEquality::TaskTwoFramesEquality(const std::string& name,
   m_J1_rotated.setZero(6, robot.nv());
   m_J2_rotated.setZero(6, robot.nv());
 
-      m_mask.resize(6);
-      m_mask.fill(1.);
-      setMask(m_mask);
+  m_mask.resize(6);
+  m_mask.fill(1.);
+  setMask(m_mask);
 
-    }
-
-    void TaskTwoFramesEquality::setMask(math::ConstRefVector mask)
-    {
-      TaskMotion::setMask(mask);
-      int n = dim();
-      m_constraint.resize(n, (unsigned int)m_J1.cols());
-      m_p_error_masked_vec.resize(n);
-      m_v_error_masked_vec.resize(n);
-      m_drift_masked.resize(n);
-      m_a_des_masked.resize(n);
-    }
-
-    int TaskTwoFramesEquality::dim() const
-    {
-      return (int)m_mask.sum();
-    }
-
-    const Vector & TaskTwoFramesEquality::Kp() const { return m_Kp; }
-
-    const Vector & TaskTwoFramesEquality::Kd() const { return m_Kd; }
-
-    void TaskTwoFramesEquality::Kp(ConstRefVector Kp)
-    {
-      assert(Kp.size()==6);
-      m_Kp = Kp;
-    }
-
-    void TaskTwoFramesEquality::Kd(ConstRefVector Kd)
-    {
-      assert(Kd.size()==6);
-      m_Kd = Kd;
-    }
-
-    const Vector & TaskTwoFramesEquality::position_error() const
-    {
-      return m_p_error_masked_vec;
-    }
-
-    const Vector & TaskTwoFramesEquality::velocity_error() const
-    {
-      return m_v_error_masked_vec;
-    }
-
-    const Vector & TaskTwoFramesEquality::getDesiredAcceleration() const
-    {
-      return m_a_des_masked;
-    }
-
-    Vector TaskTwoFramesEquality::getAcceleration(ConstRefVector dv) const
-    {
-      return m_constraint.matrix()*dv + m_drift_masked;
-    }
-
-    Index TaskTwoFramesEquality::frame_id1() const
-    {
-      return m_frame_id1;
-    }
-
-    Index TaskTwoFramesEquality::frame_id2() const
-    {
-      return m_frame_id2;
-    }    
-
-    const ConstraintBase & TaskTwoFramesEquality::getConstraint() const
-    {
-      return m_constraint;
-    }
-
-    const ConstraintBase & TaskTwoFramesEquality::compute(const double ,
-                                                    ConstRefVector ,
-                                                    ConstRefVector ,
-                                                    Data & data)
-    {
-
-      // Calculating task with formulation: [J1 - J2   0   0] dv = [-J1dot*v + J2dot*v]
-
-      SE3 oMi1, oMi2;
-      Motion v_frame1, v_frame2;
-      Motion m_drift1, m_drift2;
-      m_robot.framePosition(data, m_frame_id1, oMi1);
-      m_robot.framePosition(data, m_frame_id2, oMi2);
-      m_robot.frameVelocity(data, m_frame_id1, v_frame1);
-      m_robot.frameVelocity(data, m_frame_id2, v_frame2);      
-      m_robot.frameClassicAcceleration(data, m_frame_id1, m_drift1);
-      m_robot.frameClassicAcceleration(data, m_frame_id2, m_drift2);
-
-      // Transformations from local to local-world-aligned frame (thus only rotation is used)
-      m_wMl1.rotation(oMi1.rotation());   
-      m_wMl2.rotation(oMi2.rotation());     
-
-      m_robot.frameJacobianLocal(data, m_frame_id1, m_J1);
-      m_robot.frameJacobianLocal(data, m_frame_id2, m_J2);
-
-      // Doing all calculations in local-world-aligned frame
-      errorInSE3(oMi1, oMi2, m_p_error);          // pos err in local oMi1 frame
-      m_p_error_vec = m_wMl1.toActionMatrix() * m_p_error.toVector(); // pos err in local-world-aligned frame
-
-      m_v_error = m_wMl2.act(v_frame2) - m_wMl1.act(v_frame1);  // vel err in local-world-aligned frame
-
-      // desired acc in local-world-aligned frame
-      m_a_des = m_Kp.cwiseProduct(m_p_error_vec)
-                + m_Kd.cwiseProduct(m_v_error.toVector());
-
-      m_v_error_vec = m_v_error.toVector();
-
-      m_drift = (m_wMl1.act(m_drift1) - m_wMl2.act(m_drift2));
-      
-      m_J1_rotated.noalias() = m_wMl1.toActionMatrix() * m_J1; // Use an explicit temporary m_J_rotated to avoid allocations
-      m_J1 = m_J1_rotated;      
-
-      m_J2_rotated.noalias() = m_wMl2.toActionMatrix() * m_J2;
-      m_J2 = m_J2_rotated;    
-
-      int idx = 0;
-      for (int i = 0; i < 6; i++) {
-        if (m_mask(i) != 1.) continue;
-
-        m_constraint.matrix().row(idx) = m_J1.row(i) - m_J2.row(i);
-        m_constraint.vector().row(idx) = (m_a_des - m_drift.toVector()).row(i);
-        m_a_des_masked(idx)            = m_a_des(i);
-        m_drift_masked(idx)            = m_drift.toVector()(i);
-        m_p_error_masked_vec(idx)      = m_p_error_vec(i);
-        m_v_error_masked_vec(idx)      = m_v_error_vec(i);
-
-        idx += 1;
-      }
-      
-      return m_constraint;
-    }
-  }
 }
 
-void TaskTwoFramesEquality::setMask(math::ConstRefVector mask) {
+void TaskTwoFramesEquality::setMask(math::ConstRefVector mask)
+{
   TaskMotion::setMask(mask);
   int n = dim();
   m_constraint.resize(n, (unsigned int)m_J1.cols());
@@ -204,52 +74,69 @@ void TaskTwoFramesEquality::setMask(math::ConstRefVector mask) {
   m_a_des_masked.resize(n);
 }
 
-int TaskTwoFramesEquality::dim() const { return (int)m_mask.sum(); }
+int TaskTwoFramesEquality::dim() const
+{
+  return (int)m_mask.sum();
+}
 
-const Vector& TaskTwoFramesEquality::Kp() const { return m_Kp; }
+const Vector & TaskTwoFramesEquality::Kp() const { return m_Kp; }
 
-const Vector& TaskTwoFramesEquality::Kd() const { return m_Kd; }
+const Vector & TaskTwoFramesEquality::Kd() const { return m_Kd; }
 
-void TaskTwoFramesEquality::Kp(ConstRefVector Kp) {
-  assert(Kp.size() == 6);
+void TaskTwoFramesEquality::Kp(ConstRefVector Kp)
+{
+  assert(Kp.size()==6);
   m_Kp = Kp;
 }
 
-void TaskTwoFramesEquality::Kd(ConstRefVector Kd) {
-  assert(Kd.size() == 6);
+void TaskTwoFramesEquality::Kd(ConstRefVector Kd)
+{
+  assert(Kd.size()==6);
   m_Kd = Kd;
 }
 
-const Vector& TaskTwoFramesEquality::position_error() const {
+const Vector & TaskTwoFramesEquality::position_error() const
+{
   return m_p_error_masked_vec;
 }
 
-const Vector& TaskTwoFramesEquality::velocity_error() const {
+const Vector & TaskTwoFramesEquality::velocity_error() const
+{
   return m_v_error_masked_vec;
 }
 
-const Vector& TaskTwoFramesEquality::getDesiredAcceleration() const {
+const Vector & TaskTwoFramesEquality::getDesiredAcceleration() const
+{
   return m_a_des_masked;
 }
 
-Vector TaskTwoFramesEquality::getAcceleration(ConstRefVector dv) const {
-  return m_constraint.matrix() * dv + m_drift_masked;
+Vector TaskTwoFramesEquality::getAcceleration(ConstRefVector dv) const
+{
+  return m_constraint.matrix()*dv + m_drift_masked;
 }
 
-Index TaskTwoFramesEquality::frame_id1() const { return m_frame_id1; }
+Index TaskTwoFramesEquality::frame_id1() const
+{
+  return m_frame_id1;
+}
 
-Index TaskTwoFramesEquality::frame_id2() const { return m_frame_id2; }
+Index TaskTwoFramesEquality::frame_id2() const
+{
+  return m_frame_id2;
+}    
 
-const ConstraintBase& TaskTwoFramesEquality::getConstraint() const {
+const ConstraintBase & TaskTwoFramesEquality::getConstraint() const
+{
   return m_constraint;
 }
 
-const ConstraintBase& TaskTwoFramesEquality::compute(const double,
-                                                     ConstRefVector,
-                                                     ConstRefVector,
-                                                     Data& data) {
-  // Calculating task with formulation: [J1 - J2   0   0] y = [-J1dot*v +
-  // J2dot*v]
+const ConstraintBase & TaskTwoFramesEquality::compute(const double ,
+                                                ConstRefVector ,
+                                                ConstRefVector ,
+                                                Data & data)
+{
+
+  // Calculating task with formulation: [J1 - J2   0   0] dv = [-J1dot*v + J2dot*v]
 
   SE3 oMi1, oMi2;
   Motion v_frame1, v_frame2;
@@ -257,38 +144,36 @@ const ConstraintBase& TaskTwoFramesEquality::compute(const double,
   m_robot.framePosition(data, m_frame_id1, oMi1);
   m_robot.framePosition(data, m_frame_id2, oMi2);
   m_robot.frameVelocity(data, m_frame_id1, v_frame1);
-  m_robot.frameVelocity(data, m_frame_id2, v_frame2);
+  m_robot.frameVelocity(data, m_frame_id2, v_frame2);      
   m_robot.frameClassicAcceleration(data, m_frame_id1, m_drift1);
   m_robot.frameClassicAcceleration(data, m_frame_id2, m_drift2);
 
-  // Transformations from local to world
-  m_wMl1.rotation(oMi1.rotation());
-  m_wMl2.rotation(oMi2.rotation());
+  // Transformations from local to local-world-aligned frame (thus only rotation is used)
+  m_wMl1.rotation(oMi1.rotation());   
+  m_wMl2.rotation(oMi2.rotation());     
 
   m_robot.frameJacobianLocal(data, m_frame_id1, m_J1);
   m_robot.frameJacobianLocal(data, m_frame_id2, m_J2);
 
-  // Doing all calculations in world frame
-  errorInSE3(oMi1, oMi2, m_p_error);  // pos err in local (=rotated) oMi1 frame
-  m_p_error_vec =
-      m_wMl1.toActionMatrix() * m_p_error.toVector();  // pos err in world frame
+  // Doing all calculations in local-world-aligned frame
+  errorInSE3(oMi1, oMi2, m_p_error);          // pos err in local oMi1 frame
+  m_p_error_vec = m_wMl1.toActionMatrix() * m_p_error.toVector(); // pos err in local-world-aligned frame
 
-  m_v_error =
-      m_wMl2.act(v_frame2) - m_wMl1.act(v_frame1);  // vel err in world frame
+  m_v_error = m_wMl2.act(v_frame2) - m_wMl1.act(v_frame1);  // vel err in local-world-aligned frame
 
-  // desired acc in world frame
-  m_a_des = m_Kp.cwiseProduct(m_p_error_vec) +
-            m_Kd.cwiseProduct(m_v_error.toVector());
+  // desired acc in local-world-aligned frame
+  m_a_des = m_Kp.cwiseProduct(m_p_error_vec)
+            + m_Kd.cwiseProduct(m_v_error.toVector());
 
   m_v_error_vec = m_v_error.toVector();
 
   m_drift = (m_wMl1.act(m_drift1) - m_wMl2.act(m_drift2));
-
-  m_J1_rotated.noalias() = m_wMl1.toActionMatrix() * m_J1;
-  m_J1 = m_J1_rotated;
+  
+  m_J1_rotated.noalias() = m_wMl1.toActionMatrix() * m_J1; // Use an explicit temporary m_J_rotated to avoid allocations
+  m_J1 = m_J1_rotated;      
 
   m_J2_rotated.noalias() = m_wMl2.toActionMatrix() * m_J2;
-  m_J2 = m_J2_rotated;
+  m_J2 = m_J2_rotated;    
 
   int idx = 0;
   for (int i = 0; i < 6; i++) {
@@ -296,14 +181,14 @@ const ConstraintBase& TaskTwoFramesEquality::compute(const double,
 
     m_constraint.matrix().row(idx) = m_J1.row(i) - m_J2.row(i);
     m_constraint.vector().row(idx) = (m_a_des - m_drift.toVector()).row(i);
-    m_a_des_masked(idx) = m_a_des(i);
-    m_drift_masked(idx) = m_drift.toVector()(i);
-    m_p_error_masked_vec(idx) = m_p_error_vec(i);
-    m_v_error_masked_vec(idx) = m_v_error_vec(i);
+    m_a_des_masked(idx)            = m_a_des(i);
+    m_drift_masked(idx)            = m_drift.toVector()(i);
+    m_p_error_masked_vec(idx)      = m_p_error_vec(i);
+    m_v_error_masked_vec(idx)      = m_v_error_vec(i);
 
     idx += 1;
   }
-
+  
   return m_constraint;
 }
 }  // namespace tasks

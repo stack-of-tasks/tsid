@@ -133,25 +133,4 @@ namespace tsid
 }  // namespace contacts
 }  // namespace tsid
 
-      void updateForceInequalityConstraints();
-      void updateForceRegularizationTask();
-      void updateForceGeneratorMatrix();
-
-      TaskTwoFramesEquality m_motionTask;
-      TaskSE3Equality m_dummyMotionTask;
-      ConstraintInequality m_forceInequality;
-      ConstraintEquality m_forceRegTask;
-      Vector3 m_fRef;
-      Vector3 m_weightForceRegTask;
-      Matrix3x m_contactPoints;
-      Vector m_Kp3, m_Kd3;  // gain vectors to be returned by reference
-      double m_fMin;
-      double m_fMax;
-      double m_regularizationTaskWeight;
-      double m_motionTaskWeight;
-      Matrix m_forceGenMat;
-    };
-  }
-}
-
 #endif // ifndef __invdyn_contact_two_frame_positions_hpp__
