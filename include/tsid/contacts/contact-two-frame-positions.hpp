@@ -129,4 +129,4 @@ class ContactTwoFramePositions : public ContactBase {
 }  // namespace contacts
 }  // namespace tsid
 
-#endif // ifndef __invdyn_contact_two_frame_positions_hpp__
+#endif  // ifndef __invdyn_contact_two_frame_positions_hpp__

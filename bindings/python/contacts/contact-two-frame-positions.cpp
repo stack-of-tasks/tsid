@@ -21,8 +21,9 @@
 namespace tsid {
 namespace python {
 void exposeContactTwoFramePositions() {
-  ContactTwoFramePositionsPythonVisitor<tsid::contacts::ContactTwoFramePositions>::expose(
-      "ContactTwoFramePositions");
+  ContactTwoFramePositionsPythonVisitor<
+      tsid::contacts::ContactTwoFramePositions>::
+      expose("ContactTwoFramePositions");
 }
 }  // namespace python
 }  // namespace tsid
