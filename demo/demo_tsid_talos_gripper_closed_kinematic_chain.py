@@ -1,13 +1,11 @@
 """
-Simple demo of usage of TwoFramesContact
+Simple demo of usage of ContactTwoFramePositions in TSID
 Make the Talos gripper model works with closed kinematic chains
+(c) MIPT
 """
 import os
-import subprocess
-import sys
 import time
 
-import gepetto.corbaserver
 import numpy as np
 import pinocchio as pin
 from numpy import nan
@@ -15,21 +13,17 @@ from numpy.linalg import norm as norm
 
 import tsid
 
-sys.path += [os.getcwd() + "/../exercizes"]
-#import matplotlib.pyplot as plt
-#import plot_utils as plut
-
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
 LINE_WIDTH = 60
 print("".center(LINE_WIDTH, "#"))
-print(" Test TSID with Quadruped Robot ".center(LINE_WIDTH, "#"))
+print(" Demo of TSID with Closed Kinematic Chains via ContactTwoFramePositions".center(LINE_WIDTH, "#"))
 print("".center(LINE_WIDTH, "#"), "\n")
 
 w_ee = 1.0  # weight of end effector task
 w_posture = 1e-3  # weight of joint posture task
 
-kp_ee = 10.0  # proportional gain of center of mass task
+kp_ee = 10.0  # proportional gain of end effector task
 kp_posture = 10.0  # proportional gain of joint posture task
 
 dt = 0.001  # controller time step
@@ -37,9 +31,13 @@ PRINT_N = 500  # print every PRINT_N time steps
 DISPLAY_N = 25  # update robot configuration in viwewer every DISPLAY_N time steps
 N_SIMULATION = 6000  # number of time steps simulated
 
+# Loading Talos gripper model modified with extra links to mark the position of contact creation
+# Talos gripepr model (c) 2016, PAL Robotics, S.L.
+# Please use https://github.com/egordv/tsid_demo_closed_kinematic_chain repo for the model files
+
 filename = str(os.path.dirname(os.path.abspath(__file__)))
-path = filename + "/../models/talos_gripper"
-urdf = path + "/urdf/talos_gripper_half.urdf"
+path = filename + "../../tsid_demo_closed_kinematic_chain/models/talos_gripper"
+urdf = path + "../../tsid_demo_closed_kinematic_chain/urdf/talos_gripper_half.urdf"
 vector = pin.StdVec_StdString()
 vector.extend(item for item in path)
 
