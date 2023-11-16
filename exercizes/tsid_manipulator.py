@@ -6,7 +6,6 @@ import gepetto.corbaserver
 import numpy as np
 import numpy.matlib as matlib
 import pinocchio as se3
-
 import tsid
 
 

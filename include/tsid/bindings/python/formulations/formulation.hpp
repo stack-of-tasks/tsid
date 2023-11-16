@@ -67,7 +67,8 @@ struct InvDynPythonVisitor
              bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_AM,
              bp::args("task", "weight", "priorityLevel", "transition duration"))
-        .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_TwoFramesEquality, 
+        .def("addMotionTask",
+             &InvDynPythonVisitor::addMotionTask_TwoFramesEquality,
              bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addForceTask", &InvDynPythonVisitor::addForceTask_COP,
              bp::args("task", "weight", "priorityLevel", "transition duration"))
@@ -161,11 +162,11 @@ struct InvDynPythonVisitor
                                double transition_duration) {
     return self.addMotionTask(task, weight, priorityLevel, transition_duration);
   }
-  static bool addMotionTask_TwoFramesEquality(T& self, tasks::TaskTwoFramesEquality& task, 
-                               double weight, unsigned int priorityLevel, 
-                               double transition_duration) {
+  static bool addMotionTask_TwoFramesEquality(
+      T& self, tasks::TaskTwoFramesEquality& task, double weight,
+      unsigned int priorityLevel, double transition_duration) {
     return self.addMotionTask(task, weight, priorityLevel, transition_duration);
-  } 
+  }
   static bool addForceTask_COP(T& self, tasks::TaskCopEquality& task,
                                double weight, unsigned int priorityLevel,
                                double transition_duration) {

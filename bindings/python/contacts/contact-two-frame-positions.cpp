@@ -28,3 +28,5 @@ namespace tsid
     }
   }
 }
+}  // namespace python
+}  // namespace tsid

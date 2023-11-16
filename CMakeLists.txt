@@ -270,9 +270,12 @@ set(${PROJECT_NAME}_TASKS_SOURCES
     src/tasks/task-two-frames-equality.cpp)
 
 set(${PROJECT_NAME}_CONTACTS_SOURCES
-    src/contacts/contact-base.cpp src/contacts/contact-6d.cpp
-    src/contacts/contact-point.cpp src/contacts/measured-force-base.cpp
-    src/contacts/measured-3Dforce.cpp src/contacts/measured-6Dwrench.cpp
+    src/contacts/contact-base.cpp 
+    src/contacts/contact-6d.cpp
+    src/contacts/contact-point.cpp 
+    src/contacts/measured-force-base.cpp
+    src/contacts/measured-3Dforce.cpp 
+    src/contacts/measured-6Dwrench.cpp
     src/contacts/contact-two-frame-positions.cpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_SOURCES
