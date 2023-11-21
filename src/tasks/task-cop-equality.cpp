@@ -65,7 +65,11 @@ const ConstraintBase& TaskCopEquality::compute(const double, ConstRefVector,
     unsigned int i = cl->index;
     // get contact points in local frame and transform them to world frame
     const Matrix3x& P = cl->contact.getContactPoints();
-    m_robot.framePosition(data, static_cast<const TaskSE3Equality&>(cl->contact.getMotionTask()).frame_id(), oMi);
+    m_robot.framePosition(
+        data,
+        static_cast<const TaskSE3Equality&>(cl->contact.getMotionTask())
+            .frame_id(),
+        oMi);
     // cout<<"Contact "<<cl->contact.name()<<endl;
     // cout<<"oMi\n"<<oMi<<endl;
     for (int j = 0; j < P.cols(); ++j) {
