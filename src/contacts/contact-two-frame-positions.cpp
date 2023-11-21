@@ -34,10 +34,6 @@ ContactTwoFramePositions::ContactTwoFramePositions(
       m_motionTask(
           name, robot, frameName1,
           frameName2),  // Actual motion task with type TaskTwoFramesEquality
-      m_dummyMotionTask(name, robot,
-                        frameName1),  // Only to fit the ContactBase class
-                                      // returns, type TaskSE3Equality, seems to
-                                      // be needed only by TaskCopEquality
       m_forceInequality(name, 3, 3),
       m_forceRegTask(name, 3, 3),
       m_fMin(minNormalForce),
@@ -59,10 +55,6 @@ ContactTwoFramePositions::ContactTwoFramePositions(
   math::Vector motion_mask(6);
   motion_mask << 1., 1., 1., 0., 0., 0.;
   m_motionTask.setMask(motion_mask);
-}
-
-void ContactTwoFramePositions::useLocalFrame(bool local_frame) {
-  m_dummyMotionTask.useLocalFrame(local_frame);
 }
 
 void ContactTwoFramePositions::updateForceInequalityConstraints() {
@@ -157,10 +149,6 @@ void ContactTwoFramePositions::setForceReference(ConstRefVector& f_ref) {
   updateForceRegularizationTask();
 }
 
-void ContactTwoFramePositions::setReference(const SE3& ref) {
-  // m_dummyMotionTask.setReference(ref);
-}
-
 const ConstraintBase& ContactTwoFramePositions::computeMotionTask(
     const double t, ConstRefVector q, ConstRefVector v, Data& data) {
   return m_motionTask.compute(t, q, v, data);
@@ -186,11 +174,8 @@ ContactTwoFramePositions::computeForceRegularizationTask(const double,
 double ContactTwoFramePositions::getMinNormalForce() const { return m_fMin; }
 double ContactTwoFramePositions::getMaxNormalForce() const { return m_fMax; }
 
-const TaskSE3Equality& ContactTwoFramePositions::getMotionTask() const {
-  std::cout << "Warning! Returning emtpy motion task from "
-               "ContactTwoFramePositions::m_dummyMotionTask"
-            << std::endl;
-  return m_dummyMotionTask;
+const TaskTwoFramesEquality& ContactTwoFramePositions::getMotionTask() const {
+  return m_motionTask;
 }
 
 const ConstraintBase& ContactTwoFramePositions::getMotionConstraint() const {

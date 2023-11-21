@@ -86,11 +86,6 @@ struct ContactTwoFramePositionsPythonVisitor
              bp::arg("Kp"))
         .def("setKd", &ContactTwoFramePositionsPythonVisitor::setKd,
              bp::arg("Kd"))
-
-        .def("useLocalFrame",
-             &ContactTwoFramePositionsPythonVisitor::useLocalFrame,
-             bp::arg("local_frame"))
-
         .def("setContactNormal",
              &ContactTwoFramePositionsPythonVisitor::setContactNormal,
              bp::args("vec"))
@@ -103,9 +98,6 @@ struct ContactTwoFramePositionsPythonVisitor
         .def("setMaxNormalForce",
              &ContactTwoFramePositionsPythonVisitor::setMaxNormalForce,
              bp::args("max_force"))
-        .def("setReference",
-             &ContactTwoFramePositionsPythonVisitor::setReference,
-             bp::args("SE3"))
         .def("setForceReference",
              &ContactTwoFramePositionsPythonVisitor::setForceReference,
              bp::args("f_vec"))
@@ -148,10 +140,6 @@ struct ContactTwoFramePositionsPythonVisitor
     return cons;
   }
 
-  static void useLocalFrame(ContactTwoFramePositions& self,
-                            const bool local_frame) {
-    self.useLocalFrame(local_frame);
-  }
   static const Eigen::MatrixXd& getForceGeneratorMatrix(
       ContactTwoFramePositions& self) {
     return self.getForceGeneratorMatrix();
@@ -191,10 +179,6 @@ struct ContactTwoFramePositionsPythonVisitor
                                 const double maxNormalForce) {
     return self.setMaxNormalForce(maxNormalForce);
   }
-  static void setReference(ContactTwoFramePositions& self,
-                           const pinocchio::SE3& ref) {
-    self.setReference(ref);
-  }
   static void setForceReference(ContactTwoFramePositions& self,
                                 const ::Eigen::VectorXd f_ref) {
     self.setForceReference(f_ref);
@@ -207,7 +191,6 @@ struct ContactTwoFramePositionsPythonVisitor
                                Eigen::VectorXd f) {
     return self.getNormalForce(f);
   }
-
   static void expose(const std::string& class_name) {
     std::string doc = "ContactTwoFramePositions info.";
     bp::class_<ContactTwoFramePositions>(class_name.c_str(), doc.c_str(),
