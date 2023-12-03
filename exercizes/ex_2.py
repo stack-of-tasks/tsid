@@ -2,7 +2,6 @@ import time
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pinocchio as pin
 import plot_utils as plut
 import romeo_conf as conf
 from numpy import nan

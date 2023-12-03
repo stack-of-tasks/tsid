@@ -66,7 +66,7 @@ BOUNDS_COLOR = "silver"
 
 def create_empty_figure(nRows=1, nCols=1, figsize=(7, 7), spinesPos=None, sharex=True):
     f, ax = plt.subplots(nRows, nCols, figsize=figsize, sharex=sharex)
-    mngr = plt.get_current_fig_manager()
+    _mngr = plt.get_current_fig_manager()
     # mngr.window.setGeometry(50,50,1080,720)
 
     if spinesPos is not None:
@@ -307,7 +307,7 @@ def plotNdQuantityPerSolver(
         ax[nRows // 2, 0].set_ylabel(title)
     if SHOW_LEGENDS:
         # leg = ax[0,0].legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
-        leg = ax[0, 0].legend(loc="best")
+        _leg = ax[0, 0].legend(loc="best")
         # leg.get_frame().set_alpha(LEGEND_ALPHA)
     return ax
 

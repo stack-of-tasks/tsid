@@ -4,15 +4,16 @@ import sys
 import time
 
 import gepetto.corbaserver
+import matplotlib.pyplot as plt
 import numpy as np
 import pinocchio as pin
-import tsid
+import plot_utils as plut
 from numpy import nan
 from numpy.linalg import norm as norm
 
+import tsid
+
 sys.path += [os.getcwd() + "/../exercizes"]
-import matplotlib.pyplot as plt
-import plot_utils as plut
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
@@ -57,8 +58,8 @@ robot_display = pin.RobotWrapper.BuildFromURDF(
     ],
     pin.JointModelFreeFlyer(),
 )
-l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
-if int(l[1]) == 0:
+n = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+if int(n[1]) == 0:
     os.system("gepetto-gui &")
 time.sleep(1)
 cl = gepetto.corbaserver.Client()

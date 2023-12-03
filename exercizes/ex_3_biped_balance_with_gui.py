@@ -56,7 +56,7 @@ class Entry3d:
     def get(self):
         try:
             return [float(self.s[i].get()) for i in range(3)]
-        except:
+        except ValueError:
             print(
                 "could not convert string to float", [self.s[i].get() for i in range(3)]
             )
