@@ -7,10 +7,12 @@ import pinocchio as pin
 
 def create_7dof_arm(revoluteOnly=False):
     """
-    Create a 7 DoF robot arm (with spherical joint for shoulder and wrist and revolute joint for elbow)
+    Create a 7 DoF robot arm (with spherical joint for shoulder and wrist and revolute
+    joint for elbow)
 
     Optionnal parameters:
-        revoluteOnly (default=False): if True, the arm is created with only revolute joints. (Spherical joints are replaced by 3 revolute joints)
+        revoluteOnly (default=False): if True, the arm is created with only revolute
+        joints. (Spherical joints are replaced by 3 revolute joints)
 
     Return:
         model: pinocchio model of the robot

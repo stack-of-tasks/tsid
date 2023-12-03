@@ -99,7 +99,7 @@ postureTask.setKp(kp_posture * np.ones(robot.nv - 6))
 postureTask.setKd(2.0 * np.sqrt(kp_posture) * np.ones(robot.nv - 6))
 invdyn.addMotionTask(postureTask, w_posture, 1, 0.0)
 
-########### Test 1 ##################3
+# ########## Test 1 ##################3
 dt = 0.01
 PRINT_N = 100
 REMOVE_CONTACT_N = 100
