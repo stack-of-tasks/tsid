@@ -7,10 +7,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pinocchio as pin
 import plot_utils as plut
-import tsid
 import ur5_conf as conf
 from numpy import nan
 from numpy.linalg import norm as norm
+
+import tsid
 
 print("".center(conf.LINE_WIDTH, "#"))
 print(" Joint Space Inverse Dynamics - Manipulator ".center(conf.LINE_WIDTH, "#"))
@@ -54,8 +55,8 @@ if USE_VIEWER:
             conf.path,
         ],
     )
-    l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
-    if int(l[1]) == 0:
+    n = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+    if int(n[1]) == 0:
         os.system("gepetto-gui &")
     time.sleep(1)
     gepetto.corbaserver.Client()
