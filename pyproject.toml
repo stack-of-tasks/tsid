@@ -10,7 +10,8 @@ name = "tsid"
 version = "1.7.0"
 
 [project.urls]
-homepage = "https://github.com/stack-of-tasks/tsid"
+homepage = "https://github.com/cmake-wheel/tsid"
+upstream = "https://github.com/stack-of-tasks/tsid"
 
 [tool.cmeel]
 build-number = 1
