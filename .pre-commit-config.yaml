@@ -5,6 +5,12 @@ repos:
   rev: 5.13.2
   hooks:
   - id: isort
+    args:
+    - --profile
+    - black
+    - --project
+    - tsid
+    - --filter-files
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: v0.1.6
   hooks:
