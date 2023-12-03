@@ -1,4 +1,5 @@
 import numpy as np
+
 import tsid
 
 print("")

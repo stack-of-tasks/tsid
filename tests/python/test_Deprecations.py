@@ -3,6 +3,7 @@ import unittest
 import warnings
 
 import numpy as np
+
 import tsid
 
 
