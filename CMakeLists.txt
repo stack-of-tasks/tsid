@@ -330,7 +330,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC pinocchio::pinocchio
 
 if(BUILD_WITH_PROXQP)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_PROXSUITE)
-  target_link_libraries(${PROJECT_NAME} PUBLIC ${proxsuite_INTERFACE})
+  target_link_libraries(${PROJECT_NAME} PUBLIC proxsuite::proxsuite)
 endif()
 
 if(BUILD_WITH_OSQP)
