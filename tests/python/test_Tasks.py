@@ -2,6 +2,9 @@ import os
 
 import numpy as np
 import pinocchio as pin
+
+# Get robot model generator module
+from generator import create_7dof_arm
 from numpy.linalg import norm
 
 import tsid
@@ -279,8 +282,6 @@ print("")
 print("Test Task Joint Posture (Uncommon joints)")
 print("")
 
-# Get robot model generator module
-from generator import create_7dof_arm
 
 # Get robot model
 (

@@ -55,8 +55,8 @@ if USE_VIEWER:
             conf.path,
         ],
     )
-    l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
-    if int(l[1]) == 0:
+    n = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+    if int(n[1]) == 0:
         os.system("gepetto-gui &")
     time.sleep(1)
     gepetto.corbaserver.Client()
