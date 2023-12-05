@@ -112,7 +112,5 @@ install(
 set(PYTHON_FILES __init__.py)
 
 foreach(python ${PYTHON_FILES})
-  python_build(${PROJECT_NAME} ${python})
-  install(FILES "${${PROJECT_NAME}_SOURCE_DIR}/bindings/python/tsid/${python}"
-          DESTINATION ${${PYWRAP}_INSTALL_DIR})
+  python_install(${PROJECT_NAME} ${python} ${${PYWRAP}_INSTALL_DIR})
 endforeach(python)
