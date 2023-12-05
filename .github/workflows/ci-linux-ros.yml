@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: noetic, BUILDER: catkin_tools}
+          - {ROS_DISTRO: noetic, BUILDER: catkin_tools, CTEST_OUTPUT_ON_FAILURE: ON}
           #- {ROS_DISTRO: rolling}
           #- {ROS_DISTRO: iron}
           #- {ROS_DISTRO: humble}
