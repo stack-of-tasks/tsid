@@ -229,20 +229,6 @@ set(${PROJECT_NAME}_FORMULATIONS_HEADERS
     include/tsid/formulations/inverse-dynamics-formulation-base.hpp
     include/tsid/formulations/inverse-dynamics-formulation-acc-force.hpp)
 
-file(
-  GLOB
-  ${PYWRAP}_HEADERS
-  include/tsid/bindings/python/fwd.hpp
-  include/tsid/bindings/python/constraint/*.hpp
-  include/tsid/bindings/python/contacts/*.hpp
-  include/tsid/bindings/python/formulations/*.hpp
-  include/tsid/bindings/python/robots/*.hpp
-  include/tsid/bindings/python/solvers/*.hpp
-  include/tsid/bindings/python/tasks/*.hpp
-  include/tsid/bindings/python/trajectories/*.hpp
-  include/tsid/bindings/python/utils/*.hpp
-  include/tsid/bindings/python/math/*.hpp)
-
 set(${PROJECT_NAME}_HEADERS
     include/tsid/macros.hpp
     include/tsid/utils/statistics.hpp
