@@ -4,7 +4,6 @@ import time
 
 import numpy as np
 import pinocchio as pin
-
 import tsid
 
 

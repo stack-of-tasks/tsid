@@ -26,6 +26,7 @@
 #include "tsid/bindings/python/solvers/HQPData.hpp"
 #include "tsid/contacts/contact-6d.hpp"
 #include "tsid/contacts/contact-point.hpp"
+#include "tsid/contacts/contact-two-frame-positions.hpp"
 #include "tsid/tasks/task-joint-posture.hpp"
 #include "tsid/tasks/task-se3-equality.hpp"
 #include "tsid/tasks/task-com-equality.hpp"
@@ -34,6 +35,7 @@
 #include "tsid/tasks/task-joint-bounds.hpp"
 #include "tsid/tasks/task-joint-posVelAcc-bounds.hpp"
 #include "tsid/tasks/task-angular-momentum-equality.hpp"
+#include "tsid/tasks/task-two-frames-equality.hpp"
 
 namespace tsid {
 namespace python {
@@ -65,6 +67,9 @@ struct InvDynPythonVisitor
              bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addMotionTask", &InvDynPythonVisitor::addMotionTask_AM,
              bp::args("task", "weight", "priorityLevel", "transition duration"))
+        .def("addMotionTask",
+             &InvDynPythonVisitor::addMotionTask_TwoFramesEquality,
+             bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addForceTask", &InvDynPythonVisitor::addForceTask_COP,
              bp::args("task", "weight", "priorityLevel", "transition duration"))
         .def("addActuationTask", &InvDynPythonVisitor::addActuationTask_Bounds,
@@ -94,6 +99,14 @@ struct InvDynPythonVisitor
              bp::args("contact", "force_reg_weight"))
         .def("addRigidContact",
              &InvDynPythonVisitor::addRigidContactPointWithPriorityLevel,
+             bp::args("contact", "force_reg_weight", "motion_weight",
+                      "priority_level"))
+        .def("addRigidContact",
+             &InvDynPythonVisitor::addRigidContactTwoFramePositions,
+             bp::args("contact", "force_reg_weight"))
+        .def("addRigidContact",
+             &InvDynPythonVisitor::
+                 addRigidContactTwoFramePositionsWithPriorityLevel,
              bp::args("contact", "force_reg_weight", "motion_weight",
                       "priority_level"))
         .def("removeTask", &InvDynPythonVisitor::removeTask,
@@ -151,6 +164,11 @@ struct InvDynPythonVisitor
                                double transition_duration) {
     return self.addMotionTask(task, weight, priorityLevel, transition_duration);
   }
+  static bool addMotionTask_TwoFramesEquality(
+      T& self, tasks::TaskTwoFramesEquality& task, double weight,
+      unsigned int priorityLevel, double transition_duration) {
+    return self.addMotionTask(task, weight, priorityLevel, transition_duration);
+  }
   static bool addForceTask_COP(T& self, tasks::TaskCopEquality& task,
                                double weight, unsigned int priorityLevel,
                                double transition_duration) {
@@ -198,6 +216,18 @@ struct InvDynPythonVisitor
   }
   static bool addRigidContactPointWithPriorityLevel(
       T& self, contacts::ContactPoint& contact,
+      double force_regularization_weight, double motion_weight,
+      const bool priority_level) {
+    return self.addRigidContact(contact, force_regularization_weight,
+                                motion_weight, priority_level);
+  }
+  static bool addRigidContactTwoFramePositions(
+      T& self, contacts::ContactTwoFramePositions& contact,
+      double force_regularization_weight) {
+    return self.addRigidContact(contact, force_regularization_weight);
+  }
+  static bool addRigidContactTwoFramePositionsWithPriorityLevel(
+      T& self, contacts::ContactTwoFramePositions& contact,
       double force_regularization_weight, double motion_weight,
       const bool priority_level) {
     return self.addRigidContact(contact, force_regularization_weight,
