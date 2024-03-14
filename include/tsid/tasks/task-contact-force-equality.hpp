@@ -49,8 +49,8 @@ class TaskContactForceEquality : public TaskContactForce {
   void setAssociatedContact(contacts::ContactBase& contact);
 
   // Task expressed as a PID between the reference force and the external one
-  const ConstraintBase& compute(double t, ConstRefVector q,
-                                ConstRefVector v, Data& data) override;
+  const ConstraintBase& compute(double t, ConstRefVector q, ConstRefVector v,
+                                Data& data) override;
 
   const ConstraintBase& compute(
       double t, ConstRefVector q, ConstRefVector v, Data& data,

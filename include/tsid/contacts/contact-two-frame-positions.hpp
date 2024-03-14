@@ -54,12 +54,11 @@ class ContactTwoFramePositions : public ContactBase {
   /// Return the number of force variables
   unsigned int n_force() const override;
 
-  const ConstraintBase& computeMotionTask(double t,
-                                          ConstRefVector q,
-                                          ConstRefVector v, Data& data) override;
+  const ConstraintBase& computeMotionTask(double t, ConstRefVector q,
+                                          ConstRefVector v,
+                                          Data& data) override;
 
-  const ConstraintInequality& computeForceTask(double t,
-                                               ConstRefVector q,
+  const ConstraintInequality& computeForceTask(double t, ConstRefVector q,
                                                ConstRefVector v,
                                                const Data& data) override;
 

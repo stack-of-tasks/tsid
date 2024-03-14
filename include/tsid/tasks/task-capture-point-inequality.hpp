@@ -45,8 +45,8 @@ class TaskCapturePointInequality : public TaskMotion {
 
   int dim() const override;
 
-  const ConstraintBase& compute(double t, ConstRefVector q,
-                                ConstRefVector v, Data& data) override;
+  const ConstraintBase& compute(double t, ConstRefVector q, ConstRefVector v,
+                                Data& data) override;
 
   const ConstraintBase& getConstraint() const override;
 

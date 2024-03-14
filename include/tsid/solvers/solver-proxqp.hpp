@@ -58,7 +58,7 @@ class TSID_DLLAPI SolverProxQP : public SolverHQPBase {
                       const bool hessianRegularization = false) override;
 
   /** Return the QP data object. */
-  const QPData getQPData() const  override { return m_qpData; }
+  const QPData getQPData() const override { return m_qpData; }
 
   /** Solve the given Hierarchical Quadratic Program
    */

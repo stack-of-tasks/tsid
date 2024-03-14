@@ -61,19 +61,18 @@ class Contact6d : public ContactBase {
   /// Return the number of force variables
   unsigned int n_force() const override;
 
-  const ConstraintBase& computeMotionTask(double t,
-                                          ConstRefVector q,
-                                          ConstRefVector v, Data& data) override;
+  const ConstraintBase& computeMotionTask(double t, ConstRefVector q,
+                                          ConstRefVector v,
+                                          Data& data) override;
 
-  const ConstraintInequality& computeForceTask(double t,
-                                               ConstRefVector q,
+  const ConstraintInequality& computeForceTask(double t, ConstRefVector q,
                                                ConstRefVector v,
                                                const Data& data) override;
 
   const Matrix& getForceGeneratorMatrix() override;
 
   const ConstraintEquality& computeForceRegularizationTask(
-          double t, ConstRefVector q, ConstRefVector v, const Data& data) override;
+      double t, ConstRefVector q, ConstRefVector v, const Data& data) override;
 
   const TaskSE3Equality& getMotionTask() const override;
   const ConstraintBase& getMotionConstraint() const override;

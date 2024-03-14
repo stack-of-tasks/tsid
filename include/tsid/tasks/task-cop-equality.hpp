@@ -41,22 +41,22 @@ class TaskCopEquality : public TaskContactForce {
   TaskCopEquality(const std::string& name, RobotWrapper& robot);
 
   void setContactList(
-      const std::vector<std::shared_ptr<ContactLevel> > *contacts);
+      const std::vector<std::shared_ptr<ContactLevel> >* contacts);
 
   int dim() const override;
 
   const std::string& getAssociatedContactName() override;
 
-  const ConstraintBase& compute(double t, ConstRefVector q,
-                                ConstRefVector v, Data &data) override;
+  const ConstraintBase& compute(double t, ConstRefVector q, ConstRefVector v,
+                                Data& data) override;
 
   const ConstraintBase& compute(
-      double t, ConstRefVector q, ConstRefVector v, Data &data,
-      const std::vector<std::shared_ptr<ContactLevel> > *contacts) override;
+      double t, ConstRefVector q, ConstRefVector v, Data& data,
+      const std::vector<std::shared_ptr<ContactLevel> >* contacts) override;
 
   const ConstraintBase& getConstraint() const override;
 
-  void setReference(const Vector3 &ref);
+  void setReference(const Vector3& ref);
 
   const Vector3& getReference() const;
 
@@ -65,7 +65,7 @@ class TaskCopEquality : public TaskContactForce {
   const Vector3& getContactNormal() const;
 
  protected:
-  const std::vector<std::shared_ptr<ContactLevel> > *m_contacts;
+  const std::vector<std::shared_ptr<ContactLevel> >* m_contacts;
   std::string m_contact_name;  // an empty string
   Vector3 m_normal;  // normal direction to the ground expressed in world frame
   Vector3 m_ref;     // reference CoP in world frame
