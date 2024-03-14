@@ -42,23 +42,21 @@ class TaskContactForceEquality : public TaskContactForce {
   TaskContactForceEquality(const std::string& name, RobotWrapper& robot,
                            const double dt, contacts::ContactBase& contact);
 
-  virtual ~TaskContactForceEquality() {}
+  int dim() const override;
 
-  int dim() const;
-
-  virtual const std::string& getAssociatedContactName();
+  virtual const std::string& getAssociatedContactName() override;
   virtual const contacts::ContactBase& getAssociatedContact();
   void setAssociatedContact(contacts::ContactBase& contact);
 
   // Task expressed as a PID between the reference force and the external one
-  const ConstraintBase& compute(const double t, ConstRefVector q,
-                                ConstRefVector v, Data& data);
+  const ConstraintBase& compute(double t, ConstRefVector q,
+                                ConstRefVector v, Data& data) override;
 
   const ConstraintBase& compute(
-      const double t, ConstRefVector q, ConstRefVector v, Data& data,
-      const std::vector<std::shared_ptr<ContactLevel> >* contacts);
+      double t, ConstRefVector q, ConstRefVector v, Data& data,
+      const std::vector<std::shared_ptr<ContactLevel> >* contacts) override;
 
-  const ConstraintBase& getConstraint() const;
+  const ConstraintBase& getConstraint() const override;
 
   void setReference(TrajectorySample& ref);
   const TrajectorySample& getReference() const;

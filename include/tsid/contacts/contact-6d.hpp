@@ -55,37 +55,35 @@ class Contact6d : public ContactBase {
                             const double maxNormalForce,
                             const double forceRegWeight);
 
-  virtual ~Contact6d() {}
-
   /// Return the number of motion constraints
-  virtual unsigned int n_motion() const;
+  unsigned int n_motion() const override;
 
   /// Return the number of force variables
-  virtual unsigned int n_force() const;
+  unsigned int n_force() const override;
 
-  virtual const ConstraintBase& computeMotionTask(const double t,
-                                                  ConstRefVector q,
-                                                  ConstRefVector v, Data& data);
+  const ConstraintBase& computeMotionTask(double t,
+                                          ConstRefVector q,
+                                          ConstRefVector v, Data& data) override;
 
-  virtual const ConstraintInequality& computeForceTask(const double t,
-                                                       ConstRefVector q,
-                                                       ConstRefVector v,
-                                                       const Data& data);
+  const ConstraintInequality& computeForceTask(double t,
+                                               ConstRefVector q,
+                                               ConstRefVector v,
+                                               const Data& data) override;
 
-  virtual const Matrix& getForceGeneratorMatrix();
+  const Matrix& getForceGeneratorMatrix() override;
 
-  virtual const ConstraintEquality& computeForceRegularizationTask(
-      const double t, ConstRefVector q, ConstRefVector v, const Data& data);
+  const ConstraintEquality& computeForceRegularizationTask(
+          double t, ConstRefVector q, ConstRefVector v, const Data& data) override;
 
-  const TaskSE3Equality& getMotionTask() const;
-  const ConstraintBase& getMotionConstraint() const;
-  const ConstraintInequality& getForceConstraint() const;
-  const ConstraintEquality& getForceRegularizationTask() const;
+  const TaskSE3Equality& getMotionTask() const override;
+  const ConstraintBase& getMotionConstraint() const override;
+  const ConstraintInequality& getForceConstraint() const override;
+  const ConstraintEquality& getForceRegularizationTask() const override;
 
-  double getNormalForce(ConstRefVector f) const;
-  double getMinNormalForce() const;
-  double getMaxNormalForce() const;
-  const Matrix3x& getContactPoints() const;
+  double getNormalForce(ConstRefVector f) const override;
+  double getMinNormalForce() const override;
+  double getMaxNormalForce() const override;
+  const Matrix3x& getContactPoints() const override;
 
   const Vector& Kp() const;
   const Vector& Kd() const;
@@ -95,9 +93,9 @@ class Contact6d : public ContactBase {
   bool setContactPoints(ConstRefMatrix contactPoints);
   bool setContactNormal(ConstRefVector contactNormal);
 
-  bool setFrictionCoefficient(const double frictionCoefficient);
-  bool setMinNormalForce(const double minNormalForce);
-  bool setMaxNormalForce(const double maxNormalForce);
+  bool setFrictionCoefficient(double frictionCoefficient);
+  bool setMinNormalForce(double minNormalForce) override;
+  bool setMaxNormalForce(double maxNormalForce) override;
   void setReference(const SE3& ref);
   void setForceReference(ConstRefVector& f_ref);
   void setRegularizationTaskWeightVector(ConstRefVector& w);

@@ -39,31 +39,29 @@ class TaskJointPosture : public TaskMotion {
 
   TaskJointPosture(const std::string& name, RobotWrapper& robot);
 
-  virtual ~TaskJointPosture() {}
-
-  int dim() const;
+  int dim() const override;
 
   const ConstraintBase& compute(const double t, ConstRefVector q,
-                                ConstRefVector v, Data& data);
+                                ConstRefVector v, Data& data) override;
 
-  const ConstraintBase& getConstraint() const;
+  const ConstraintBase& getConstraint() const override;
 
   void setReference(const TrajectorySample& ref);
-  const TrajectorySample& getReference() const;
+  const TrajectorySample& getReference() const override;
 
-  const Vector& getDesiredAcceleration() const;
-  Vector getAcceleration(ConstRefVector dv) const;
+  const Vector& getDesiredAcceleration() const override;
+  Vector getAcceleration(ConstRefVector dv) const override;
 
   TSID_DEPRECATED const Vector& mask() const;     // deprecated
   TSID_DEPRECATED void mask(const Vector& mask);  // deprecated
-  virtual void setMask(math::ConstRefVector mask);
+  void setMask(math::ConstRefVector mask) override;
 
-  const Vector& position_error() const;
-  const Vector& velocity_error() const;
-  const Vector& position() const;
-  const Vector& velocity() const;
-  const Vector& position_ref() const;
-  const Vector& velocity_ref() const;
+  const Vector& position_error() const override;
+  const Vector& velocity_error() const override;
+  const Vector& position() const override;
+  const Vector& velocity() const override;
+  const Vector& position_ref() const override;
+  const Vector& velocity_ref() const override;
 
   const Vector& Kp();
   const Vector& Kd();

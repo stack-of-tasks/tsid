@@ -42,17 +42,15 @@ class TaskAMEquality : public TaskMotion {
 
   TaskAMEquality(const std::string& name, RobotWrapper& robot);
 
-  virtual ~TaskAMEquality() {}
+  int dim() const override;
 
-  int dim() const;
+  const ConstraintBase& compute(double t, ConstRefVector q,
+                                ConstRefVector v, Data& data) override;
 
-  const ConstraintBase& compute(const double t, ConstRefVector q,
-                                ConstRefVector v, Data& data);
-
-  const ConstraintBase& getConstraint() const;
+  const ConstraintBase& getConstraint() const override;
 
   void setReference(const TrajectorySample& ref);
-  const TrajectorySample& getReference() const;
+  const TrajectorySample& getReference() const override;
 
   const Vector3& getDesiredMomentumDerivative() const;
   Vector3 getdMomentum(ConstRefVector dv) const;

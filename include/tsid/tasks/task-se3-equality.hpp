@@ -44,49 +44,47 @@ class TaskSE3Equality : public TaskMotion {
   TaskSE3Equality(const std::string& name, RobotWrapper& robot,
                   const std::string& frameName);
 
-  virtual ~TaskSE3Equality() {}
-
-  int dim() const;
+  int dim() const override;
 
   const ConstraintBase& compute(const double t, ConstRefVector q,
-                                ConstRefVector v, Data& data);
+                                ConstRefVector v, Data& data) override;
 
-  const ConstraintBase& getConstraint() const;
+  const ConstraintBase& getConstraint() const override;
 
   void setReference(TrajectorySample& ref);
   void setReference(const SE3& ref);
-  const TrajectorySample& getReference() const;
+  const TrajectorySample& getReference() const override;
 
   /** Return the desired task acceleration (after applying the specified mask).
    *  The value is expressed in local frame is the local_frame flag is true,
    *  otherwise it is expressed in a local world-oriented frame.
    */
-  const Vector& getDesiredAcceleration() const;
+  const Vector& getDesiredAcceleration() const override;
 
   /** Return the task acceleration (after applying the specified mask).
    *  The value is expressed in local frame is the local_frame flag is true,
    *  otherwise it is expressed in a local world-oriented frame.
    */
-  Vector getAcceleration(ConstRefVector dv) const;
+  Vector getAcceleration(ConstRefVector dv) const override;
 
-  virtual void setMask(math::ConstRefVector mask);
+  virtual void setMask(math::ConstRefVector mask) override;
 
   /** Return the position tracking error (after applying the specified mask).
    *  The error is expressed in local frame is the local_frame flag is true,
    *  otherwise it is expressed in a local world-oriented frame.
    */
-  const Vector& position_error() const;
+  const Vector& position_error() const override;
 
   /** Return the velocity tracking error (after applying the specified mask).
    *  The error is expressed in local frame is the local_frame flag is true,
    *  otherwise it is expressed in a local world-oriented frame.
    */
-  const Vector& velocity_error() const;
+  const Vector& velocity_error() const override;
 
-  const Vector& position() const;
-  const Vector& velocity() const;
-  const Vector& position_ref() const;
-  const Vector& velocity_ref() const;
+  const Vector& position() const override;
+  const Vector& velocity() const override;
+  const Vector& position_ref() const override;
+  const Vector& velocity_ref() const override;
 
   const Vector& Kp() const;
   const Vector& Kd() const;

@@ -34,29 +34,28 @@ class ConstraintEquality : public ConstraintBase {
 
   ConstraintEquality(const std::string& name, ConstRefMatrix A,
                      ConstRefVector b);
-  virtual ~ConstraintEquality() {}
 
-  unsigned int rows() const;
-  unsigned int cols() const;
-  void resize(const unsigned int r, const unsigned int c);
+  unsigned int rows() const override;
+  unsigned int cols() const override;
+  void resize(unsigned int r, unsigned int c) override;
 
-  bool isEquality() const;
-  bool isInequality() const;
-  bool isBound() const;
+  bool isEquality() const override;
+  bool isInequality() const override;
+  bool isBound() const override;
 
-  const Vector& vector() const;
-  const Vector& lowerBound() const;
-  const Vector& upperBound() const;
+  const Vector& vector() const override;
+  const Vector& lowerBound() const override;
+  const Vector& upperBound() const override;
 
-  Vector& vector();
-  Vector& lowerBound();
-  Vector& upperBound();
+  Vector& vector() override;
+  Vector& lowerBound() override;
+  Vector& upperBound() override;
 
-  bool setVector(ConstRefVector b);
-  bool setLowerBound(ConstRefVector lb);
-  bool setUpperBound(ConstRefVector ub);
+  bool setVector(ConstRefVector b) override;
+  bool setLowerBound(ConstRefVector lb) override;
+  bool setUpperBound(ConstRefVector ub) override;
 
-  bool checkConstraint(ConstRefVector x, double tol = 1e-6) const;
+  bool checkConstraint(ConstRefVector x, double tol = 1e-6) const override;
 
  protected:
   Vector m_b;

@@ -25,8 +25,6 @@ namespace tasks {
 class TaskActuation : public TaskBase {
  public:
   TaskActuation(const std::string& name, RobotWrapper& robot);
-
-  virtual ~TaskActuation() {}
 };
 }  // namespace tasks
 }  // namespace tsid

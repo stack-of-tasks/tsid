@@ -38,14 +38,12 @@ class TaskActuationBounds : public TaskActuation {
 
   TaskActuationBounds(const std::string& name, RobotWrapper& robot);
 
-  virtual ~TaskActuationBounds() {}
+  int dim() const override;
 
-  int dim() const;
+  const ConstraintBase& compute(double t, ConstRefVector q,
+                                ConstRefVector v, Data& data) override;
 
-  const ConstraintBase& compute(const double t, ConstRefVector q,
-                                ConstRefVector v, Data& data);
-
-  const ConstraintBase& getConstraint() const;
+  const ConstraintBase& getConstraint() const override;
 
   void setBounds(ConstRefVector lower, ConstRefVector upper);
   const Vector& getLowerBounds() const;

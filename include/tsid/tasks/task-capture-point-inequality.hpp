@@ -43,18 +43,16 @@ class TaskCapturePointInequality : public TaskMotion {
   TaskCapturePointInequality(const std::string& name, RobotWrapper& robot,
                              const double timeStep);
 
-  virtual ~TaskCapturePointInequality() {}
+  int dim() const override;
 
-  int dim() const;
+  const ConstraintBase& compute(double t, ConstRefVector q,
+                                ConstRefVector v, Data& data) override;
 
-  const ConstraintBase& compute(const double t, ConstRefVector q,
-                                ConstRefVector v, Data& data);
+  const ConstraintBase& getConstraint() const override;
 
-  const ConstraintBase& getConstraint() const;
+  Vector getAcceleration(ConstRefVector dv) const override;
 
-  Vector getAcceleration(ConstRefVector dv) const;
-
-  const Vector& position() const;
+  const Vector& position() const override;
 
   void setSupportLimitsXAxis(const double x_min, const double x_max);
 

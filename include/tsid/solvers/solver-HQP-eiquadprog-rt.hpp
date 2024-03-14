@@ -42,25 +42,25 @@ class TSID_DLLAPI SolverHQuadProgRT : public SolverHQPBase {
 
   SolverHQuadProgRT(const std::string& name);
 
-  void resize(unsigned int n, unsigned int neq, unsigned int nin);
+  void resize(unsigned int n, unsigned int neq, unsigned int nin) override;
 
   /** Solve the given Hierarchical Quadratic Program
    */
-  const HQPOutput& solve(const HQPData& problemData);
+  const HQPOutput& solve(const HQPData& problemData) override;
 
   // TODO: change eiquadprog-rt to new API
   /** Retrieve the matrices describing a QP problem from the problem data. */
   void retrieveQPData(const HQPData& /*problemData*/,
-                      const bool /*hessianRegularization = true*/){};
+                      const bool /*hessianRegularization = true*/)  override {}
 
   // /** Return the QP data object. */
   // const QPDataQuadProg getQPData() const { return m_qpData; }
 
   /** Get the objective value of the last solved problem. */
-  double getObjectiveValue();
+  double getObjectiveValue() override;
 
   /** Set the current maximum number of iterations performed by the solver. */
-  bool setMaximumIterations(unsigned int maxIter);
+  bool setMaximumIterations(unsigned int maxIter) override;
 
  protected:
   void sendMsg(const std::string& s);

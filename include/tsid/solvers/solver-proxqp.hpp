@@ -51,24 +51,24 @@ class TSID_DLLAPI SolverProxQP : public SolverHQPBase {
 
   SolverProxQP(const std::string& name);
 
-  void resize(unsigned int n, unsigned int neq, unsigned int nin);
+  void resize(unsigned int n, unsigned int neq, unsigned int nin) override;
 
   /** Retrieve the matrices describing a QP problem from the problem data. */
   void retrieveQPData(const HQPData& problemData,
-                      const bool hessianRegularization = false);
+                      const bool hessianRegularization = false) override;
 
   /** Return the QP data object. */
-  const QPData getQPData() const { return m_qpData; }
+  const QPData getQPData() const  override { return m_qpData; }
 
   /** Solve the given Hierarchical Quadratic Program
    */
-  const HQPOutput& solve(const HQPData& problemData);
+  const HQPOutput& solve(const HQPData& problemData) override;
 
   /** Get the objective value of the last solved problem. */
-  double getObjectiveValue();
+  double getObjectiveValue() override;
 
   /** Set the current maximum number of iterations performed by the solver. */
-  bool setMaximumIterations(unsigned int maxIter);
+  bool setMaximumIterations(unsigned int maxIter) override;
 
   void setMuInequality(double muIn);
   void setMuEquality(double muEq);
