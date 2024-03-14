@@ -56,57 +56,55 @@ class InverseDynamicsFormulationAccForce
   InverseDynamicsFormulationAccForce(const std::string& name,
                                      RobotWrapper& robot, bool verbose = false);
 
-  virtual ~InverseDynamicsFormulationAccForce() {}
+  Data& data() override;
 
-  Data& data();
-
-  unsigned int nVar() const;
-  unsigned int nEq() const;
-  unsigned int nIn() const;
+  unsigned int nVar() const override;
+  unsigned int nEq() const override;
+  unsigned int nIn() const override;
 
   bool addMotionTask(TaskMotion& task, double weight,
                      unsigned int priorityLevel,
-                     double transition_duration = 0.0);
+                     double transition_duration = 0.0) override;
 
   bool addForceTask(TaskContactForce& task, double weight,
                     unsigned int priorityLevel,
-                    double transition_duration = 0.0);
+                    double transition_duration = 0.0) override;
 
   bool addActuationTask(TaskActuation& task, double weight,
                         unsigned int priorityLevel,
-                        double transition_duration = 0.0);
+                        double transition_duration = 0.0) override;
 
-  bool updateTaskWeight(const std::string& task_name, double weight);
+  bool updateTaskWeight(const std::string& task_name, double weight) override;
 
   bool addRigidContact(ContactBase& contact, double force_regularization_weight,
                        double motion_weight = 1.0,
-                       unsigned int motion_priority_level = 0);
+                       unsigned int motion_priority_level = 0) override;
 
-  TSID_DEPRECATED bool addRigidContact(ContactBase& contact);
+  TSID_DEPRECATED bool addRigidContact(ContactBase& contact) override;
 
   bool updateRigidContactWeights(const std::string& contact_name,
                                  double force_regularization_weight,
-                                 double motion_weight = -1.0);
+                                 double motion_weight = -1.0) override;
 
-  bool addMeasuredForce(MeasuredForceBase& measuredForce);
+  bool addMeasuredForce(MeasuredForceBase& measuredForce) override;
 
   bool removeTask(const std::string& taskName,
-                  double transition_duration = 0.0);
+                  double transition_duration = 0.0) override;
 
   bool removeRigidContact(const std::string& contactName,
-                          double transition_duration = 0.0);
+                          double transition_duration = 0.0) override;
 
-  bool removeMeasuredForce(const std::string& measuredForceName);
+  bool removeMeasuredForce(const std::string& measuredForceName) override;
 
   const HQPData& computeProblemData(double time, ConstRefVector q,
-                                    ConstRefVector v);
+                                    ConstRefVector v) override;
 
-  const Vector& getActuatorForces(const HQPOutput& sol);
-  const Vector& getAccelerations(const HQPOutput& sol);
-  const Vector& getContactForces(const HQPOutput& sol);
+  const Vector& getActuatorForces(const HQPOutput& sol) override;
+  const Vector& getAccelerations(const HQPOutput& sol) override;
+  const Vector& getContactForces(const HQPOutput& sol) override;
   Vector getContactForces(const std::string& name, const HQPOutput& sol);
   bool getContactForces(const std::string& name, const HQPOutput& sol,
-                        RefVector f);
+                        RefVector f) override;
 
  public:
   template <class TaskLevelPointer>

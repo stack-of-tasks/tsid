@@ -44,6 +44,8 @@ add_definitions(-Wno-deprecated-declarations)
 # Ignore them for now.
 add_definitions(-Wno-sign-conversion)
 
+add_definitions(-Werror=suggest-override)
+
 # Project configuration
 if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
   set(PROJECT_USE_CMAKE_EXPORT TRUE)

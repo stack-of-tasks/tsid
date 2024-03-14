@@ -31,8 +31,6 @@ class TaskContactForce : public TaskBase {
 
   TaskContactForce(const std::string& name, RobotWrapper& robot);
 
-  virtual ~TaskContactForce() {}
-
   /**
    * Contact force tasks have an additional compute method that takes as extra
    * input argument the list of active contacts. This can be needed for force

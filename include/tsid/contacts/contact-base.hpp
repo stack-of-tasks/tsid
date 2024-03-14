@@ -45,7 +45,7 @@ class ContactBase {
 
   ContactBase(const std::string& name, RobotWrapper& robot);
 
-  virtual ~ContactBase() {}
+  virtual ~ContactBase() = default;
 
   const std::string& name() const;
 

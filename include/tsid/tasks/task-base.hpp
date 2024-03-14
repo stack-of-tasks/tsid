@@ -42,7 +42,7 @@ class TaskBase {
 
   TaskBase(const std::string& name, RobotWrapper& robot);
 
-  virtual ~TaskBase() {}
+  virtual ~TaskBase() = default;
 
   const std::string& name() const;
 
@@ -52,7 +52,7 @@ class TaskBase {
   /// \info should be overloaded in the child class.
   virtual int dim() const = 0;
 
-  virtual const ConstraintBase& compute(const double t, ConstRefVector q,
+  virtual const ConstraintBase& compute(double t, ConstRefVector q,
                                         ConstRefVector v, Data& data) = 0;
 
   virtual const ConstraintBase& getConstraint() const = 0;

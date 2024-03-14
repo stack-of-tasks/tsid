@@ -38,28 +38,26 @@ class TaskComEquality : public TaskMotion {
 
   TaskComEquality(const std::string& name, RobotWrapper& robot);
 
-  virtual ~TaskComEquality() {}
+  int dim() const override;
 
-  int dim() const;
+  const ConstraintBase& compute(double t, ConstRefVector q, ConstRefVector v,
+                                Data& data) override;
 
-  const ConstraintBase& compute(const double t, ConstRefVector q,
-                                ConstRefVector v, Data& data);
-
-  const ConstraintBase& getConstraint() const;
+  const ConstraintBase& getConstraint() const override;
 
   void setReference(const TrajectorySample& ref);
-  const TrajectorySample& getReference() const;
+  const TrajectorySample& getReference() const override;
 
-  const Vector& getDesiredAcceleration() const;
-  Vector getAcceleration(ConstRefVector dv) const;
-  virtual void setMask(math::ConstRefVector mask);
+  const Vector& getDesiredAcceleration() const override;
+  Vector getAcceleration(ConstRefVector dv) const override;
+  virtual void setMask(math::ConstRefVector mask) override;
 
-  const Vector& position_error() const;
-  const Vector& velocity_error() const;
-  const Vector& position() const;
-  const Vector& velocity() const;
-  const Vector& position_ref() const;
-  const Vector& velocity_ref() const;
+  const Vector& position_error() const override;
+  const Vector& velocity_error() const override;
+  const Vector& position() const override;
+  const Vector& velocity() const override;
+  const Vector& position_ref() const override;
+  const Vector& velocity_ref() const override;
 
   const Vector3& Kp();
   const Vector3& Kd();

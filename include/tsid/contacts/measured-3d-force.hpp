@@ -37,7 +37,7 @@ class Measured3Dforce : public MeasuredForceBase {
   Measured3Dforce(const std::string &name, RobotWrapper &robot,
                   const std::string &frameName);
 
-  const Vector &computeJointTorques(Data &data);
+  const Vector &computeJointTorques(Data &data) override;
 
   /**
    *  Set the value of the external wrench applied by the environment on the

@@ -32,8 +32,6 @@ class TaskMotion : public TaskBase {
 
   TaskMotion(const std::string& name, RobotWrapper& robot);
 
-  virtual ~TaskMotion() {}
-
   virtual const TrajectorySample& getReference() const;
 
   virtual const Vector& getDesiredAcceleration() const;

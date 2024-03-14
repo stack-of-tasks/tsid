@@ -37,7 +37,7 @@ class Measured6Dwrench : public MeasuredForceBase {
   Measured6Dwrench(const std::string &name, RobotWrapper &robot,
                    const std::string &frameName);
 
-  const Vector &computeJointTorques(Data &data);
+  const Vector &computeJointTorques(Data &data) override;
 
   /**
    *  Set the value of the external wrench applied by the environment on the

@@ -45,38 +45,35 @@ class ContactPoint : public ContactBase {
                const double frictionCoefficient, const double minNormalForce,
                const double maxNormalForce);
 
-  virtual ~ContactPoint() {}
-
   /// Return the number of motion constraints
-  virtual unsigned int n_motion() const;
+  unsigned int n_motion() const override;
 
   /// Return the number of force variables
-  virtual unsigned int n_force() const;
+  unsigned int n_force() const override;
 
-  virtual const ConstraintBase& computeMotionTask(const double t,
-                                                  ConstRefVector q,
-                                                  ConstRefVector v, Data& data);
+  const ConstraintBase& computeMotionTask(double t, ConstRefVector q,
+                                          ConstRefVector v,
+                                          Data& data) override;
 
-  virtual const ConstraintInequality& computeForceTask(const double t,
-                                                       ConstRefVector q,
-                                                       ConstRefVector v,
-                                                       const Data& data);
+  const ConstraintInequality& computeForceTask(double t, ConstRefVector q,
+                                               ConstRefVector v,
+                                               const Data& data) override;
 
-  virtual const Matrix& getForceGeneratorMatrix();
+  const Matrix& getForceGeneratorMatrix() override;
 
-  virtual const ConstraintEquality& computeForceRegularizationTask(
-      const double t, ConstRefVector q, ConstRefVector v, const Data& data);
+  const ConstraintEquality& computeForceRegularizationTask(
+      double t, ConstRefVector q, ConstRefVector v, const Data& data) override;
 
-  const TaskSE3Equality& getMotionTask() const;
-  const ConstraintBase& getMotionConstraint() const;
-  const ConstraintInequality& getForceConstraint() const;
-  const ConstraintEquality& getForceRegularizationTask() const;
+  const TaskSE3Equality& getMotionTask() const override;
+  const ConstraintBase& getMotionConstraint() const override;
+  const ConstraintInequality& getForceConstraint() const override;
+  const ConstraintEquality& getForceRegularizationTask() const override;
   double getMotionTaskWeight() const;
-  const Matrix3x& getContactPoints() const;
+  const Matrix3x& getContactPoints() const override;
 
-  double getNormalForce(ConstRefVector f) const;
-  double getMinNormalForce() const;
-  double getMaxNormalForce() const;
+  double getNormalForce(ConstRefVector f) const override;
+  double getMinNormalForce() const override;
+  double getMaxNormalForce() const override;
 
   const Vector&
   Kp();  // cannot be const because it set a member variable inside
@@ -88,8 +85,8 @@ class ContactPoint : public ContactBase {
   bool setContactNormal(ConstRefVector contactNormal);
 
   bool setFrictionCoefficient(const double frictionCoefficient);
-  bool setMinNormalForce(const double minNormalForce);
-  bool setMaxNormalForce(const double maxNormalForce);
+  bool setMinNormalForce(const double minNormalForce) override;
+  bool setMaxNormalForce(const double maxNormalForce) override;
   bool setMotionTaskWeight(const double w);
   void setReference(const SE3& ref);
   void setForceReference(ConstRefVector& f_ref);
