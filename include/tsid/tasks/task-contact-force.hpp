@@ -37,7 +37,7 @@ class TaskContactForce : public TaskBase {
    * tasks that involve all contacts, such as the CoP task.
    */
   TSID_DISABLE_WARNING_PUSH
-  TSID_DISABLE_WARNING(-Woverloaded-virtual)
+  TSID_DISABLE_WARNING(-Woverloaded - virtual)
   virtual const ConstraintBase& compute(
       const double t, ConstRefVector q, ConstRefVector v, Data& data,
       const std::vector<std::shared_ptr<ContactLevel> >* contacts) = 0;
