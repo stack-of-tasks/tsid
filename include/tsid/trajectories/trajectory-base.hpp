@@ -77,7 +77,7 @@ class TrajectoryBase {
 
   TrajectoryBase(const std::string& name) : m_name(name) {}
 
-  virtual ~TrajectoryBase() {}
+  virtual ~TrajectoryBase() = default;
 
   virtual unsigned int size() const = 0;
 

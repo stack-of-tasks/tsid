@@ -42,7 +42,7 @@ class ConstraintBase {
                  const unsigned int cols);
 
   ConstraintBase(const std::string& name, ConstRefMatrix A);
-  virtual ~ConstraintBase() {}
+  virtual ~ConstraintBase() = default;
 
   virtual const std::string& name() const;
   virtual unsigned int rows() const = 0;

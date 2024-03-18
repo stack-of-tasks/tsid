@@ -42,7 +42,7 @@ class TSID_DLLAPI SolverHQPBase {
   typedef math::ConstRefMatrix ConstRefMatrix;
 
   SolverHQPBase(const std::string& name);
-  virtual ~SolverHQPBase(){};
+  virtual ~SolverHQPBase() = default;
 
   virtual const std::string& name() const { return m_name; }
 

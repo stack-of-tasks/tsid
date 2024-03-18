@@ -84,7 +84,7 @@ class InverseDynamicsFormulationBase {
   InverseDynamicsFormulationBase(const std::string& name, RobotWrapper& robot,
                                  bool verbose = false);
 
-  virtual ~InverseDynamicsFormulationBase() {}
+  virtual ~InverseDynamicsFormulationBase() = default;
 
   virtual Data& data() = 0;
 

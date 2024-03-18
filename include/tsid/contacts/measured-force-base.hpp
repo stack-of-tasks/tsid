@@ -35,6 +35,8 @@ class MeasuredForceBase {
 
   MeasuredForceBase(const std::string &name, RobotWrapper &robot);
 
+  virtual ~MeasuredForceBase() = default;
+
   const std::string &name() const;
 
   void name(const std::string &name);

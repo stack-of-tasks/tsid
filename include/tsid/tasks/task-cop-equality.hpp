@@ -38,34 +38,34 @@ class TaskCopEquality : public TaskContactForce {
   typedef math::ConstraintEquality ConstraintEquality;
   typedef pinocchio::SE3 SE3;
 
-  TaskCopEquality(const std::string &name, RobotWrapper &robot);
-
-  virtual ~TaskCopEquality() {}
+  TaskCopEquality(const std::string& name, RobotWrapper& robot);
 
   void setContactList(
-      const std::vector<std::shared_ptr<ContactLevel> > *contacts);
+      const std::vector<std::shared_ptr<ContactLevel> >* contacts);
 
-  int dim() const;
+  int dim() const override;
 
-  virtual const std::string &getAssociatedContactName();
+  const std::string& getAssociatedContactName() override;
 
-  const ConstraintBase &compute(const double t, ConstRefVector q,
-                                ConstRefVector v, Data &data);
+  const ConstraintBase& compute(double t, ConstRefVector q, ConstRefVector v,
+                                Data& data) override;
 
-  const ConstraintBase &compute(
-      const double t, ConstRefVector q, ConstRefVector v, Data &data,
-      const std::vector<std::shared_ptr<ContactLevel> > *contacts);
+  const ConstraintBase& compute(
+      double t, ConstRefVector q, ConstRefVector v, Data& data,
+      const std::vector<std::shared_ptr<ContactLevel> >* contacts) override;
 
-  const ConstraintBase &getConstraint() const;
+  const ConstraintBase& getConstraint() const override;
 
-  void setReference(const Vector3 &ref);
-  const Vector3 &getReference() const;
+  void setReference(const Vector3& ref);
 
-  void setContactNormal(const Vector3 &n);
-  const Vector3 &getContactNormal() const;
+  const Vector3& getReference() const;
+
+  void setContactNormal(const Vector3& n);
+
+  const Vector3& getContactNormal() const;
 
  protected:
-  const std::vector<std::shared_ptr<ContactLevel> > *m_contacts;
+  const std::vector<std::shared_ptr<ContactLevel> >* m_contacts;
   std::string m_contact_name;  // an empty string
   Vector3 m_normal;  // normal direction to the ground expressed in world frame
   Vector3 m_ref;     // reference CoP in world frame

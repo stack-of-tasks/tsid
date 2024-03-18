@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS, NYU, MPI Tübingen
+// Copyright (c) 2023 MIPT
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -15,8 +15,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_task_se3_equality_hpp__
-#define __invdyn_task_se3_equality_hpp__
+#ifndef __invdyn_task_frames_equality_hpp__
+#define __invdyn_task_frames_equality_hpp__
 
 #include "tsid/tasks/task-motion.hpp"
 #include "tsid/trajectories/trajectory-base.hpp"
@@ -28,7 +28,7 @@
 namespace tsid {
 namespace tasks {
 
-class TaskSE3Equality : public TaskMotion {
+class TaskTwoFramesEquality : public TaskMotion {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -41,8 +41,9 @@ class TaskSE3Equality : public TaskMotion {
   typedef pinocchio::Motion Motion;
   typedef pinocchio::SE3 SE3;
 
-  TaskSE3Equality(const std::string& name, RobotWrapper& robot,
-                  const std::string& frameName);
+  TaskTwoFramesEquality(const std::string& name, RobotWrapper& robot,
+                        const std::string& frameName1,
+                        const std::string& frameName2);
 
   int dim() const override;
 
@@ -50,10 +51,6 @@ class TaskSE3Equality : public TaskMotion {
                                 ConstRefVector v, Data& data) override;
 
   const ConstraintBase& getConstraint() const override;
-
-  void setReference(TrajectorySample& ref);
-  void setReference(const SE3& ref);
-  const TrajectorySample& getReference() const override;
 
   /** Return the desired task acceleration (after applying the specified mask).
    *  The value is expressed in local frame is the local_frame flag is true,
@@ -81,17 +78,13 @@ class TaskSE3Equality : public TaskMotion {
    */
   const Vector& velocity_error() const override;
 
-  const Vector& position() const override;
-  const Vector& velocity() const override;
-  const Vector& position_ref() const override;
-  const Vector& velocity_ref() const override;
-
   const Vector& Kp() const;
   const Vector& Kd() const;
   void Kp(ConstRefVector Kp);
   void Kd(ConstRefVector Kp);
 
-  Index frame_id() const;
+  Index frame_id1() const;
+  Index frame_id2() const;
 
   /**
    * @brief Specifies if the jacobian and desired acceloration should be
@@ -103,28 +96,28 @@ class TaskSE3Equality : public TaskMotion {
   void useLocalFrame(bool local_frame);
 
  protected:
-  std::string m_frame_name;
-  Index m_frame_id;
+  std::string m_frame_name1;
+  std::string m_frame_name2;
+  Index m_frame_id1;
+  Index m_frame_id2;
   Motion m_p_error, m_v_error;
   Vector m_p_error_vec, m_v_error_vec;
   Vector m_p_error_masked_vec, m_v_error_masked_vec;
   Vector m_p, m_v;
   Vector m_p_ref, m_v_ref_vec;
   Motion m_v_ref, m_a_ref;
-  SE3 m_M_ref, m_wMl;
+  SE3 m_wMl1, m_wMl2;
   Vector m_Kp;
   Vector m_Kd;
   Vector m_a_des, m_a_des_masked;
   Motion m_drift;
   Vector m_drift_masked;
-  Matrix6x m_J;
-  Matrix6x m_J_rotated;
+  Matrix6x m_J1, m_J2;
+  Matrix6x m_J1_rotated, m_J2_rotated;
   ConstraintEquality m_constraint;
-  TrajectorySample m_ref;
-  bool m_local_frame;
 };
 
 }  // namespace tasks
 }  // namespace tsid
 
-#endif  // ifndef __invdyn_task_se3_equality_hpp__
+#endif  // ifndef __invdyn_task_frames_equality_hpp__

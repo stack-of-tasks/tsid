@@ -44,6 +44,8 @@ add_definitions(-Wno-deprecated-declarations)
 # Ignore them for now.
 add_definitions(-Wno-sign-conversion)
 
+add_definitions(-Werror=suggest-override)
+
 # Project configuration
 if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
   set(PROJECT_USE_CMAKE_EXPORT TRUE)
@@ -159,7 +161,8 @@ set(${PROJECT_NAME}_TASKS_HEADERS
     include/tsid/tasks/task-joint-posture.hpp
     include/tsid/tasks/task-joint-posVelAcc-bounds.hpp
     include/tsid/tasks/task-capture-point-inequality.hpp
-    include/tsid/tasks/task-angular-momentum-equality.hpp)
+    include/tsid/tasks/task-angular-momentum-equality.hpp
+    include/tsid/tasks/task-two-frames-equality.hpp)
 
 set(${PROJECT_NAME}_CONTACTS_HEADERS
     include/tsid/contacts/fwd.hpp
@@ -168,7 +171,8 @@ set(${PROJECT_NAME}_CONTACTS_HEADERS
     include/tsid/contacts/contact-point.hpp
     include/tsid/contacts/measured-force-base.hpp
     include/tsid/contacts/measured-3Dforce.hpp
-    include/tsid/contacts/measured-6Dwrench.hpp)
+    include/tsid/contacts/measured-6Dwrench.hpp
+    include/tsid/contacts/contact-two-frame-positions.hpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_HEADERS
     include/tsid/trajectories/fwd.hpp
@@ -276,12 +280,17 @@ set(${PROJECT_NAME}_TASKS_SOURCES
     src/tasks/task-capture-point-inequality.cpp
     src/tasks/task-motion.cpp
     src/tasks/task-se3-equality.cpp
-    src/tasks/task-angular-momentum-equality.cpp)
+    src/tasks/task-angular-momentum-equality.cpp
+    src/tasks/task-two-frames-equality.cpp)
 
 set(${PROJECT_NAME}_CONTACTS_SOURCES
-    src/contacts/contact-base.cpp src/contacts/contact-6d.cpp
-    src/contacts/contact-point.cpp src/contacts/measured-force-base.cpp
-    src/contacts/measured-3Dforce.cpp src/contacts/measured-6Dwrench.cpp)
+    src/contacts/contact-base.cpp
+    src/contacts/contact-6d.cpp
+    src/contacts/contact-point.cpp
+    src/contacts/measured-force-base.cpp
+    src/contacts/measured-3Dforce.cpp
+    src/contacts/measured-6Dwrench.cpp
+    src/contacts/contact-two-frame-positions.cpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_SOURCES
     src/trajectories/trajectory-se3.cpp

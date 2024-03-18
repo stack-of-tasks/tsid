@@ -34,14 +34,12 @@ class TaskJointBounds : public TaskMotion {
 
   TaskJointBounds(const std::string& name, RobotWrapper& robot, double dt);
 
-  virtual ~TaskJointBounds() {}
-
-  int dim() const;
+  int dim() const override;
 
   const ConstraintBase& compute(const double t, ConstRefVector q,
-                                ConstRefVector v, Data& data);
+                                ConstRefVector v, Data& data) override;
 
-  const ConstraintBase& getConstraint() const;
+  const ConstraintBase& getConstraint() const override;
 
   void setTimeStep(double dt);
   void setVelocityBounds(ConstRefVector lower, ConstRefVector upper);
@@ -51,7 +49,7 @@ class TaskJointBounds : public TaskMotion {
   const Vector& getVelocityLowerBounds() const;
   const Vector& getVelocityUpperBounds() const;
 
-  virtual void setMask(math::ConstRefVector mask);
+  virtual void setMask(math::ConstRefVector mask) override;
 
  protected:
   Vector m_v_lb, m_v_ub;

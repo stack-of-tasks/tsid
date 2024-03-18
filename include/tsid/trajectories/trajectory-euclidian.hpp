@@ -34,19 +34,17 @@ class TrajectoryEuclidianConstant : public TrajectoryBase {
 
   TrajectoryEuclidianConstant(const std::string& name, ConstRefVector ref);
 
-  virtual ~TrajectoryEuclidianConstant() {}
-
-  unsigned int size() const;
+  unsigned int size() const override;
 
   void setReference(ConstRefVector ref);
 
-  const TrajectorySample& operator()(double time);
+  const TrajectorySample& operator()(double time) override;
 
-  const TrajectorySample& computeNext();
+  const TrajectorySample& computeNext() override;
 
-  void getLastSample(TrajectorySample& sample) const;
+  void getLastSample(TrajectorySample& sample) const override;
 
-  bool has_trajectory_ended() const;
+  bool has_trajectory_ended() const override;
 
  protected:
   Vector m_ref;
