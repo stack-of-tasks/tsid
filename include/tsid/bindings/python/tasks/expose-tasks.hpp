@@ -39,6 +39,7 @@ void exposeTaskJointBounds();
 void exposeTaskJointPosVelAccBounds();
 void exposeTaskAMEquality();
 void exposeTaskTwoFramesEquality();
+void exposeTaskActuationEquality();
 
 inline void exposeTasks() {
   exposeTaskComEquality();
@@ -50,6 +51,8 @@ inline void exposeTasks() {
   exposeTaskJointPosVelAccBounds();
   exposeTaskAMEquality();
   exposeTaskTwoFramesEquality();
+  exposeTaskActuationEquality();
+
 }
 
 }  // namespace python
