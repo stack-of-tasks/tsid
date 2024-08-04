@@ -69,13 +69,15 @@ struct TaskActuationEqualityPythonVisitor
 
         .def("setReference", &TaskActuationEqualityPythonVisitor::setReference,
              bp::arg("ref"))
-        .def("getReference", &TaskActuationEqualityPythonVisitor::getReference)
+        .def("getReference", &TaskActuationEqualityPythonVisitor::getReference,
+              bp::return_value_policy<bp::copy_const_reference>())
 
         .def("setWeightVector",
              &TaskActuationEqualityPythonVisitor::setWeightVector,
              bp::arg("weights"))
         .def("getWeightVector",
-             &TaskActuationEqualityPythonVisitor::getWeightVector);
+             &TaskActuationEqualityPythonVisitor::getWeightVector,
+             bp::return_value_policy<bp::copy_const_reference>());
   }
 
   static std::string name(TaskAucEq &self) {
