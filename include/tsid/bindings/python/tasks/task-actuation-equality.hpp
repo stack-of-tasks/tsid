@@ -5,8 +5,6 @@
  * Description:
  * this file contain boost python binding for task acutation equality
  */
-
-
 //
 // Copyright (c) 2018 CNRS
 //
@@ -104,7 +102,6 @@ struct TaskActuationEqualityPythonVisitor
   }
 
   //// getter and setter of reference
-
   static void setReference(TaskAucEq &self, const Eigen::VectorXd &ref) {
     self.setReference(ref);
   }
@@ -114,7 +111,6 @@ struct TaskActuationEqualityPythonVisitor
   }
 
   // getter and setter of weight
-
   static void setWeightVector(TaskAucEq &self, const Eigen::VectorXd &weights) {
     self.setWeightVector(weights);
   }
