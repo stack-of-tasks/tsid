@@ -27,6 +27,7 @@
 #include "tsid/bindings/python/tasks/task-joint-posVelAcc-bounds.hpp"
 #include "tsid/bindings/python/tasks/task-am-equality.hpp"
 #include "tsid/bindings/python/tasks/task-two-frames-equality.hpp"
+#include "tsid/bindings/python/tasks/task-actuation-equality.hpp"
 
 namespace tsid {
 namespace python {
