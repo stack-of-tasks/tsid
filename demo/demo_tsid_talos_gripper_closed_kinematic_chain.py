@@ -3,14 +3,15 @@ Simple demo of usage of ContactTwoFramePositions in TSID
 Make the Talos gripper model works with closed kinematic chains
 (c) MIPT
 """
+
 import os
 import time
 
 import numpy as np
 import pinocchio as pin
-import tsid
-from numpy import nan
 from numpy.linalg import norm as norm
+
+import tsid
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
@@ -111,12 +112,10 @@ invdyn.addRigidContact(
 
 # Setting actuation to zero for passive joints in kinematic chain via TaskActuationBounds
 tau_max = model.effortLimit[-robot.na :]
-tau_max[
-    0
-] = 0.0  # setting gripper_left_inner_single_joint to passive contstrainig it's actuation bounds to zero
-tau_max[
-    1
-] = 0.0  # setting gripper_left_fingertip_3_joint to passive contstrainig it's actuation bounds to zero
+# setting gripper_left_inner_single_joint to passive contstrainig it's actuation bounds to zero
+tau_max[0] = 0.0
+# setting gripper_left_fingertip_3_joint to passive contstrainig it's actuation bounds to zero
+tau_max[1] = 0.0
 tau_min = -tau_max
 actuationBoundsTask = tsid.TaskActuationBounds("task-actuation-bounds", robot)
 actuationBoundsTask.setBounds(tau_min, tau_max)
