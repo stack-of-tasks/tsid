@@ -9,9 +9,8 @@ import time
 
 import numpy as np
 import pinocchio as pin
-from numpy.linalg import norm as norm
-
 import tsid
+from numpy.linalg import norm as norm
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
