@@ -96,8 +96,7 @@ for i in range(-N_pre, N + N_post):
     elif i > 0 and i < N - 1:
         if contact_phase[i] != contact_phase[i - 1]:
             print(
-                "Time %.3f Changing contact phase from %s to %s"
-                % (t, contact_phase[i - 1], contact_phase[i])
+                f"Time {t:.3f} Changing contact phase from {contact_phase[i - 1]} to {contact_phase[i]}"
             )
             if contact_phase[i] == "left":
                 tsid.add_contact_LF()
@@ -129,7 +128,7 @@ for i in range(-N_pre, N + N_post):
         print("QP problem could not be solved! Error code:", sol.status)
         break
     if norm(v, 2) > 40.0:
-        print("Time %.3f Velocities are too high, stop everything!" % (t), norm(v))
+        print(f"Time {t:.3f} Velocities are too high, stop everything!", norm(v))
         break
 
     if i > 0:
@@ -177,24 +176,21 @@ for i in range(-N_pre, N + N_post):
         )
 
     if i % conf.PRINT_N == 0:
-        print("Time %.3f" % (t))
+        print(f"Time {t:.3f}")
         if tsid.formulation.checkContact(tsid.contactRF.name, sol) and i >= 0:
             print(
-                "\tnormal force %s: %.1f"
-                % (tsid.contactRF.name.ljust(20, "."), f_RF[2, i])
+                "\tnormal force {}: {:.1f}".format(tsid.contactRF.name.ljust(20, "."), f_RF[2, i])
             )
 
         if tsid.formulation.checkContact(tsid.contactLF.name, sol) and i >= 0:
             print(
-                "\tnormal force %s: %.1f"
-                % (tsid.contactLF.name.ljust(20, "."), f_LF[2, i])
+                "\tnormal force {}: {:.1f}".format(tsid.contactLF.name.ljust(20, "."), f_LF[2, i])
             )
 
         print(
-            "\ttracking err %s: %.3f"
-            % (tsid.comTask.name.ljust(20, "."), norm(tsid.comTask.position_error, 2))
+            "\ttracking err {}: {:.3f}".format(tsid.comTask.name.ljust(20, "."), norm(tsid.comTask.position_error, 2))
         )
-        print("\t||v||: %.3f\t ||dv||: %.3f" % (norm(v, 2), norm(dv)))
+        print(f"\t||v||: {norm(v, 2):.3f}\t ||dv||: {norm(dv):.3f}")
 
     q, v = tsid.integrate_dv(q, v, dv, conf.dt)
     t += conf.dt

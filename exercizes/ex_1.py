@@ -55,26 +55,23 @@ for i in range(0, N):
     com_acc_des[:, i] = tsid.comTask.getDesiredAcceleration
 
     if i % conf.PRINT_N == 0:
-        print("Time %.3f" % (t))
+        print(f"Time {t:.3f}")
         if tsid.formulation.checkContact(tsid.contactRF.name, sol):
             f = tsid.formulation.getContactForce(tsid.contactRF.name, sol)
             print(
-                "\tnormal force %s: %.1f"
-                % (tsid.contactRF.name.ljust(20, "."), tsid.contactRF.getNormalForce(f))
+                "\tnormal force {}: {:.1f}".format(tsid.contactRF.name.ljust(20, "."), tsid.contactRF.getNormalForce(f))
             )
 
         if tsid.formulation.checkContact(tsid.contactLF.name, sol):
             f = tsid.formulation.getContactForce(tsid.contactLF.name, sol)
             print(
-                "\tnormal force %s: %.1f"
-                % (tsid.contactLF.name.ljust(20, "."), tsid.contactLF.getNormalForce(f))
+                "\tnormal force {}: {:.1f}".format(tsid.contactLF.name.ljust(20, "."), tsid.contactLF.getNormalForce(f))
             )
 
         print(
-            "\ttracking err %s: %.3f"
-            % (tsid.comTask.name.ljust(20, "."), norm(tsid.comTask.position_error, 2))
+            "\ttracking err {}: {:.3f}".format(tsid.comTask.name.ljust(20, "."), norm(tsid.comTask.position_error, 2))
         )
-        print("\t||v||: %.3f\t ||dv||: %.3f" % (norm(v, 2), norm(dv)))
+        print(f"\t||v||: {norm(v, 2):.3f}\t ||dv||: {norm(dv):.3f}")
 
     q, v = tsid.integrate_dv(q, v, dv, conf.dt)
     t += conf.dt

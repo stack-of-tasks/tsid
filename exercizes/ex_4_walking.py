@@ -125,8 +125,7 @@ for i in range(-N_pre, N + N_post):
     elif i > 0 and i < N - 1:
         if contact_phase[i] != contact_phase[i - 1]:
             print(
-                "Time %.3f Changing contact phase from %s to %s"
-                % (t, contact_phase[i - 1], contact_phase[i])
+                f"Time {t:.3f} Changing contact phase from {contact_phase[i - 1]} to {contact_phase[i]}"
             )
             if contact_phase[i] == "left":
                 tsid_biped.add_contact_LF()
@@ -151,7 +150,7 @@ for i in range(-N_pre, N + N_post):
         print("QP problem could not be solved! Error code:", sol.status)
         break
     if norm(v, 2) > 40.0:
-        print("Time %.3f Velocities are too high, stop everything!" % (t), norm(v))
+        print(f"Time {t:.3f} Velocities are too high, stop everything!", norm(v))
         break
 
     if i > 0:
@@ -190,14 +189,13 @@ for i in range(-N_pre, N + N_post):
                 cop_LF[1, i] = -f_LF[3, i] / f_LF[2, i]
 
     if i % conf.PRINT_N == 0:
-        print("Time %.3f" % (t))
+        print(f"Time {t:.3f}")
         if (
             tsid_biped.formulation.checkContact(tsid_biped.contactRF.name, sol)
             and i >= 0
         ):
             print(
-                "\tnormal force %s: %.1f"
-                % (tsid_biped.contactRF.name.ljust(20, "."), f_RF[2, i])
+                "\tnormal force {}: {:.1f}".format(tsid_biped.contactRF.name.ljust(20, "."), f_RF[2, i])
             )
 
         if (
@@ -205,18 +203,16 @@ for i in range(-N_pre, N + N_post):
             and i >= 0
         ):
             print(
-                "\tnormal force %s: %.1f"
-                % (tsid_biped.contactLF.name.ljust(20, "."), f_LF[2, i])
+                "\tnormal force {}: {:.1f}".format(tsid_biped.contactLF.name.ljust(20, "."), f_LF[2, i])
             )
 
         print(
-            "\ttracking err %s: %.3f"
-            % (
+            "\ttracking err {}: {:.3f}".format(
                 tsid_biped.comTask.name.ljust(20, "."),
                 norm(tsid_biped.comTask.position_error, 2),
             )
         )
-        print("\t||v||: %.3f\t ||dv||: %.3f" % (norm(v, 2), norm(dv)))
+        print(f"\t||v||: {norm(v, 2):.3f}\t ||dv||: {norm(dv):.3f}")
 
     q, v = tsid_biped.integrate_dv(q, v, dv, conf.dt)
     t += conf.dt

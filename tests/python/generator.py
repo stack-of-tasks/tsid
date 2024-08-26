@@ -258,7 +258,7 @@ def create_7dof_arm(revoluteOnly=False):
             id_hand,
             fcl.Cylinder(0.02, 0.1),
             pin.XYZQUATToSE3(
-                np.array([geom_radius, 0, 2 * geom_radius] + [0, 0.707, 0, 0.707])
+                np.array([geom_radius, 0, 2 * geom_radius, 0, 0.707, 0, 0.707])
             ),
             "",
             np.ones(3),

@@ -25,7 +25,7 @@ class Scale3d:
         for i in range(3):
             self.s[i] = Scale(
                 master,
-                label="%s %s" % (name, AXES[i]),
+                label=f"{name} {AXES[i]}",
                 from_=from_[i],
                 to=to[i],
                 tickinterval=tickinterval[i],
@@ -45,7 +45,7 @@ class Entry3d:
     def __init__(self, master, name):
         self.s = 3 * [None]
         for i in range(3):
-            Label(master, text="%s %s" % (name, AXES[i])).pack()  # side=tk.TOP)
+            Label(master, text=f"{name} {AXES[i]}").pack()  # side=tk.TOP)
             self.s[i] = Entry(master, width=5)
             self.s[i].pack()  # side=tk.BOTTOM)
             separator = Frame(height=1, bd=1, relief=tk.SUNKEN)
@@ -222,10 +222,10 @@ def run_simu():
             x_lf_ref = tsid.trajLF.getSample(t).pos()[:3]
             x_rf_ref = tsid.trajRF.getSample(t).pos()[:3]
             vizutils.applyViewerConfiguration(
-                tsid.viz, "world/com", x_com.tolist() + [0, 0, 0, 1.0]
+                tsid.viz, "world/com", [*x_com.tolist(), 0, 0, 0, 1.0]
             )
             vizutils.applyViewerConfiguration(
-                tsid.viz, "world/com_ref", x_com_ref.tolist() + [0, 0, 0, 1.0]
+                tsid.viz, "world/com_ref", [*x_com_ref.tolist(), 0, 0, 0, 1.0]
             )
             vizutils.applyViewerConfiguration(
                 tsid.viz, "world/rf", pin.SE3ToXYZQUATtuple(H_rf)
@@ -234,16 +234,15 @@ def run_simu():
                 tsid.viz, "world/lf", pin.SE3ToXYZQUATtuple(H_lf)
             )
             vizutils.applyViewerConfiguration(
-                tsid.viz, "world/rf_ref", x_rf_ref.tolist() + [0, 0, 0, 1.0]
+                tsid.viz, "world/rf_ref", [*x_rf_ref.tolist(), 0, 0, 0, 1.0]
             )
             vizutils.applyViewerConfiguration(
-                tsid.viz, "world/lf_ref", x_lf_ref.tolist() + [0, 0, 0, 1.0]
+                tsid.viz, "world/lf_ref", [*x_lf_ref.tolist(), 0, 0, 0, 1.0]
             )
 
         if i % 1000 == 0:
             print(
-                "Average loop time: %.1f (expected is %.1f)"
-                % (1e3 * time_avg, 1e3 * conf.dt)
+                f"Average loop time: {1e3 * time_avg:.1f} (expected is {1e3 * conf.dt:.1f})"
             )
 
         time_spent = time.time() - time_start

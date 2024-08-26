@@ -183,18 +183,17 @@ for i in range(0, N_SIMULATION):
     com_acc_des[:, i] = comTask.getDesiredAcceleration
 
     if i % PRINT_N == 0:
-        print("Time %.3f" % (t))
+        print(f"Time {t:.3f}")
         print("\tNormal forces: ", end=" ")
         for contact in contacts:
             if invdyn.checkContact(contact.name, sol):
                 f = invdyn.getContactForce(contact.name, sol)
-                print("%4.1f" % (contact.getNormalForce(f)), end=" ")
+                print(f"{contact.getNormalForce(f):4.1f}", end=" ")
 
         print(
-            "\n\ttracking err %s: %.3f"
-            % (comTask.name.ljust(20, "."), norm(comTask.position_error, 2))
+            "\n\ttracking err {}: {:.3f}".format(comTask.name.ljust(20, "."), norm(comTask.position_error, 2))
         )
-        print("\t||v||: %.3f\t ||dv||: %.3f" % (norm(v, 2), norm(dv)))
+        print(f"\t||v||: {norm(v, 2):.3f}\t ||dv||: {norm(dv):.3f}")
 
     v_mean = v + 0.5 * dt * dv
     v += dt * dv

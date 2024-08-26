@@ -176,7 +176,7 @@ while True:
     dv = invdyn.getAccelerations(sol)
 
     if i % PRINT_N == 0:
-        print("Time %.3f" % (t))
+        print(f"Time {t:.3f}")
 
     v_mean = v + 0.5 * dt * dv
     v += dt * dv

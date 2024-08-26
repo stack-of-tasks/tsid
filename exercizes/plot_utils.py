@@ -88,7 +88,7 @@ def movePlotSpines(ax, spinesPos):
 def setAxisFontSize(ax, size):
     for label in ax.get_xticklabels() + ax.get_yticklabels():
         label.set_fontsize(size)
-        label.set_bbox(dict(facecolor="white", edgecolor="None", alpha=0.65))
+        label.set_bbox({"facecolor": "white", "edgecolor": "None", "alpha": 0.65})
 
 
 mpl.rcdefaults()
