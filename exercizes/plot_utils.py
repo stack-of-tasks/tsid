@@ -158,7 +158,7 @@ def plotNdQuantity(
     )
 
 
-def plotNdQuantityPerSolver(
+def plotNdQuantityPerSolver(  # noqa: C901
     nRows,
     nCols,
     quantity,
