@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.1] - 2024-08-26
+
 - Fix a typo in ex_4_walking
 - check solver status, set eps_abs to 1e-6, fix seed
 - CMake: require >= 3.10
@@ -163,7 +165,8 @@ It also fixes some issues with respect to the packaging.
 This is the first release of TSID.
 This release includes minimal features for the torque control of humanoid robots such as HRP-2.
 
-[Unreleased]: https://github.com/stack-of-tasks/tsid/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/stack-of-tasks/tsid/compare/v1.7.1...HEAD
+[1.7.1]: https://github.com/stack-of-tasks/tsid/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/stack-of-tasks/tsid/compare/v1.6.3...v1.7.0
 [1.6.3]: https://github.com/stack-of-tasks/tsid/compare/v1.6.2...v1.6.3
 [1.6.2]: https://github.com/stack-of-tasks/tsid/compare/v1.6.1...v1.6.2
