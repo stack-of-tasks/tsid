@@ -1,12 +1,11 @@
 import numpy as np
-
 import tsid
 
 print("")
 print("Test Solvers")
 print("")
 
-np.random.seed(0)
+rng = np.random.default_rng(seed=0)
 
 EPS = 1e-3
 nTest = 100
@@ -61,15 +60,15 @@ except AttributeError:
     pass
 
 HQPData = tsid.HQPData()
-A1 = np.random.rand(n, n) + 0.001 * np.eye(n)
-b1 = np.random.rand(n)
+A1 = rng.random((n, n)) + 0.001 * np.eye(n)
+b1 = rng.random(n)
 cost = tsid.ConstraintEquality("c1", A1, b1)
 
 x = np.linalg.solve(A1, b1)
 
-A_in = np.random.rand(nin, n)
-A_lb = np.random.rand(nin) * NORMAL_DISTR_VAR
-A_ub = np.random.rand(nin) * NORMAL_DISTR_VAR
+A_in = rng.random((nin, n))
+A_lb = rng.random(nin) * NORMAL_DISTR_VAR
+A_ub = rng.random(nin) * NORMAL_DISTR_VAR
 constrVal = A_in.dot(x)
 
 for i in range(0, nin):
@@ -83,7 +82,7 @@ for i in range(0, nin):
         A_lb[i] = constrVal[i] - MARGIN_PERC * np.abs(constrVal[i])
 
 in_const = tsid.ConstraintInequality("ini1", A_in, A_lb, A_ub)
-A_eq = np.random.rand(neq, n)
+A_eq = rng.random((neq, n))
 b_eq = A_eq.dot(x)
 eq_const = tsid.ConstraintEquality("eq1", A_eq, b_eq)
 
@@ -106,8 +105,8 @@ HQPData.print_all()
 gradientPerturbations = []
 hessianPerturbations = []
 for i in range(0, nTest):
-    gradientPerturbations.append(np.random.rand(n) * GRADIENT_PERTURBATION_VARIANCE)
-    hessianPerturbations.append(np.random.rand(n, n) * HESSIAN_PERTURBATION_VARIANCE)
+    gradientPerturbations.append(rng.random(n) * GRADIENT_PERTURBATION_VARIANCE)
+    hessianPerturbations.append(rng.random((n, n)) * HESSIAN_PERTURBATION_VARIANCE)
 
 for name, solver in solver_list:
     print(f"Using {name}")

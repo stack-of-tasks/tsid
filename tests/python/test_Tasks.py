@@ -2,12 +2,11 @@ import os
 
 import numpy as np
 import pinocchio as pin
+import tsid
+from numpy.linalg import norm
 
 # Get robot model generator module
 from generator import create_7dof_arm
-from numpy.linalg import norm
-
-import tsid
 
 print("")
 print("Test Task COM")
@@ -102,7 +101,8 @@ task_joint.setKd(Kd)
 assert np.linalg.norm(Kp - task_joint.Kp, 2) < tol
 assert np.linalg.norm(Kd - task_joint.Kd, 2) < tol
 
-q_ref = np.random.randn(na)
+rng = np.random.default_rng()
+q_ref = rng.standard_normal(na)
 traj = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
 sample = tsid.TrajectorySample(0)
 
@@ -239,7 +239,7 @@ dt = 0.001
 max_it = 1000
 Jpinv = np.zeros((robot.nv, 3))
 error_past = 1e100
-v = np.random.randn(robot.nv)
+v = rng.standard_normal(robot.nv)
 
 for i in range(0, max_it):
     robot.computeAllTerms(data, q, v)
