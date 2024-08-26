@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CMake: require >= 3.10
 - add changelog
 - setup ruff & fix isort pre-commit config
+- update ROS CI
 
 ## [1.7.0] - 2023-05-13
 
