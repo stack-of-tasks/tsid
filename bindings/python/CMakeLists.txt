@@ -19,6 +19,7 @@ set(${PYWRAP}_SOURCES
     constraint/constraint-inequality.cpp
     contacts/contact-6d.cpp
     contacts/contact-point.cpp
+    contacts/contact-two-frame-positions.cpp
     formulations/formulation.cpp
     math/utils.cpp
     robots/robot-wrapper.cpp
@@ -34,6 +35,7 @@ set(${PYWRAP}_SOURCES
     tasks/task-joint-posture.cpp
     tasks/task-joint-posVelAcc-bounds.cpp
     tasks/task-se3-equality.cpp
+    tasks/task-two-frames-equality.cpp
     trajectories/trajectory-base.cpp
     trajectories/trajectory-euclidian.cpp
     trajectories/trajectory-se3.cpp)
