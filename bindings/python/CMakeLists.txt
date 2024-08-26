@@ -47,6 +47,8 @@ set(${PYWRAP}_HEADERS
     ../../include/tsid/bindings/python/constraint/expose-constraints.hpp
     ../../include/tsid/bindings/python/contacts/contact-6d.hpp
     ../../include/tsid/bindings/python/contacts/contact-point.hpp
+    ../../include/tsid/bindings/python/contacts/contact-two-frame-positions.hpp
+    ../../include/tsid/bindings/python/contacts/contact-two-frames.hpp
     ../../include/tsid/bindings/python/contacts/expose-contact.hpp
     ../../include/tsid/bindings/python/formulations/expose-formulations.hpp
     ../../include/tsid/bindings/python/formulations/formulation.hpp
@@ -70,6 +72,7 @@ set(${PYWRAP}_HEADERS
     ../../include/tsid/bindings/python/tasks/task-joint-posture.hpp
     ../../include/tsid/bindings/python/tasks/task-joint-posVelAcc-bounds.hpp
     ../../include/tsid/bindings/python/tasks/task-se3-equality.hpp
+    ../../include/tsid/bindings/python/tasks/task-two-frames-equality.hpp
     ../../include/tsid/bindings/python/trajectories/expose-trajectories.hpp
     ../../include/tsid/bindings/python/trajectories/trajectory-base.hpp
     ../../include/tsid/bindings/python/trajectories/trajectory-euclidian.hpp
