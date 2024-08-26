@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CMake: require >= 3.10
 - add changelog
 - setup ruff & fix isort pre-commit config
+- update ROS CI
 
 ## [1.7.0] - 2023-05-13
 
@@ -162,7 +163,7 @@ It also fixes some issues with respect to the packaging.
 This is the first release of TSID.
 This release includes minimal features for the torque control of humanoid robots such as HRP-2.
 
-[unreleased]: https://github.com/stack-of-tasks/tsid/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/stack-of-tasks/tsid/compare/v1.7.0...HEAD
 [1.7.0]: https://github.com/stack-of-tasks/tsid/compare/v1.6.3...v1.7.0
 [1.6.3]: https://github.com/stack-of-tasks/tsid/compare/v1.6.2...v1.6.3
 [1.6.2]: https://github.com/stack-of-tasks/tsid/compare/v1.6.1...v1.6.2
