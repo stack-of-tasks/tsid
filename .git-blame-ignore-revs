@@ -9,3 +9,6 @@ b2be1d0b5a2ef7a5de758bca053161fb652aba56
 
 # ruff (Guilhem Saurel, 2024-08-26)
 1ae998e5aef7dacc13bad7aa457575a513d78864
+
+# pre-commit run -a (Guilhem Saurel, 2024-08-26)
+e928496128b53fb15b1aad3b04fedd844ee86500
