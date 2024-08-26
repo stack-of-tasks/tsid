@@ -10,9 +10,9 @@ from numpy import nan
 from numpy.linalg import norm as norm
 from tsid_manipulator import TsidManipulator
 
-print(("".center(conf.LINE_WIDTH, "#")))
-print((" TSID - Manipulator End-Effector Sin Tracking ".center(conf.LINE_WIDTH, "#")))
-print(("".center(conf.LINE_WIDTH, "#")))
+print("".center(conf.LINE_WIDTH, "#"))
+print(" TSID - Manipulator End-Effector Sin Tracking ".center(conf.LINE_WIDTH, "#"))
+print("".center(conf.LINE_WIDTH, "#"))
 print("")
 
 PLOT_EE_POS = 1
@@ -89,12 +89,12 @@ for i in range(0, N):
     ee_acc_des[:, i] = tsid.eeTask.getDesiredAcceleration[:3]
 
     if i % conf.PRINT_N == 0:
-        print(("Time %.3f" % (t)))
+        print("Time %.3f" % (t))
         print(
-            (
+
                 "\ttracking err %s: %.3f"
                 % (tsid.eeTask.name.ljust(20, "."), norm(tsid.eeTask.position_error, 2))
-            )
+
         )
 
     q[:, i + 1], v[:, i + 1] = tsid.integrate_dv(q[:, i], v[:, i], dv, conf.dt)

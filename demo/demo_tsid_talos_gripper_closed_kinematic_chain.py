@@ -1,5 +1,4 @@
-"""
-Simple demo of usage of ContactTwoFramePositions in TSID
+"""Simple demo of usage of ContactTwoFramePositions in TSID
 Make the Talos gripper model works with closed kinematic chains
 (c) MIPT
 """

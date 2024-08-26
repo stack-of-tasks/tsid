@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jan 16 09:16:56 2015
+"""Created on Fri Jan 16 09:16:56 2015
 
 @author: adelpret
 """

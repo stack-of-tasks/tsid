@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Apr 17 22:31:22 2019
+"""Created on Wed Apr 17 22:31:22 2019
 
 @author: student
 """
@@ -116,8 +114,14 @@ def push_robot():
 
 
 def create_gui():
-    """thread worker function"""
-    global scale_com, scale_RF, scale_LF, button_contact_RF, button_contact_LF, com_vel_entry
+    """Thread worker function"""
+    global \
+        scale_com, \
+        scale_RF, \
+        scale_LF, \
+        button_contact_RF, \
+        button_contact_LF, \
+        com_vel_entry
     master = Tk(className="TSID GUI")
     scale_com = Scale3d(
         master,
