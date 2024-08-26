@@ -179,16 +179,22 @@ for i in range(-N_pre, N + N_post):
         print(f"Time {t:.3f}")
         if tsid.formulation.checkContact(tsid.contactRF.name, sol) and i >= 0:
             print(
-                "\tnormal force {}: {:.1f}".format(tsid.contactRF.name.ljust(20, "."), f_RF[2, i])
+                "\tnormal force {}: {:.1f}".format(
+                    tsid.contactRF.name.ljust(20, "."), f_RF[2, i]
+                )
             )
 
         if tsid.formulation.checkContact(tsid.contactLF.name, sol) and i >= 0:
             print(
-                "\tnormal force {}: {:.1f}".format(tsid.contactLF.name.ljust(20, "."), f_LF[2, i])
+                "\tnormal force {}: {:.1f}".format(
+                    tsid.contactLF.name.ljust(20, "."), f_LF[2, i]
+                )
             )
 
         print(
-            "\ttracking err {}: {:.3f}".format(tsid.comTask.name.ljust(20, "."), norm(tsid.comTask.position_error, 2))
+            "\ttracking err {}: {:.3f}".format(
+                tsid.comTask.name.ljust(20, "."), norm(tsid.comTask.position_error, 2)
+            )
         )
         print(f"\t||v||: {norm(v, 2):.3f}\t ||dv||: {norm(dv):.3f}")
 

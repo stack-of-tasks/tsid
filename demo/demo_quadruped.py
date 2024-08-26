@@ -191,7 +191,9 @@ for i in range(0, N_SIMULATION):
                 print(f"{contact.getNormalForce(f):4.1f}", end=" ")
 
         print(
-            "\n\ttracking err {}: {:.3f}".format(comTask.name.ljust(20, "."), norm(comTask.position_error, 2))
+            "\n\ttracking err {}: {:.3f}".format(
+                comTask.name.ljust(20, "."), norm(comTask.position_error, 2)
+            )
         )
         print(f"\t||v||: {norm(v, 2):.3f}\t ||dv||: {norm(dv):.3f}")
 

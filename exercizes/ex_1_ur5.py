@@ -91,7 +91,9 @@ for i in range(0, N):
     if i % conf.PRINT_N == 0:
         print(f"Time {t:.3f}")
         print(
-            "\ttracking err {}: {:.3f}".format(tsid.eeTask.name.ljust(20, "."), norm(tsid.eeTask.position_error, 2))
+            "\ttracking err {}: {:.3f}".format(
+                tsid.eeTask.name.ljust(20, "."), norm(tsid.eeTask.position_error, 2)
+            )
         )
 
     q[:, i + 1], v[:, i + 1] = tsid.integrate_dv(q[:, i], v[:, i], dv, conf.dt)

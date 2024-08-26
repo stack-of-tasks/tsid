@@ -112,7 +112,9 @@ for i in range(0, N):
     if i % conf.PRINT_N == 0:
         print(f"Time {t:.3f}")
         print(
-            "\ttracking err {}: {:.3f}".format(postureTask.name.ljust(20, "."), norm(postureTask.position_error, 2))
+            "\ttracking err {}: {:.3f}".format(
+                postureTask.name.ljust(20, "."), norm(postureTask.position_error, 2)
+            )
         )
 
     # numerical integration

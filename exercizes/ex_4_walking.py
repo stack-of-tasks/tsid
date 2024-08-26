@@ -195,7 +195,9 @@ for i in range(-N_pre, N + N_post):
             and i >= 0
         ):
             print(
-                "\tnormal force {}: {:.1f}".format(tsid_biped.contactRF.name.ljust(20, "."), f_RF[2, i])
+                "\tnormal force {}: {:.1f}".format(
+                    tsid_biped.contactRF.name.ljust(20, "."), f_RF[2, i]
+                )
             )
 
         if (
@@ -203,7 +205,9 @@ for i in range(-N_pre, N + N_post):
             and i >= 0
         ):
             print(
-                "\tnormal force {}: {:.1f}".format(tsid_biped.contactLF.name.ljust(20, "."), f_LF[2, i])
+                "\tnormal force {}: {:.1f}".format(
+                    tsid_biped.contactLF.name.ljust(20, "."), f_LF[2, i]
+                )
             )
 
         print(
