@@ -2,13 +2,13 @@ ci:
   autoupdate_branch: devel
 repos:
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.1.6
+  rev: v0.6.2
   hooks:
   - id: ruff
     args:
     - --fix
     - --exit-non-zero-on-fix
-  - id: format
+  - id: ruff-format
 - repo: https://github.com/cheshirekow/cmake-format-precommit
   rev: v0.6.13
   hooks:
