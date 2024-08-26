@@ -6,3 +6,6 @@ b2be1d0b5a2ef7a5de758bca053161fb652aba56
 
 # pre-commit run -a (Guilhem Saurel, 2022-09-05)
 1d932e2d389a6205e6d3a7490b5c826fe01fea47
+
+# ruff (Guilhem Saurel, 2024-08-26)
+1ae998e5aef7dacc13bad7aa457575a513d78864
