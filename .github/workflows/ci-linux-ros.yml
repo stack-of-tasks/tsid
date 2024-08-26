@@ -6,10 +6,9 @@ jobs:
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: noetic, BUILDER: catkin_tools, CTEST_OUTPUT_ON_FAILURE: ON}
-          #- {ROS_DISTRO: rolling}
-          #- {ROS_DISTRO: iron}
-          #- {ROS_DISTRO: humble}
+          #- {ROS_DISTRO: rolling} Unable to locate package ros-rolling-pinocchio
+          - {ROS_DISTRO: iron}
+          - {ROS_DISTRO: humble}
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
       UPSTREAM_WORKSPACE: dependencies.rosinstall
@@ -19,11 +18,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      # eiquadprog is not yet available in ROS2
+      - run: sed -i "/eiquadprog/d" package.xml
       # This step will fetch/store the directory used by ccache before/after the ci run
       - uses: actions/cache@v3
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
       # Run industrial_ci
-      - uses: 'ros-industrial/industrial_ci@3ed9846c96ed1e0bb36193e8e250632eaac980d0'
+      - uses: 'ros-industrial/industrial_ci@d23b9ad2c63bfad638a2b1fe3df34b8df9a2f17b'
         env: ${{ matrix.env }}
