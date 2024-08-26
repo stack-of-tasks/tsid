@@ -3,7 +3,7 @@ extend-exclude = ["cmake"]
 
 [tool.ruff.lint]
 extend-ignore = ["COM812", "D203", "D213"]
-extend-select = ["A", "B", "C", "COM", "EM", "EXE", "G", "N", "NPY", "PTH", "RET", "RUF", "UP", "W", "YTT"]
+extend-select = ["A", "B", "C", "COM", "EM", "EXE", "G", "NPY", "PTH", "RET", "RUF", "UP", "W", "YTT"]
 
 [tool.tomlsort]
 all = true
