@@ -104,7 +104,7 @@ HQPData.print_all()
 
 gradientPerturbations = []
 hessianPerturbations = []
-for i in range(0, nTest):
+for _ in range(0, nTest):
     gradientPerturbations.append(rng.random(n) * GRADIENT_PERTURBATION_VARIANCE)
     hessianPerturbations.append(rng.random((n, n)) * HESSIAN_PERTURBATION_VARIANCE)
 
