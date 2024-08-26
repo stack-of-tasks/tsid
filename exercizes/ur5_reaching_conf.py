@@ -3,7 +3,7 @@
 @author: student
 """
 
-from os.path import join
+from pathlib import Path
 
 import numpy as np
 from example_robot_data.robots_loader import getModelPath
@@ -54,6 +54,6 @@ EE_REF_SPHERE_COLOR = (1, 0, 0, 0.5)
 
 
 urdf = "ur_description/urdf/ur5_robot.urdf"
-path = getModelPath(urdf)
-urdf = join(path, urdf)
-path = join(path, "../..")
+path = Path(getModelPath(urdf))
+urdf = path / urdf
+path = path / "../.."

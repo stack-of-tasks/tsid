@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 from example_robot_data.robots_loader import getModelPath
 
@@ -45,5 +47,5 @@ EE_SPHERE_COLOR = (1, 0.5, 0, 0.5)
 EE_REF_SPHERE_COLOR = (1, 0, 0, 0.5)
 
 urdf = "/talos_data/robots/talos_left_arm.urdf"
-path = getModelPath(urdf)
-urdf = path + urdf
+path = Path(getModelPath(urdf))
+urdf = path / urdf

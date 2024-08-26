@@ -3,14 +3,13 @@ Make the Talos gripper model works with closed kinematic chains
 (c) MIPT
 """
 
-import os
 import time
+from pathlib import Path
 
 import numpy as np
 import pinocchio as pin
-from numpy.linalg import norm as norm
-
 import tsid
+from numpy.linalg import norm as norm
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
@@ -38,7 +37,7 @@ N_SIMULATION = 6000  # number of time steps simulated
 # Talos gripepr model (c) 2016, PAL Robotics, S.L.
 # Please use https://github.com/egordv/tsid_demo_closed_kinematic_chain repo for the model files
 
-filename = str(os.path.dirname(os.path.abspath(__file__)))
+filename = str(Path(__file__).resolve().parent)
 path = filename + "../../tsid_demo_closed_kinematic_chain/models/talos_gripper"
 urdf = path + "../../tsid_demo_closed_kinematic_chain/urdf/talos_gripper_half.urdf"
 vector = pin.StdVec_StdString()

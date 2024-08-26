@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import numpy as np
 import pinocchio as pin
@@ -14,7 +14,7 @@ print("")
 
 
 tol = 1e-5
-filename = str(os.path.dirname(os.path.abspath(__file__)))
+filename = str(Path(__file__).resolve().parent)
 path = filename + "/../../models/romeo"
 urdf = path + "/urdf/romeo.urdf"
 vector = pin.StdVec_StdString()
@@ -204,7 +204,7 @@ print("Test Task Angular Momentum")
 print("")
 
 tol = 1e-5
-filename = str(os.path.dirname(os.path.abspath(__file__)))
+filename = str(Path(__file__).resolve().parent)
 path = filename + "/../../models/romeo"
 urdf = path + "/urdf/romeo.urdf"
 vector = pin.StdVec_StdString()

@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import numpy as np
 import pinocchio as pin
@@ -104,7 +104,7 @@ LF_SPHERE_COLOR = (0, 0, 1, 0.5)
 LF_REF_SPHERE_COLOR = (0.5, 0, 1, 0.5)
 
 urdf = "/talos_data/robots/talos_reduced.urdf"
-path = getModelPath(urdf)
-urdf = path + urdf
-srdf = path + "/talos_data/srdf/talos.srdf"
-path = os.path.join(path, "../..")
+path = Path(getModelPath(urdf))
+urdf = path / urdf
+srdf = path / "talos_data/srdf/talos.srdf"
+path = path / "../.."

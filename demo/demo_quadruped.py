@@ -2,18 +2,18 @@ import os
 import subprocess
 import sys
 import time
+from pathlib import Path
 
 import gepetto.corbaserver
 import matplotlib.pyplot as plt
 import numpy as np
 import pinocchio as pin
 import plot_utils as plut
+import tsid
 from numpy import nan
 from numpy.linalg import norm as norm
 
-import tsid
-
-sys.path += [os.getcwd() + "/../exercizes"]
+sys.path += [Path.cwd().parent / "exercizes"]
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
@@ -43,7 +43,7 @@ PRINT_N = 500  # print every PRINT_N time steps
 DISPLAY_N = 25  # update robot configuration in viwewer every DISPLAY_N time steps
 N_SIMULATION = 6000  # number of time steps simulated
 
-filename = str(os.path.dirname(os.path.abspath(__file__)))
+filename = str(Path(__file__).resolve().parent)
 path = filename + "/../models"
 urdf = path + "/quadruped/urdf/quadruped.urdf"
 vector = pin.StdVec_StdString()

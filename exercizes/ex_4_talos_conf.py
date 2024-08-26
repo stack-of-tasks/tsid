@@ -3,7 +3,7 @@
 @author: student
 """
 
-import os
+from pathlib import Path
 
 import numpy as np
 import pinocchio as pin
@@ -17,12 +17,12 @@ DATA_FILE_TSID = "talos_walking_traj_tsid.npz"
 
 # robot parameters
 # ----------------------------------------------
-filename = str(os.path.dirname(os.path.abspath(__file__)))
-urdf = "/talos_data/robots/talos_reduced.urdf"
-modelPath = getModelPath(urdf)
-urdf = modelPath + urdf
-srdf = modelPath + "/talos_data/srdf/talos.srdf"
-path = os.path.join(modelPath, "../..")
+filename = str(Path(__file__).resolve().parent)
+urdf = "talos_data/robots/talos_reduced.urdf"
+modelPath = Path(getModelPath(urdf))
+urdf = modelPath / urdf
+srdf = modelPath / "talos_data/srdf/talos.srdf"
+path = modelPath / "../.."
 
 nv = 38
 foot_scaling = 1.0
