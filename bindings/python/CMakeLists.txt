@@ -13,7 +13,6 @@
 
 # --- LIBRARY --- #
 set(${PYWRAP}_SOURCES
-    module.cpp
     constraint/constraint-bound.cpp
     constraint/constraint-equality.cpp
     constraint/constraint-inequality.cpp
@@ -22,6 +21,7 @@ set(${PYWRAP}_SOURCES
     contacts/contact-two-frame-positions.cpp
     formulations/formulation.cpp
     math/utils.cpp
+    module.cpp
     robots/robot-wrapper.cpp
     solvers/HQPData.cpp
     solvers/HQPOutput.cpp
