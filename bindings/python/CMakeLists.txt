@@ -117,5 +117,5 @@ install(
 set(PYTHON_FILES __init__.py)
 
 foreach(python ${PYTHON_FILES})
-  python_install(${PROJECT_NAME} ${python} ${${PYWRAP}_INSTALL_DIR})
+  python_install_on_site(${PROJECT_NAME} ${python})
 endforeach(python)
