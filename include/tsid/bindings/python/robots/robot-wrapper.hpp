@@ -129,10 +129,10 @@ struct RobotPythonVisitor
   static Eigen::VectorXd gear_ratios(const Robot &self) {
     return self.gear_ratios();
   }
-  static bool set_rotor_inertias(Robot &self, Eigen::VectorXd &rotor_inertias) {
+  static bool set_rotor_inertias(Robot &self, const Eigen::VectorXd &rotor_inertias) {
     return self.rotor_inertias(rotor_inertias);
   }
-  static bool set_gear_ratios(Robot &self, Eigen::VectorXd &gear_ratios) {
+  static bool set_gear_ratios(Robot &self, const Eigen::VectorXd &gear_ratios) {
     return self.gear_ratios(gear_ratios);
   }
 
