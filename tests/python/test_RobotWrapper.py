@@ -37,8 +37,9 @@ print(robot.com(data))
 base_mass_matrix = robot.mass(data)
 
 # Adding motor inertia
-rotor_inertia = np.random.uniform(0, 1, size=(robot.nq - 7))
-gear_ratio = np.random.uniform(0, 1, size=(robot.nq - 7))
+rng = np.random.default_rng()
+rotor_inertia = rng.uniform(0, 1, size=(robot.nq - 7))
+gear_ratio = rng.uniform(0, 1, size=(robot.nq - 7))
 expected_inertia = rotor_inertia * gear_ratio**2
 print(f"Expected motors inertia: {expected_inertia}")
 
