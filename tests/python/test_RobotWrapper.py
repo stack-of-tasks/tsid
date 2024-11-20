@@ -50,7 +50,9 @@ robot.computeAllTerms(data, q, v)
 mass_matrix_with_motor_inertia = robot.mass(data)
 
 # Assert that mass matrices are different by motor's inertia
-np.testing.assert_allclose(np.diag(mass_matrix_with_motor_inertia - base_mass_matrix)[6:], expected_inertia)
+np.testing.assert_allclose(
+    np.diag(mass_matrix_with_motor_inertia - base_mass_matrix)[6:], expected_inertia
+)
 
 
 print("All test is done")
