@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Fix missing `const` specifier in python bindings for methods `RobotInertia.set_rotor_inertia()`
+ and `RobotInertia.set_gear_ratios()`
 ## [1.7.1] - 2024-08-26
 
 - Fix a typo in ex_4_walking
