@@ -4,7 +4,6 @@ import time
 
 import gepetto.corbaserver
 import numpy as np
-import numpy.matlib as matlib
 import pinocchio as se3
 import tsid
 
@@ -23,13 +22,13 @@ class TsidManipulator:
         robot = self.robot
         self.model = model = robot.model()
         try:
-            #            q = se3.getNeutralConfiguration(model, conf.srdf, False)
+            # q = se3.getNeutralConfiguration(model, conf.srdf, False)
             se3.loadReferenceConfigurations(model, conf.srdf, False)
             q = model.referenceConfigurations["default"]
-        #        q = model.referenceConfigurations["half_sitting"]
-        except:
+            # q = model.referenceConfigurations["half_sitting"]
+        except Exception:
             q = conf.q0
-        #            q = np.array(np.zeros(robot.nv)).T
+            # q = np.array(np.zeros(robot.nv)).T
         v = np.zeros(robot.nv)
 
         assert model.existFrame(conf.ee_frame_name)
@@ -93,10 +92,10 @@ class TsidManipulator:
                     conf.path,
                 ],
             )
-            l = subprocess.getstatusoutput(
+            n = subprocess.getstatusoutput(
                 "ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l"
             )
-            if int(l[1]) == 0:
+            if int(n[1]) == 0:
                 os.system("gepetto-gui &")
             time.sleep(1)
             gepetto.corbaserver.Client()

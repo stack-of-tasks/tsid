@@ -54,8 +54,8 @@ if USE_VIEWER:
             conf.path,
         ],
     )
-    l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
-    if int(l[1]) == 0:
+    n = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+    if int(n[1]) == 0:
         os.system("gepetto-gui &")
     time.sleep(1)
     gepetto.corbaserver.Client()
@@ -101,7 +101,7 @@ for i in range(0, N):
     HQPData = formulation.computeProblemData(t, q[:, i], v[:, i])
     sol = solver.solve(HQPData)
     if sol.status != 0:
-        print("Time %.3f QP problem could not be solved! Error code:" % t, sol.status)
+        print(f"Time {t:.3f} QP problem could not be solved! Error code:", sol.status)
         break
 
     tau[:, i] = formulation.getActuatorForces(sol)
@@ -109,10 +109,11 @@ for i in range(0, N):
     dv_des[:, i] = postureTask.getDesiredAcceleration
 
     if i % conf.PRINT_N == 0:
-        print("Time %.3f" % (t))
+        print(f"Time {t:.3f}")
         print(
-            "\ttracking err %s: %.3f"
-            % (postureTask.name.ljust(20, "."), norm(postureTask.position_error, 2))
+            "\ttracking err {}: {:.3f}".format(
+                postureTask.name.ljust(20, "."), norm(postureTask.position_error, 2)
+            )
         )
 
     # numerical integration

@@ -35,7 +35,8 @@ except ModuleNotFoundError as e:
 
 import ex_4_conf as conf
 import matplotlib.pyplot as plt
-from plot_utils import *
+
+# from plot_utils import *
 
 # import ex_4_long_conf as conf
 
@@ -155,7 +156,6 @@ plot_utils.plot_y(
 plot_utils.plot_xy(
     time, N, foot_length, foot_width, cop_ref, cop_x, cop_y, com_state_x, com_state_y
 )
-import matplotlib.pyplot as plt
 
 plt.gca().set_xlim([cop_ref[0, 0] - 0.2, cop_ref[-1, 0] + 0.2])
 plt.gca().set_ylim([cop_ref[0, 1] - 0.2, cop_ref[-1, 1] + 0.2])

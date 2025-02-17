@@ -176,8 +176,6 @@ class TsidBiped:
                 conf.urdf, [conf.path], pin.JointModelFreeFlyer()
             )
             if viewer == pin.visualize.GepettoVisualizer:
-                import gepetto.corbaserver
-
                 launched = subprocess.getstatusoutput(
                     "ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l"
                 )

@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import numpy as np
 import pinocchio as se3
@@ -9,7 +9,7 @@ print("")
 print("Test InvDyn")
 print("")
 
-filename = str(os.path.dirname(os.path.abspath(__file__)))
+filename = str(Path(__file__).resolve().parent)
 path = filename + "/../../models/romeo"
 urdf = path + "/urdf/romeo.urdf"
 vector = se3.StdVec_StdString()
@@ -98,7 +98,7 @@ postureTask.setKp(kp_posture * np.ones(robot.nv - 6))
 postureTask.setKd(2.0 * np.sqrt(kp_posture) * np.ones(robot.nv - 6))
 invdyn.addMotionTask(postureTask, w_posture, 1, 0.0)
 
-########### Test 1 ##################3
+# ########## Test 1 ##################3
 dt = 0.01
 PRINT_N = 100
 REMOVE_CONTACT_N = 100

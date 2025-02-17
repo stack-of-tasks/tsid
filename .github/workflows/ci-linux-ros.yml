@@ -6,22 +6,25 @@ jobs:
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: noetic, CMAKE_BUILD_TYPE: Debug}
-          - {ROS_DISTRO: noetic, CMAKE_BUILD_TYPE: Release}
+          #- {ROS_DISTRO: rolling} Unable to locate package ros-rolling-pinocchio
+          - {ROS_DISTRO: iron}
+          - {ROS_DISTRO: humble}
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
       UPSTREAM_WORKSPACE: dependencies.rosinstall
       CMAKE_ARGS: -DBUILD_WITH_OSQP=ON -DBUILD_WITH_PROXQP=ON -DBUILD_WITH_VECTORIZATION_SUPPORT=OFF  # Simde is not available yet
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
+      # eiquadprog is not yet available in ROS2
+      - run: sed -i "/eiquadprog/d" package.xml
       # This step will fetch/store the directory used by ccache before/after the ci run
       - uses: actions/cache@v3
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
       # Run industrial_ci
-      - uses: 'ros-industrial/industrial_ci@6a8f546cbd31fbd5c9f77e3409265c8b39abc3d6'
+      - uses: 'ros-industrial/industrial_ci@d23b9ad2c63bfad638a2b1fe3df34b8df9a2f17b'
         env: ${{ matrix.env }}

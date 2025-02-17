@@ -4,7 +4,7 @@
     local-name: qpmad
 - git:
     uri: https://github.com/Simple-Robotics/proxsuite.git
-    version: devel
+    version: main
     local-name: proxsuite
 - git:
     uri: https://github.com/ori-drs/osqp.git # fork for packaging
@@ -14,3 +14,7 @@
     uri: https://github.com/robotology/osqp-eigen.git
     version: master
     local-name: osqp-eigen
+- git:
+    uri: https://github.com/stack-of-tasks/eiquadprog.git
+    version: master
+    local-name: eiquadprog

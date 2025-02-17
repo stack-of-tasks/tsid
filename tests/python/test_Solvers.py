@@ -5,6 +5,8 @@ print("")
 print("Test Solvers")
 print("")
 
+rng = np.random.default_rng(seed=0)
+
 EPS = 1e-3
 nTest = 100
 n = 60
@@ -38,6 +40,7 @@ print("Adding eiquadprog to list of solvers to test")
 
 try:
     solver_proxqp = tsid.SolverProxQP("proxqp solver")
+    solver_proxqp.set_epsilon_absolute(1e-6)
     solver_proxqp.resize(n, neq, nin)
     solver_list.append(("proxqp", solver_proxqp))
     print("Adding proxqp to list of solvers to test")
@@ -47,6 +50,8 @@ except AttributeError:
 
 try:
     solver_osqp = tsid.SolverOSQP("osqp solver")
+    solver_osqp.set_epsilon_absolute(1e-6)
+    solver_osqp.set_maximum_iterations(10_000)
     solver_osqp.resize(n, neq, nin)
     solver_list.append(("osqp", solver_osqp))
     print("Adding osqp to list of solvers to test")
@@ -55,14 +60,15 @@ except AttributeError:
     pass
 
 HQPData = tsid.HQPData()
-A1 = np.random.rand(n, n) + 0.001 * np.eye(n)
-b1 = np.random.rand(n)
+A1 = rng.random((n, n)) + 0.001 * np.eye(n)
+b1 = rng.random(n)
 cost = tsid.ConstraintEquality("c1", A1, b1)
 
-x = np.linalg.inv(A1).dot(b1)
-A_in = np.random.rand(nin, n)
-A_lb = np.random.rand(nin) * NORMAL_DISTR_VAR
-A_ub = np.random.rand(nin) * NORMAL_DISTR_VAR
+x = np.linalg.solve(A1, b1)
+
+A_in = rng.random((nin, n))
+A_lb = rng.random(nin) * NORMAL_DISTR_VAR
+A_ub = rng.random(nin) * NORMAL_DISTR_VAR
 constrVal = A_in.dot(x)
 
 for i in range(0, nin):
@@ -76,7 +82,7 @@ for i in range(0, nin):
         A_lb[i] = constrVal[i] - MARGIN_PERC * np.abs(constrVal[i])
 
 in_const = tsid.ConstraintInequality("ini1", A_in, A_lb, A_ub)
-A_eq = np.random.rand(neq, n)
+A_eq = rng.random((neq, n))
 b_eq = A_eq.dot(x)
 eq_const = tsid.ConstraintEquality("eq1", A_eq, b_eq)
 
@@ -98,9 +104,9 @@ HQPData.print_all()
 
 gradientPerturbations = []
 hessianPerturbations = []
-for i in range(0, nTest):
-    gradientPerturbations.append(np.random.rand(n) * GRADIENT_PERTURBATION_VARIANCE)
-    hessianPerturbations.append(np.random.rand(n, n) * HESSIAN_PERTURBATION_VARIANCE)
+for _ in range(0, nTest):
+    gradientPerturbations.append(rng.random(n) * GRADIENT_PERTURBATION_VARIANCE)
+    hessianPerturbations.append(rng.random((n, n)) * HESSIAN_PERTURBATION_VARIANCE)
 
 for name, solver in solver_list:
     print(f"Using {name}")
@@ -110,6 +116,7 @@ for name, solver in solver_list:
 
         HQPoutput = solver.solve(HQPData)
 
+        assert HQPoutput.status == 0  # HQP_STATUS_OPTIMAL = 0
         assert np.linalg.norm(A_eq.dot(HQPoutput.x) - b_eq, 2) < EPS
         assert (A_in.dot(HQPoutput.x) <= A_ub + EPS).all()
         assert (A_in.dot(HQPoutput.x) > A_lb - EPS).all()

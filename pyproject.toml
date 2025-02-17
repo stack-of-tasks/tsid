@@ -28,8 +28,12 @@ upstream = "https://github.com/stack-of-tasks/tsid"
 build-number = 1
 configure-args = ["-DSUFFIX_SO_VERSION=OFF"]
 
-[tool.isort]
-profile = "black"
+[tool.ruff]
+extend-exclude = ["cmake"]
+
+[tool.ruff.lint]
+extend-ignore = ["COM812", "D203", "D213"]
+extend-select = ["A", "B", "C", "COM", "EM", "EXE", "G", "NPY", "PTH", "RET", "RUF", "UP", "W", "YTT"]
 
 [tool.tomlsort]
 all = true

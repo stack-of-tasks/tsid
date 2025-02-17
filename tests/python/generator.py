@@ -6,15 +6,18 @@ import pinocchio as pin
 
 
 def create_7dof_arm(revoluteOnly=False):
-    """
-    Create a 7 DoF robot arm (with spherical joint for shoulder and wrist and revolute joint for elbow)
+    """Create a 7 DoF robot arm (with spherical joint for shoulder and wrist and revolute
+    joint for elbow)
 
     Optionnal parameters:
-        revoluteOnly (default=False): if True, the arm is created with only revolute joints. (Spherical joints are replaced by 3 revolute joints)
+        revoluteOnly (default=False): if True, the arm is created with only revolute
+        joints. (Spherical joints are replaced by 3 revolute joints)
 
     Return:
+    ------
         model: pinocchio model of the robot
         geom_model: pinocchio geometric model of the robot
+
     """
     # Some useful values
     geom_radius = 0.1  # radius of the arm geometries
@@ -255,7 +258,7 @@ def create_7dof_arm(revoluteOnly=False):
             id_hand,
             fcl.Cylinder(0.02, 0.1),
             pin.XYZQUATToSE3(
-                np.array([geom_radius, 0, 2 * geom_radius] + [0, 0.707, 0, 0.707])
+                np.array([geom_radius, 0, 2 * geom_radius, 0, 0.707, 0, 0.707])
             ),
             "",
             np.ones(3),

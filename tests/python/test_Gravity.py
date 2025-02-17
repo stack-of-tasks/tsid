@@ -1,6 +1,5 @@
-import os
+from pathlib import Path
 
-import numpy as np
 import pinocchio as se3
 import tsid
 
@@ -9,7 +8,7 @@ print("Test setGravity")
 print("")
 
 
-filename = str(os.path.dirname(os.path.abspath(__file__)))
+filename = str(Path(__file__).resolve().parent)
 path = filename + "/../../models/romeo"
 urdf = path + "/urdf/romeo.urdf"
 vector = se3.StdVec_StdString()

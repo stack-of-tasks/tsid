@@ -1,9 +1,12 @@
-import os
+from pathlib import Path
 
 import numpy as np
 import pinocchio as pin
 import tsid
 from numpy.linalg import norm
+
+# Get robot model generator module
+from generator import create_7dof_arm
 
 print("")
 print("Test Task COM")
@@ -11,7 +14,7 @@ print("")
 
 
 tol = 1e-5
-filename = str(os.path.dirname(os.path.abspath(__file__)))
+filename = str(Path(__file__).resolve().parent)
 path = filename + "/../../models/romeo"
 urdf = path + "/urdf/romeo.urdf"
 vector = pin.StdVec_StdString()
@@ -98,7 +101,8 @@ task_joint.setKd(Kd)
 assert np.linalg.norm(Kp - task_joint.Kp, 2) < tol
 assert np.linalg.norm(Kd - task_joint.Kd, 2) < tol
 
-q_ref = np.random.randn(na)
+rng = np.random.default_rng()
+q_ref = rng.standard_normal(na)
 traj = tsid.TrajectoryEuclidianConstant("traj_joint", q_ref)
 sample = tsid.TrajectorySample(0)
 
@@ -200,7 +204,7 @@ print("Test Task Angular Momentum")
 print("")
 
 tol = 1e-5
-filename = str(os.path.dirname(os.path.abspath(__file__)))
+filename = str(Path(__file__).resolve().parent)
 path = filename + "/../../models/romeo"
 urdf = path + "/urdf/romeo.urdf"
 vector = pin.StdVec_StdString()
@@ -235,7 +239,7 @@ dt = 0.001
 max_it = 1000
 Jpinv = np.zeros((robot.nv, 3))
 error_past = 1e100
-v = np.random.randn(robot.nv)
+v = rng.standard_normal(robot.nv)
 
 for i in range(0, max_it):
     robot.computeAllTerms(data, q, v)
@@ -278,8 +282,6 @@ print("")
 print("Test Task Joint Posture (Uncommon joints)")
 print("")
 
-# Get robot model generator module
-from generator import create_7dof_arm
 
 # Get robot model
 (

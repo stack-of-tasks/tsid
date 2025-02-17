@@ -10,9 +10,9 @@ from numpy import nan
 from numpy.linalg import norm as norm
 from tsid_manipulator import TsidManipulator
 
-print(("".center(conf.LINE_WIDTH, "#")))
-print((" TSID - Manipulator End-Effector Sin Tracking ".center(conf.LINE_WIDTH, "#")))
-print(("".center(conf.LINE_WIDTH, "#")))
+print("".center(conf.LINE_WIDTH, "#"))
+print(" TSID - Manipulator End-Effector Sin Tracking ".center(conf.LINE_WIDTH, "#"))
+print("".center(conf.LINE_WIDTH, "#"))
 print("")
 
 PLOT_EE_POS = 1
@@ -70,7 +70,7 @@ for i in range(0, N):
 
     sol = tsid.solver.solve(HQPData)
     if sol.status != 0:
-        print(("Time %.3f QP problem could not be solved! Error code:" % t, sol.status))
+        print((f"Time {t:.3f} QP problem could not be solved! Error code:", sol.status))
         break
 
     tau[:, i] = tsid.formulation.getActuatorForces(sol)
@@ -89,11 +89,10 @@ for i in range(0, N):
     ee_acc_des[:, i] = tsid.eeTask.getDesiredAcceleration[:3]
 
     if i % conf.PRINT_N == 0:
-        print(("Time %.3f" % (t)))
+        print(f"Time {t:.3f}")
         print(
-            (
-                "\ttracking err %s: %.3f"
-                % (tsid.eeTask.name.ljust(20, "."), norm(tsid.eeTask.position_error, 2))
+            "\ttracking err {}: {:.3f}".format(
+                tsid.eeTask.name.ljust(20, "."), norm(tsid.eeTask.position_error, 2)
             )
         )
 
@@ -102,9 +101,9 @@ for i in range(0, N):
 
     if i % conf.DISPLAY_N == 0:
         tsid.robot_display.display(q[:, i])
-        tsid.gui.applyConfiguration("world/ee", ee_pos[:, i].tolist() + [0, 0, 0, 1.0])
+        tsid.gui.applyConfiguration("world/ee", [*ee_pos[:, i].tolist(), 0, 0, 0, 1.0])
         tsid.gui.applyConfiguration(
-            "world/ee_ref", ee_pos_ref[:, i].tolist() + [0, 0, 0, 1.0]
+            "world/ee_ref", [*ee_pos_ref[:, i].tolist(), 0, 0, 0, 1.0]
         )
 
     time_spent = time.time() - time_start

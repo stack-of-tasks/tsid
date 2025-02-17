@@ -17,8 +17,10 @@
 #define TSID_DISABLE_WARNING_POP TSID_DO_PRAGMA(GCC diagnostic pop)
 #define TSID_DISABLE_WARNING(warningName) \
   TSID_DO_PRAGMA(GCC diagnostic ignored #warningName)
+// clang-format off
 #define TSID_DISABLE_WARNING_DEPRECATED \
-  TSID_DISABLE_WARNING(-Wdeprecated - declarations)
+  TSID_DISABLE_WARNING(-Wdeprecated-declarations)
+// clang-format on
 
 #else
 

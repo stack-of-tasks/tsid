@@ -1,4 +1,4 @@
-import copy
+from pathlib import Path
 
 import numpy as np
 import pinocchio as se3
@@ -9,9 +9,8 @@ print("Test Contact")
 print("")
 
 tol = 1e-5
-import os
 
-filename = str(os.path.dirname(os.path.abspath(__file__)))
+filename = str(Path(__file__).resolve().parent)
 path = filename + "/../models/romeo"
 urdf = path + "/urdf/romeo.urdf"
 vector = se3.StdVec_StdString()

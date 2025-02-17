@@ -2,17 +2,18 @@ import os
 import subprocess
 import sys
 import time
+from pathlib import Path
 
 import gepetto.corbaserver
+import matplotlib.pyplot as plt
 import numpy as np
 import pinocchio as pin
+import plot_utils as plut
 import tsid
 from numpy import nan
 from numpy.linalg import norm as norm
 
-sys.path += [os.getcwd() + "/../exercizes"]
-import matplotlib.pyplot as plt
-import plot_utils as plut
+sys.path += [Path.cwd().parent / "exercizes"]
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
@@ -42,7 +43,7 @@ PRINT_N = 500  # print every PRINT_N time steps
 DISPLAY_N = 25  # update robot configuration in viwewer every DISPLAY_N time steps
 N_SIMULATION = 6000  # number of time steps simulated
 
-filename = str(os.path.dirname(os.path.abspath(__file__)))
+filename = str(Path(__file__).resolve().parent)
 path = filename + "/../models"
 urdf = path + "/quadruped/urdf/quadruped.urdf"
 vector = pin.StdVec_StdString()
@@ -57,8 +58,8 @@ robot_display = pin.RobotWrapper.BuildFromURDF(
     ],
     pin.JointModelFreeFlyer(),
 )
-l = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
-if int(l[1]) == 0:
+n = subprocess.getstatusoutput("ps aux |grep 'gepetto-gui'|grep -v 'grep'|wc -l")
+if int(n[1]) == 0:
     os.system("gepetto-gui &")
 time.sleep(1)
 cl = gepetto.corbaserver.Client()
@@ -182,18 +183,19 @@ for i in range(0, N_SIMULATION):
     com_acc_des[:, i] = comTask.getDesiredAcceleration
 
     if i % PRINT_N == 0:
-        print("Time %.3f" % (t))
+        print(f"Time {t:.3f}")
         print("\tNormal forces: ", end=" ")
         for contact in contacts:
             if invdyn.checkContact(contact.name, sol):
                 f = invdyn.getContactForce(contact.name, sol)
-                print("%4.1f" % (contact.getNormalForce(f)), end=" ")
+                print(f"{contact.getNormalForce(f):4.1f}", end=" ")
 
         print(
-            "\n\ttracking err %s: %.3f"
-            % (comTask.name.ljust(20, "."), norm(comTask.position_error, 2))
+            "\n\ttracking err {}: {:.3f}".format(
+                comTask.name.ljust(20, "."), norm(comTask.position_error, 2)
+            )
         )
-        print("\t||v||: %.3f\t ||dv||: %.3f" % (norm(v, 2), norm(dv)))
+        print(f"\t||v||: {norm(v, 2):.3f}\t ||dv||: {norm(dv):.3f}")
 
     v_mean = v + 0.5 * dt * dv
     v += dt * dv

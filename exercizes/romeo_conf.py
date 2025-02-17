@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Apr 18 09:47:07 2019
+"""Created on Thu Apr 18 09:47:07 2019
 
 @author: student
 """
 
-import os
+from pathlib import Path
 
 import numpy as np
 import pinocchio as pin
@@ -74,7 +72,7 @@ RF_REF_SPHERE_COLOR = (0, 1, 0.5, 0.5)
 LF_SPHERE_COLOR = (0, 0, 1, 0.5)
 LF_REF_SPHERE_COLOR = (0.5, 0, 1, 0.5)
 
-filename = str(os.path.dirname(os.path.abspath(__file__)))
-path = filename + "/../models/romeo"
-urdf = path + "/urdf/romeo.urdf"
-srdf = path + "/srdf/romeo_collision.srdf"
+filename = Path(__file__).resolve().parent
+path = filename / "../models/romeo"
+urdf = path / "urdf/romeo.urdf"
+srdf = path / "srdf/romeo_collision.srdf"

@@ -11,7 +11,7 @@
 # GNU Lesser General Public License along with tsid If not, see
 # <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.10)
 
 # Project properties
 set(PROJECT_ORG stack-of-tasks)
@@ -52,13 +52,25 @@ set(CXX_DISABLE_WERROR TRUE)
 set(DOXYGEN_USE_MATHJAX YES)
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
-# JRL-cmakemodule setup
+# Check if the submodule cmake have been initialized
 set(JRL_CMAKE_MODULES "${CMAKE_CURRENT_LIST_DIR}/cmake")
-if(NOT EXISTS "${CMAKE_SOURCE_DIR}/cmake/base.cmake")
-  if(${CMAKE_VERSION} VERSION_LESS "3.14.0")
+if(EXISTS "${JRL_CMAKE_MODULES}/base.cmake")
+  message(STATUS "JRL cmakemodules found in 'cmake/' git submodule")
+else()
+  find_package(jrl-cmakemodules QUIET CONFIG)
+  if(jrl-cmakemodules_FOUND)
+    get_property(
+      JRL_CMAKE_MODULES
+      TARGET jrl-cmakemodules::jrl-cmakemodules
+      PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+    message(STATUS "JRL cmakemodules found on system at ${JRL_CMAKE_MODULES}")
+  elseif(${CMAKE_VERSION} VERSION_LESS "3.14.0")
     message(
       FATAL_ERROR
-        "\nPlease run the following command first:\ngit submodule update --init\n"
+        "\nCan't find jrl-cmakemodules. Please either:\n"
+        "  - use git submodule: 'git submodule update --init'\n"
+        "  - or install https://github.com/jrl-umi3218/jrl-cmakemodules\n"
+        "  - or upgrade your CMake version to >= 3.14 to allow automatic fetching\n"
     )
   else()
     message(STATUS "JRL cmakemodules not found. Let's fetch it.")
@@ -147,7 +159,8 @@ set(${PROJECT_NAME}_TASKS_HEADERS
     include/tsid/tasks/task-joint-posture.hpp
     include/tsid/tasks/task-joint-posVelAcc-bounds.hpp
     include/tsid/tasks/task-capture-point-inequality.hpp
-    include/tsid/tasks/task-angular-momentum-equality.hpp)
+    include/tsid/tasks/task-angular-momentum-equality.hpp
+    include/tsid/tasks/task-two-frames-equality.hpp)
 
 set(${PROJECT_NAME}_CONTACTS_HEADERS
     include/tsid/contacts/fwd.hpp
@@ -156,7 +169,8 @@ set(${PROJECT_NAME}_CONTACTS_HEADERS
     include/tsid/contacts/contact-point.hpp
     include/tsid/contacts/measured-force-base.hpp
     include/tsid/contacts/measured-3Dforce.hpp
-    include/tsid/contacts/measured-6Dwrench.hpp)
+    include/tsid/contacts/measured-6Dwrench.hpp
+    include/tsid/contacts/contact-two-frame-positions.hpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_HEADERS
     include/tsid/trajectories/fwd.hpp
@@ -215,20 +229,6 @@ set(${PROJECT_NAME}_FORMULATIONS_HEADERS
     include/tsid/formulations/inverse-dynamics-formulation-base.hpp
     include/tsid/formulations/inverse-dynamics-formulation-acc-force.hpp)
 
-file(
-  GLOB
-  ${PYWRAP}_HEADERS
-  include/tsid/bindings/python/fwd.hpp
-  include/tsid/bindings/python/constraint/*.hpp
-  include/tsid/bindings/python/contacts/*.hpp
-  include/tsid/bindings/python/formulations/*.hpp
-  include/tsid/bindings/python/robots/*.hpp
-  include/tsid/bindings/python/solvers/*.hpp
-  include/tsid/bindings/python/tasks/*.hpp
-  include/tsid/bindings/python/trajectories/*.hpp
-  include/tsid/bindings/python/utils/*.hpp
-  include/tsid/bindings/python/math/*.hpp)
-
 set(${PROJECT_NAME}_HEADERS
     include/tsid/macros.hpp
     include/tsid/utils/statistics.hpp
@@ -264,12 +264,17 @@ set(${PROJECT_NAME}_TASKS_SOURCES
     src/tasks/task-capture-point-inequality.cpp
     src/tasks/task-motion.cpp
     src/tasks/task-se3-equality.cpp
-    src/tasks/task-angular-momentum-equality.cpp)
+    src/tasks/task-angular-momentum-equality.cpp
+    src/tasks/task-two-frames-equality.cpp)
 
 set(${PROJECT_NAME}_CONTACTS_SOURCES
-    src/contacts/contact-base.cpp src/contacts/contact-6d.cpp
-    src/contacts/contact-point.cpp src/contacts/measured-force-base.cpp
-    src/contacts/measured-3Dforce.cpp src/contacts/measured-6Dwrench.cpp)
+    src/contacts/contact-base.cpp
+    src/contacts/contact-6d.cpp
+    src/contacts/contact-point.cpp
+    src/contacts/measured-force-base.cpp
+    src/contacts/measured-3Dforce.cpp
+    src/contacts/measured-6Dwrench.cpp
+    src/contacts/contact-two-frame-positions.cpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_SOURCES
     src/trajectories/trajectory-se3.cpp
@@ -318,7 +323,8 @@ add_source_group(${PROJECT_NAME}_SOURCES)
 
 add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES}
                                    ${${PROJECT_NAME}_HEADERS})
-target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
+target_include_directories(
+  ${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(${PROJECT_NAME} PUBLIC pinocchio::pinocchio
                                              eiquadprog::eiquadprog)
 
@@ -330,7 +336,7 @@ endif()
 
 if(BUILD_WITH_PROXQP)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_PROXSUITE)
-  target_link_libraries(${PROJECT_NAME} PUBLIC ${proxsuite_INTERFACE})
+  target_link_libraries(${PROJECT_NAME} PUBLIC proxsuite::proxsuite)
 endif()
 
 if(BUILD_WITH_OSQP)

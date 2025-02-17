@@ -39,6 +39,7 @@ class ContactBase {
   typedef math::Matrix Matrix;
   typedef math::Matrix3x Matrix3x;
   typedef tasks::TaskSE3Equality TaskSE3Equality;
+  typedef tasks::TaskMotion TaskMotion;
   typedef pinocchio::Data Data;
   typedef robots::RobotWrapper RobotWrapper;
 
@@ -71,7 +72,7 @@ class ContactBase {
   virtual const ConstraintEquality& computeForceRegularizationTask(
       const double t, ConstRefVector q, ConstRefVector v, const Data& data) = 0;
 
-  virtual const TaskSE3Equality& getMotionTask() const = 0;
+  virtual const TaskMotion& getMotionTask() const = 0;
   virtual const ConstraintBase& getMotionConstraint() const = 0;
   virtual const ConstraintInequality& getForceConstraint() const = 0;
   virtual const ConstraintEquality& getForceRegularizationTask() const = 0;

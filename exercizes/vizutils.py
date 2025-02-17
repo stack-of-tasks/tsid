@@ -30,7 +30,8 @@ def addViewerBox(viz, name, sizex, sizey, sizez, rgba):
     elif isinstance(viz, pin.visualize.GepettoVisualizer):
         viz.viewer.gui.addBox(name, sizex, sizey, sizez, rgba)
     else:
-        raise AttributeError("Viewer %s is not supported." % viz.__class__)
+        msg = f"Viewer {viz.__class__} is not supported."
+        raise AttributeError(msg)
 
 
 def addViewerSphere(viz, name, size, rgba):
@@ -43,7 +44,8 @@ def addViewerSphere(viz, name, size, rgba):
     elif isinstance(viz, pin.visualize.GepettoVisualizer):
         viz.viewer.gui.addSphere(name, size, rgba)
     else:
-        raise AttributeError("Viewer %s is not supported." % viz.__class__)
+        msg = f"Viewer {viz.__class__} is not supported."
+        raise AttributeError(msg)
 
 
 def applyViewerConfiguration(viz, name, xyzquat):
@@ -53,7 +55,8 @@ def applyViewerConfiguration(viz, name, xyzquat):
         viz.viewer.gui.applyConfiguration(name, xyzquat)
         viz.viewer.gui.refresh()
     else:
-        raise AttributeError("Viewer %s is not supported." % viz.__class__)
+        msg = f"Viewer {viz.__class__} is not supported."
+        raise AttributeError(msg)
 
 
 """
