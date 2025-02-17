@@ -1,9 +1,20 @@
 [build-system]
 build-backend = "cmeel"
-requires = ["cmeel[build]", "eiquadprog >= 1.2.6, < 2", "pin[build] >= 2.6.18, < 3"]
+requires = [
+  "cmeel-boost >= 1.87.0, < 1.88",
+  "cmeel[build]",
+  "coal-library[build] >= 3, < 4",
+  "eiquadprog",
+  "pin[build]",
+  "scipy"
+]
 
 [project]
-dependencies = ["eiquadprog >= 1.2.6, < 2", "pin >= 2.6.18, < 3"]
+dependencies = [
+  "cmeel-boost >= 1.87.0, < 1.88",
+  "eiquadprog",
+  "pin"
+]
 description = "A fast and flexible implementation of Rigid Body Dynamics algorithms and their analytical derivatives"
 license = "BSD-3-Clause"
 name = "tsid"
