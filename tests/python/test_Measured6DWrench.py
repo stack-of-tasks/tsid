@@ -22,7 +22,7 @@ data = robot.data()
 frameName = "RAnkleRoll"
 contact = tsid.Measured6Dwrench(
     "Measured6Dwrench", robot, frameName)
-wrench = np.asarray([1.5, 1.5, 1.5, 2.5, 2.5, 2.5])
+wrench = np.asarray([1.5, 1.5, 1.5, 2.5, 2.5, 2.5]) # Some random wrench
 contact.setMeasuredContactForce(wrench)
 measured_wrench = contact.measuredContactForce
 print(measured_wrench)
