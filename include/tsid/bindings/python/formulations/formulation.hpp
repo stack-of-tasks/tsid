@@ -130,7 +130,7 @@ struct InvDynPythonVisitor
         .def("getContactForce", &InvDynPythonVisitor::getContactForce,
              bp::args("name", "HQPOutput"))
         .def("addMeasuredForce", &InvDynPythonVisitor::addMeasuredForce,
-               bp::args("measured_force"));
+             bp::args("measured_force"));
   }
   static pinocchio::Data data(T& self) {
     pinocchio::Data data = self.data();
@@ -276,9 +276,10 @@ struct InvDynPythonVisitor
                                          const solvers::HQPOutput& sol) {
     return self.getContactForces(name, sol);
   }
-  static bool addMeasuredForce(T& self, contacts::Measured6Dwrench measured_force) {
-     return self.addMeasuredForce(measured_force);
-}
+  static bool addMeasuredForce(T& self,
+                               contacts::Measured6Dwrench measured_force) {
+    return self.addMeasuredForce(measured_force);
+  }
 
   static void expose(const std::string& class_name) {
     std::string doc = "InvDyn info.";

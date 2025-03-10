@@ -4,7 +4,8 @@
 namespace tsid {
 namespace python {
 void exposeMeasured6Dwrench() {
-    Measured6DWrenchPythonVisitor<tsid::contacts::Measured6Dwrench>::expose("Measured6Dwrench");
+  Measured6DWrenchPythonVisitor<tsid::contacts::Measured6Dwrench>::expose(
+      "Measured6Dwrench");
 }
 }  // namespace python
 }  // namespace tsid

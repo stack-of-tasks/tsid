@@ -27,86 +27,88 @@ namespace python {
 namespace bp = boost::python;
 
 template <typename Measured6DWrench>
-struct Measured6DWrenchPythonVisitor : public boost::python::def_visitor<Measured6DWrenchPythonVisitor<Measured6DWrench> >
-{
+struct Measured6DWrenchPythonVisitor
+    : public boost::python::def_visitor<
+          Measured6DWrenchPythonVisitor<Measured6DWrench> > {
   template <class PyClass>
-  void visit(PyClass & cl) const {
+  void visit(PyClass &cl) const {
     cl
-    // Expose the constructor:
-    .def(bp::init<std::string, typename Measured6DWrench::RobotWrapper &, std::string>
-         ((bp::arg("name"), bp::arg("robot"), bp::arg("frameName")),
-          "Constructor for Measured6Dwrench"))
-    
-    // Expose the name getter and setter:
-    .add_property("name", &Measured6DWrenchPythonVisitor::getName, &Measured6DWrenchPythonVisitor::setName,
-                  "Get or set the name of the measured-6Dwrench instance")
-    
-    // Expose computeJointTorques(Data &data)
-    .def("computeJointTorques", &Measured6DWrenchPythonVisitor::computeJointTorques,
-         bp::args("data"),
-         "Compute the joint torques from the measured contact force")
-    
-    // Expose setMeasuredContactForce(const Vector6 &fext)
-    .def("setMeasuredContactForce", &Measured6DWrenchPythonVisitor::setMeasuredContactForce,
-         bp::args("fext"),
-         "Set the measured contact force")
-    
-    // Expose getMeasuredContactForce() as a read-only property.
-    .add_property("measuredContactForce",
-                  bp::make_function(&Measured6DWrenchPythonVisitor::getMeasuredContactForce),
-                  "Get the measured contact force")
-    
-    // Expose useLocalFrame(bool local_frame)
-    .def("useLocalFrame", &Measured6DWrenchPythonVisitor::useLocalFrame,
-         bp::args("local_frame"),
-         "Specify whether to use the local frame for external force and jacobian");
+        // Expose the constructor:
+        .def(bp::init<std::string, typename Measured6DWrench::RobotWrapper &,
+                      std::string>(
+            (bp::arg("name"), bp::arg("robot"), bp::arg("frameName")),
+            "Constructor for Measured6Dwrench"))
+
+        // Expose the name getter and setter:
+        .add_property("name", &Measured6DWrenchPythonVisitor::getName,
+                      &Measured6DWrenchPythonVisitor::setName,
+                      "Get or set the name of the measured-6Dwrench instance")
+
+        // Expose computeJointTorques(Data &data)
+        .def("computeJointTorques",
+             &Measured6DWrenchPythonVisitor::computeJointTorques,
+             bp::args("data"),
+             "Compute the joint torques from the measured contact force")
+
+        // Expose setMeasuredContactForce(const Vector6 &fext)
+        .def("setMeasuredContactForce",
+             &Measured6DWrenchPythonVisitor::setMeasuredContactForce,
+             bp::args("fext"), "Set the measured contact force")
+
+        // Expose getMeasuredContactForce() as a read-only property.
+        .add_property(
+            "measuredContactForce",
+            bp::make_function(
+                &Measured6DWrenchPythonVisitor::getMeasuredContactForce),
+            "Get the measured contact force")
+
+        // Expose useLocalFrame(bool local_frame)
+        .def("useLocalFrame", &Measured6DWrenchPythonVisitor::useLocalFrame,
+             bp::args("local_frame"),
+             "Specify whether to use the local frame for external force and "
+             "jacobian");
   }
 
   // Wrapper for name() getter.
-  static std::string getName(Measured6DWrench & self) {
-    return self.name();
-  }
+  static std::string getName(Measured6DWrench &self) { return self.name(); }
 
   // Wrapper for name(const std::string &) setter.
-  static void setName(Measured6DWrench & self, const std::string & name) {
+  static void setName(Measured6DWrench &self, const std::string &name) {
     self.name(name);
   }
 
   // Wrapper for computeJointTorques(Data &data) returning by value.
-  static typename Measured6DWrench::Vector computeJointTorques(Measured6DWrench & self,
-                                                                 pinocchio::Data & data)
-  {
+  static typename Measured6DWrench::Vector computeJointTorques(
+      Measured6DWrench &self, pinocchio::Data &data) {
     return self.computeJointTorques(data);
   }
 
   // Wrapper for setMeasuredContactForce(const Vector6 &fext)
-  static void setMeasuredContactForce(Measured6DWrench & self,
-                                      const typename Measured6DWrench::Vector6 & fext)
-  {
+  static void setMeasuredContactForce(
+      Measured6DWrench &self, const typename Measured6DWrench::Vector6 &fext) {
     self.setMeasuredContactForce(fext);
   }
 
   // Wrapper for getMeasuredContactForce() returning by value.
-  static typename Measured6DWrench::Vector6 getMeasuredContactForce(Measured6DWrench & self)
-  {
+  static typename Measured6DWrench::Vector6 getMeasuredContactForce(
+      Measured6DWrench &self) {
     return self.getMeasuredContactForce();
   }
 
   // Wrapper for useLocalFrame(bool local_frame)
-  static void useLocalFrame(Measured6DWrench & self, bool local_frame)
-  {
+  static void useLocalFrame(Measured6DWrench &self, bool local_frame) {
     self.useLocalFrame(local_frame);
   }
 
   // Function to expose the binding.
-  static void expose(const std::string & class_name) {
+  static void expose(const std::string &class_name) {
     std::string doc = "Bindings for tsid::contacts::Measured6Dwrench";
     bp::class_<Measured6DWrench>(class_name.c_str(), doc.c_str(), bp::no_init)
-      .def(Measured6DWrenchPythonVisitor<Measured6DWrench>());
+        .def(Measured6DWrenchPythonVisitor<Measured6DWrench>());
   }
 };
 
-} // namespace python
-} // namespace tsid
+}  // namespace python
+}  // namespace tsid
 
 #endif  // __tsid_python_measured_6d_wrench_hpp__
