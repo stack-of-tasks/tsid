@@ -8,6 +8,7 @@ repos:
     args:
     - --fix
     - --exit-non-zero-on-fix
+    exclude: '^.*\.ipynb$'
   - id: ruff-format
 - repo: https://github.com/cheshirekow/cmake-format-precommit
   rev: v0.6.13
