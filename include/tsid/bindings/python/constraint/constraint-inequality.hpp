@@ -57,25 +57,27 @@ struct ConstraintIneqPythonVisitor
         .add_property("upperBound", &ConstraintIneqPythonVisitor::upperBound)
 
         .def("setMatrix",
-             (bool(ConstraintInequality::*)(
-                 const Eigen::Ref<const Eigen::MatrixXd>)) &
-                 ConstraintInequality::setMatrix,
+             (bool (ConstraintInequality::*)(
+                 const Eigen::Ref<
+                     const Eigen::MatrixXd>))&ConstraintInequality::setMatrix,
              bp::args("matrix"), "Set Matrix")
         .def("setVector",
-             (bool(ConstraintInequality::*)(
-                 const Eigen::Ref<const Eigen::VectorXd>)) &
-                 ConstraintInequality::setVector,
+             (bool (ConstraintInequality::*)(
+                 const Eigen::Ref<
+                     const Eigen::VectorXd>))&ConstraintInequality::setVector,
              bp::args("vector"), "Set Vector")
-        .def("setLowerBound",
-             (bool(ConstraintInequality::*)(
-                 const Eigen::Ref<const Eigen::VectorXd>)) &
-                 ConstraintInequality::setLowerBound,
-             bp::args("lb"), "Set LowerBound")
-        .def("setUpperBound",
-             (bool(ConstraintInequality::*)(
-                 const Eigen::Ref<const Eigen::VectorXd>)) &
-                 ConstraintInequality::setUpperBound,
-             bp::args("ub"), "Set UpperBound");
+        .def(
+            "setLowerBound",
+            (bool (ConstraintInequality::*)(
+                const Eigen::Ref<const Eigen::VectorXd>))&ConstraintInequality::
+                setLowerBound,
+            bp::args("lb"), "Set LowerBound")
+        .def(
+            "setUpperBound",
+            (bool (ConstraintInequality::*)(
+                const Eigen::Ref<const Eigen::VectorXd>))&ConstraintInequality::
+                setUpperBound,
+            bp::args("ub"), "Set UpperBound");
   }
   static Eigen::MatrixXd matrix(const ConstraintInequality& self) {
     return self.matrix();
