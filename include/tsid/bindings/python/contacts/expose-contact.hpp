@@ -21,20 +21,20 @@
 #include "tsid/bindings/python/contacts/contact-6d.hpp"
 #include "tsid/bindings/python/contacts/contact-point.hpp"
 #include "tsid/bindings/python/contacts/contact-two-frame-positions.hpp"
-#include "tsid/bindings/python/contacts/measured-6Dwrench.hpp"
+#include "tsid/bindings/python/contacts/measured-6d-wrench.hpp"
 
 namespace tsid {
 namespace python {
 void exposeContact6d();
 void exposeContactPoint();
 void exposeContactTwoFramePositions();
-void exposeMeasured6Dwrench();
+void exposeMeasured6dWrench();
 
 inline void exposeContact() {
   exposeContact6d();
   exposeContactPoint();
   exposeContactTwoFramePositions();
-  exposeMeasured6Dwrench();
+  exposeMeasured6dWrench();
 }
 
 }  // namespace python
