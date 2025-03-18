@@ -57,24 +57,24 @@ struct ConstraintEqPythonVisitor
         .add_property("upperBound", &ConstraintEqPythonVisitor::upperBound)
 
         .def("setMatrix",
-             (bool(ConstraintEquality::*)(
-                 const Eigen::Ref<const Eigen::MatrixXd>)) &
-                 ConstraintEquality::setMatrix,
+             (bool (ConstraintEquality::*)(
+                 const Eigen::Ref<
+                     const Eigen::MatrixXd>))&ConstraintEquality::setMatrix,
              bp::args("matrix"), "Set Matrix")
         .def("setVector",
-             (bool(ConstraintEquality::*)(
-                 const Eigen::Ref<const Eigen::VectorXd>)) &
-                 ConstraintEquality::setVector,
+             (bool (ConstraintEquality::*)(
+                 const Eigen::Ref<
+                     const Eigen::VectorXd>))&ConstraintEquality::setVector,
              bp::args("vector"), "Set Vector")
         .def("setLowerBound",
-             (bool(ConstraintEquality::*)(
-                 const Eigen::Ref<const Eigen::VectorXd>)) &
-                 ConstraintEquality::setLowerBound,
+             (bool (ConstraintEquality::*)(
+                 const Eigen::Ref<
+                     const Eigen::VectorXd>))&ConstraintEquality::setLowerBound,
              bp::args("lb"), "Set LowerBound")
         .def("setUpperBound",
-             (bool(ConstraintEquality::*)(
-                 const Eigen::Ref<const Eigen::VectorXd>)) &
-                 ConstraintEquality::setUpperBound,
+             (bool (ConstraintEquality::*)(
+                 const Eigen::Ref<
+                     const Eigen::VectorXd>))&ConstraintEquality::setUpperBound,
              bp::args("ub"), "Set UpperBound")
 
         ;

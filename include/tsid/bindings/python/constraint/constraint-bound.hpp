@@ -56,19 +56,19 @@ struct ConstraintPythonVisitor
         .add_property("upperBound", &ConstraintPythonVisitor::upperBound)
 
         .def("setVector",
-             (bool(ConstraintBound::*)(
-                 const Eigen::Ref<const Eigen::VectorXd>)) &
-                 ConstraintBound::setVector,
+             (bool (ConstraintBound::*)(
+                 const Eigen::Ref<
+                     const Eigen::VectorXd>))&ConstraintBound::setVector,
              bp::args("vector"), "Set Vector")
         .def("setLowerBound",
-             (bool(ConstraintBound::*)(
-                 const Eigen::Ref<const Eigen::VectorXd>)) &
-                 ConstraintBound::setLowerBound,
+             (bool (ConstraintBound::*)(
+                 const Eigen::Ref<
+                     const Eigen::VectorXd>))&ConstraintBound::setLowerBound,
              bp::args("lb"), "Set LowerBound")
         .def("setUpperBound",
-             (bool(ConstraintBound::*)(
-                 const Eigen::Ref<const Eigen::VectorXd>)) &
-                 ConstraintBound::setUpperBound,
+             (bool (ConstraintBound::*)(
+                 const Eigen::Ref<
+                     const Eigen::VectorXd>))&ConstraintBound::setUpperBound,
              bp::args("ub"), "Set UpperBound");
   }
   static Eigen::VectorXd vector(const ConstraintBound& self) {

@@ -44,7 +44,7 @@ import matplotlib.pyplot as plt
 # ----------------------------
 foot_length = conf.lxn + conf.lxp  # foot size in the x-direction
 foot_width = conf.lyn + conf.lyp  # foot size in the y-direciton
-nb_dt_per_step = int(round(conf.T_step / conf.dt_mpc))
+nb_dt_per_step = round(conf.T_step / conf.dt_mpc)
 N = conf.nb_steps * nb_dt_per_step  # number of desired walking intervals
 
 # CoM initial state: [x_0, xdot_0].T

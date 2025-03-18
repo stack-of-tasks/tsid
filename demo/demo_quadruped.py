@@ -168,7 +168,7 @@ for i in range(0, N_SIMULATION):
 
     sol = solver.solve(HQPData)
     if sol.status != 0:
-        print("[%d] QP problem could not be solved! Error code:" % (i), sol.status)
+        print(f"[{i}] QP problem could not be solved! Error code", sol.status)
         break
 
     tau = invdyn.getActuatorForces(sol)
