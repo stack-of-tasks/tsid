@@ -19,7 +19,7 @@ set(${PYWRAP}_SOURCES
     contacts/contact-6d.cpp
     contacts/contact-point.cpp
     contacts/contact-two-frame-positions.cpp
-    contacts/measured-6Dwrench
+    contacts/measured-6Dwrench.cpp
     formulations/formulation.cpp
     math/utils.cpp
     module.cpp
