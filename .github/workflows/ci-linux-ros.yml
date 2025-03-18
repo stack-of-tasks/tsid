@@ -6,9 +6,9 @@ jobs:
     strategy:
       matrix:
         env:
-          #- {ROS_DISTRO: rolling} Unable to locate package ros-rolling-pinocchio
-          - {ROS_DISTRO: iron}
           - {ROS_DISTRO: humble}
+          - {ROS_DISTRO: jazzy}
+          - {ROS_DISTRO: rolling}
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
       UPSTREAM_WORKSPACE: dependencies.rosinstall
