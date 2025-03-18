@@ -1,5 +1,14 @@
 name: CI - Linux - ROS
-on: [push, pull_request]
+
+on:
+  push:
+    branches:
+      - devel
+      - master
+  pull_request:
+    branches:
+      - devel
+      - master
 
 jobs:
   CI:
