@@ -2,7 +2,13 @@ name: CI - Linux/OSX - Conda
 
 on:
   push:
+    branches:
+      - devel
+      - master
   pull_request:
+    branches:
+      - devel
+      - master
 
 jobs:
   build-with-conda:

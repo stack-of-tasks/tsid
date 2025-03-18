@@ -1,14 +1,23 @@
 name: CI - Linux - ROS
-on: [push, pull_request]
+
+on:
+  push:
+    branches:
+      - devel
+      - master
+  pull_request:
+    branches:
+      - devel
+      - master
 
 jobs:
   CI:
     strategy:
       matrix:
         env:
-          #- {ROS_DISTRO: rolling} Unable to locate package ros-rolling-pinocchio
-          - {ROS_DISTRO: iron}
           - {ROS_DISTRO: humble}
+          - {ROS_DISTRO: jazzy}
+          - {ROS_DISTRO: rolling}
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
       UPSTREAM_WORKSPACE: dependencies.rosinstall
@@ -26,5 +35,5 @@ jobs:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
       # Run industrial_ci
-      - uses: 'ros-industrial/industrial_ci@d23b9ad2c63bfad638a2b1fe3df34b8df9a2f17b'
+      - uses: 'ros-industrial/industrial_ci@3e67ec54d63496e076267392148a26229740befc'
         env: ${{ matrix.env }}
