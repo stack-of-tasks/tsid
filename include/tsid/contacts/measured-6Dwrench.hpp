@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2022 CNRS INRIA LORIA
+// Copyright (c) 2025 CNRS INRIA LORIA
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
