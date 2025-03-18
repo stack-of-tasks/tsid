@@ -277,7 +277,7 @@ struct InvDynPythonVisitor
     return self.getContactForces(name, sol);
   }
   static bool addMeasuredForce(T& self,
-                               contacts::Measured6Dwrench measured_force) {
+                               contacts::Measured6Dwrench& measured_force) {
     return self.addMeasuredForce(measured_force);
   }
 
