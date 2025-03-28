@@ -170,6 +170,8 @@ set(${PROJECT_NAME}_CONTACTS_HEADERS
     include/tsid/contacts/measured-force-base.hpp
     include/tsid/contacts/measured-3d-force.hpp
     include/tsid/contacts/measured-6d-wrench.hpp
+    include/tsid/contacts/measured-3Dforce.hpp
+    include/tsid/contacts/measured-6Dwrench.hpp
     include/tsid/contacts/contact-two-frame-positions.hpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_HEADERS
