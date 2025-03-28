@@ -27,7 +27,7 @@
 #include "tsid/contacts/contact-6d.hpp"
 #include "tsid/contacts/contact-point.hpp"
 #include "tsid/contacts/contact-two-frame-positions.hpp"
-#include "tsid/contacts/measured-6Dwrench.hpp"
+#include "tsid/contacts/measured-6d-wrench.hpp"
 #include "tsid/tasks/task-joint-posture.hpp"
 #include "tsid/tasks/task-se3-equality.hpp"
 #include "tsid/tasks/task-com-equality.hpp"

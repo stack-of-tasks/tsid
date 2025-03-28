@@ -18,7 +18,7 @@
 #define __tsid_python_measured_6d_wrench_hpp__
 
 #include "tsid/bindings/python/fwd.hpp"
-#include "tsid/contacts/measured-6Dwrench.hpp"
+#include "tsid/contacts/measured-6d-wrench.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
 #include "pinocchio/multibody/data.hpp"
 

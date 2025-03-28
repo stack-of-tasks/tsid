@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2022 CNRS INRIA LORIA
+// Copyright (c) 2025 CNRS INRIA LORIA
 //
 // This file is part of tsid
 // tsid is free software: you can redistribute it
@@ -15,8 +15,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#ifndef __invdyn_measured_3Dforce_hpp__
-#define __invdyn_measured_3Dforce_hpp__
+#ifndef __invdyn_measured_3d_force_hpp__
+#define __invdyn_measured_3d_force_hpp__
 
 #include <pinocchio/multibody/data.hpp>
 
@@ -68,4 +68,4 @@ class Measured3Dforce : public MeasuredForceBase {
 }  // namespace contacts
 }  // namespace tsid
 
-#endif  // ifndef __invdyn_measured_6Dwrench_hpp__
+#endif  // ifndef __invdyn_measured_3d_force_hpp__
