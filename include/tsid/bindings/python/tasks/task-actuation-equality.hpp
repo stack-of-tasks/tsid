@@ -68,7 +68,7 @@ struct TaskActuationEqualityPythonVisitor
         .def("setReference", &TaskActuationEqualityPythonVisitor::setReference,
              bp::arg("ref"))
         .def("getReference", &TaskActuationEqualityPythonVisitor::getReference,
-              bp::return_value_policy<bp::copy_const_reference>())
+             bp::return_value_policy<bp::copy_const_reference>())
 
         .def("setWeightVector",
              &TaskActuationEqualityPythonVisitor::setWeightVector,
@@ -123,23 +123,21 @@ struct TaskActuationEqualityPythonVisitor
   static const Eigen::VectorXd &getmask(const TaskAucEq &self) {
     return self.mask();
   }
-  
+
   static void setmask(TaskAucEq &self, const Eigen::VectorXd mask) {
     return self.mask(mask);
   }
 
-  static void expose(const std::string& class_name) {
+  static void expose(const std::string &class_name) {
     std::string doc = "TaskActuationEqualityPythonVisitor info.";
     bp::class_<TaskAucEq>(class_name.c_str(), doc.c_str(), bp::no_init)
         .def(TaskActuationEqualityPythonVisitor<TaskAucEq>());
 
-    bp::register_ptr_to_python<boost::shared_ptr<math::ConstraintBase> >();
+    bp::register_ptr_to_python<boost::shared_ptr<math::ConstraintBase>>();
   }
-
-
 };
 
-} // namespace python
-} // namespace tsid
+}  // namespace python
+}  // namespace tsid
 
-#endif // ifndef __tsid_python_task_actuation_equality_hpp__
+#endif  // ifndef __tsid_python_task_actuation_equality_hpp__

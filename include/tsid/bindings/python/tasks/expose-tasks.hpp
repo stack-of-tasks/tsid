@@ -53,7 +53,6 @@ inline void exposeTasks() {
   exposeTaskAMEquality();
   exposeTaskTwoFramesEquality();
   exposeTaskActuationEquality();
-
 }
 
 }  // namespace python

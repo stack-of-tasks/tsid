@@ -21,8 +21,8 @@
 namespace tsid {
 namespace python {
 void exposeTaskActuationEquality() {
-  TaskActuationEqualityPythonVisitor<tsid::tasks::TaskActuationEquality>::expose(
-      "TaskActuationEquality");
+  TaskActuationEqualityPythonVisitor<
+      tsid::tasks::TaskActuationEquality>::expose("TaskActuationEquality");
 }
 }  // namespace python
 }  // namespace tsid
