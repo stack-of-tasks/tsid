@@ -35,10 +35,10 @@ jobs:
         # Workaround for https://github.com/conda-incubator/setup-miniconda/issues/186
         conda config --remove channels defaults
         # Compilation related dependencies
-        mamba install cmake compilers make pkg-config doxygen ninja graphviz
+        conda install cmake compilers make pkg-config doxygen ninja graphviz
         # Main dependencies
-        mamba install tsid --only-deps
-        mamba install proxsuite osqp-eigen
+        conda install tsid --only-deps
+        conda install proxsuite osqp-eigen
 
     - name: Activate ccache [Conda]
       uses: hendrikmuhs/ccache-action@v1.2
@@ -50,7 +50,7 @@ jobs:
       shell: bash -l {0}
       run: |
         conda info
-        mamba list
+        conda list
         env
 
     - name: Configure [Conda]
