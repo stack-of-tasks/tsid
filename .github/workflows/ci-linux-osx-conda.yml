@@ -26,10 +26,7 @@ jobs:
 
     - uses: conda-incubator/setup-miniconda@v3
       with:
-        miniforge-variant: Mambaforge
-        miniforge-version: latest
         channels: conda-forge
-        python-version: "3.10"
         activate-environment: tsid
 
     - name: Install dependencies [Conda]
