@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix missing `const` specifier in python bindings for methods `RobotInertia.set_rotor_inertia()`
  and `RobotInertia.set_gear_ratios()`
+- Add python bidings for the measured force contact
+- Deprecated `tsid/contacts/measured-3Dforce.hpp` and `tsid/contacts/measured-6Dwrench.hpp`
+  use `tsid/contacts/measured-3d-force.hpp` and `tsid/contacts/measured-6d-wrench.hpp` instead
+
 ## [1.7.1] - 2024-08-26
 
 - Fix a typo in ex_4_walking
