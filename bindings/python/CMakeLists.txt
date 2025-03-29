@@ -19,6 +19,7 @@ set(${PYWRAP}_SOURCES
     contacts/contact-6d.cpp
     contacts/contact-point.cpp
     contacts/contact-two-frame-positions.cpp
+    contacts/measured-6d-wrench.cpp
     formulations/formulation.cpp
     math/utils.cpp
     module.cpp
@@ -49,6 +50,7 @@ set(${PYWRAP}_HEADERS
     ../../include/tsid/bindings/python/contacts/contact-point.hpp
     ../../include/tsid/bindings/python/contacts/contact-two-frame-positions.hpp
     ../../include/tsid/bindings/python/contacts/contact-two-frames.hpp
+    ../../include/tsid/bindings/python/contacts/measured-6d-wrench.hpp
     ../../include/tsid/bindings/python/contacts/expose-contact.hpp
     ../../include/tsid/bindings/python/formulations/expose-formulations.hpp
     ../../include/tsid/bindings/python/formulations/formulation.hpp
