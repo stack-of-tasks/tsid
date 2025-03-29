@@ -30,7 +30,7 @@ jobs:
       # eiquadprog is not yet available in ROS2
       - run: sed -i "/eiquadprog/d" package.xml
       # This step will fetch/store the directory used by ccache before/after the ci run
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
