@@ -28,6 +28,7 @@ set(${PYWRAP}_SOURCES
     solvers/HQPOutput.cpp
     solvers/solver-HQP-eiquadprog.cpp
     tasks/task-actuation-bounds.cpp
+    tasks/task-actuation-equality.cpp
     tasks/task-am-equality.cpp
     tasks/task-com-equality.cpp
     tasks/task-contact-force-equality.cpp
