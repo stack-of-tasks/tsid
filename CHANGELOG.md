@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add python bidings for the measured force contact
 - Deprecated `tsid/contacts/measured-3Dforce.hpp` and `tsid/contacts/measured-6Dwrench.hpp`
   use `tsid/contacts/measured-3d-force.hpp` and `tsid/contacts/measured-6d-wrench.hpp` instead
+- Introduce use of override keyword for virtual methods
 
 ## [1.7.1] - 2024-08-26
 
