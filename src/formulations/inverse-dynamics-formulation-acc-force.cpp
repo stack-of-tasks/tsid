@@ -541,6 +541,9 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(
     return false;
   }
 
+  // Find motion task priority
+  bool is_motion_contraint =
+      (getTaskPriority(contactName + "_motion_task") == 0);
   bool first_constraint_found = removeFromHqpData(contactName + "_motion_task");
   assert(first_constraint_found);
 
@@ -556,7 +559,7 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(
   for (auto it = m_contacts.begin(); it != m_contacts.end(); it++) {
     if ((*it)->contact.name() == contactName) {
       m_k -= (*it)->contact.n_force();
-      m_eq -= (*it)->motionConstraint->rows();
+      if (is_motion_contraint) m_eq -= (*it)->motionConstraint->rows();
       m_in -= (*it)->forceConstraint->rows();
       m_contacts.erase(it);
       resizeHqpData();
@@ -599,4 +602,18 @@ bool InverseDynamicsFormulationAccForce::removeFromHqpData(
     }
   }
   return false;
+}
+
+unsigned int InverseDynamicsFormulationAccForce::getTaskPriority(
+    const std::string &name) {
+  for (std::size_t i = 0; i < m_hqpData.size(); i++) {
+    const bool found = std::any_of(
+        m_hqpData[i].begin(), m_hqpData[i].end(),
+        [&name](const auto &c) { return c.second->name() == name; });
+    if (found) {
+      return i;
+    }
+  }
+  assert(false);  // Task name not found in formulation data
+  return -1;
 }

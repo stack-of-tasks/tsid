@@ -105,6 +105,7 @@ class InverseDynamicsFormulationAccForce
   Vector getContactForces(const std::string& name, const HQPOutput& sol);
   bool getContactForces(const std::string& name, const HQPOutput& sol,
                         RefVector f) override;
+  unsigned int getTaskPriority(const std::string& name) override;
 
  public:
   template <class TaskLevelPointer>

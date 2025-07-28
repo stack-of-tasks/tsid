@@ -157,6 +157,8 @@ class InverseDynamicsFormulationBase {
   virtual bool getContactForces(const std::string& name, const HQPOutput& sol,
                                 RefVector f) = 0;
 
+  virtual unsigned int getTaskPriority(const std::string& name) = 0;
+
  protected:
   std::string m_name;
   RobotWrapper m_robot;
