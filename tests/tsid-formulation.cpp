@@ -322,6 +322,15 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force_remove_contact) {
     CHECK_LESS_THAN(v.norm(), 1e6);
   }
 
+  // Removing contact constraint should decrease nb of equality by 6
+  int nEq = tsid->nEq();
+  tsid->removeRigidContact("contact_rfoot");
+  nEq -= 6;
+  BOOST_CHECK_EQUAL(nEq, tsid->nEq());
+  tsid->removeRigidContact("contact_lfoot");
+  nEq -= 6;
+  BOOST_CHECK_EQUAL(nEq, tsid->nEq());
+
   delete solver;
   cout << "\n### TEST FINISHED ###\n";
   PRINT_VECTOR(v);
