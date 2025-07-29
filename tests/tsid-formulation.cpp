@@ -322,6 +322,15 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force_remove_contact) {
     CHECK_LESS_THAN(v.norm(), 1e6);
   }
 
+  // Removing contact constraint should decrease nb of equality by 6
+  int nEq = tsid->nEq();
+  tsid->removeRigidContact("contact_rfoot");
+  nEq -= 6;
+  BOOST_CHECK_EQUAL(nEq, tsid->nEq());
+  tsid->removeRigidContact("contact_lfoot");
+  nEq -= 6;
+  BOOST_CHECK_EQUAL(nEq, tsid->nEq());
+
   delete solver;
   cout << "\n### TEST FINISHED ###\n";
   PRINT_VECTOR(v);
@@ -573,6 +582,7 @@ BOOST_AUTO_TEST_CASE(test_contact_point_invdyn_formulation_acc_force) {
   Vector3 contactNormal = Vector3::UnitZ();
   std::vector<std::shared_ptr<ContactPoint>> contacts(4);
 
+  int nEq = tsid->nEq();
   for (int i = 0; i < 4; i++) {
     auto cp = std::make_shared<ContactPoint>("contact_" + contactFrames[i],
                                              robot, contactFrames[i],
@@ -583,6 +593,9 @@ BOOST_AUTO_TEST_CASE(test_contact_point_invdyn_formulation_acc_force) {
         robot.framePosition(data, robot.model().getFrameId(contactFrames[i])));
     cp->useLocalFrame(false);
     tsid->addRigidContact(*cp, w_forceReg, 1.0, 1);
+
+    // Adding rigid contact as cost should not change nb of equalities
+    BOOST_CHECK_EQUAL(nEq, tsid->nEq());
 
     contacts[i] = cp;
   }
@@ -650,10 +663,15 @@ BOOST_AUTO_TEST_CASE(test_contact_point_invdyn_formulation_acc_force) {
     CHECK_LESS_THAN(v.norm(), 1e6);
   }
 
+  nEq = tsid->nEq();
   for (int i = 0; i < 4; i++) {
     Eigen::Matrix<double, 3, 1> f;
     tsid->getContactForces(contacts[i]->name(), *sol, f);
     cout << contacts[i]->name() << " force:" << f.transpose() << endl;
+
+    // Removing rigid contact (added as cost) should not change nb of equalities
+    tsid->removeRigidContact(contacts[i]->name());
+    BOOST_CHECK_EQUAL(nEq, tsid->nEq());
   }
 
   delete solver;
