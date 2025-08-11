@@ -58,7 +58,7 @@ jobs:
           - os: "macos-14"
             python: "cp38"
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: "artifact-${{ matrix.os }}-${{ matrix.python }}"
           path: wheelhouse
@@ -113,7 +113,7 @@ jobs:
         run: >
           git verify-tag --raw ${{ github.ref_name }} 2>&1
           | grep -q 'VALIDSIG 9B1A79065D2F2B806C8A5A1C7D2ACDAF4653CF28'
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           merge-multiple: true
           path: dist
