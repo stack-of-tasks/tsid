@@ -2,7 +2,7 @@ ci:
   autoupdate_branch: devel
 repos:
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.12.5
+  rev: v0.12.9
   hooks:
   - id: ruff
     args:
@@ -26,7 +26,7 @@ repos:
     - '--style={BasedOnStyle: Google, SortIncludes: false, WhitespaceSensitiveMacros: ["TSID_DISABLE_WARNING"]}'
     exclude: '^.*\.ipynb$'
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v5.0.0
+  rev: v6.0.0
   hooks:
   - id: check-json
   - id: check-symlinks
