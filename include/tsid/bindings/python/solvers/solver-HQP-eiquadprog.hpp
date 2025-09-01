@@ -35,9 +35,9 @@ struct SolverHQuadProgPythonVisitor
     : public boost::python::def_visitor<SolverHQuadProgPythonVisitor<Solver> > {
   template <class PyClass>
 
-  void visit(PyClass &cl) const {
-    cl.def(bp::init<const std::string &>((bp::arg("name")),
-                                         "Default Constructor with name"))
+  void visit(PyClass& cl) const {
+    cl.def(bp::init<const std::string&>((bp::arg("name")),
+                                        "Default Constructor with name"))
 
         .def("resize", &SolverHQuadProgPythonVisitor::resize,
              bp::args("n", "neq", "nin"))
@@ -51,33 +51,33 @@ struct SolverHQuadProgPythonVisitor
              bp::args("HQPData for Python"));
   }
 
-  static void resize(Solver &self, unsigned int n, unsigned int neq,
+  static void resize(Solver& self, unsigned int n, unsigned int neq,
                      unsigned int nin) {
     self.resize(n, neq, nin);
   }
-  static solvers::HQPOutput solve(Solver &self,
-                                  const solvers::HQPData &problemData) {
+  static solvers::HQPOutput solve(Solver& self,
+                                  const solvers::HQPData& problemData) {
     solvers::HQPOutput output;
     output = self.solve(problemData);
     return output;
   }
-  static solvers::HQPOutput solver_helper(Solver &self, HQPDatas &HQPDatas) {
+  static solvers::HQPOutput solver_helper(Solver& self, HQPDatas& HQPDatas) {
     solvers::HQPOutput output;
-    solvers::HQPData &data = HQPDatas.get();
+    solvers::HQPData& data = HQPDatas.get();
 
     output = self.solve(data);
 
     return output;
   }
 
-  static solvers::QPDataQuadProg retrieveQPData(Solver &self,
-                                                HQPDatas &HQPDatas) {
+  static solvers::QPDataQuadProg retrieveQPData(Solver& self,
+                                                HQPDatas& HQPDatas) {
     solvers::HQPData data = HQPDatas.get();
     self.retrieveQPData(data);
     return self.getQPData();
   }
 
-  static void expose(const std::string &class_name) {
+  static void expose(const std::string& class_name) {
     std::string doc = "Solver EiQuadProg info.";
     bp::class_<Solver>(class_name.c_str(), doc.c_str(), bp::no_init)
         .def(SolverHQuadProgPythonVisitor<Solver>());

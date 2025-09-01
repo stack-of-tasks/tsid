@@ -34,18 +34,18 @@ class Measured6Dwrench : public MeasuredForceBase {
   typedef pinocchio::Data Data;
   typedef pinocchio::Data::Matrix6x Matrix6x;
 
-  Measured6Dwrench(const std::string &name, RobotWrapper &robot,
-                   const std::string &frameName);
+  Measured6Dwrench(const std::string& name, RobotWrapper& robot,
+                   const std::string& frameName);
 
-  const Vector &computeJointTorques(Data &data) override;
+  const Vector& computeJointTorques(Data& data) override;
 
   /**
    *  Set the value of the external wrench applied by the environment on the
    * robot.
    */
-  void setMeasuredContactForce(const Vector6 &fext);
+  void setMeasuredContactForce(const Vector6& fext);
 
-  const Vector6 &getMeasuredContactForce() const;
+  const Vector6& getMeasuredContactForce() const;
 
   /**
    * @brief Specifies if the external force and jacobian is

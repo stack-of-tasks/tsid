@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(test_task_se3_equality) {
   BOOST_CHECK(task.Kd().isApprox(Kd));
 
   pinocchio::SE3 M_ref = pinocchio::SE3::Random();
-  TrajectoryBase *traj = new TrajectorySE3Constant("traj_SE3", M_ref);
+  TrajectoryBase* traj = new TrajectorySE3Constant("traj_SE3", M_ref);
   TrajectorySample sample;
 
   double t = 0.0;
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(test_task_se3_equality) {
     robot.computeAllTerms(data, q, v);
     sample = traj->computeNext();
     task.setReference(sample);
-    const ConstraintBase &constraint = task.compute(t, q, v, data);
+    const ConstraintBase& constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows() == 6);
     BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols()) ==
                 static_cast<tsid::math::Index>(robot.nv()));
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(test_task_com_equality) {
 
   math::Vector3 com_ref =
       data.com[0] + pinocchio::SE3::Vector3(0.02, 0.02, 0.02);
-  TrajectoryBase *traj = new TrajectoryEuclidianConstant("traj_com", com_ref);
+  TrajectoryBase* traj = new TrajectoryEuclidianConstant("traj_com", com_ref);
   TrajectorySample sample;
 
   double t = 0.0;
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(test_task_com_equality) {
     robot.computeAllTerms(data, q, v);
     sample = traj->computeNext();
     task.setReference(sample);
-    const ConstraintBase &constraint = task.compute(t, q, v, data);
+    const ConstraintBase& constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows() == 3);
     BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols()) ==
                 static_cast<tsid::math::Index>(robot.nv()));
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(test_task_joint_posture) {
 
   cout << "Gonna create reference trajectory\n";
   ConstRefVector q_ref = math::Vector::Random(na);
-  TrajectoryBase *traj = new TrajectoryEuclidianConstant("traj_joint", q_ref);
+  TrajectoryBase* traj = new TrajectoryEuclidianConstant("traj_joint", q_ref);
   TrajectorySample sample;
 
   cout << "Gonna set up for simulation\n";
@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(test_task_joint_posture) {
     robot.computeAllTerms(data, q, v);
     sample = traj->computeNext();
     task.setReference(sample);
-    const ConstraintBase &constraint = task.compute(t, q, v, data);
+    const ConstraintBase& constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows() == na);
     BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols()) ==
                 static_cast<tsid::math::Index>(robot.nv()));
@@ -297,7 +297,7 @@ BOOST_AUTO_TEST_CASE(test_task_joint_bounds) {
   pinocchio::Data data(robot.model());
   for (int i = 0; i < max_it; i++) {
     robot.computeAllTerms(data, q, v);
-    const ConstraintBase &constraint = task.compute(t, q, v, data);
+    const ConstraintBase& constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows() == (Eigen::Index)robot.nv());
     BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols()) ==
                 static_cast<tsid::math::Index>(robot.nv()));
@@ -344,7 +344,7 @@ BOOST_AUTO_TEST_CASE(test_task_joint_posVelAcc_bounds) {
   pinocchio::Data data(robot.model());
   for (int i = 0; i < max_it; i++) {
     robot.computeAllTerms(data, q, v);
-    const ConstraintBase &constraint = task.compute(t, q, v, data);
+    const ConstraintBase& constraint = task.compute(t, q, v, data);
     BOOST_CHECK(constraint.rows() == (Eigen::Index)robot.na());
     BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols()) ==
                 static_cast<tsid::math::Index>(robot.nv()));

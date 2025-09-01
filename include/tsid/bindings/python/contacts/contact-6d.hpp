@@ -36,15 +36,15 @@ struct Contact6DPythonVisitor
     : public boost::python::def_visitor<Contact6DPythonVisitor<Contact6d> > {
   template <class PyClass>
 
-  void visit(PyClass &cl) const {
-    cl.def(bp::init<std::string, robots::RobotWrapper &, std::string,
+  void visit(PyClass& cl) const {
+    cl.def(bp::init<std::string, robots::RobotWrapper&, std::string,
                     Eigen::MatrixXd, Eigen::VectorXd, double, double, double>(
                (bp::arg("name"), bp::arg("robot"), bp::arg("framename"),
                 bp::arg("contactPoint"), bp::arg("contactNormal"),
                 bp::arg("frictionCoeff"), bp::arg("minForce"),
                 bp::arg("maxForce")),
                "Default Constructor"))
-        .def(bp::init<std::string, robots::RobotWrapper &, std::string,
+        .def(bp::init<std::string, robots::RobotWrapper&, std::string,
                       Eigen::MatrixXd, Eigen::VectorXd, double, double, double,
                       double>(
             (bp::arg("name"), bp::arg("robot"), bp::arg("framename"),
@@ -105,16 +105,16 @@ struct Contact6DPythonVisitor
              &Contact6DPythonVisitor::setRegularizationTaskWeightVector,
              bp::args("w_vec"));
   }
-  static std::string name(Contact6d &self) {
+  static std::string name(Contact6d& self) {
     std::string name = self.name();
     return name;
   }
 
-  static math::ConstraintEquality computeMotionTask(Contact6d &self,
+  static math::ConstraintEquality computeMotionTask(Contact6d& self,
                                                     const double t,
-                                                    const Eigen::VectorXd &q,
-                                                    const Eigen::VectorXd &v,
-                                                    pinocchio::Data &data) {
+                                                    const Eigen::VectorXd& q,
+                                                    const Eigen::VectorXd& v,
+                                                    pinocchio::Data& data) {
     self.computeMotionTask(t, q, v, data);
     math::ConstraintEquality cons(self.getMotionConstraint().name(),
                                   self.getMotionConstraint().matrix(),
@@ -122,8 +122,8 @@ struct Contact6DPythonVisitor
     return cons;
   }
   static math::ConstraintInequality computeForceTask(
-      Contact6d &self, const double t, const Eigen::VectorXd &q,
-      const Eigen::VectorXd &v, const pinocchio::Data &data) {
+      Contact6d& self, const double t, const Eigen::VectorXd& q,
+      const Eigen::VectorXd& v, const pinocchio::Data& data) {
     self.computeForceTask(t, q, v, data);
     math::ConstraintInequality cons(self.getForceConstraint().name(),
                                     self.getForceConstraint().matrix(),
@@ -132,64 +132,64 @@ struct Contact6DPythonVisitor
     return cons;
   }
   static math::ConstraintEquality computeForceRegularizationTask(
-      Contact6d &self, const double t, const Eigen::VectorXd &q,
-      const Eigen::VectorXd &v, const pinocchio::Data &data) {
+      Contact6d& self, const double t, const Eigen::VectorXd& q,
+      const Eigen::VectorXd& v, const pinocchio::Data& data) {
     self.computeForceRegularizationTask(t, q, v, data);
     math::ConstraintEquality cons(self.getForceRegularizationTask().name(),
                                   self.getForceRegularizationTask().matrix(),
                                   self.getForceRegularizationTask().vector());
     return cons;
   }
-  static tsid::tasks::TaskSE3Equality getMotionTask(Contact6d &self) {
+  static tsid::tasks::TaskSE3Equality getMotionTask(Contact6d& self) {
     tsid::tasks::TaskSE3Equality t = self.getMotionTask();
     return t;
   }
 
-  static const Eigen::MatrixXd &getForceGeneratorMatrix(Contact6d &self) {
+  static const Eigen::MatrixXd& getForceGeneratorMatrix(Contact6d& self) {
     return self.getForceGeneratorMatrix();
   }
-  static const Eigen::VectorXd &Kp(Contact6d &self) { return self.Kp(); }
-  static const Eigen::VectorXd &Kd(Contact6d &self) { return self.Kd(); }
-  static void setKp(Contact6d &self, const ::Eigen::VectorXd Kp) {
+  static const Eigen::VectorXd& Kp(Contact6d& self) { return self.Kp(); }
+  static const Eigen::VectorXd& Kd(Contact6d& self) { return self.Kd(); }
+  static void setKp(Contact6d& self, const ::Eigen::VectorXd Kp) {
     return self.Kp(Kp);
   }
-  static void setKd(Contact6d &self, const ::Eigen::VectorXd Kd) {
+  static void setKd(Contact6d& self, const ::Eigen::VectorXd Kd) {
     return self.Kd(Kd);
   }
-  static bool setContactPoints(Contact6d &self,
+  static bool setContactPoints(Contact6d& self,
                                const ::Eigen::MatrixXd contactpoints) {
     return self.setContactPoints(contactpoints);
   }
-  static bool setContactNormal(Contact6d &self,
+  static bool setContactNormal(Contact6d& self,
                                const ::Eigen::VectorXd contactNormal) {
     return self.setContactNormal(contactNormal);
   }
-  static bool setFrictionCoefficient(Contact6d &self,
+  static bool setFrictionCoefficient(Contact6d& self,
                                      const double frictionCoefficient) {
     return self.setFrictionCoefficient(frictionCoefficient);
   }
-  static bool setMinNormalForce(Contact6d &self, const double minNormalForce) {
+  static bool setMinNormalForce(Contact6d& self, const double minNormalForce) {
     return self.setMinNormalForce(minNormalForce);
   }
-  static bool setMaxNormalForce(Contact6d &self, const double maxNormalForce) {
+  static bool setMaxNormalForce(Contact6d& self, const double maxNormalForce) {
     return self.setMaxNormalForce(maxNormalForce);
   }
-  static void setReference(Contact6d &self, const pinocchio::SE3 &ref) {
+  static void setReference(Contact6d& self, const pinocchio::SE3& ref) {
     self.setReference(ref);
   }
-  static void setForceReference(Contact6d &self,
+  static void setForceReference(Contact6d& self,
                                 const ::Eigen::VectorXd f_ref) {
     self.setForceReference(f_ref);
   }
-  static void setRegularizationTaskWeightVector(Contact6d &self,
+  static void setRegularizationTaskWeightVector(Contact6d& self,
                                                 const ::Eigen::VectorXd w) {
     self.setRegularizationTaskWeightVector(w);
   }
-  static double getNormalForce(Contact6d &self, Eigen::VectorXd f) {
+  static double getNormalForce(Contact6d& self, Eigen::VectorXd f) {
     return self.getNormalForce(f);
   }
 
-  static void expose(const std::string &class_name) {
+  static void expose(const std::string& class_name) {
     std::string doc = "Contact6d info.";
     bp::class_<Contact6d>(class_name.c_str(), doc.c_str(), bp::no_init)
         .def(Contact6DPythonVisitor<Contact6d>());
