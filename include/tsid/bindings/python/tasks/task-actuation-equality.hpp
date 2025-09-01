@@ -44,8 +44,8 @@ struct TaskActuationEqualityPythonVisitor
           TaskActuationEqualityPythonVisitor<TaskAucEq>> {
   template <class PyClass>
 
-  void visit(PyClass &cl) const {
-    cl.def(bp::init<std::string, robots::RobotWrapper &>(
+  void visit(PyClass& cl) const {
+    cl.def(bp::init<std::string, robots::RobotWrapper&>(
                (bp::arg("name"), bp::arg("robot")), "Default Constructor"))
 
         .add_property("dim", &TaskAucEq::dim, "return dimension size")
@@ -78,15 +78,15 @@ struct TaskActuationEqualityPythonVisitor
              bp::return_value_policy<bp::copy_const_reference>());
   }
 
-  static std::string name(TaskAucEq &self) {
+  static std::string name(TaskAucEq& self) {
     std::string name = self.name();
     return name;
   }
 
-  static math::ConstraintEquality compute(TaskAucEq &self, const double t,
-                                          const Eigen::VectorXd &q,
-                                          const Eigen::VectorXd &v,
-                                          pinocchio::Data &data) {
+  static math::ConstraintEquality compute(TaskAucEq& self, const double t,
+                                          const Eigen::VectorXd& q,
+                                          const Eigen::VectorXd& v,
+                                          pinocchio::Data& data) {
     self.compute(t, q, v, data);
     math::ConstraintEquality cons(self.getConstraint().name(),
                                   self.getConstraint().matrix(),
@@ -94,7 +94,7 @@ struct TaskActuationEqualityPythonVisitor
     return cons;
   }
 
-  static math::ConstraintEquality getConstraint(const TaskAucEq &self) {
+  static math::ConstraintEquality getConstraint(const TaskAucEq& self) {
     math::ConstraintEquality cons(self.getConstraint().name(),
                                   self.getConstraint().matrix(),
                                   self.getConstraint().vector());
@@ -102,33 +102,33 @@ struct TaskActuationEqualityPythonVisitor
   }
 
   //// getter and setter of reference
-  static void setReference(TaskAucEq &self, const Eigen::VectorXd &ref) {
+  static void setReference(TaskAucEq& self, const Eigen::VectorXd& ref) {
     self.setReference(ref);
   }
 
-  static const Eigen::VectorXd &getReference(const TaskAucEq &self) {
+  static const Eigen::VectorXd& getReference(const TaskAucEq& self) {
     return self.getReference();
   }
 
   // getter and setter of weight
-  static void setWeightVector(TaskAucEq &self, const Eigen::VectorXd &weights) {
+  static void setWeightVector(TaskAucEq& self, const Eigen::VectorXd& weights) {
     self.setWeightVector(weights);
   }
 
-  static const Eigen::VectorXd &getWeightVector(const TaskAucEq &self) {
+  static const Eigen::VectorXd& getWeightVector(const TaskAucEq& self) {
     return self.getWeightVector();
   }
 
   // getter and setter of mask
-  static const Eigen::VectorXd &getmask(const TaskAucEq &self) {
+  static const Eigen::VectorXd& getmask(const TaskAucEq& self) {
     return self.mask();
   }
 
-  static void setmask(TaskAucEq &self, const Eigen::VectorXd mask) {
+  static void setmask(TaskAucEq& self, const Eigen::VectorXd mask) {
     return self.mask(mask);
   }
 
-  static void expose(const std::string &class_name) {
+  static void expose(const std::string& class_name) {
     std::string doc = "TaskActuationEqualityPythonVisitor info.";
     bp::class_<TaskAucEq>(class_name.c_str(), doc.c_str(), bp::no_init)
         .def(TaskActuationEqualityPythonVisitor<TaskAucEq>());

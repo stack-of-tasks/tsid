@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(test_trajectory_se3) {
   SE3ToVector(M_ref, M_vec);
   VectorXd zero = VectorXd::Zero(6);
 
-  TrajectoryBase *traj = new TrajectorySE3Constant("traj_se3", M_ref);
+  TrajectoryBase* traj = new TrajectorySE3Constant("traj_se3", M_ref);
   BOOST_CHECK(traj->has_trajectory_ended());
   BOOST_CHECK(traj->computeNext().getValue().isApprox(M_vec));
   BOOST_CHECK(traj->operator()(0.0).getValue().isApprox(M_vec));
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(test_trajectory_euclidian) {
   const unsigned int n = 5;
   VectorXd q_ref = VectorXd::Ones(n);
   VectorXd zero = VectorXd::Zero(n);
-  TrajectoryBase *traj = new TrajectoryEuclidianConstant("traj_eucl", q_ref);
+  TrajectoryBase* traj = new TrajectoryEuclidianConstant("traj_eucl", q_ref);
 
   BOOST_CHECK(traj->has_trajectory_ended());
   BOOST_CHECK(traj->computeNext().getValue().isApprox(q_ref));

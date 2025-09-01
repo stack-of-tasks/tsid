@@ -34,18 +34,18 @@ class Measured3Dforce : public MeasuredForceBase {
   typedef pinocchio::Data Data;
   typedef pinocchio::Data::Matrix3x Matrix3x;
 
-  Measured3Dforce(const std::string &name, RobotWrapper &robot,
-                  const std::string &frameName);
+  Measured3Dforce(const std::string& name, RobotWrapper& robot,
+                  const std::string& frameName);
 
-  const Vector &computeJointTorques(Data &data) override;
+  const Vector& computeJointTorques(Data& data) override;
 
   /**
    *  Set the value of the external wrench applied by the environment on the
    * robot.
    */
-  void setMeasuredContactForce(const Vector3 &fext);
+  void setMeasuredContactForce(const Vector3& fext);
 
-  const Vector3 &getMeasuredContactForce() const;
+  const Vector3& getMeasuredContactForce() const;
 
   /**
    * @brief Specifies if the external force and jacobian is

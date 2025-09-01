@@ -26,8 +26,8 @@ using namespace std;
 using namespace math;
 using namespace pinocchio;
 
-Measured6Dwrench::Measured6Dwrench(const std::string &name, RobotWrapper &robot,
-                                   const std::string &frameName)
+Measured6Dwrench::Measured6Dwrench(const std::string& name, RobotWrapper& robot,
+                                   const std::string& frameName)
     : MeasuredForceBase(name, robot), m_frame_name(frameName) {
   assert(m_robot.model().existFrame(frameName));
   m_frame_id = m_robot.model().getFrameId(frameName);
@@ -40,7 +40,7 @@ Measured6Dwrench::Measured6Dwrench(const std::string &name, RobotWrapper &robot,
   m_local_frame = true;
 }
 
-const Vector &Measured6Dwrench::computeJointTorques(Data &data) {
+const Vector& Measured6Dwrench::computeJointTorques(Data& data) {
   m_robot.frameJacobianLocal(data, m_frame_id, m_J);
 
   if (!m_local_frame) {
@@ -60,11 +60,11 @@ const Vector &Measured6Dwrench::computeJointTorques(Data &data) {
   return m_computedTorques;
 }
 
-void Measured6Dwrench::setMeasuredContactForce(const Vector6 &fext) {
+void Measured6Dwrench::setMeasuredContactForce(const Vector6& fext) {
   m_fext = fext;
 }
 
-const Vector6 &Measured6Dwrench::getMeasuredContactForce() const {
+const Vector6& Measured6Dwrench::getMeasuredContactForce() const {
   return m_fext;
 }
 

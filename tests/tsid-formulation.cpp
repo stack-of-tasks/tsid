@@ -130,7 +130,7 @@ class StandardRomeoInvDynCtrl {
     // Create the inverse-dynamics formulation
     tsid = std::make_shared<InverseDynamicsFormulationAccForce>("tsid", *robot);
     tsid->computeProblemData(t, q, v);
-    pinocchio::Data &data = tsid->data();
+    pinocchio::Data& data = tsid->data();
 
     // Add the contact constraints
     Matrix3x contactPoints(3, 4);
@@ -205,12 +205,12 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force_remove_contact) {
   double t = 0.0;
 
   StandardRomeoInvDynCtrl romeo_inv_dyn(dt);
-  RobotWrapper &robot = *(romeo_inv_dyn.robot);
+  RobotWrapper& robot = *(romeo_inv_dyn.robot);
   auto tsid = romeo_inv_dyn.tsid;
-  Contact6d &contactRF = *(romeo_inv_dyn.contactRF);
-  Contact6d &contactLF = *(romeo_inv_dyn.contactLF);
-  TaskComEquality &comTask = *(romeo_inv_dyn.comTask);
-  TaskJointPosture &postureTask = *(romeo_inv_dyn.postureTask);
+  Contact6d& contactRF = *(romeo_inv_dyn.contactRF);
+  Contact6d& contactLF = *(romeo_inv_dyn.contactLF);
+  TaskComEquality& comTask = *(romeo_inv_dyn.comTask);
+  TaskJointPosture& postureTask = *(romeo_inv_dyn.postureTask);
   Vector q = romeo_inv_dyn.q;
   Vector v = romeo_inv_dyn.v;
   const int nv = robot.model().nv;
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force_remove_contact) {
   TrajectorySample samplePosture(nv - 6);
 
   // Create an HQP solver
-  SolverHQPBase *solver = SolverHQPFactory::createNewSolver(
+  SolverHQPBase* solver = SolverHQPFactory::createNewSolver(
       SOLVER_HQP_EIQUADPROG, "solver-eiquadprog");
   solver->resize(tsid->nVar(), tsid->nEq(), tsid->nIn());
 
@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force_remove_contact) {
     samplePosture = trajPosture->computeNext();
     postureTask.setReference(samplePosture);
 
-    const HQPData &HQPData = tsid->computeProblemData(t, q, v);
+    const HQPData& HQPData = tsid->computeProblemData(t, q, v);
     if (i == 0) cout << HQPDataToString(HQPData, false) << endl;
 
     REQUIRE_TASK_FINITE(postureTask);
@@ -265,13 +265,13 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force_remove_contact) {
     CHECK_LESS_THAN(contactRF.getMotionTask().position_error().norm(), 1e-3);
     CHECK_LESS_THAN(contactLF.getMotionTask().position_error().norm(), 1e-3);
 
-    const HQPOutput &sol = solver->solve(HQPData);
+    const HQPOutput& sol = solver->solve(HQPData);
 
     BOOST_CHECK_MESSAGE(sol.status == HQP_STATUS_OPTIMAL,
                         "Status " + toString(sol.status));
 
-    const Vector &tau = tsid->getActuatorForces(sol);
-    const Vector &dv = tsid->getAccelerations(sol);
+    const Vector& tau = tsid->getActuatorForces(sol);
+    const Vector& dv = tsid->getAccelerations(sol);
 
     if (i > 0) {
       CHECK_LESS_THAN((tau - tau_old).norm(), 2e1);
@@ -347,12 +347,12 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force) {
   double t = 0.0;
 
   StandardRomeoInvDynCtrl romeo_inv_dyn(dt);
-  RobotWrapper &robot = *(romeo_inv_dyn.robot);
+  RobotWrapper& robot = *(romeo_inv_dyn.robot);
   auto tsid = romeo_inv_dyn.tsid;
-  Contact6d &contactRF = *(romeo_inv_dyn.contactRF);
-  Contact6d &contactLF = *(romeo_inv_dyn.contactLF);
-  TaskComEquality &comTask = *(romeo_inv_dyn.comTask);
-  TaskJointPosture &postureTask = *(romeo_inv_dyn.postureTask);
+  Contact6d& contactRF = *(romeo_inv_dyn.contactRF);
+  Contact6d& contactLF = *(romeo_inv_dyn.contactLF);
+  TaskComEquality& comTask = *(romeo_inv_dyn.comTask);
+  TaskJointPosture& postureTask = *(romeo_inv_dyn.postureTask);
   Vector q = romeo_inv_dyn.q;
   Vector v = romeo_inv_dyn.v;
   const int nv = robot.model().nv;
@@ -369,7 +369,7 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force) {
   TrajectorySample samplePosture(nv - 6);
 
   // Create an HQP solver
-  SolverHQPBase *solver = SolverHQPFactory::createNewSolver(
+  SolverHQPBase* solver = SolverHQPFactory::createNewSolver(
       SOLVER_HQP_EIQUADPROG, "solver-eiquadprog");
 
   solver->resize(tsid->nVar(), tsid->nEq(), tsid->nIn());
@@ -383,7 +383,7 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force) {
 
   Vector dv = Vector::Zero(nv);
   Vector f_RF(12), f_LF(12), f(24);
-  vector<ContactBase *> contacts;
+  vector<ContactBase*> contacts;
   contacts.push_back(&contactRF);
   contacts.push_back(&contactLF);
   Matrix Jc(24, nv);
@@ -393,7 +393,7 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force) {
     samplePosture = trajPosture->computeNext();
     postureTask.setReference(samplePosture);
 
-    const HQPData &HQPData = tsid->computeProblemData(t, q, v);
+    const HQPData& HQPData = tsid->computeProblemData(t, q, v);
     if (i == 0) cout << HQPDataToString(HQPData, false) << endl;
 
     REQUIRE_TASK_FINITE(postureTask);
@@ -434,7 +434,7 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force) {
       if (i < 20) PRINT_VECTOR(dv);
     }
 
-    const HQPOutput &sol = solver->solve(HQPData);
+    const HQPOutput& sol = solver->solve(HQPData);
 
     BOOST_CHECK_MESSAGE(sol.status == HQP_STATUS_OPTIMAL,
                         "Status " + toString(sol.status));
@@ -552,7 +552,7 @@ BOOST_AUTO_TEST_CASE(test_contact_point_invdyn_formulation_acc_force) {
   auto tsid =
       std::make_shared<InverseDynamicsFormulationAccForce>("tsid", robot);
   tsid->computeProblemData(t, q, v);
-  pinocchio::Data &data = tsid->data();
+  pinocchio::Data& data = tsid->data();
 
   // Place the robot onto the ground.
 
@@ -601,14 +601,14 @@ BOOST_AUTO_TEST_CASE(test_contact_point_invdyn_formulation_acc_force) {
   }
 
   // Create an HQP solver
-  SolverHQPBase *solver = SolverHQPFactory::createNewSolver(
+  SolverHQPBase* solver = SolverHQPFactory::createNewSolver(
       SOLVER_HQP_EIQUADPROG, "solver-eiquadprog");
   solver->resize(tsid->nVar(), tsid->nEq(), tsid->nIn());
 
   Vector dv = Vector::Zero(nv);
-  const HQPOutput *sol;
+  const HQPOutput* sol;
   for (int i = 0; i < max_it; i++) {
-    const HQPData &HQPData = tsid->computeProblemData(t, q, v);
+    const HQPData& HQPData = tsid->computeProblemData(t, q, v);
 
     REQUIRE_TASK_FINITE((*comTask));
 
@@ -696,10 +696,10 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force_computation_time) {
   double t = 0.0;
 
   StandardRomeoInvDynCtrl romeo_inv_dyn(dt);
-  RobotWrapper &robot = *(romeo_inv_dyn.robot);
+  RobotWrapper& robot = *(romeo_inv_dyn.robot);
   auto tsid = romeo_inv_dyn.tsid;
-  TaskComEquality &comTask = *(romeo_inv_dyn.comTask);
-  TaskJointPosture &postureTask = *(romeo_inv_dyn.postureTask);
+  TaskComEquality& comTask = *(romeo_inv_dyn.comTask);
+  TaskJointPosture& postureTask = *(romeo_inv_dyn.postureTask);
   Vector q = romeo_inv_dyn.q;
   Vector v = romeo_inv_dyn.v;
   const int nv = robot.model().nv;
@@ -716,11 +716,11 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force_computation_time) {
   TrajectorySample samplePosture(nv - 6);
 
   // Create an HQP solver
-  SolverHQPBase *solver =
+  SolverHQPBase* solver =
       SolverHQPFactory::createNewSolver(SOLVER_HQP_EIQUADPROG, "eiquadprog");
-  SolverHQPBase *solver_fast = SolverHQPFactory::createNewSolver(
+  SolverHQPBase* solver_fast = SolverHQPFactory::createNewSolver(
       SOLVER_HQP_EIQUADPROG_FAST, "eiquadprog-fast");
-  SolverHQPBase *solver_rt = SolverHQPFactory::createNewSolver<61, 18, 71>(
+  SolverHQPBase* solver_rt = SolverHQPFactory::createNewSolver<61, 18, 71>(
       SOLVER_HQP_EIQUADPROG_RT, "eiquadprog-rt");
 
   solver->resize(tsid->nVar(), tsid->nEq(), tsid->nIn());
@@ -736,17 +736,17 @@ BOOST_AUTO_TEST_CASE(test_invdyn_formulation_acc_force_computation_time) {
     postureTask.setReference(samplePosture);
 
     getProfiler().start(PROFILE_PROBLEM_FORMULATION);
-    const HQPData &HQPData = tsid->computeProblemData(t, q, v);
+    const HQPData& HQPData = tsid->computeProblemData(t, q, v);
     getProfiler().stop(PROFILE_PROBLEM_FORMULATION);
 
     getProfiler().start(PROFILE_HQP);
-    const HQPOutput &sol = solver->solve(HQPData);
+    const HQPOutput& sol = solver->solve(HQPData);
     getProfiler().stop(PROFILE_HQP);
 
     getProfiler().stop(PROFILE_CONTROL_CYCLE);
 
     getProfiler().start(PROFILE_HQP_FAST);
-    const HQPOutput &sol_fast = solver_fast->solve(HQPData);
+    const HQPOutput& sol_fast = solver_fast->solve(HQPData);
     getProfiler().stop(PROFILE_HQP_FAST);
 
     getProfiler().start(PROFILE_HQP_RT);

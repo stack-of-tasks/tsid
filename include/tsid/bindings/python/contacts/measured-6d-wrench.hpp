@@ -31,10 +31,10 @@ struct Measured6dWrenchPythonVisitor
     : public boost::python::def_visitor<
           Measured6dWrenchPythonVisitor<Measured6dWrench> > {
   template <class PyClass>
-  void visit(PyClass &cl) const {
+  void visit(PyClass& cl) const {
     cl
         // Expose the constructor:
-        .def(bp::init<std::string, typename Measured6dWrench::RobotWrapper &,
+        .def(bp::init<std::string, typename Measured6dWrench::RobotWrapper&,
                       std::string>(
             (bp::arg("name"), bp::arg("robot"), bp::arg("frameName")),
             "Constructor for Measured6dwrench"))
@@ -70,38 +70,38 @@ struct Measured6dWrenchPythonVisitor
   }
 
   // Wrapper for name() getter.
-  static std::string getName(Measured6dWrench &self) { return self.name(); }
+  static std::string getName(Measured6dWrench& self) { return self.name(); }
 
   // Wrapper for name(const std::string &) setter.
-  static void setName(Measured6dWrench &self, const std::string &name) {
+  static void setName(Measured6dWrench& self, const std::string& name) {
     self.name(name);
   }
 
   // Wrapper for computeJointTorques(Data &data) returning by value.
   static typename Measured6dWrench::Vector computeJointTorques(
-      Measured6dWrench &self, pinocchio::Data &data) {
+      Measured6dWrench& self, pinocchio::Data& data) {
     return self.computeJointTorques(data);
   }
 
   // Wrapper for setMeasuredContactForce(const Vector6 &fext)
   static void setMeasuredContactForce(
-      Measured6dWrench &self, const typename Measured6dWrench::Vector6 &fext) {
+      Measured6dWrench& self, const typename Measured6dWrench::Vector6& fext) {
     self.setMeasuredContactForce(fext);
   }
 
   // Wrapper for getMeasuredContactForce() returning by value.
   static typename Measured6dWrench::Vector6 getMeasuredContactForce(
-      Measured6dWrench &self) {
+      Measured6dWrench& self) {
     return self.getMeasuredContactForce();
   }
 
   // Wrapper for useLocalFrame(bool local_frame)
-  static void useLocalFrame(Measured6dWrench &self, bool local_frame) {
+  static void useLocalFrame(Measured6dWrench& self, bool local_frame) {
     self.useLocalFrame(local_frame);
   }
 
   // Function to expose the binding.
-  static void expose(const std::string &class_name) {
+  static void expose(const std::string& class_name) {
     std::string doc = "Bindings for tsid::contacts::Measured6dwrench";
     bp::class_<Measured6dWrench>(class_name.c_str(), doc.c_str(), bp::no_init)
         .def(Measured6dWrenchPythonVisitor<Measured6dWrench>());

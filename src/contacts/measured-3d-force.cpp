@@ -28,8 +28,8 @@ using namespace pinocchio;
 
 typedef pinocchio::Data::Matrix6x Matrix6x;
 
-Measured3Dforce::Measured3Dforce(const std::string &name, RobotWrapper &robot,
-                                 const std::string &frameName)
+Measured3Dforce::Measured3Dforce(const std::string& name, RobotWrapper& robot,
+                                 const std::string& frameName)
     : MeasuredForceBase(name, robot), m_frame_name(frameName) {
   assert(m_robot.model().existFrame(frameName));
   m_frame_id = m_robot.model().getFrameId(frameName);
@@ -42,7 +42,7 @@ Measured3Dforce::Measured3Dforce(const std::string &name, RobotWrapper &robot,
   m_local_frame = true;
 }
 
-const Vector &Measured3Dforce::computeJointTorques(Data &data) {
+const Vector& Measured3Dforce::computeJointTorques(Data& data) {
   Matrix6x J;
   J.setZero(6, m_robot.nv());
 
@@ -66,11 +66,11 @@ const Vector &Measured3Dforce::computeJointTorques(Data &data) {
   return m_computedTorques;
 }
 
-void Measured3Dforce::setMeasuredContactForce(const Vector3 &fext) {
+void Measured3Dforce::setMeasuredContactForce(const Vector3& fext) {
   m_fext = fext;
 }
 
-const Vector3 &Measured3Dforce::getMeasuredContactForce() const {
+const Vector3& Measured3Dforce::getMeasuredContactForce() const {
   return m_fext;
 }
 

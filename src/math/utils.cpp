@@ -20,14 +20,14 @@
 namespace tsid {
 namespace math {
 
-void SE3ToXYZQUAT(const pinocchio::SE3 &M, RefVector xyzQuat) {
+void SE3ToXYZQUAT(const pinocchio::SE3& M, RefVector xyzQuat) {
   PINOCCHIO_CHECK_INPUT_ARGUMENT(
       xyzQuat.size() == 7, "The size of the xyzQuat vector needs to equal 7");
   xyzQuat.head<3>() = M.translation();
   xyzQuat.tail<4>() = Eigen::Quaterniond(M.rotation()).coeffs();
 }
 
-void SE3ToVector(const pinocchio::SE3 &M, RefVector vec) {
+void SE3ToVector(const pinocchio::SE3& M, RefVector vec) {
   PINOCCHIO_CHECK_INPUT_ARGUMENT(
       vec.size() == 12, "The size of the vec vector needs to equal 12");
   vec.head<3>() = M.translation();
@@ -35,7 +35,7 @@ void SE3ToVector(const pinocchio::SE3 &M, RefVector vec) {
   vec.tail<9>() = Eigen::Map<const Vector9>(&M.rotation()(0), 9);
 }
 
-void vectorToSE3(RefVector vec, pinocchio::SE3 &M) {
+void vectorToSE3(RefVector vec, pinocchio::SE3& M) {
   PINOCCHIO_CHECK_INPUT_ARGUMENT(vec.size() == 12,
                                  "vec needs to contain 12 rows");
   M.translation(vec.head<3>());
@@ -43,8 +43,8 @@ void vectorToSE3(RefVector vec, pinocchio::SE3 &M) {
   M.rotation(Eigen::Map<const Matrix3>(&vec(3), 3, 3));
 }
 
-void errorInSE3(const pinocchio::SE3 &M, const pinocchio::SE3 &Mdes,
-                pinocchio::Motion &error) {
+void errorInSE3(const pinocchio::SE3& M, const pinocchio::SE3& Mdes,
+                pinocchio::Motion& error) {
   // error = pinocchio::log6(Mdes.inverse() * M);
   // pinocchio::SE3 M_err = Mdes.inverse() * M;
   pinocchio::SE3 M_err = M.inverse() * Mdes;
@@ -52,7 +52,7 @@ void errorInSE3(const pinocchio::SE3 &M, const pinocchio::SE3 &Mdes,
   error.angular() = pinocchio::log3(M_err.rotation());
 }
 
-void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd> &svd,
+void solveWithDampingFromSvd(Eigen::JacobiSVD<Eigen::MatrixXd>& svd,
                              ConstRefVector b, RefVector sol, double damping) {
   assert(svd.rows() == b.size());
   const double d2 = damping * damping;
@@ -88,19 +88,19 @@ void pseudoInverse(ConstRefMatrix A, RefMatrix Apinv, double tolerance,
 }
 
 void pseudoInverse(ConstRefMatrix A,
-                   Eigen::JacobiSVD<Eigen::MatrixXd> &svdDecomposition,
+                   Eigen::JacobiSVD<Eigen::MatrixXd>& svdDecomposition,
                    RefMatrix Apinv, double tolerance,
                    unsigned int computationOptions) {
   using namespace Eigen;
   int nullSpaceRows = -1, nullSpaceCols = -1;
-  pseudoInverse(A, svdDecomposition, Apinv, tolerance, (double *)0,
+  pseudoInverse(A, svdDecomposition, Apinv, tolerance, (double*)0,
                 nullSpaceRows, nullSpaceCols, computationOptions);
 }
 
 void pseudoInverse(ConstRefMatrix A,
-                   Eigen::JacobiSVD<Eigen::MatrixXd> &svdDecomposition,
-                   RefMatrix Apinv, double tolerance, double *nullSpaceBasisOfA,
-                   int &nullSpaceRows, int &nullSpaceCols,
+                   Eigen::JacobiSVD<Eigen::MatrixXd>& svdDecomposition,
+                   RefMatrix Apinv, double tolerance, double* nullSpaceBasisOfA,
+                   int& nullSpaceRows, int& nullSpaceCols,
                    unsigned int computationOptions) {
   using namespace Eigen;
 
@@ -134,11 +134,11 @@ void pseudoInverse(ConstRefMatrix A,
 }
 
 void dampedPseudoInverse(ConstRefMatrix A,
-                         Eigen::JacobiSVD<Eigen::MatrixXd> &svdDecomposition,
+                         Eigen::JacobiSVD<Eigen::MatrixXd>& svdDecomposition,
                          RefMatrix Apinv, double tolerance,
                          double dampingFactor, unsigned int computationOptions,
-                         double *nullSpaceBasisOfA, int *nullSpaceRows,
-                         int *nullSpaceCols) {
+                         double* nullSpaceBasisOfA, int* nullSpaceRows,
+                         int* nullSpaceCols) {
   using namespace Eigen;
 
   if (computationOptions == 0)
@@ -173,8 +173,8 @@ void dampedPseudoInverse(ConstRefMatrix A,
 }
 
 void nullSpaceBasisFromDecomposition(
-    const Eigen::JacobiSVD<Eigen::MatrixXd> &svdDecomposition, double tolerance,
-    double *nullSpaceBasisMatrix, int &rows, int &cols) {
+    const Eigen::JacobiSVD<Eigen::MatrixXd>& svdDecomposition, double tolerance,
+    double* nullSpaceBasisMatrix, int& rows, int& cols) {
   using namespace Eigen;
   JacobiSVD<MatrixXd>::SingularValuesType singularValues =
       svdDecomposition.singularValues();
@@ -189,10 +189,10 @@ void nullSpaceBasisFromDecomposition(
 }
 
 void nullSpaceBasisFromDecomposition(
-    const Eigen::JacobiSVD<Eigen::MatrixXd> &svdDecomposition, int rank,
-    double *nullSpaceBasisMatrix, int &rows, int &cols) {
+    const Eigen::JacobiSVD<Eigen::MatrixXd>& svdDecomposition, int rank,
+    double* nullSpaceBasisMatrix, int& rows, int& cols) {
   using namespace Eigen;
-  const MatrixXd &vMatrix = svdDecomposition.matrixV();
+  const MatrixXd& vMatrix = svdDecomposition.matrixV();
   // A \in \mathbb{R}^{uMatrix.rows() \times vMatrix.cols()}
   rows = (int)vMatrix.cols();
   cols = (int)vMatrix.cols() - rank;
