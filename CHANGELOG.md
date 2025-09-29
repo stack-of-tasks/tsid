@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.9.0] - 1980-01-01
+## [1.9.0] - 2025-09-29
 
 - Fix value of nEq when removeRigidContact for contact with priority > 0
 - update jrl-cmakemodules to v1
