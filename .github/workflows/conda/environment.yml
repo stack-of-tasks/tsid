@@ -1,0 +1,21 @@
+name: tsid
+channels:
+  - conda-forge
+dependencies:
+  - cmake
+  - cxx-compiler
+  - pkg-config
+  - doxygen
+  - graphviz
+  - ccache
+  - ninja
+  - python
+  - eigenpy
+  - libboost-python-devel
+  - eigen
+  - pinocchio
+  - eiquadprog
+  - osqp-eigen
+  - proxsuite
+  - urdfdom
+  - numpy
