@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- ROS: jrl_cmakemodules dependency + kilted CI
+
 ## [1.9.0] - 2025-09-29
 
 - Fix value of nEq when removeRigidContact for contact with priority > 0
