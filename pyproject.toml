@@ -1,18 +1,19 @@
 [build-system]
 build-backend = "cmeel"
 requires = [
-  "cmeel-boost >= 1.87.0, < 1.88",
+  "cmeel-boost ~= 1.89.0",
   "cmeel[build]",
-  "coal-library[build] >= 3, < 4",
-  "eiquadprog",
+  "eiquadprog[build]",
+  "libtsid[build] == 1.9.0",
   "pin[build]",
   "scipy"
 ]
 
 [project]
 dependencies = [
-  "cmeel-boost >= 1.87.0, < 1.88",
+  "cmeel-boost ~= 1.89.0",
   "eiquadprog",
+  "libtsid == 1.9.0",
   "pin"
 ]
 description = "A fast and flexible implementation of Rigid Body Dynamics algorithms and their analytical derivatives"
@@ -21,11 +22,16 @@ name = "tsid"
 version = "1.7.1"
 
 [project.urls]
+changelog = "https://github.com/stack-of-tasks/tsid/blob/devel/CHANGELOG.md"
 homepage = "https://github.com/cmake-wheel/tsid"
 upstream = "https://github.com/stack-of-tasks/tsid"
 
 [tool.cmeel]
-configure-args = ["-DSUFFIX_SO_VERSION=OFF"]
+configure-args = [
+  "-DBUILD_PYTHON_INTERFACE=ON",
+  "-DBUILD_STANDALONE_PYTHON_INTERFACE=ON",
+  "-DSUFFIX_SO_VERSION=OFF"
+]
 
 [tool.ruff]
 extend-exclude = ["cmake"]
