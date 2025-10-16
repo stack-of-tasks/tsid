@@ -176,7 +176,7 @@ def plotNdQuantityPerSolver(  # noqa: C901
     x=None,
 ):
     if ax is None:
-        f, ax = plt.subplots(nRows, nCols, sharex=True, sharey=sharey)
+        _f, ax = plt.subplots(nRows, nCols, sharex=True, sharey=sharey)
     ax = ax.reshape(nRows, nCols)
     k = 0
     if x is None:
@@ -321,7 +321,7 @@ def plotQuantityPerSolver(
     xlabel="",
     legend_location="best",
 ):
-    f, ax = plt.subplots()
+    _f, ax = plt.subplots()
     lw = DEFAULT_LINE_WIDTH
     if x is None:
         x = list(range(quantity.shape[0]))

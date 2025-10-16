@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>tsid</name>
-  <version>1.7.1</version>
+  <version>1.9.0</version>
   <description>
     Efficient Task Space Inverse Dynamics (TSID) based on Pinocchio
   </description>
   <url>https://github.com/stack-of-tasks/tsid</url>
-  <license>BSD</license>
+  <license>BSD-2-Clause</license>
   <author>Andrea Del Prete</author>
   <author>Justin Carpentier</author>
   <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>

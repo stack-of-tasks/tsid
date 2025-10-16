@@ -7,13 +7,6 @@
 // License as published by the Free Software Foundation, either version
 // 3 of the License, or (at your option) any later version.
 // tsid is distributed in the hope that it will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Lesser Public License for more details. You should have
-// received a copy of the GNU Lesser General Public License along with
-// tsid If not, see
-// <http://www.gnu.org/licenses/>.
-//
 
 #ifndef __invdyn_inverse_dynamics_formulation_base_hpp__
 #define __invdyn_inverse_dynamics_formulation_base_hpp__
@@ -84,7 +77,7 @@ class InverseDynamicsFormulationBase {
   InverseDynamicsFormulationBase(const std::string& name, RobotWrapper& robot,
                                  bool verbose = false);
 
-  virtual ~InverseDynamicsFormulationBase() {}
+  virtual ~InverseDynamicsFormulationBase() = default;
 
   virtual Data& data() = 0;
 
@@ -156,6 +149,8 @@ class InverseDynamicsFormulationBase {
   virtual const Vector& getContactForces(const HQPOutput& sol) = 0;
   virtual bool getContactForces(const std::string& name, const HQPOutput& sol,
                                 RefVector f) = 0;
+
+  virtual unsigned int getTaskPriority(const std::string& name) = 0;
 
  protected:
   std::string m_name;

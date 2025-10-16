@@ -45,38 +45,38 @@ class TaskTwoFramesEquality : public TaskMotion {
                         const std::string& frameName1,
                         const std::string& frameName2);
 
-  int dim() const;
+  int dim() const override;
 
   const ConstraintBase& compute(const double t, ConstRefVector q,
-                                ConstRefVector v, Data& data);
+                                ConstRefVector v, Data& data) override;
 
-  const ConstraintBase& getConstraint() const;
+  const ConstraintBase& getConstraint() const override;
 
   /** Return the desired task acceleration (after applying the specified mask).
    *  The value is expressed in local frame is the local_frame flag is true,
    *  otherwise it is expressed in a local world-oriented frame.
    */
-  const Vector& getDesiredAcceleration() const;
+  const Vector& getDesiredAcceleration() const override;
 
   /** Return the task acceleration (after applying the specified mask).
    *  The value is expressed in local frame is the local_frame flag is true,
    *  otherwise it is expressed in a local world-oriented frame.
    */
-  Vector getAcceleration(ConstRefVector dv) const;
+  Vector getAcceleration(ConstRefVector dv) const override;
 
-  virtual void setMask(math::ConstRefVector mask);
+  virtual void setMask(math::ConstRefVector mask) override;
 
   /** Return the position tracking error (after applying the specified mask).
    *  The error is expressed in local frame is the local_frame flag is true,
    *  otherwise it is expressed in a local world-oriented frame.
    */
-  const Vector& position_error() const;
+  const Vector& position_error() const override;
 
   /** Return the velocity tracking error (after applying the specified mask).
    *  The error is expressed in local frame is the local_frame flag is true,
    *  otherwise it is expressed in a local world-oriented frame.
    */
-  const Vector& velocity_error() const;
+  const Vector& velocity_error() const override;
 
   const Vector& Kp() const;
   const Vector& Kd() const;

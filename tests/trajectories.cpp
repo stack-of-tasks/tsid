@@ -1,19 +1,6 @@
 //
 // Copyright (c) 2017 CNRS
 //
-// This file is part of tsid
-// tsid is free software: you can redistribute it
-// and/or modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation, either version
-// 3 of the License, or (at your option) any later version.
-// tsid is distributed in the hope that it will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Lesser Public License for more details. You should have
-// received a copy of the GNU Lesser General Public License along with
-// tsid If not, see
-// <http://www.gnu.org/licenses/>.
-//
 
 #include <iostream>
 
@@ -39,7 +26,7 @@ BOOST_AUTO_TEST_CASE(test_trajectory_se3) {
   SE3ToVector(M_ref, M_vec);
   VectorXd zero = VectorXd::Zero(6);
 
-  TrajectoryBase *traj = new TrajectorySE3Constant("traj_se3", M_ref);
+  TrajectoryBase* traj = new TrajectorySE3Constant("traj_se3", M_ref);
   BOOST_CHECK(traj->has_trajectory_ended());
   BOOST_CHECK(traj->computeNext().getValue().isApprox(M_vec));
   BOOST_CHECK(traj->operator()(0.0).getValue().isApprox(M_vec));
@@ -60,7 +47,7 @@ BOOST_AUTO_TEST_CASE(test_trajectory_euclidian) {
   const unsigned int n = 5;
   VectorXd q_ref = VectorXd::Ones(n);
   VectorXd zero = VectorXd::Zero(n);
-  TrajectoryBase *traj = new TrajectoryEuclidianConstant("traj_eucl", q_ref);
+  TrajectoryBase* traj = new TrajectoryEuclidianConstant("traj_eucl", q_ref);
 
   BOOST_CHECK(traj->has_trajectory_ended());
   BOOST_CHECK(traj->computeNext().getValue().isApprox(q_ref));

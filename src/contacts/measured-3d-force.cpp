@@ -1,21 +1,8 @@
 //
-// Copyright (c) 2022 CNRS INRIA LORIA
-//
-// This file is part of tsid
-// tsid is free software: you can redistribute it
-// and/or modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation, either version
-// 3 of the License, or (at your option) any later version.
-// tsid is distributed in the hope that it will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Lesser Public License for more details. You should have
-// received a copy of the GNU Lesser General Public License along with
-// tsid If not, see
-// <http://www.gnu.org/licenses/>.
+// Copyright (c) 2025 CNRS INRIA LORIA
 //
 
-#include "tsid/contacts/measured-3Dforce.hpp"
+#include "tsid/contacts/measured-3d-force.hpp"
 
 #include "tsid/robots/robot-wrapper.hpp"
 
@@ -28,8 +15,8 @@ using namespace pinocchio;
 
 typedef pinocchio::Data::Matrix6x Matrix6x;
 
-Measured3Dforce::Measured3Dforce(const std::string &name, RobotWrapper &robot,
-                                 const std::string &frameName)
+Measured3Dforce::Measured3Dforce(const std::string& name, RobotWrapper& robot,
+                                 const std::string& frameName)
     : MeasuredForceBase(name, robot), m_frame_name(frameName) {
   assert(m_robot.model().existFrame(frameName));
   m_frame_id = m_robot.model().getFrameId(frameName);
@@ -42,7 +29,7 @@ Measured3Dforce::Measured3Dforce(const std::string &name, RobotWrapper &robot,
   m_local_frame = true;
 }
 
-const Vector &Measured3Dforce::computeJointTorques(Data &data) {
+const Vector& Measured3Dforce::computeJointTorques(Data& data) {
   Matrix6x J;
   J.setZero(6, m_robot.nv());
 
@@ -66,11 +53,11 @@ const Vector &Measured3Dforce::computeJointTorques(Data &data) {
   return m_computedTorques;
 }
 
-void Measured3Dforce::setMeasuredContactForce(const Vector3 &fext) {
+void Measured3Dforce::setMeasuredContactForce(const Vector3& fext) {
   m_fext = fext;
 }
 
-const Vector3 &Measured3Dforce::getMeasuredContactForce() const {
+const Vector3& Measured3Dforce::getMeasuredContactForce() const {
   return m_fext;
 }
 

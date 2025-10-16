@@ -46,14 +46,12 @@ class TaskJointPosVelAccBounds : public TaskMotion {
   TaskJointPosVelAccBounds(const std::string& name, RobotWrapper& robot,
                            double dt, bool verbose = true);
 
-  virtual ~TaskJointPosVelAccBounds() {}
+  int dim() const override;
 
-  int dim() const;
+  const ConstraintBase& compute(double t, ConstRefVector q, ConstRefVector v,
+                                Data& data) override;
 
-  const ConstraintBase& compute(const double t, ConstRefVector q,
-                                ConstRefVector v, Data& data);
-
-  const ConstraintBase& getConstraint() const;
+  const ConstraintBase& getConstraint() const override;
 
   void setTimeStep(double dt);
   void setPositionBounds(ConstRefVector lower, ConstRefVector upper);
@@ -106,7 +104,7 @@ class TaskJointPosVelAccBounds : public TaskMotion {
 
   TSID_DEPRECATED const Vector& mask() const;     // deprecated
   TSID_DEPRECATED void mask(const Vector& mask);  // deprecated
-  virtual void setMask(math::ConstRefVector mask);
+  virtual void setMask(math::ConstRefVector mask) override;
 
  protected:
   ConstraintInequality m_constraint;

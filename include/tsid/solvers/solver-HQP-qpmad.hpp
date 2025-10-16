@@ -1,19 +1,6 @@
 //
 // Copyright (c) 2022 Inria
 //
-// This file is part of tsid
-// tsid is free software: you can redistribute it
-// and/or modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation, either version
-// 3 of the License, or (at your option) any later version.
-// tsid is distributed in the hope that it will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Lesser Public License for more details. You should have
-// received a copy of the GNU Lesser General Public License along with
-// tsid If not, see
-// <http://www.gnu.org/licenses/>.
-//
 
 #ifndef __invdyn_solvers_hqp_qpmad_hpp__
 #define __invdyn_solvers_hqp_qpmad_hpp__
@@ -41,18 +28,18 @@ class TSID_DLLAPI SolverHQpmad : public SolverHQPBase {
 
   SolverHQpmad(const std::string& name);
 
-  void resize(unsigned int n, unsigned int neq, unsigned int nin);
+  void resize(unsigned int n, unsigned int neq, unsigned int nin) override;
 
   /** Solve the given Hierarchical Quadratic Program
    */
-  const HQPOutput& solve(const HQPData& problemData);
+  const HQPOutput& solve(const HQPData& problemData) override;
 
   /** Retrieve the matrices describing a QP problem from the problem data. */
   void retrieveQPData(const HQPData& problemData,
-                      const bool hessianRegularization = true);
+                      const bool hessianRegularization = true) override;
 
   /** Get the objective value of the last solved problem. */
-  double getObjectiveValue();
+  double getObjectiveValue() override;
 
   Settings& settings() { return m_settings; }
 

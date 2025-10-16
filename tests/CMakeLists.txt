@@ -1,15 +1,6 @@
 #
 # Copyright (c) 2017-2020 CNRS
 #
-# This file is part of tsid tsid is free software: you can redistribute it
-# and/or modify it under the terms of the GNU Lesser General Public License as
-# published by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. tsid is distributed in the hope that it
-# will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-# Lesser Public License for more details. You should have received a copy of the
-# GNU Lesser General Public License along with tsid. If not, see
-# <http://www.gnu.org/licenses/>.
 
 # --- MACROS ------------------------------------------------------------------
 # --- MACROS ------------------------------------------------------------------
@@ -38,30 +29,33 @@ endmacro(ADD_TESTCASE)
 # --- RULES -------------------------------------------------------------------
 # --- RULES -------------------------------------------------------------------
 
-add_testcase(constraints)
-add_testcase(trajectories)
+if(NOT BUILD_STANDALONE_PYTHON_INTERFACE)
+  add_testcase(constraints)
+  add_testcase(trajectories)
 
-add_testcase(robot-wrapper)
-add_test_cflags(robot-wrapper
-                '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+  add_testcase(robot-wrapper)
+  add_test_cflags(robot-wrapper
+                  '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-add_testcase(tasks)
-add_test_cflags(tasks '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+  add_testcase(tasks)
+  add_test_cflags(tasks
+                  '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-add_testcase(contacts)
-add_test_cflags(contacts
-                '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+  add_testcase(contacts)
+  add_test_cflags(contacts
+                  '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-add_testcase(tsid-formulation)
-add_test_cflags(tsid-formulation
-                '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+  add_testcase(tsid-formulation)
+  add_test_cflags(tsid-formulation
+                  '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
 
-add_testcase(math_utils)
-add_testcase(hqp_solvers)
+  add_testcase(math_utils)
+  add_testcase(hqp_solvers)
 
-add_testcase(set_gravity)
-add_test_cflags(set_gravity
-                '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+  add_testcase(set_gravity)
+  add_test_cflags(set_gravity
+                  '-DTSID_SOURCE_DIR=\\\"${${PROJECT_NAME}_SOURCE_DIR}\\\"')
+endif()
 
 if(BUILD_PYTHON_INTERFACE)
   add_subdirectory(python)

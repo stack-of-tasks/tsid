@@ -1,19 +1,6 @@
 //
 // Copyright (c) 2017 CNRS, NYU, MPI Tübingen, UNITN
 //
-// This file is part of tsid
-// tsid is free software: you can redistribute it
-// and/or modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation, either version
-// 3 of the License, or (at your option) any later version.
-// tsid is distributed in the hope that it will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Lesser Public License for more details. You should have
-// received a copy of the GNU Lesser General Public License along with
-// tsid If not, see
-// <http://www.gnu.org/licenses/>.
-//
 
 #ifndef __invdyn_inverse_dynamics_formulation_acc_force_hpp__
 #define __invdyn_inverse_dynamics_formulation_acc_force_hpp__
@@ -56,57 +43,56 @@ class InverseDynamicsFormulationAccForce
   InverseDynamicsFormulationAccForce(const std::string& name,
                                      RobotWrapper& robot, bool verbose = false);
 
-  virtual ~InverseDynamicsFormulationAccForce() {}
+  Data& data() override;
 
-  Data& data();
-
-  unsigned int nVar() const;
-  unsigned int nEq() const;
-  unsigned int nIn() const;
+  unsigned int nVar() const override;
+  unsigned int nEq() const override;
+  unsigned int nIn() const override;
 
   bool addMotionTask(TaskMotion& task, double weight,
                      unsigned int priorityLevel,
-                     double transition_duration = 0.0);
+                     double transition_duration = 0.0) override;
 
   bool addForceTask(TaskContactForce& task, double weight,
                     unsigned int priorityLevel,
-                    double transition_duration = 0.0);
+                    double transition_duration = 0.0) override;
 
   bool addActuationTask(TaskActuation& task, double weight,
                         unsigned int priorityLevel,
-                        double transition_duration = 0.0);
+                        double transition_duration = 0.0) override;
 
-  bool updateTaskWeight(const std::string& task_name, double weight);
+  bool updateTaskWeight(const std::string& task_name, double weight) override;
 
   bool addRigidContact(ContactBase& contact, double force_regularization_weight,
                        double motion_weight = 1.0,
-                       unsigned int motion_priority_level = 0);
+                       unsigned int motion_priority_level = 0) override;
 
-  TSID_DEPRECATED bool addRigidContact(ContactBase& contact);
+  TSID_DEPRECATED bool addRigidContact(ContactBase& contact) override;
 
   bool updateRigidContactWeights(const std::string& contact_name,
                                  double force_regularization_weight,
-                                 double motion_weight = -1.0);
+                                 double motion_weight = -1.0) override;
 
-  bool addMeasuredForce(MeasuredForceBase& measuredForce);
+  bool addMeasuredForce(MeasuredForceBase& measuredForce) override;
 
   bool removeTask(const std::string& taskName,
-                  double transition_duration = 0.0);
+                  double transition_duration = 0.0) override;
 
   bool removeRigidContact(const std::string& contactName,
-                          double transition_duration = 0.0);
+                          double transition_duration = 0.0) override;
 
-  bool removeMeasuredForce(const std::string& measuredForceName);
+  bool removeMeasuredForce(const std::string& measuredForceName) override;
 
   const HQPData& computeProblemData(double time, ConstRefVector q,
-                                    ConstRefVector v);
+                                    ConstRefVector v) override;
 
-  const Vector& getActuatorForces(const HQPOutput& sol);
-  const Vector& getAccelerations(const HQPOutput& sol);
-  const Vector& getContactForces(const HQPOutput& sol);
+  const Vector& getActuatorForces(const HQPOutput& sol) override;
+  const Vector& getAccelerations(const HQPOutput& sol) override;
+  const Vector& getContactForces(const HQPOutput& sol) override;
   Vector getContactForces(const std::string& name, const HQPOutput& sol);
   bool getContactForces(const std::string& name, const HQPOutput& sol,
-                        RefVector f);
+                        RefVector f) override;
+  unsigned int getTaskPriority(const std::string& name) override;
 
  public:
   template <class TaskLevelPointer>

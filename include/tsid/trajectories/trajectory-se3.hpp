@@ -35,19 +35,17 @@ class TrajectorySE3Constant : public TrajectoryBase {
 
   TrajectorySE3Constant(const std::string& name, const SE3& M);
 
-  virtual ~TrajectorySE3Constant() {}
-
-  unsigned int size() const;
+  unsigned int size() const override;
 
   void setReference(const SE3& M);
 
-  const TrajectorySample& operator()(double time);
+  const TrajectorySample& operator()(double time) override;
 
-  const TrajectorySample& computeNext();
+  const TrajectorySample& computeNext() override;
 
-  void getLastSample(TrajectorySample& sample) const;
+  void getLastSample(TrajectorySample& sample) const override;
 
-  bool has_trajectory_ended() const;
+  bool has_trajectory_ended() const override;
 
  protected:
   SE3 m_M;

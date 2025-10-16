@@ -1,0 +1,26 @@
+name: "CI - Nix"
+
+on:
+  push:
+    branches:
+      - devel
+      - master
+  pull_request:
+    branches:
+      - devel
+      - master
+
+jobs:
+  nix:
+    runs-on: "${{ matrix.os }}-latest"
+    strategy:
+      matrix:
+        os: [ubuntu, macos]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+      - uses: cachix/cachix-action@v16
+        with:
+          name: gepetto
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: nix build -L

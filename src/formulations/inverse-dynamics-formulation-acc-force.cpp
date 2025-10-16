@@ -1,19 +1,6 @@
 //
 // Copyright (c) 2017 CNRS, NYU, MPI Tübingen
 //
-// This file is part of tsid
-// tsid is free software: you can redistribute it
-// and/or modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation, either version
-// 3 of the License, or (at your option) any later version.
-// tsid is distributed in the hope that it will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Lesser Public License for more details. You should have
-// received a copy of the GNU Lesser General Public License along with
-// tsid If not, see
-// <http://www.gnu.org/licenses/>.
-//
 
 #include "tsid/formulations/inverse-dynamics-formulation-acc-force.hpp"
 
@@ -30,7 +17,7 @@ using namespace std;
 typedef pinocchio::Data Data;
 
 InverseDynamicsFormulationAccForce::InverseDynamicsFormulationAccForce(
-    const std::string &name, RobotWrapper &robot, bool verbose)
+    const std::string& name, RobotWrapper& robot, bool verbose)
     : InverseDynamicsFormulationBase(name, robot, verbose),
       m_data(robot.model()),
       m_baseDynamics(new math::ConstraintEquality(
@@ -50,7 +37,7 @@ InverseDynamicsFormulationAccForce::InverseDynamicsFormulationAccForce(
           1.0, m_baseDynamics));
 }
 
-Data &InverseDynamicsFormulationAccForce::data() { return m_data; }
+Data& InverseDynamicsFormulationAccForce::data() { return m_data; }
 
 unsigned int InverseDynamicsFormulationAccForce::nVar() const {
   return m_v + m_k;
@@ -75,7 +62,7 @@ void InverseDynamicsFormulationAccForce::addTask(TaskLevelPointer tl,
                                                  double weight,
                                                  unsigned int priorityLevel) {
   if (priorityLevel > m_hqpData.size()) m_hqpData.resize(priorityLevel);
-  const ConstraintBase &c = tl->task.getConstraint();
+  const ConstraintBase& c = tl->task.getConstraint();
   if (c.isEquality()) {
     tl->constraint =
         std::make_shared<ConstraintEquality>(c.name(), c.rows(), m_v + m_k);
@@ -95,7 +82,7 @@ void InverseDynamicsFormulationAccForce::addTask(TaskLevelPointer tl,
 }
 
 bool InverseDynamicsFormulationAccForce::addMotionTask(
-    TaskMotion &task, double weight, unsigned int priorityLevel,
+    TaskMotion& task, double weight, unsigned int priorityLevel,
     double transition_duration) {
   PINOCCHIO_CHECK_INPUT_ARGUMENT(
       weight >= 0.0, "The weight needs to be positive or equal to 0");
@@ -111,7 +98,7 @@ bool InverseDynamicsFormulationAccForce::addMotionTask(
 }
 
 bool InverseDynamicsFormulationAccForce::addForceTask(
-    TaskContactForce &task, double weight, unsigned int priorityLevel,
+    TaskContactForce& task, double weight, unsigned int priorityLevel,
     double transition_duration) {
   PINOCCHIO_CHECK_INPUT_ARGUMENT(
       weight >= 0.0, "The weight needs to be positive or equal to 0");
@@ -126,7 +113,7 @@ bool InverseDynamicsFormulationAccForce::addForceTask(
 }
 
 bool InverseDynamicsFormulationAccForce::addActuationTask(
-    TaskActuation &task, double weight, unsigned int priorityLevel,
+    TaskActuation& task, double weight, unsigned int priorityLevel,
     double transition_duration) {
   PINOCCHIO_CHECK_INPUT_ARGUMENT(
       weight >= 0.0, "The weight needs to be positive or equal to 0");
@@ -139,7 +126,7 @@ bool InverseDynamicsFormulationAccForce::addActuationTask(
 
   if (priorityLevel > m_hqpData.size()) m_hqpData.resize(priorityLevel);
 
-  const ConstraintBase &c = tl->task.getConstraint();
+  const ConstraintBase& c = tl->task.getConstraint();
   if (c.isEquality()) {
     tl->constraint =
         std::make_shared<ConstraintEquality>(c.name(), c.rows(), m_v + m_k);
@@ -160,7 +147,7 @@ bool InverseDynamicsFormulationAccForce::addActuationTask(
 }
 
 bool InverseDynamicsFormulationAccForce::updateTaskWeight(
-    const std::string &task_name, double weight) {
+    const std::string& task_name, double weight) {
   ConstraintLevel::iterator it;
   // do not look into first priority level because weights do not matter there
   for (unsigned int i = 1; i < m_hqpData.size(); i++) {
@@ -175,7 +162,7 @@ bool InverseDynamicsFormulationAccForce::updateTaskWeight(
 }
 
 bool InverseDynamicsFormulationAccForce::addRigidContact(
-    ContactBase &contact, double force_regularization_weight,
+    ContactBase& contact, double force_regularization_weight,
     double motion_weight, unsigned int motionPriorityLevel) {
   auto cl = std::make_shared<ContactLevel>(contact);
   cl->index = m_k;
@@ -183,21 +170,21 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(
   m_contacts.push_back(cl);
   resizeHqpData();
 
-  const ConstraintBase &motionConstr = contact.getMotionConstraint();
+  const ConstraintBase& motionConstr = contact.getMotionConstraint();
   cl->motionConstraint = std::make_shared<ConstraintEquality>(
       contact.name() + "_motion_task", motionConstr.rows(), m_v + m_k);
   m_hqpData[motionPriorityLevel].push_back(
       solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(
           motion_weight, cl->motionConstraint));
 
-  const ConstraintInequality &forceConstr = contact.getForceConstraint();
+  const ConstraintInequality& forceConstr = contact.getForceConstraint();
   cl->forceConstraint = std::make_shared<ConstraintInequality>(
       contact.name() + "_force_constraint", forceConstr.rows(), m_v + m_k);
   m_hqpData[0].push_back(
       solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(
           1.0, cl->forceConstraint));
 
-  const ConstraintEquality &forceRegConstr =
+  const ConstraintEquality& forceRegConstr =
       contact.getForceRegularizationTask();
   cl->forceRegTask = std::make_shared<ConstraintEquality>(
       contact.name() + "_force_reg_task", forceRegConstr.rows(), m_v + m_k);
@@ -211,7 +198,7 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(
   return true;
 }
 
-bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase &contact) {
+bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase& contact) {
   std::cout << "[InverseDynamicsFormulationAccForce] Method "
                "addRigidContact(ContactBase) is deprecated. You should use "
                "addRigidContact(ContactBase, double) instead.\n";
@@ -219,7 +206,7 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(ContactBase &contact) {
 }
 
 bool InverseDynamicsFormulationAccForce::updateRigidContactWeights(
-    const std::string &contact_name, double force_regularization_weight,
+    const std::string& contact_name, double force_regularization_weight,
     double motion_weight) {
   // update weight of force regularization task
   ConstraintLevel::iterator itt;
@@ -245,14 +232,14 @@ bool InverseDynamicsFormulationAccForce::updateRigidContactWeights(
 }
 
 bool InverseDynamicsFormulationAccForce::addMeasuredForce(
-    MeasuredForceBase &measuredForce) {
+    MeasuredForceBase& measuredForce) {
   auto tl = std::make_shared<MeasuredForceLevel>(measuredForce);
   m_measuredForces.push_back(tl);
 
   return true;
 }
 
-const HQPData &InverseDynamicsFormulationAccForce::computeProblemData(
+const HQPData& InverseDynamicsFormulationAccForce::computeProblemData(
     double time, ConstRefVector q, ConstRefVector v) {
   m_t = time;
 
@@ -282,22 +269,22 @@ const HQPData &InverseDynamicsFormulationAccForce::computeProblemData(
   for (auto cl : m_contacts) {
     unsigned int m = cl->contact.n_force();
 
-    const ConstraintBase &mc =
+    const ConstraintBase& mc =
         cl->contact.computeMotionTask(time, q, v, m_data);
     cl->motionConstraint->matrix().leftCols(m_v) = mc.matrix();
     cl->motionConstraint->vector() = mc.vector();
 
-    const Matrix &T =
+    const Matrix& T =
         cl->contact.getForceGeneratorMatrix();  // e.g., 6x12 for a 6d contact
     m_Jc.middleRows(cl->index, m).noalias() = T.transpose() * mc.matrix();
 
-    const ConstraintInequality &fc =
+    const ConstraintInequality& fc =
         cl->contact.computeForceTask(time, q, v, m_data);
     cl->forceConstraint->matrix().middleCols(m_v + cl->index, m) = fc.matrix();
     cl->forceConstraint->lowerBound() = fc.lowerBound();
     cl->forceConstraint->upperBound() = fc.upperBound();
 
-    const ConstraintEquality &fr =
+    const ConstraintEquality& fr =
         cl->contact.computeForceRegularizationTask(time, q, v, m_data);
     cl->forceRegTask->matrix().middleCols(m_v + cl->index, m) = fr.matrix();
     cl->forceRegTask->vector() = fr.vector();
@@ -309,14 +296,14 @@ const HQPData &InverseDynamicsFormulationAccForce::computeProblemData(
     h_fext += it->measuredForce.computeJointTorques(m_data);
   }
 
-  const Matrix &M_a = m_robot.mass(m_data).bottomRows(m_v - m_u);
-  const Vector &h_a =
+  const Matrix& M_a = m_robot.mass(m_data).bottomRows(m_v - m_u);
+  const Vector& h_a =
       m_robot.nonLinearEffects(m_data).tail(m_v - m_u) - h_fext.tail(m_v - m_u);
-  const Matrix &J_a = m_Jc.rightCols(m_v - m_u);
-  const Matrix &M_u = m_robot.mass(m_data).topRows(m_u);
-  const Vector &h_u =
+  const Matrix& J_a = m_Jc.rightCols(m_v - m_u);
+  const Matrix& M_u = m_robot.mass(m_data).topRows(m_u);
+  const Vector& h_u =
       m_robot.nonLinearEffects(m_data).head(m_u) - h_fext.head(m_u);
-  const Matrix &J_u = m_Jc.leftCols(m_u);
+  const Matrix& J_u = m_Jc.leftCols(m_u);
 
   m_baseDynamics->matrix().leftCols(m_v) = M_u;
   m_baseDynamics->matrix().rightCols(m_k) = -J_u.transpose();
@@ -324,8 +311,8 @@ const HQPData &InverseDynamicsFormulationAccForce::computeProblemData(
 
   //  std::vector<TaskLevel*>::iterator it;
   //  for(it=m_taskMotions.begin(); it!=m_taskMotions.end(); it++)
-  for (auto &it : m_taskMotions) {
-    const ConstraintBase &c = it->task.compute(time, q, v, m_data);
+  for (auto& it : m_taskMotions) {
+    const ConstraintBase& c = it->task.compute(time, q, v, m_data);
     if (c.isEquality()) {
       it->constraint->matrix().leftCols(m_v) = c.matrix();
       it->constraint->vector() = c.vector();
@@ -340,7 +327,7 @@ const HQPData &InverseDynamicsFormulationAccForce::computeProblemData(
     }
   }
 
-  for (auto &it : m_taskContactForces) {
+  for (auto& it : m_taskContactForces) {
     // cout<<"Task "<<it->task.name()<<endl;
     // by default the task is associated to all contact forces
     int i0 = m_v;
@@ -360,7 +347,7 @@ const HQPData &InverseDynamicsFormulationAccForce::computeProblemData(
       }
     }
 
-    const ConstraintBase &c = it->task.compute(time, q, v, m_data, &m_contacts);
+    const ConstraintBase& c = it->task.compute(time, q, v, m_data, &m_contacts);
     // cout<<"matrix"<<endl<<c.matrix()<<endl;
     // cout<<"vector"<<endl<<c.vector().transpose()<<endl;
     // cout<<"i0 "<<i0<<" c_size "<<c_size<<endl;
@@ -382,8 +369,8 @@ const HQPData &InverseDynamicsFormulationAccForce::computeProblemData(
     }
   }
 
-  for (auto &it : m_taskActuations) {
-    const ConstraintBase &c = it->task.compute(time, q, v, m_data);
+  for (auto& it : m_taskActuations) {
+    const ConstraintBase& c = it->task.compute(time, q, v, m_data);
     if (c.isEquality()) {
       it->constraint->matrix().leftCols(m_v).noalias() = c.matrix() * M_a;
       it->constraint->matrix().rightCols(m_k).noalias() =
@@ -412,13 +399,13 @@ const HQPData &InverseDynamicsFormulationAccForce::computeProblemData(
   return m_hqpData;
 }
 
-bool InverseDynamicsFormulationAccForce::decodeSolution(const HQPOutput &sol) {
+bool InverseDynamicsFormulationAccForce::decodeSolution(const HQPOutput& sol) {
   if (m_solutionDecoded) return true;
 
-  const Matrix &M_a = m_robot.mass(m_data).bottomRows(m_v - m_u);
-  const Vector &h_a =
+  const Matrix& M_a = m_robot.mass(m_data).bottomRows(m_v - m_u);
+  const Vector& h_a =
       m_robot.nonLinearEffects(m_data).tail(m_v - m_u) - h_fext.tail(m_v - m_u);
-  const Matrix &J_a = m_Jc.rightCols(m_v - m_u);
+  const Matrix& J_a = m_Jc.rightCols(m_v - m_u);
   m_dv = sol.x.head(m_v);
   m_f = sol.x.tail(m_k);
   m_tau = h_a;
@@ -428,30 +415,30 @@ bool InverseDynamicsFormulationAccForce::decodeSolution(const HQPOutput &sol) {
   return true;
 }
 
-const Vector &InverseDynamicsFormulationAccForce::getActuatorForces(
-    const HQPOutput &sol) {
+const Vector& InverseDynamicsFormulationAccForce::getActuatorForces(
+    const HQPOutput& sol) {
   decodeSolution(sol);
   return m_tau;
 }
 
-const Vector &InverseDynamicsFormulationAccForce::getAccelerations(
-    const HQPOutput &sol) {
+const Vector& InverseDynamicsFormulationAccForce::getAccelerations(
+    const HQPOutput& sol) {
   decodeSolution(sol);
   return m_dv;
 }
 
-const Vector &InverseDynamicsFormulationAccForce::getContactForces(
-    const HQPOutput &sol) {
+const Vector& InverseDynamicsFormulationAccForce::getContactForces(
+    const HQPOutput& sol) {
   decodeSolution(sol);
   return m_f;
 }
 
 Vector InverseDynamicsFormulationAccForce::getContactForces(
-    const std::string &name, const HQPOutput &sol) {
+    const std::string& name, const HQPOutput& sol) {
   decodeSolution(sol);
   // for(std::vector<ContactLevel*>::iterator it=m_contacts.begin();
   // it!=m_contacts.end(); it++)
-  for (auto &it : m_contacts) {
+  for (auto& it : m_contacts) {
     if (it->contact.name() == name) {
       const int k = it->contact.n_force();
       return m_f.segment(it->index, k);
@@ -461,9 +448,9 @@ Vector InverseDynamicsFormulationAccForce::getContactForces(
 }
 
 bool InverseDynamicsFormulationAccForce::getContactForces(
-    const std::string &name, const HQPOutput &sol, RefVector f) {
+    const std::string& name, const HQPOutput& sol, RefVector f) {
   decodeSolution(sol);
-  for (auto &it : m_contacts) {
+  for (auto& it : m_contacts) {
     if (it->contact.name() == name) {
       const int k = it->contact.n_force();
       assert(f.size() == k);
@@ -474,7 +461,7 @@ bool InverseDynamicsFormulationAccForce::getContactForces(
   return false;
 }
 
-bool InverseDynamicsFormulationAccForce::removeTask(const std::string &taskName,
+bool InverseDynamicsFormulationAccForce::removeTask(const std::string& taskName,
                                                     double) {
 #ifndef NDEBUG
   bool taskFound = removeFromHqpData(taskName);
@@ -518,9 +505,9 @@ bool InverseDynamicsFormulationAccForce::removeTask(const std::string &taskName,
 }
 
 bool InverseDynamicsFormulationAccForce::removeRigidContact(
-    const std::string &contactName, double transition_duration) {
+    const std::string& contactName, double transition_duration) {
   if (transition_duration > 0.0) {
-    for (auto &it : m_contacts) {
+    for (auto& it : m_contacts) {
       if (it->contact.name() == contactName) {
         auto transitionInfo = std::make_shared<ContactTransitionInfo>();
         transitionInfo->contactLevel = it;
@@ -541,6 +528,9 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(
     return false;
   }
 
+  // Find motion task priority
+  bool is_motion_contraint =
+      (getTaskPriority(contactName + "_motion_task") == 0);
   bool first_constraint_found = removeFromHqpData(contactName + "_motion_task");
   assert(first_constraint_found);
 
@@ -556,7 +546,7 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(
   for (auto it = m_contacts.begin(); it != m_contacts.end(); it++) {
     if ((*it)->contact.name() == contactName) {
       m_k -= (*it)->contact.n_force();
-      m_eq -= (*it)->motionConstraint->rows();
+      if (is_motion_contraint) m_eq -= (*it)->motionConstraint->rows();
       m_in -= (*it)->forceConstraint->rows();
       m_contacts.erase(it);
       resizeHqpData();
@@ -566,7 +556,7 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(
   }
 
   int k = 0;
-  for (auto &it : m_contacts) {
+  for (auto& it : m_contacts) {
     it->index = k;
     k += it->contact.n_force();
   }
@@ -575,7 +565,7 @@ bool InverseDynamicsFormulationAccForce::removeRigidContact(
 }
 
 bool InverseDynamicsFormulationAccForce::removeMeasuredForce(
-    const std::string &measuredForceName) {
+    const std::string& measuredForceName) {
   for (auto it = m_measuredForces.begin(); it != m_measuredForces.end(); it++) {
     if ((*it)->measuredForce.name() == measuredForceName) {
       m_measuredForces.erase(it);
@@ -586,7 +576,7 @@ bool InverseDynamicsFormulationAccForce::removeMeasuredForce(
 }
 
 bool InverseDynamicsFormulationAccForce::removeFromHqpData(
-    const std::string &name) {
+    const std::string& name) {
   bool found = false;
   for (HQPData::iterator it = m_hqpData.begin();
        !found && it != m_hqpData.end(); it++) {
@@ -599,4 +589,18 @@ bool InverseDynamicsFormulationAccForce::removeFromHqpData(
     }
   }
   return false;
+}
+
+unsigned int InverseDynamicsFormulationAccForce::getTaskPriority(
+    const std::string& name) {
+  for (std::size_t i = 0; i < m_hqpData.size(); i++) {
+    const bool found = std::any_of(
+        m_hqpData[i].begin(), m_hqpData[i].end(),
+        [&name](const auto& c) { return c.second->name() == name; });
+    if (found) {
+      return i;
+    }
+  }
+  assert(false);  // Task name not found in formulation data
+  return -1;
 }

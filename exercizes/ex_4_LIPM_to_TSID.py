@@ -36,9 +36,8 @@ com, dcom, ddcom, cop, contact_phase, foot_steps_ctrl = interpolate_lipm_traj(
 )
 
 # COMPUTE TRAJECTORIES FOR FEET
-N = conf.nb_steps * int(
-    round(conf.T_step / conf.dt_mpc)
-)  # number of time steps for traj-opt
+# number of time steps for traj-opt
+N = conf.nb_steps * round(conf.T_step / conf.dt_mpc)
 N_ctrl = int((N * conf.dt_mpc) / dt_ctrl)  # number of time steps for TSID
 foot_steps_RF = foot_steps[::2, :]  # assume first foot step corresponds to right foot
 x_RF, dx_RF, ddx_RF = compute_foot_traj(

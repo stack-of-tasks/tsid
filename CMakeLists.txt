@@ -1,17 +1,8 @@
 #
 # Copyright (c) 2017-2021 CNRS
 #
-# This file is part of tsid tsid is free software: you can redistribute it
-# and/or modify it under the terms of the GNU Lesser General Public License as
-# published by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. tsid is distributed in the hope that it
-# will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-# Lesser Public License for more details. You should have received a copy of the
-# GNU Lesser General Public License along with tsid If not, see
-# <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.22)
 
 # Project properties
 set(PROJECT_ORG stack-of-tasks)
@@ -23,8 +14,6 @@ set(PROJECT_URL "https://github.com/${PROJECT_ORG}/${PROJECT_NAME}")
 
 # Project options
 option(INSTALL_DOCUMENTATION "Build and install the documentation" OFF)
-option(BUILD_PYTHON_INTERFACE "Build the python bindings" ON)
-option(INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
 option(SUFFIX_SO_VERSION "Suffix library name with its version" ON)
 option(INITIALIZE_WITH_NAN "Initialize Eigen entries with NaN" OFF)
 option(EIGEN_RUNTIME_NO_MALLOC
@@ -44,10 +33,12 @@ add_definitions(-Wno-deprecated-declarations)
 # Ignore them for now.
 add_definitions(-Wno-sign-conversion)
 
+add_definitions(-Werror=suggest-override)
+
 # Project configuration
-if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+if(NOT BUILD_STANDALONE_PYTHON_INTERFACE)
   set(PROJECT_USE_CMAKE_EXPORT TRUE)
-endif(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+endif()
 set(CXX_DISABLE_WERROR TRUE)
 set(DOXYGEN_USE_MATHJAX YES)
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
@@ -64,14 +55,6 @@ else()
       TARGET jrl-cmakemodules::jrl-cmakemodules
       PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
     message(STATUS "JRL cmakemodules found on system at ${JRL_CMAKE_MODULES}")
-  elseif(${CMAKE_VERSION} VERSION_LESS "3.14.0")
-    message(
-      FATAL_ERROR
-        "\nCan't find jrl-cmakemodules. Please either:\n"
-        "  - use git submodule: 'git submodule update --init'\n"
-        "  - or install https://github.com/jrl-umi3218/jrl-cmakemodules\n"
-        "  - or upgrade your CMake version to >= 3.14 to allow automatic fetching\n"
-    )
   else()
     message(STATUS "JRL cmakemodules not found. Let's fetch it.")
     include(FetchContent)
@@ -86,8 +69,6 @@ endif()
 include("${JRL_CMAKE_MODULES}/base.cmake")
 include("${JRL_CMAKE_MODULES}/ide.cmake")
 include("${JRL_CMAKE_MODULES}/apple.cmake")
-
-set_default_cmake_build_type("RelWithDebInfo")
 
 # Handle APPLE Cmake policy
 if(APPLE)
@@ -119,6 +100,9 @@ check_minimal_cxx_standard(17 ENFORCE)
 if(BUILD_PYTHON_INTERFACE)
   set(PYWRAP ${PROJECT_NAME}_pywrap)
   add_project_dependency(eigenpy 2.7.12 REQUIRED)
+  if(BUILD_STANDALONE_PYTHON_INTERFACE)
+    add_project_dependency(${PROJECT_NAME} REQUIRED CONFIG)
+  endif()
 endif(BUILD_PYTHON_INTERFACE)
 
 add_project_dependency(pinocchio 2.3.1 REQUIRED)
@@ -168,6 +152,8 @@ set(${PROJECT_NAME}_CONTACTS_HEADERS
     include/tsid/contacts/contact-6d.hpp
     include/tsid/contacts/contact-point.hpp
     include/tsid/contacts/measured-force-base.hpp
+    include/tsid/contacts/measured-3d-force.hpp
+    include/tsid/contacts/measured-6d-wrench.hpp
     include/tsid/contacts/measured-3Dforce.hpp
     include/tsid/contacts/measured-6Dwrench.hpp
     include/tsid/contacts/contact-two-frame-positions.hpp)
@@ -272,8 +258,8 @@ set(${PROJECT_NAME}_CONTACTS_SOURCES
     src/contacts/contact-6d.cpp
     src/contacts/contact-point.cpp
     src/contacts/measured-force-base.cpp
-    src/contacts/measured-3Dforce.cpp
-    src/contacts/measured-6Dwrench.cpp
+    src/contacts/measured-3d-force.cpp
+    src/contacts/measured-6d-wrench.cpp
     src/contacts/contact-two-frame-positions.cpp)
 
 set(${PROJECT_NAME}_TRAJECTORIES_SOURCES
@@ -321,51 +307,51 @@ set(${PROJECT_NAME}_SOURCES
 add_header_group(${PROJECT_NAME}_HEADERS)
 add_source_group(${PROJECT_NAME}_SOURCES)
 
-add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES}
-                                   ${${PROJECT_NAME}_HEADERS})
-target_include_directories(
-  ${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(${PROJECT_NAME} PUBLIC pinocchio::pinocchio
-                                             eiquadprog::eiquadprog)
+if(NOT BUILD_STANDALONE_PYTHON_INTERFACE)
+  add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES}
+                                     ${${PROJECT_NAME}_HEADERS})
+  add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+  target_include_directories(
+    ${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+  target_link_libraries(${PROJECT_NAME} PUBLIC pinocchio::pinocchio
+                                               eiquadprog::eiquadprog)
 
-if(APPLE)
-  set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "@loader_path")
-elseif(UNIX)
-  set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
-endif()
+  if(APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH
+                                                     "@loader_path")
+  elseif(UNIX)
+    set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+  endif()
 
-if(BUILD_WITH_PROXQP)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_PROXSUITE)
-  target_link_libraries(${PROJECT_NAME} PUBLIC proxsuite::proxsuite)
-endif()
+  if(BUILD_WITH_PROXQP)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_PROXSUITE)
+    target_link_libraries(${PROJECT_NAME} PUBLIC proxsuite::proxsuite)
+  endif()
 
-if(BUILD_WITH_OSQP)
-  target_link_libraries(${PROJECT_NAME} PUBLIC OsqpEigen::OsqpEigen)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_OSQP)
-endif()
+  if(BUILD_WITH_OSQP)
+    target_link_libraries(${PROJECT_NAME} PUBLIC OsqpEigen::OsqpEigen)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_OSQP)
+  endif()
 
-if(qpmad_FOUND)
-  target_include_directories(${PROJECT_NAME} PUBLIC ${qpmad_INCLUDE_DIRS})
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_QPMAD_FOUND)
-endif()
+  if(qpmad_FOUND)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${qpmad_INCLUDE_DIRS})
+    target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_QPMAD_FOUND)
+  endif()
 
-if(SUFFIX_SO_VERSION)
-  set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})
-endif(SUFFIX_SO_VERSION)
+  if(SUFFIX_SO_VERSION)
+    set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION
+                                                     ${PROJECT_VERSION})
+  endif(SUFFIX_SO_VERSION)
 
-if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
   install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${TARGETS_EXPORT_NAME}
     DESTINATION lib)
-endif(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+endif()
 
-add_subdirectory(bindings)
+if(BUILD_PYTHON_INTERFACE)
+  add_subdirectory(bindings)
+endif()
 if(BUILD_TESTING)
   add_subdirectory(tests)
 endif(BUILD_TESTING)
-
-# --- PACKAGING ----------------------------------------------------------------
-if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
-  install(FILES package.xml DESTINATION share/${PROJECT_NAME})
-endif(NOT INSTALL_PYTHON_INTERFACE_ONLY)
