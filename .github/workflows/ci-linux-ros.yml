@@ -17,6 +17,7 @@ jobs:
         env:
           - {ROS_DISTRO: humble}
           - {ROS_DISTRO: jazzy}
+          - {ROS_DISTRO: kilted}
           - {ROS_DISTRO: rolling}
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
@@ -27,8 +28,6 @@ jobs:
       - uses: actions/checkout@v5
         with:
           submodules: recursive
-      # eiquadprog is not yet available in ROS2
-      - run: sed -i "/eiquadprog/d" package.xml
       # This step will fetch/store the directory used by ccache before/after the ci run
       - uses: actions/cache@v4
         with:
