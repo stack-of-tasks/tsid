@@ -15,6 +15,7 @@
 #include <tsid/tasks/task-joint-posture.hpp>
 #include <tsid/tasks/task-joint-bounds.hpp>
 #include <tsid/tasks/task-joint-posVelAcc-bounds.hpp>
+#include <tsid/tasks/task-capture-point-inequality.hpp>
 
 #include <tsid/trajectories/trajectory-se3.hpp>
 #include <tsid/trajectories/trajectory-euclidian.hpp>
@@ -341,6 +342,64 @@ BOOST_AUTO_TEST_CASE(test_task_joint_posVelAcc_bounds) {
     BOOST_REQUIRE(isFinite(v));
     BOOST_REQUIRE(isFinite(q));
     t += dt;
+  }
+}
+
+BOOST_AUTO_TEST_CASE(test_task_capture_point_inequality) {
+  cout << "\n\n*********** TEST TASK CAPTURE POINT INEQUALITY ***********\n";
+  vector<string> package_dirs;
+  package_dirs.push_back(romeo_model_path);
+  string urdfFileName = package_dirs[0] + "/urdf/romeo.urdf";
+  RobotWrapper robot(urdfFileName, package_dirs,
+                     pinocchio::JointModelFreeFlyer(), false);
+
+  const double dt = 0.001;
+  TaskCapturePointInequality task("task-capture-point", robot, dt);
+
+  // Test setSupportLimitsXAxis with valid inputs (x_min <= x_max)
+  BOOST_CHECK_NO_THROW(task.setSupportLimitsXAxis(-0.1, 0.1));
+  BOOST_CHECK_NO_THROW(task.setSupportLimitsXAxis(0.0, 0.0));  // equal is valid
+  BOOST_CHECK_NO_THROW(task.setSupportLimitsXAxis(-0.5, 0.5));
+
+  // Test setSupportLimitsYAxis with valid inputs (y_min <= y_max)
+  BOOST_CHECK_NO_THROW(task.setSupportLimitsYAxis(-0.1, 0.1));
+  BOOST_CHECK_NO_THROW(task.setSupportLimitsYAxis(0.0, 0.0));  // equal is valid
+  BOOST_CHECK_NO_THROW(task.setSupportLimitsYAxis(-0.3, 0.3));
+
+  // Test setSupportLimitsXAxis with invalid inputs (x_min > x_max)
+  BOOST_CHECK_THROW(task.setSupportLimitsXAxis(0.1, -0.1),
+                    std::invalid_argument);
+
+  // Test setSupportLimitsYAxis with invalid inputs (y_min > y_max)
+  BOOST_CHECK_THROW(task.setSupportLimitsYAxis(0.1, -0.1),
+                    std::invalid_argument);
+
+  // Test setSafetyMargin
+  task.setSafetyMargin(0.01, 0.01);
+
+  // Test compute
+  task.setSupportLimitsXAxis(-0.1, 0.1);
+  task.setSupportLimitsYAxis(-0.05, 0.05);
+  task.setSafetyMargin(0.01, 0.01);
+
+  VectorXd q = neutral(robot.model());
+  q(2) += 0.84;
+  VectorXd v = VectorXd::Zero(robot.nv());
+  pinocchio::Data data(robot.model());
+
+  double t = 0.0;
+  robot.computeAllTerms(data, q, v);
+  const ConstraintBase& constraint = task.compute(t, q, v, data);
+  BOOST_CHECK(constraint.rows() == 2);
+  BOOST_CHECK(static_cast<tsid::math::Index>(constraint.cols()) ==
+              static_cast<tsid::math::Index>(robot.nv()));
+  BOOST_REQUIRE(isFinite(constraint.matrix()));
+  BOOST_REQUIRE(isFinite(constraint.lowerBound()));
+  BOOST_REQUIRE(isFinite(constraint.upperBound()));
+
+  // Lower bound should be <= upper bound
+  for (int i = 0; i < 2; i++) {
+    BOOST_CHECK(constraint.lowerBound()(i) <= constraint.upperBound()(i));
   }
 }
 

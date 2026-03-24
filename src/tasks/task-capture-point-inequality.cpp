@@ -58,8 +58,8 @@ const ConstraintBase& TaskCapturePointInequality::getConstraint() const {
 
 void TaskCapturePointInequality::setSupportLimitsXAxis(const double x_min,
                                                        const double x_max) {
-  PINOCCHIO_CHECK_INPUT_ARGUMENT(x_min >= x_max,
-                                 "The minimum limit for x needs to be greater "
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(x_min <= x_max,
+                                 "The minimum limit for x needs to be less than "
                                  "or equal to the maximum limit");
   m_support_limits_x(0) = x_min;
   m_support_limits_x(1) = x_max;
@@ -67,8 +67,8 @@ void TaskCapturePointInequality::setSupportLimitsXAxis(const double x_min,
 
 void TaskCapturePointInequality::setSupportLimitsYAxis(const double y_min,
                                                        const double y_max) {
-  PINOCCHIO_CHECK_INPUT_ARGUMENT(y_min >= y_max,
-                                 "The minimum limit for y needs to be greater "
+  PINOCCHIO_CHECK_INPUT_ARGUMENT(y_min <= y_max,
+                                 "The minimum limit for y needs to be less than "
                                  "or equal to the maximum limit");
   m_support_limits_y(0) = y_min;
   m_support_limits_y(1) = y_max;
