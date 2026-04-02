@@ -49,8 +49,8 @@ def create_7dof_arm(revoluteOnly=False):
         pin.GeometryObject(
             "base",
             id_base,  # parent
-            fcl.Box(0.5, 0.5, 0.02),
             pin.SE3(np.identity(3), np.array([0, 0, -0.01 - geom_radius])),
+            fcl.Box(0.5, 0.5, 0.02),
             "",
             np.ones(3),
             False,  # Default values
@@ -62,8 +62,8 @@ def create_7dof_arm(revoluteOnly=False):
         pin.GeometryObject(
             "shoulderGeom",
             id_base,
-            fcl.Sphere(geom_radius),
             pin.SE3.Identity(),
+            fcl.Sphere(geom_radius),
             "",
             np.ones(3),
             False,  # Default values
@@ -103,8 +103,8 @@ def create_7dof_arm(revoluteOnly=False):
         pin.GeometryObject(
             "elbowGeom",
             id_upper,
-            fcl.Sphere(geom_radius),
             pin.SE3(np.identity(3), np.array([0, 0, geom_length])),
+            fcl.Sphere(geom_radius),
             "",
             np.ones(3),
             False,  # Default values
@@ -116,8 +116,8 @@ def create_7dof_arm(revoluteOnly=False):
         pin.GeometryObject(
             "upperGeom",
             id_upper,
-            fcl.Cylinder(geom_radius, geom_length),
             placement_upper,
+            fcl.Cylinder(geom_radius, geom_length),
             "",
             np.ones(3),
             False,  # Default values
@@ -146,8 +146,8 @@ def create_7dof_arm(revoluteOnly=False):
         pin.GeometryObject(
             "wristGeom",
             id_lower,
-            fcl.Sphere(geom_radius),
             pin.SE3(np.identity(3), np.array([0, 0, geom_length])),
+            fcl.Sphere(geom_radius),
             "",
             np.ones(3),
             False,  # Default values
@@ -159,8 +159,8 @@ def create_7dof_arm(revoluteOnly=False):
         pin.GeometryObject(
             "lowerGeom",
             id_lower,
-            fcl.Cylinder(geom_radius, geom_length),
             placement_lower,
+            fcl.Cylinder(geom_radius, geom_length),
             "",
             np.ones(3),
             False,  # Default values
@@ -204,8 +204,8 @@ def create_7dof_arm(revoluteOnly=False):
         pin.GeometryObject(
             "palmGeom",
             id_hand,
-            fcl.Sphere(geom_radius),
             pin.SE3(np.identity(3), np.array([0, 0, 2 * geom_radius])),
+            fcl.Sphere(geom_radius),
             "",
             np.ones(3),
             False,  # Default values
@@ -217,8 +217,8 @@ def create_7dof_arm(revoluteOnly=False):
         pin.GeometryObject(
             "finger1Geom",
             id_hand,
-            fcl.Cylinder(0.02, 0.1),
             pin.SE3(np.identity(3), np.array([0.05, 0, 3 * geom_radius])),
+            fcl.Cylinder(0.02, 0.1),
             "",
             np.ones(3),
             False,  # Default values
@@ -230,8 +230,8 @@ def create_7dof_arm(revoluteOnly=False):
         pin.GeometryObject(
             "finger2Geom",
             id_hand,
-            fcl.Cylinder(0.02, 0.1),
             pin.SE3(np.identity(3), np.array([0, 0, 3 * geom_radius])),
+            fcl.Cylinder(0.02, 0.1),
             "",
             np.ones(3),
             False,  # Default values
@@ -243,8 +243,8 @@ def create_7dof_arm(revoluteOnly=False):
         pin.GeometryObject(
             "finger3Geom",
             id_hand,
-            fcl.Cylinder(0.02, 0.1),
             pin.SE3(np.identity(3), np.array([-0.05, 0, 3 * geom_radius])),
+            fcl.Cylinder(0.02, 0.1),
             "",
             np.ones(3),
             False,  # Default values
@@ -256,10 +256,10 @@ def create_7dof_arm(revoluteOnly=False):
         pin.GeometryObject(
             "thumbGeom",
             id_hand,
-            fcl.Cylinder(0.02, 0.1),
             pin.XYZQUATToSE3(
                 np.array([geom_radius, 0, 2 * geom_radius, 0, 0.707, 0, 0.707])
             ),
+            fcl.Cylinder(0.02, 0.1),
             "",
             np.ones(3),
             False,  # Default values
