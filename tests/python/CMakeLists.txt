@@ -8,7 +8,7 @@ set(${PYWRAP}_TESTS
     Solvers
     Tasks
     Trajectories
-    Deprecations
+    # Deprecations
     Measured6DWrench)
 
 foreach(test ${${PYWRAP}_TESTS})

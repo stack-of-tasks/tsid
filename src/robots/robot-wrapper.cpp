@@ -4,13 +4,13 @@
 
 #include "tsid/robots/robot-wrapper.hpp"
 
+#include <pinocchio/algorithm/center-of-mass.hpp>
+#include <pinocchio/algorithm/centroidal.hpp>
+#include <pinocchio/algorithm/compute-all-terms.hpp>
+#include <pinocchio/algorithm/frames.hpp>
+#include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/parsers/urdf.hpp>
-#include <pinocchio/algorithm/center-of-mass.hpp>
-#include <pinocchio/algorithm/compute-all-terms.hpp>
-#include <pinocchio/algorithm/jacobian.hpp>
-#include <pinocchio/algorithm/frames.hpp>
-#include <pinocchio/algorithm/centroidal.hpp>
 
 using namespace pinocchio;
 using namespace tsid::math;
@@ -206,7 +206,7 @@ SE3 RobotWrapper::framePosition(const Data& data,
                                  "Frame index greater than size of frame "
                                  "vector in model - frame may not exist");
   const Frame& f = m_model.frames[index];
-  return data.oMi[f.parent].act(f.placement);
+  return data.oMi[f.parentJoint].act(f.placement);
 }
 
 void RobotWrapper::framePosition(const Data& data,
@@ -216,7 +216,7 @@ void RobotWrapper::framePosition(const Data& data,
                                  "Frame index greater than size of frame "
                                  "vector in model - frame may not exist");
   const Frame& f = m_model.frames[index];
-  framePosition = data.oMi[f.parent].act(f.placement);
+  framePosition = data.oMi[f.parentJoint].act(f.placement);
 }
 
 Motion RobotWrapper::frameVelocity(const Data& data,
@@ -225,7 +225,7 @@ Motion RobotWrapper::frameVelocity(const Data& data,
                                  "Frame index greater than size of frame "
                                  "vector in model - frame may not exist");
   const Frame& f = m_model.frames[index];
-  return f.placement.actInv(data.v[f.parent]);
+  return f.placement.actInv(data.v[f.parentJoint]);
 }
 
 void RobotWrapper::frameVelocity(const Data& data,
@@ -235,7 +235,7 @@ void RobotWrapper::frameVelocity(const Data& data,
                                  "Frame index greater than size of frame "
                                  "vector in model - frame may not exist");
   const Frame& f = m_model.frames[index];
-  frameVelocity = f.placement.actInv(data.v[f.parent]);
+  frameVelocity = f.placement.actInv(data.v[f.parentJoint]);
 }
 
 Motion RobotWrapper::frameVelocityWorldOriented(
@@ -255,7 +255,7 @@ Motion RobotWrapper::frameAcceleration(const Data& data,
                                  "Frame index greater than size of frame "
                                  "vector in model - frame may not exist");
   const Frame& f = m_model.frames[index];
-  return f.placement.actInv(data.a[f.parent]);
+  return f.placement.actInv(data.a[f.parentJoint]);
 }
 
 void RobotWrapper::frameAcceleration(const Data& data,
@@ -265,7 +265,7 @@ void RobotWrapper::frameAcceleration(const Data& data,
                                  "Frame index greater than size of frame "
                                  "vector in model - frame may not exist");
   const Frame& f = m_model.frames[index];
-  frameAcceleration = f.placement.actInv(data.a[f.parent]);
+  frameAcceleration = f.placement.actInv(data.a[f.parentJoint]);
 }
 
 Motion RobotWrapper::frameAccelerationWorldOriented(
@@ -285,8 +285,8 @@ Motion RobotWrapper::frameClassicAcceleration(
                                  "Frame index greater than size of frame "
                                  "vector in model - frame may not exist");
   const Frame& f = m_model.frames[index];
-  Motion a = f.placement.actInv(data.a[f.parent]);
-  Motion v = f.placement.actInv(data.v[f.parent]);
+  Motion a = f.placement.actInv(data.a[f.parentJoint]);
+  Motion v = f.placement.actInv(data.v[f.parentJoint]);
   a.linear() += v.angular().cross(v.linear());
   return a;
 }
@@ -298,8 +298,8 @@ void RobotWrapper::frameClassicAcceleration(const Data& data,
                                  "Frame index greater than size of frame "
                                  "vector in model - frame may not exist");
   const Frame& f = m_model.frames[index];
-  frameAcceleration = f.placement.actInv(data.a[f.parent]);
-  Motion v = f.placement.actInv(data.v[f.parent]);
+  frameAcceleration = f.placement.actInv(data.a[f.parentJoint]);
+  Motion v = f.placement.actInv(data.v[f.parentJoint]);
   frameAcceleration.linear() += v.angular().cross(v.linear());
 }
 
