@@ -3,7 +3,7 @@
 <!--             - rename joint_base by waist (joint base name in sot is already joint_base) -->
 <!--             - waist joint goes from base_link to body (and not torso)                   -->
 <!--             - inverse trunkYaw joint direction (now from body to torso)                 -->
-<!-- Aldebaran file comes from                                                               --> 
+<!-- Aldebaran file comes from                                                               -->
 <!-- https://github.com/ros-aldebaran/romeo_robot/blob/master/romeo_description/urdf/romeoV1_generated_urdf/romeo.urdf -->
 <robot name="romeoH37V1" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <link name="base_link"/>
@@ -666,4 +666,3 @@
     </collision>
   </link>
 </robot>
-

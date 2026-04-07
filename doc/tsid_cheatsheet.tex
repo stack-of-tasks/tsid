@@ -66,7 +66,7 @@
         \begin{minted}[autogobble]{python}
         import tsid
         \end{minted}
-        
+
     \end{minipage}
 };
 %------------ Title ---------------------
@@ -88,7 +88,7 @@
         # Suppresion
         invdyn.removeFromHqpData('constraint_name')
         \end{minted}
-        
+
     \end{minipage}
 };
 %------------ Title ---------------------
@@ -110,24 +110,24 @@
         # Actuation Tasks
         tsid.TaskActuationtBounds('task_name', robot)
         tsid.TaskAMEquality('task_name', robot)
-        
+
         # Task creation
-        invdyn.addMotionTask(task, weight, priority_level, 
+        invdyn.addMotionTask(task, weight, priority_level,
                                 transition_duration)
-        invdyn.addActuationTask(task, weight, priority_level, 
+        invdyn.addActuationTask(task, weight, priority_level,
                                 transition_duration)
         # Task update
         invdyn.UpdateTaskWeight('task_name', weight)
         # Task suppression
         invdyn.removeTask('task_name', duration)
-        
+
         # Gains value
         task.setKp(value) # Proportional gain
         task.setKd(value) # Derivative gain
-        
+
         \end{minted}
-        
-        
+
+
     \end{minipage}
 };
 %------------ Title ---------------------
@@ -141,14 +141,14 @@
 
         \begin{minted}[autogobble]{python}
         # Contact creation
-        tsid.Contact6d('contact_name', robot, 'frame_name', contact_point, 
-                        contact_normal, friction_parameter, minForce, 
+        tsid.Contact6d('contact_name', robot, 'frame_name', contact_point,
+                        contact_normal, friction_parameter, minForce,
                         maxForce)
         invdyn.addRigidContact('contact_name', weight)
         # Contact suppression
         invdyn.removeRigidContact('contact_name', duration)
         \end{minted}
-        
+
     \end{minipage}
 };
 %------------ Title ---------------------
@@ -164,17 +164,17 @@
         # Set trajectory
         tsid.TrajectoryEuclidianConstant('traj_name', init_value)
         tsid.TrajectorySE3Constant('traj_name', init_value)
-        
+
         # Compute
         traj.computeNext()
-        
+
         # Define
         traj.pos(value) # Position
         traj.vel(value) # Velocity
         traj.acc(value) # Acceleration
-        task.setReference(traj) 
+        task.setReference(traj)
         \end{minted}
-        
+
     \end{minipage}
 };
 %------------ Title ---------------------
@@ -192,7 +192,7 @@
         tsid.SolverHQuadProgFast('solver_name')
         solver.resize(invdyn.nVar, invdyn.nEq, invdyn.nIn)
         \end{minted}
-        
+
     \end{minipage}
 };
 %------------ Title ---------------------
@@ -208,32 +208,32 @@
         \begin{minted}[autogobble]{python}
         # Get solution
         solver.solve(HQP_data)
-        
+
         # Dynamics
         invdyn.getActuatorForces(HQP_output)
         invdyn.getAccelerations(HQP_output)
-        
+
         # CoM
         robot.com(data) # Position
         robot.com_vel(data) # Velocity
         task.getAcceleration(dv) # Acceleration
-        
+
         # Trajectory
         traj.pos() # Position
         traj.vel() # Velocity
         traj.acc() # Acceleration
-        task.getDesiredAcceleration 
-        
+        task.getDesiredAcceleration
+
         # Contact
         invdyn.checkContact('contact_name', HQP_output)
         invdyn.getContactForce('contact_name', HQP_output)
         contact.getNormalForce(force)
-        
+
         # Error
         task.position_error
-        
+
         \end{minted}
-        
+
     \end{minipage}
 };
 %------------ Title ---------------------

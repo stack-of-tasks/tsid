@@ -31,7 +31,8 @@ set(${PYWRAP}_SOURCES
     tasks/task-two-frames-equality.cpp
     trajectories/trajectory-base.cpp
     trajectories/trajectory-euclidian.cpp
-    trajectories/trajectory-se3.cpp)
+    trajectories/trajectory-se3.cpp
+)
 
 set(${PYWRAP}_HEADERS
     ../../include/tsid/bindings/python/constraint/constraint-bound.hpp
@@ -71,46 +72,55 @@ set(${PYWRAP}_HEADERS
     ../../include/tsid/bindings/python/trajectories/trajectory-base.hpp
     ../../include/tsid/bindings/python/trajectories/trajectory-euclidian.hpp
     ../../include/tsid/bindings/python/trajectories/trajectory-se3.hpp
-    ../../include/tsid/bindings/python/utils/container.hpp)
+    ../../include/tsid/bindings/python/utils/container.hpp
+)
 
 add_library(${PYWRAP} SHARED ${${PYWRAP}_SOURCES} ${${PYWRAP}_HEADERS})
-target_link_libraries(${PYWRAP} PUBLIC ${PROJECT_NAME}::${PROJECT_NAME}
-                                       eigenpy::eigenpy)
+target_link_libraries(
+    ${PYWRAP}
+    PUBLIC ${PROJECT_NAME}::${PROJECT_NAME} eigenpy::eigenpy
+)
 
 if(IS_ABSOLUTE ${PYTHON_SITELIB})
-  set(${PYWRAP}_INSTALL_DIR ${PYTHON_SITELIB}/${PROJECT_NAME})
+    set(${PYWRAP}_INSTALL_DIR ${PYTHON_SITELIB}/${PROJECT_NAME})
 else()
-  set(${PYWRAP}_INSTALL_DIR
-      ${CMAKE_INSTALL_PREFIX}/${PYTHON_SITELIB}/${PROJECT_NAME})
+    set(${PYWRAP}_INSTALL_DIR
+        ${CMAKE_INSTALL_PREFIX}/${PYTHON_SITELIB}/${PROJECT_NAME}
+    )
 endif()
 
 if(BUILD_WITH_COMMIT_VERSION)
-  tag_library_version(${PYWRAP})
+    tag_library_version(${PYWRAP})
 endif(BUILD_WITH_COMMIT_VERSION)
 add_header_group(${PYWRAP}_HEADERS)
 add_source_group(${PYWRAP}_SOURCES)
 
 # We need to change the extension for python bindings
 set_target_properties(
-  ${PYWRAP}
-  PROPERTIES SUFFIX ${PYTHON_EXT_SUFFIX}
-             PREFIX ""
-             LIBRARY_OUTPUT_DIRECTORY
-             "${CMAKE_BINARY_DIR}/bindings/python/${PROJECT_NAME}")
+    ${PYWRAP}
+    PROPERTIES
+        SUFFIX ${PYTHON_EXT_SUFFIX}
+        PREFIX ""
+        LIBRARY_OUTPUT_DIRECTORY
+            "${CMAKE_BINARY_DIR}/bindings/python/${PROJECT_NAME}"
+)
 
 if(UNIX)
-  get_relative_rpath(${${PYWRAP}_INSTALL_DIR} ${PYWRAP}_INSTALL_RPATH)
-  set_target_properties(${PYWRAP} PROPERTIES INSTALL_RPATH
-                                             "${${PYWRAP}_INSTALL_RPATH}")
+    get_relative_rpath(${${PYWRAP}_INSTALL_DIR} ${PYWRAP}_INSTALL_RPATH)
+    set_target_properties(
+        ${PYWRAP}
+        PROPERTIES INSTALL_RPATH "${${PYWRAP}_INSTALL_RPATH}"
+    )
 endif()
 
 install(
-  TARGETS ${PYWRAP}
-  EXPORT ${TARGETS_EXPORT_NAME}
-  DESTINATION ${PYTHON_SITELIB}/${PROJECT_NAME})
+    TARGETS ${PYWRAP}
+    EXPORT ${TARGETS_EXPORT_NAME}
+    DESTINATION ${PYTHON_SITELIB}/${PROJECT_NAME}
+)
 
 set(PYTHON_FILES __init__.py)
 
 foreach(python ${PYTHON_FILES})
-  python_install_on_site(${PROJECT_NAME} ${python})
+    python_install_on_site(${PROJECT_NAME} ${python})
 endforeach(python)
