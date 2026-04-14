@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Fix inverted condition in setSupportLimitsXAxis/YAxis
+- Fix pinocchio 2 -> 3 migration, to fix build with pinocchio 4
 - ROS: jrl_cmakemodules dependency + kilted CI
+- CMake: don't use mathjax by default
+- Nix: switch to flakoboros
 
 ## [1.9.0] - 2025-09-29
 
