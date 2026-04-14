@@ -5,6 +5,7 @@
 #include "tsid/solvers/solver-HQP-qpmad.hpp"
 #include "tsid/math/utils.hpp"
 #include "tsid/utils/stop-watch.hpp"
+#include <cassert>
 
 #include <limits>
 

@@ -3,9 +3,10 @@
 //
 
 #include "tsid/solvers/solver-HQP-eiquadprog.hpp"
-#include "tsid/math/utils.hpp"
 #include "eiquadprog/eiquadprog.hpp"
+#include "tsid/math/utils.hpp"
 #include "tsid/utils/stop-watch.hpp"
+#include <cassert>
 
 using namespace tsid::math;
 using namespace tsid::solvers;

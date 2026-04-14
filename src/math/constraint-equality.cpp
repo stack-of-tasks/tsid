@@ -15,6 +15,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
+#include <cassert>
 #include <tsid/math/constraint-equality.hpp>
 
 using namespace tsid::math;

@@ -3,9 +3,10 @@
 //
 
 #include "tsid/solvers/solver-HQP-eiquadprog-fast.hpp"
-#include "tsid/math/utils.hpp"
 #include "eiquadprog/eiquadprog-fast.hpp"
+#include "tsid/math/utils.hpp"
 #include "tsid/utils/stop-watch.hpp"
+#include <cassert>
 
 // #define PROFILE_EIQUADPROG_FAST
 

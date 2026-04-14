@@ -3,6 +3,7 @@
 //
 
 #include "tsid/contacts/measured-3d-force.hpp"
+#include <cassert>
 
 #include "tsid/robots/robot-wrapper.hpp"
 

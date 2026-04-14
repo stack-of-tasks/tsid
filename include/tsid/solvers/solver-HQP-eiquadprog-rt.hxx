@@ -5,10 +5,11 @@
 #ifndef __invdyn_solvers_hqp_eiquadprog_rt_hxx__
 #define __invdyn_solvers_hqp_eiquadprog_rt_hxx__
 
-#include "tsid/solvers/solver-HQP-eiquadprog-rt.hpp"
 #include "eiquadprog/eiquadprog-rt.hxx"
-#include "tsid/utils/stop-watch.hpp"
 #include "tsid/math/utils.hpp"
+#include "tsid/solvers/solver-HQP-eiquadprog-rt.hpp"
+#include "tsid/utils/stop-watch.hpp"
+#include <cassert>
 
 namespace eisol = eiquadprog::solvers;
 

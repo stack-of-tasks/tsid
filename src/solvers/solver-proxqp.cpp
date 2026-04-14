@@ -5,6 +5,7 @@
 #include "tsid/solvers/solver-proxqp.hpp"
 #include "tsid/math/utils.hpp"
 #include "tsid/utils/stop-watch.hpp"
+#include <cassert>
 
 namespace tsid {
 namespace solvers {

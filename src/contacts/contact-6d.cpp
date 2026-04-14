@@ -2,8 +2,9 @@
 // Copyright (c) 2017 CNRS, NYU, MPI Tübingen
 //
 
-#include "tsid/math/utils.hpp"
 #include "tsid/contacts/contact-6d.hpp"
+#include "tsid/math/utils.hpp"
+#include <cassert>
 
 #include <pinocchio/spatial/skew.hpp>
 

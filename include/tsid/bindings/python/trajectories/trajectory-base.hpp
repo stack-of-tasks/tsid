@@ -6,12 +6,12 @@
 #define __tsid_python_traj_sample_hpp__
 
 #include "tsid/bindings/python/fwd.hpp"
+#include <cassert>
 
-#include <tsid/math/utils.hpp>
 #include "tsid/trajectories/trajectory-base.hpp"
+#include <tsid/math/utils.hpp>
 
 #include <pinocchio/bindings/python/utils/deprecation.hpp>
-#include <assert.h>
 namespace tsid {
 namespace python {
 namespace bp = boost::python;
@@ -20,7 +20,7 @@ typedef pinocchio::SE3 SE3;
 template <typename TrajSample>
 struct TrajectorySamplePythonVisitor
     : public boost::python::def_visitor<
-          TrajectorySamplePythonVisitor<TrajSample> > {
+          TrajectorySamplePythonVisitor<TrajSample>> {
   template <class PyClass>
 
   void visit(PyClass& cl) const {

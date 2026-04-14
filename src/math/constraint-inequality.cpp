@@ -2,6 +2,7 @@
 // Copyright (c) 2017 CNRS
 //
 
+#include <cassert>
 #include <tsid/math/constraint-inequality.hpp>
 
 using namespace tsid::math;

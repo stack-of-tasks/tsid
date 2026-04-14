@@ -3,6 +3,7 @@
 //
 
 #include "tsid/formulations/inverse-dynamics-formulation-acc-force.hpp"
+#include <cassert>
 
 #include "tsid/math/constraint-bound.hpp"
 #include "tsid/math/constraint-inequality.hpp"
@@ -33,7 +34,7 @@ InverseDynamicsFormulationAccForce::InverseDynamicsFormulationAccForce(
   m_Jc.setZero(m_k, m_v);
   h_fext.setZero(m_v);
   m_hqpData[0].push_back(
-      solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(
+      solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(
           1.0, m_baseDynamics));
 }
 
@@ -77,8 +78,8 @@ void InverseDynamicsFormulationAccForce::addTask(TaskLevelPointer tl,
   //  else
   //    tl->constraint = new ConstraintBound(c.name(), m_v+m_k);
   m_hqpData[priorityLevel].push_back(
-      make_pair<double, std::shared_ptr<ConstraintBase> >(weight,
-                                                          tl->constraint));
+      make_pair<double, std::shared_ptr<ConstraintBase>>(weight,
+                                                         tl->constraint));
 }
 
 bool InverseDynamicsFormulationAccForce::addMotionTask(
@@ -140,8 +141,8 @@ bool InverseDynamicsFormulationAccForce::addActuationTask(
   }
 
   m_hqpData[priorityLevel].push_back(
-      make_pair<double, std::shared_ptr<ConstraintBase> >(weight,
-                                                          tl->constraint));
+      make_pair<double, std::shared_ptr<ConstraintBase>>(weight,
+                                                         tl->constraint));
 
   return true;
 }
@@ -174,14 +175,14 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(
   cl->motionConstraint = std::make_shared<ConstraintEquality>(
       contact.name() + "_motion_task", motionConstr.rows(), m_v + m_k);
   m_hqpData[motionPriorityLevel].push_back(
-      solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(
+      solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(
           motion_weight, cl->motionConstraint));
 
   const ConstraintInequality& forceConstr = contact.getForceConstraint();
   cl->forceConstraint = std::make_shared<ConstraintInequality>(
       contact.name() + "_force_constraint", forceConstr.rows(), m_v + m_k);
   m_hqpData[0].push_back(
-      solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(
+      solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(
           1.0, cl->forceConstraint));
 
   const ConstraintEquality& forceRegConstr =
@@ -189,7 +190,7 @@ bool InverseDynamicsFormulationAccForce::addRigidContact(
   cl->forceRegTask = std::make_shared<ConstraintEquality>(
       contact.name() + "_force_reg_task", forceRegConstr.rows(), m_v + m_k);
   m_hqpData[1].push_back(
-      solvers::make_pair<double, std::shared_ptr<ConstraintBase> >(
+      solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(
           force_regularization_weight, cl->forceRegTask));
 
   if (motionPriorityLevel == 0) m_eq += motionConstr.rows();

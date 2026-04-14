@@ -2,9 +2,10 @@
 // Copyright (c) 2023 MIPT
 //
 
-#include "tsid/math/utils.hpp"
 #include "tsid/tasks/task-two-frames-equality.hpp"
+#include "tsid/math/utils.hpp"
 #include "tsid/robots/robot-wrapper.hpp"
+#include <cassert>
 
 namespace tsid {
 namespace tasks {

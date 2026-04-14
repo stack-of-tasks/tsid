@@ -3,6 +3,7 @@
 //
 
 #include "tsid/contacts/measured-6d-wrench.hpp"
+#include <cassert>
 
 #include "tsid/robots/robot-wrapper.hpp"
 

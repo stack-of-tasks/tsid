@@ -2,8 +2,9 @@
 // Copyright (c) 2023 MIPT
 //
 
-#include "tsid/math/utils.hpp"
 #include "tsid/contacts/contact-two-frame-positions.hpp"
+#include "tsid/math/utils.hpp"
+#include <cassert>
 
 #include <pinocchio/spatial/skew.hpp>
 
