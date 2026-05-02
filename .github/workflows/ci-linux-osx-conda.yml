@@ -46,7 +46,7 @@ jobs:
       run: |
         echo "CCACHE_COMPILERTYPE=gcc" >> "$GITHUB_ENV"
 
-    - uses: conda-incubator/setup-miniconda@v3
+    - uses: conda-incubator/setup-miniconda@v4
       with:
         miniforge-version: latest
         activate-environment: tsid
