@@ -9,23 +9,21 @@
       { lib, ... }:
       {
         extraDevPyPackages = [ "tsid" ];
-        overrideAttrs.tsid =
-          { ... }:
-          {
-            src = lib.fileset.toSource {
-              root = ./.;
-              fileset = lib.fileset.unions [
-                ./bindings
-                ./CMakeLists.txt
-                ./doc
-                ./include
-                ./models
-                ./package.xml
-                ./src
-                ./tests
-              ];
-            };
+        overrideAttrs.tsid = {
+          src = lib.fileset.toSource {
+            root = ./.;
+            fileset = lib.fileset.unions [
+              ./bindings
+              ./CMakeLists.txt
+              ./doc
+              ./include
+              ./models
+              ./package.xml
+              ./src
+              ./tests
+            ];
           };
+        };
       }
     );
 }
