@@ -97,11 +97,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1780389887,
-        "narHash": "sha256-c8XjwT8+oYdQ7BjuzUCLBqktpC1jvrC+pKDt71KYF4M=",
+        "lastModified": 1780737291,
+        "narHash": "sha256-X/NV78229FRopX6lqV2r/e0zS602Gp0kmUyp4lA/3iI=",
         "owner": "gepetto",
         "repo": "flakoboros",
-        "rev": "a1ff90acc5c0abe2a36b6384a55db5320792c887",
+        "rev": "325b46e60bf77a5b10929d94381430a390ec4843",
         "type": "github"
       },
       "original": {
@@ -148,11 +148,11 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1780752087,
-        "narHash": "sha256-VHXM0jPFSScSI15+lYpxPR8f2jqtQOQ13PqVI6UkRmY=",
+        "lastModified": 1780851304,
+        "narHash": "sha256-J9gvQIWdUFcBOwP0/2BnLkRIx+htvgd5F8SNROltZTM=",
         "owner": "gepetto",
         "repo": "gazebros2nix",
-        "rev": "8eb92db826f038627698a0f9ba4a3aca0a8a18d0",
+        "rev": "8d51270e902f551389a69aea2e060eb9394645f5",
         "type": "github"
       },
       "original": {
@@ -199,11 +199,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1780799782,
-        "narHash": "sha256-tWr+bDnRenVumPTPWLlmKcpMKgizAy3kYf2H5K0u7So=",
+        "lastModified": 1781164340,
+        "narHash": "sha256-TYKu3/SG5AvgymamI47WRwslAtJhZT3f+Pl04fhv1n0=",
         "owner": "gepetto",
         "repo": "nix",
-        "rev": "c7d5345af56e214ae7d0e355d1939edf612719d3",
+        "rev": "98d59388c4be841a96388937092610195d389cf4",
         "type": "github"
       },
       "original": {
@@ -265,11 +265,11 @@
         "rosdistro": "rosdistro"
       },
       "locked": {
-        "lastModified": 1780387251,
-        "narHash": "sha256-VQpPVKWmb3y1jwc4AUk/V03UlD/7pWfFkjx9Ok8RcUQ=",
+        "lastModified": 1780736467,
+        "narHash": "sha256-Z+2rqsfRTsbt84tcmLBPawHekPU2yaEhsr/inJ2Vb5c=",
         "owner": "lopsided98",
         "repo": "nix-ros-overlay",
-        "rev": "28c809da49349cb7852194729e75ea54ba794cbb",
+        "rev": "58ed8bba49e54700448cddd05c26fd3c743909e3",
         "type": "github"
       },
       "original": {
@@ -402,11 +402,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778901413,
-        "narHash": "sha256-GSKXTAnFqRAMlZkJrIPcQMYf+lpMr66K3i60mB9STvc=",
+        "lastModified": 1780416763,
+        "narHash": "sha256-rRK3IFixgsrK6S3e14Xz9HAZm7+kMAIl3oi5zZlcwYI=",
         "owner": "pyproject-nix",
         "repo": "pyproject.nix",
-        "rev": "a228447c3e179d477c1b6246ef3efa8cfe3c469a",
+        "rev": "ad83f1ead0e78e57b188f35cb57298affb06fc5f",
         "type": "github"
       },
       "original": {
@@ -423,11 +423,11 @@
     "rosdistro": {
       "flake": false,
       "locked": {
-        "lastModified": 1780067887,
-        "narHash": "sha256-zb6ubdTFku4W8Mjb651VWJL1tWBP6BJg0iXcKypT29M=",
+        "lastModified": 1780665549,
+        "narHash": "sha256-QzobMKNpcpS4uWETzPxXkt0F66Sji15N+xsK1JcEWDU=",
         "owner": "ros",
         "repo": "rosdistro",
-        "rev": "1c698d63a1a2d31dd24502a41bb1139eeb00e876",
+        "rev": "bcec45c05427f0ad6860cb323695995d8cb1e4bd",
         "type": "github"
       },
       "original": {
