@@ -25,6 +25,9 @@
 #ifdef TSID_WITH_OSQP
 #include "tsid/bindings/python/solvers/solver-osqp.hpp"
 #endif
+#ifdef TSID_WITH_DAQP
+#include "tsid/bindings/python/solvers/solver-HQP-daqp.hpp"
+#endif
 #include "tsid/bindings/python/solvers/HQPData.hpp"
 #include "tsid/bindings/python/solvers/HQPOutput.hpp"
 namespace tsid {
@@ -32,6 +35,7 @@ namespace python {
 void exposeSolverHQuadProg();
 void exposeSolverProxQP();
 void exposeSolverOSQP();
+void exposeSolverDAQP();
 void exposeConstraintLevel();
 void exposeHQPData();
 void exposeHQPOutput();
@@ -39,6 +43,7 @@ inline void exposeSolvers() {
   exposeSolverHQuadProg();
   exposeSolverProxQP();
   exposeSolverOSQP();
+  exposeSolverDAQP();
   exposeConstraintLevel();
   exposeHQPData();
   exposeHQPOutput();
