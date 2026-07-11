@@ -20,6 +20,9 @@
 #ifdef TSID_QPMAD_FOUND
 #include <tsid/solvers/solver-HQP-qpmad.hpp>
 #endif
+#ifdef TSID_WITH_DAQP
+#include <tsid/solvers/solver-HQP-daqp.hpp>
+#endif
 
 #include <tsid/math/utils.hpp>
 #include <tsid/math/constraint-equality.hpp>
@@ -33,6 +36,84 @@
 #define REQUIRE_FINITE(A) BOOST_REQUIRE_MESSAGE(isFinite(A), #A << ": " << A)
 
 BOOST_AUTO_TEST_SUITE(BOOST_TEST_MODULE)
+
+#ifdef TSID_WITH_DAQP
+BOOST_AUTO_TEST_CASE(test_daqp_multilevel_hierarchy) {
+  using namespace tsid;
+  using namespace math;
+  using namespace solvers;
+
+  std::unique_ptr<SolverHQPBase> solver(
+      SolverHQPFactory::createNewSolver(SOLVER_HQP_DAQP, "daqp"));
+  HQPData data(4);
+
+  const Vector lower = Vector::Constant(2, -10.);
+  const Vector upper = Vector::Constant(2, 10.);
+  auto bounds = std::make_shared<ConstraintBound>("bounds", lower, upper);
+  data[0].push_back(
+      solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(1., bounds));
+
+  Matrix selectX(1, 2);
+  selectX << 1., 0.;
+  auto xIsOne = std::make_shared<ConstraintEquality>("x-is-one", selectX,
+                                                     Vector::Constant(1, 1.));
+  data[1].push_back(
+      solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(1., xIsOne));
+
+  Matrix identity = Matrix::Identity(2, 2);
+  Vector secondTarget(2);
+  secondTarget << 2., 3.;
+  auto secondLevel = std::make_shared<ConstraintEquality>(
+      "second-level", identity, secondTarget);
+  data[2].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(
+      1., secondLevel));
+
+  Matrix selectY(1, 2);
+  selectY << 0., 1.;
+  auto yIsMinusFour = std::make_shared<ConstraintEquality>(
+      "y-is-minus-four", selectY, Vector::Constant(1, -4.));
+  data[3].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(
+      1., yIsMinusFour));
+
+  const HQPOutput& output = solver->solve(data);
+  BOOST_REQUIRE_EQUAL(output.status, HQP_STATUS_OPTIMAL);
+  Vector expected(2);
+  expected << 1., 3.;
+  BOOST_CHECK_MESSAGE(
+      output.x.isApprox(expected, 1e-5),
+      "Unexpected hierarchical solution: " << output.x.transpose());
+
+  const HQPOutput& warmOutput = solver->solve(data);
+  BOOST_REQUIRE_EQUAL(warmOutput.status, HQP_STATUS_OPTIMAL);
+  BOOST_CHECK(warmOutput.x.isApprox(expected, 1e-5));
+}
+
+BOOST_AUTO_TEST_CASE(test_daqp_weighted_level) {
+  using namespace tsid;
+  using namespace math;
+  using namespace solvers;
+
+  SolverHQPDAQP solver("daqp");
+  HQPData data(2);
+  Matrix A = Matrix::Ones(1, 1);
+  auto zero = std::make_shared<ConstraintEquality>(
+      "zero", 2. * A, Vector::Zero(1));
+  auto two =
+      std::make_shared<ConstraintEquality>("two", A, Vector::Constant(1, 2.));
+  auto hardRange = std::make_shared<ConstraintInequality>(
+      "hard-range", A, Vector::Zero(1), Vector::Constant(1, 2.));
+  data[0].push_back(solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(
+      1., hardRange));
+  data[1].push_back(
+      solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(1., zero));
+  data[1].push_back(
+      solvers::make_pair<double, std::shared_ptr<ConstraintBase>>(3., two));
+
+  const HQPOutput& output = solver.solve(data);
+  BOOST_REQUIRE_EQUAL(output.status, HQP_STATUS_OPTIMAL);
+  BOOST_CHECK_SMALL(output.x[0] - 6. / 7., 1e-5);
+}
+#endif
 
 // BOOST_AUTO_TEST_CASE ( test_eiquadprog_unconstrained)
 //{
