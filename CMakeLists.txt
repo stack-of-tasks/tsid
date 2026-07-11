@@ -28,6 +28,7 @@ option(
 )
 option(BUILD_WITH_PROXQP "Support using the proxqp solver" OFF)
 option(BUILD_WITH_OSQP "Support using the osqp solver" OFF)
+option(BUILD_WITH_DAQP "Support using the DAQP hierarchical QP solver" OFF)
 
 # With pos, vel, acc awaiting renaming (e.g. in trajectory-base), we are
 # producing a ton of deprecation warnings. Ignoring them for now; remove this
@@ -109,6 +110,10 @@ endif(BUILD_PYTHON_INTERFACE)
 
 add_project_dependency(pinocchio 2.3.1 REQUIRED)
 add_project_dependency(eiquadprog 1.1.3 REQUIRED)
+
+if(BUILD_WITH_DAQP)
+    add_project_dependency(daqp REQUIRED CONFIG)
+endif()
 
 find_package(qpmad QUIET) # optional
 if(qpmad_FOUND)
@@ -213,6 +218,13 @@ if(BUILD_WITH_OSQP)
     )
 endif()
 
+if(BUILD_WITH_DAQP)
+    list(
+        APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
+        include/tsid/solvers/solver-HQP-daqp.hpp
+    )
+endif()
+
 if(qpmad_FOUND)
     list(
         APPEND ${PROJECT_NAME}_SOLVERS_HEADERS
@@ -306,6 +318,10 @@ if(BUILD_WITH_OSQP)
     list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-osqp.cpp)
 endif()
 
+if(BUILD_WITH_DAQP)
+    list(APPEND ${PROJECT_NAME}_SOLVERS_SOURCES src/solvers/solver-HQP-daqp.cpp)
+endif()
+
 if(qpmad_FOUND)
     list(
         APPEND ${PROJECT_NAME}_SOLVERS_SOURCES
@@ -361,6 +377,15 @@ if(NOT BUILD_STANDALONE_PYTHON_INTERFACE)
     if(BUILD_WITH_OSQP)
         target_link_libraries(${PROJECT_NAME} PUBLIC OsqpEigen::OsqpEigen)
         target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_OSQP)
+    endif()
+
+    if(BUILD_WITH_DAQP)
+        target_compile_definitions(${PROJECT_NAME} PUBLIC -DTSID_WITH_DAQP)
+        if(TARGET daqp::daqp)
+            target_link_libraries(${PROJECT_NAME} PUBLIC daqp::daqp)
+        else()
+            target_link_libraries(${PROJECT_NAME} PUBLIC daqp)
+        endif()
     endif()
 
     if(qpmad_FOUND)
