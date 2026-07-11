@@ -49,6 +49,10 @@ enum TSID_DLLAPI SolverHQP {
   ,
   SOLVER_HQP_OSQP
 #endif
+#ifdef TSID_WITH_DAQP
+  ,
+  SOLVER_HQP_DAQP
+#endif
 #ifdef QPOASES_FOUND
   ,
   SOLVER_HQP_OASES
