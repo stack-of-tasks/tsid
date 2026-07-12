@@ -296,6 +296,10 @@ const HQPOutput& SolverHQPDAQP::solve(const HQPData& problemData) {
       }
     }
     daqp_solve(&result, &m_workspace->workspace);
+    // DAQP's public hierarchical result contains soft-level duals. TSID
+    // needs the final active-set signs to warm-start the next hierarchy.
+    if (!m_useConventionalQP)
+      daqp_extract_active_duals(&result, &m_workspace->workspace);
   } else {
     resetWorkspace();
   }
