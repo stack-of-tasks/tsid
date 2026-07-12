@@ -41,9 +41,7 @@ class TSID_DLLAPI SolverHQPDAQP : public SolverHQPBase {
    * numerical DAQP data on every solve.
    */
   void setAssumeMatricesUnchanged(bool unchanged);
-  bool getAssumeMatricesUnchanged() const {
-    return m_assumeMatricesUnchanged;
-  }
+  bool getAssumeMatricesUnchanged() const { return m_assumeMatricesUnchanged; }
 
   const RowMajorMatrix& constraintMatrix() const { return m_A; }
   const Vector& lowerBounds() const { return m_lower; }

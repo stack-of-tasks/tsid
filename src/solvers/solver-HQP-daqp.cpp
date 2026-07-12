@@ -176,8 +176,8 @@ void SolverHQPDAQP::retrieveQPData(const HQPData& problemData, bool) {
   }
 
   if (m_useConventionalQP) {
-    const bool rebuildH = !m_assumeMatricesUnchanged || m_H.rows() != n ||
-                          m_H.cols() != n;
+    const bool rebuildH =
+        !m_assumeMatricesUnchanged || m_H.rows() != n || m_H.cols() != n;
     if (rebuildH) m_H.setZero(n, n);
     m_f.setZero(n);
     for (const auto& item : problemData[1]) {
@@ -185,10 +185,10 @@ void SolverHQPDAQP::retrieveQPData(const HQPData& problemData, bool) {
       const auto& constraint = item.second;
       const double weight = item.first;
       if (rebuildH)
-        m_H.noalias() += weight * constraint->matrix().transpose() *
-                          constraint->matrix();
-      m_f.noalias() -= weight * constraint->matrix().transpose() *
-                        constraint->vector();
+        m_H.noalias() +=
+            weight * constraint->matrix().transpose() * constraint->matrix();
+      m_f.noalias() -=
+          weight * constraint->matrix().transpose() * constraint->vector();
     }
   } else {
     m_H.resize(0, 0);
@@ -266,8 +266,8 @@ const HQPOutput& SolverHQPDAQP::solve(const HQPData& problemData) {
         updateMask |= DAQP_UPDATE_d;
       }
     } else if (m_useConventionalQP) {
-      updateMask |= DAQP_UPDATE_Rinv | DAQP_UPDATE_M | DAQP_UPDATE_v |
-                    DAQP_UPDATE_d;
+      updateMask |=
+          DAQP_UPDATE_Rinv | DAQP_UPDATE_M | DAQP_UPDATE_v | DAQP_UPDATE_d;
     } else {
       updateMask |= DAQP_UPDATE_M | DAQP_UPDATE_d | DAQP_UPDATE_hierarchy;
       normalizationChanged = true;

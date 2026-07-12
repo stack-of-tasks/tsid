@@ -88,8 +88,7 @@ BOOST_AUTO_TEST_CASE(test_daqp_multilevel_hierarchy) {
   BOOST_REQUIRE_EQUAL(warmOutput.status, HQP_STATUS_OPTIMAL);
   BOOST_CHECK(warmOutput.x.isApprox(expected, 1e-5));
 
-  static_cast<SolverHQPDAQP*>(solver.get())
-      ->setAssumeMatricesUnchanged(true);
+  static_cast<SolverHQPDAQP*>(solver.get())->setAssumeMatricesUnchanged(true);
   secondLevel->vector()[1] = 4.;
   const HQPOutput& updatedOutput = solver->solve(data);
   BOOST_REQUIRE_EQUAL(updatedOutput.status, HQP_STATUS_OPTIMAL);
@@ -105,8 +104,8 @@ BOOST_AUTO_TEST_CASE(test_daqp_weighted_level) {
   SolverHQPDAQP solver("daqp");
   HQPData data(2);
   Matrix A = Matrix::Ones(1, 1);
-  auto zero = std::make_shared<ConstraintEquality>(
-      "zero", 2. * A, Vector::Zero(1));
+  auto zero =
+      std::make_shared<ConstraintEquality>("zero", 2. * A, Vector::Zero(1));
   auto two =
       std::make_shared<ConstraintEquality>("two", A, Vector::Constant(1, 2.));
   auto hardRange = std::make_shared<ConstraintInequality>(
@@ -620,10 +619,9 @@ BOOST_AUTO_TEST_CASE(test_eiquadprog_classic_vs_rt_vs_fast_vs_proxqp) {
       BOOST_CHECK_MESSAGE(
           output.x.isApprox(output_daqp.x, 1e-5),
           "\nDiff DAQP: " + toString((output.x - output_daqp.x).norm()));
-      BOOST_CHECK_MESSAGE(
-          output.x.isApprox(output_daqp_cold.x, 1e-5),
-          "\nDiff DAQP cold: " +
-              toString((output.x - output_daqp_cold.x).norm()));
+      BOOST_CHECK_MESSAGE(output.x.isApprox(output_daqp_cold.x, 1e-5),
+                          "\nDiff DAQP cold: " +
+                              toString((output.x - output_daqp_cold.x).norm()));
       BOOST_CHECK_MESSAGE(
           output.x.isApprox(output_daqp_reuse.x, 1e-5),
           "\nDiff DAQP reuse: " +
