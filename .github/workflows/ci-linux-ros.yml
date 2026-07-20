@@ -22,7 +22,7 @@ jobs:
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
       UPSTREAM_WORKSPACE: dependencies.rosinstall
-      CMAKE_ARGS: -DBUILD_WITH_OSQP=ON -DBUILD_WITH_PROXQP=ON -DBUILD_WITH_VECTORIZATION_SUPPORT=OFF  # Simde is not available yet
+      CMAKE_ARGS: -DBUILD_WITH_PROXQP=ON -DBUILD_WITH_VECTORIZATION_SUPPORT=OFF
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
