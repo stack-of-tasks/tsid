@@ -18,11 +18,12 @@ jobs:
           - {ROS_DISTRO: humble}
           - {ROS_DISTRO: jazzy}
           - {ROS_DISTRO: kilted}
+          - {ROS_DISTRO: lyrical}
           - {ROS_DISTRO: rolling}
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
       UPSTREAM_WORKSPACE: dependencies.rosinstall
-      CMAKE_ARGS: -DBUILD_WITH_OSQP=ON -DBUILD_WITH_PROXQP=ON -DBUILD_WITH_VECTORIZATION_SUPPORT=OFF  # Simde is not available yet
+      CMAKE_ARGS: -DBUILD_WITH_PROXQP=ON
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

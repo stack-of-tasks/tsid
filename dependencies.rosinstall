@@ -1,20 +1,9 @@
 - git:
-    uri: https://github.com/asherikov/qpmad.git
-    version: master
+    # ref. https://github.com/asherikov/qpmad/pull/13
+    uri: https://github.com/nim65s/qpmad.git
+    version: cmake
     local-name: qpmad
 - git:
     uri: https://github.com/Simple-Robotics/proxsuite.git
     version: devel
     local-name: proxsuite
-- git:
-    uri: https://github.com/ori-drs/osqp.git # fork for packaging
-    version: master
-    local-name: osqp
-- git:
-    uri: https://github.com/robotology/osqp-eigen.git
-    version: master
-    local-name: osqp-eigen
-- git:
-    uri: https://github.com/stack-of-tasks/eiquadprog.git
-    version: master
-    local-name: eiquadprog
