@@ -1,6 +1,6 @@
 from math import pi
 
-import hppfcl as fcl
+import coal as fcl
 import numpy as np
 import pinocchio as pin
 
