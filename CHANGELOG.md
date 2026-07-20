@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Add DAQP solver
+- ROS CI: remove OSQP
+- ROS CI: add lyrical
+
 ## [1.10.0] - 2026-04-14
 
 - Fix inverted condition in setSupportLimitsXAxis/YAxis
