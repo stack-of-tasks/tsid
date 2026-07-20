@@ -7,7 +7,3 @@
     uri: https://github.com/Simple-Robotics/proxsuite.git
     version: devel
     local-name: proxsuite
-- git:
-    uri: https://github.com/stack-of-tasks/eiquadprog.git
-    version: master
-    local-name: eiquadprog
