@@ -55,6 +55,7 @@ set(${PYWRAP}_HEADERS
     ../../include/tsid/bindings/python/solvers/HQPData.hpp
     ../../include/tsid/bindings/python/solvers/HQPOutput.hpp
     ../../include/tsid/bindings/python/solvers/solver-HQP-eiquadprog.hpp
+    ../../include/tsid/bindings/python/solvers/solver-HQP-daqp.hpp
     ../../include/tsid/bindings/python/solvers/solver-osqp.hpp
     ../../include/tsid/bindings/python/solvers/solver-proxqp.hpp
     ../../include/tsid/bindings/python/tasks/expose-tasks.hpp

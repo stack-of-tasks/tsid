@@ -26,5 +26,12 @@ void exposeSolverOSQP() {
   SolverOSQPPythonVisitor<tsid::solvers::SolverOSQP>::expose("SolverOSQP");
 #endif
 }
+
+void exposeSolverDAQP() {
+#ifdef TSID_WITH_DAQP
+  SolverDAQPPythonVisitor<tsid::solvers::SolverHQPDAQP>::expose(
+      "SolverHQPDAQP");
+#endif
+}
 }  // namespace python
 }  // namespace tsid

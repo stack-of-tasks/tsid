@@ -18,6 +18,10 @@
 #include <tsid/solvers/solver-osqp.hpp>
 #endif
 
+#ifdef TSID_WITH_DAQP
+#include <tsid/solvers/solver-HQP-daqp.hpp>
+#endif
+
 #ifdef QPOASES_FOUND
 #include <tsid/solvers/solver-HQP-qpoases.hh>
 #endif
@@ -42,6 +46,10 @@ SolverHQPBase* SolverHQPFactory::createNewSolver(const SolverHQP solverType,
 
 #ifdef TSID_WITH_OSQP
   if (solverType == SOLVER_HQP_OSQP) return new SolverOSQP(name);
+#endif
+
+#ifdef TSID_WITH_DAQP
+  if (solverType == SOLVER_HQP_DAQP) return new SolverHQPDAQP(name);
 #endif
 
 #ifdef QPOASES_FOUND
