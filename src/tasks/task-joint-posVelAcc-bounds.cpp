@@ -10,7 +10,7 @@
  * Andrea del Prete. Joint Position and Velocity Bounds in Discrete-Time
  * Acceleration/Torque Control of Robot Manipulators. IEEE Robotics and
  * Automation Letters, IEEE 2018, 3 (1),
- * pp.281-288.￿10.1109/LRA.2017.2738321￿. hal-01356989v3 And
+ * pp.281-288. doi:10.1109/LRA.2017.2738321. hal-01356989v3 And
  * https://github.com/andreadelprete/pinocchio_inv_dyn/blob/master/python/pinocchio_inv_dyn/acc_bounds_util.py
  */
 namespace tsid {
